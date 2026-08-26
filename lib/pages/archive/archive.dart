@@ -5,6 +5,7 @@
 
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/archive/archive_view.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
@@ -30,8 +31,13 @@ class ArchiveController extends State<Archive> {
     await showFutureLoadingDialog(
       context: context,
       future: () async {
+        final room = archive[i].room;
         Logs().v('Forget room ${archive.last.room.getLocalizedDisplayname()}');
-        await archive[i].room.forget();
+        await room.forget();
+        await TranslationRuntime.instance.invalidateRoomUnlessLocallyReferenced(
+          room.id,
+          excludingClient: room.client,
+        );
         archive.removeAt(i);
       },
     );
@@ -63,7 +69,13 @@ class ArchiveController extends State<Archive> {
           Logs().v(
             'Forget room ${archive.last.room.getLocalizedDisplayname()}',
           );
-          await archive.last.room.forget();
+          final room = archive.last.room;
+          await room.forget();
+          await TranslationRuntime.instance
+              .invalidateRoomUnlessLocallyReferenced(
+                room.id,
+                excludingClient: room.client,
+              );
           archive.removeLast();
         }
       },

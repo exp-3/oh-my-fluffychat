@@ -6,6 +6,7 @@
 import 'dart:async';
 
 import 'package:fluffychat/l10n/l10n.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:go_router/go_router.dart';
@@ -72,6 +73,11 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
                   future: () => widget.room.leave(),
                 );
                 if (result.error == null) {
+                  await TranslationRuntime.instance
+                      .invalidateRoomUnlessLocallyReferenced(
+                        widget.room.id,
+                        excludingClient: widget.room.client,
+                      );
                   router.go('/rooms');
                 }
 

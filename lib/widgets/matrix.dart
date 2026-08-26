@@ -13,6 +13,7 @@ import 'package:fluffychat/utils/init_with_restore.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
 import 'package:fluffychat/utils/notification_background_handler.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/utils/uia_request_manager.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/fluffy_chat_app.dart';
@@ -163,6 +164,9 @@ class MatrixState extends State<Matrix> {
                   store,
                 );
                 _registerSubs(_loginClientCandidate!.clientName);
+                TranslationRuntime.instance.attachClient(
+                  _loginClientCandidate!,
+                );
                 setActiveClient(_loginClientCandidate);
                 _loginClientCandidate = null;
                 FluffyChatApp.router.go('/backup');
@@ -254,10 +258,11 @@ class MatrixState extends State<Matrix> {
         });
     onLogoutSub[name] ??= c.onLoginStateChanged.stream
         .where((state) => state == LoginState.loggedOut)
-        .listen((_) {
+        .listen((_) async {
           final loggedInWithMultipleClients = widget.clients.length > 1;
 
           _cancelSubs(c.clientName);
+          await TranslationRuntime.instance.detachLoggedOutClient(c);
           widget.clients.remove(c);
           ClientManager.removeClientNameFromStore(c.clientName, store);
           InitWithRestoreExtension.deleteSessionBackup(name);
@@ -316,6 +321,7 @@ class MatrixState extends State<Matrix> {
   }
 
   void initMatrix() {
+    TranslationRuntime.instance.attachClients(widget.clients);
     for (final c in widget.clients) {
       _registerSubs(c.clientName);
     }

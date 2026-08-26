@@ -8,7 +8,9 @@ import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
 import 'package:fluffychat/pages/chat_details/participant_list_item.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/utils/verified_room_extension.dart';
+import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/chat_settings_popup_menu.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
@@ -236,6 +238,7 @@ class ChatDetailsView extends StatelessWidget {
                                   label: L10n.of(context).unmuteChat,
                                   icon: Icons.notifications_off_outlined,
                                 ),
+                              _RoomTranslationButton(room),
                             ],
                           ),
                         ),
@@ -366,6 +369,59 @@ class ChatDetailsView extends StatelessWidget {
                     ),
             ),
           ),
+        );
+      },
+    );
+  }
+}
+
+class _RoomTranslationButton extends StatelessWidget {
+  final Room room;
+  const _RoomTranslationButton(this.room);
+
+  Future<void> _showLockedControlExplanation(
+    BuildContext context,
+    String message,
+  ) async {
+    final l10n = L10n.of(context);
+    final result = await showOkCancelAlertDialog(
+      context: context,
+      title: l10n.automaticTranslationForThisRoom,
+      message: message,
+      okLabel: l10n.settings,
+      cancelLabel: l10n.cancel,
+    );
+    if (result == OkCancelResult.ok && context.mounted) {
+      context.go('/rooms/settings/translation');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final runtime = TranslationRuntime.instance;
+    return AnimatedBuilder(
+      animation: runtime,
+      builder: (context, _) {
+        final control = runtime.roomControl(room);
+        final l10n = L10n.of(context);
+        final subtitle = switch (control.reason) {
+          RoomTranslationLockReason.globallyDisabled =>
+            l10n.translationDisabledGlobally,
+          RoomTranslationLockReason.encryptedExcluded =>
+            l10n.translationEncryptedRoomExcluded,
+          RoomTranslationLockReason.manualOnly =>
+            l10n.translationManualOnlyRoom,
+          RoomTranslationLockReason.allRooms ||
+          RoomTranslationLockReason.unencryptedOnly =>
+            l10n.translationRoomManagedGlobally,
+          RoomTranslationLockReason.none => null,
+        };
+        return _MainChatDetailsButton(
+          label: control.value ? l10n.stopRoomTranslation : l10n.translateRoom,
+          icon: control.value ? Icons.translate : Icons.translate_outlined,
+          onPressed: control.canChange
+              ? () => runtime.setRoomSelected(room, !control.value)
+              : () => _showLockedControlExplanation(context, subtitle!),
         );
       },
     );

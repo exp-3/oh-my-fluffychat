@@ -17,6 +17,7 @@ import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/utils/show_scaffold_dialog.dart';
 import 'package:fluffychat/utils/show_update_snackbar.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
@@ -780,7 +781,17 @@ class ChatListController extends State<ChatList>
         if (confirmed == OkCancelResult.cancel) return;
         if (!mounted) return;
 
-        await showFutureLoadingDialog(context: context, future: room.leave);
+        final result = await showFutureLoadingDialog(
+          context: context,
+          future: room.leave,
+        );
+        if (result.error == null) {
+          await TranslationRuntime.instance
+              .invalidateRoomUnlessLocallyReferenced(
+                room.id,
+                excludingClient: room.client,
+              );
+        }
 
         return;
       case ChatContextAction.addToSpace:

@@ -29,6 +29,7 @@ import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/other_party_can_receive.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/utils/show_scaffold_dialog.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
@@ -235,6 +236,11 @@ class ChatController extends State<ChatPageWithRoom>
     );
     if (!mounted) return;
     if (success.error != null) return;
+    await TranslationRuntime.instance.invalidateRoomUnlessLocallyReferenced(
+      room.id,
+      excludingClient: room.client,
+    );
+    if (!mounted) return;
     context.go('/rooms');
   }
 
@@ -1011,6 +1017,34 @@ class ChatController extends State<ChatPageWithRoom>
     });
   }
 
+  Future<void> translateSelectedEventsAction() async {
+    final runtime = TranslationRuntime.instance;
+    final currentTimeline = timeline;
+    if (currentTimeline == null) return;
+    final events = selectedEvents
+        .map((event) => event.getDisplayEvent(currentTimeline))
+        .where(runtime.canTranslateEvent)
+        .toList(growable: false);
+    if (!runtime.enabled || events.isEmpty) return;
+    if (!runtime.privacyAccepted) {
+      final result = await showOkCancelAlertDialog(
+        context: context,
+        title: L10n.of(context).translation,
+        message: L10n.of(context).translationPrivacyNotice,
+        okLabel: L10n.of(context).ok,
+        cancelLabel: L10n.of(context).cancel,
+      );
+      if (result != OkCancelResult.ok) return;
+      await runtime.acceptPrivacyNotice();
+    }
+    clearSelectedEvents();
+    for (final event in events) {
+      unawaited(
+        runtime.translateEvent(event, manual: true).catchError((_) => null),
+      );
+    }
+  }
+
   Future<void> reportEventAction() async {
     final event = selectedEvents.single;
     final l10n = L10n.of(context);
@@ -1384,7 +1418,16 @@ class ChatController extends State<ChatPageWithRoom>
     if (!mounted) return;
     context.go('/rooms/${result.result!}');
 
-    await showFutureLoadingDialog(context: context, future: room.leave);
+    final leaveResult = await showFutureLoadingDialog(
+      context: context,
+      future: room.leave,
+    );
+    if (leaveResult.error == null) {
+      await TranslationRuntime.instance.invalidateRoomUnlessLocallyReferenced(
+        room.id,
+        excludingClient: room.client,
+      );
+    }
   }
 
   void onSelectMessage(Event event) {

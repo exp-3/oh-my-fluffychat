@@ -17,6 +17,7 @@ import 'package:fluffychat/pages/chat/reply_display.dart';
 import 'package:fluffychat/utils/account_config.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
 import 'package:fluffychat/utils/matrix_live_kit_calls/matrix_live_kit_call.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/widgets/chat_settings_popup_menu.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
@@ -127,6 +128,15 @@ class ChatView extends StatelessWidget {
                 title: ChatAppBarTitle(controller),
                 actions: [
                   if (controller.selectMode) ...[
+                    if (TranslationRuntime.instance.enabled &&
+                        controller.selectedEvents.any(
+                          TranslationRuntime.instance.canTranslateEvent,
+                        ))
+                      IconButton(
+                        icon: const Icon(Icons.translate_outlined),
+                        tooltip: L10n.of(context).translateSelectedMessages,
+                        onPressed: controller.translateSelectedEventsAction,
+                      ),
                     if (controller.canEditSelectedEvents)
                       IconButton(
                         icon: const Icon(Icons.edit_outlined),

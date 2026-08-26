@@ -10,6 +10,7 @@ import 'package:fluffychat/pages/chat_list/unread_bubble.dart';
 import 'package:fluffychat/utils/matrix_live_kit_calls/matrix_live_kit_call.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/room_status_extension.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/hover_builder.dart';
@@ -392,10 +393,17 @@ class ChatListItem extends StatelessWidget {
                               );
                               if (consent != OkCancelResult.ok) return;
                               if (!context.mounted) return;
-                              await showFutureLoadingDialog(
+                              final result = await showFutureLoadingDialog(
                                 context: context,
                                 future: room.leave,
                               );
+                              if (result.error == null) {
+                                await TranslationRuntime.instance
+                                    .invalidateRoomUnlessLocallyReferenced(
+                                      room.id,
+                                      excludingClient: room.client,
+                                    );
+                              }
                             },
                           )
                         : null

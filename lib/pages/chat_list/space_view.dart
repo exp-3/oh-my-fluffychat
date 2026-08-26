@@ -15,6 +15,7 @@ import 'package:fluffychat/utils/localized_exception_extension.dart';
 import 'package:fluffychat/utils/matrix_live_kit_calls/matrix_live_kit_call.dart';
 import 'package:fluffychat/utils/stream_extension.dart';
 import 'package:fluffychat/utils/string_color.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
@@ -201,6 +202,13 @@ class _SpaceViewState extends State<SpaceView> {
         );
         if (!mounted) return;
         if (success.error != null) return;
+        if (space != null) {
+          await TranslationRuntime.instance
+              .invalidateRoomUnlessLocallyReferenced(
+                space.id,
+                excludingClient: space.client,
+              );
+        }
         widget.onBack();
     }
   }
@@ -358,10 +366,18 @@ class _SpaceViewState extends State<SpaceView> {
           future: () => room!.markUnread(false),
         );
       case SpaceChildAction.leave:
-        await showFutureLoadingDialog(
+        final roomToLeave = room!;
+        final result = await showFutureLoadingDialog(
           context: context,
-          future: () => room!.leave(),
+          future: roomToLeave.leave,
         );
+        if (result.error == null) {
+          await TranslationRuntime.instance
+              .invalidateRoomUnlessLocallyReferenced(
+                roomToLeave.id,
+                excludingClient: roomToLeave.client,
+              );
+        }
     }
   }
 
