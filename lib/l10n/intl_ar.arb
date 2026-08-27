@@ -2730,5 +2730,7 @@
     "translationDisabledGlobally": "قم بتمكين الترجمة في إعدادات التطبيق أولاً.",
     "translationRoomManagedGlobally": "يتم التحكم في هذا الإعداد من خلال نطاق الترجمة العالمي.",
     "translationEncryptedRoomExcluded": "لا يقوم النطاق الحالي بترجمة الغرف المشفرة تلقائيًا.",
-    "translationManualOnlyRoom": "يقوم النطاق الحالي بترجمة الرسائل التي تحددها يدويًا فقط."
+    "translationManualOnlyRoom": "يقوم النطاق الحالي بترجمة الرسائل التي تحددها يدويًا فقط.",
+    "translationBilingualColor": "لون نص الترجمة",
+    "translationStyleDivider": "مقسم"
 }

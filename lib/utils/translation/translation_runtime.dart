@@ -58,8 +58,9 @@ class TranslationRuntime extends ChangeNotifier {
   bool _privacyAccepted = false;
   TranslationScope _scope = TranslationScope.manualOnly;
   TranslationDisplayMode _displayMode = TranslationDisplayMode.bilingual;
-  TranslationBilingualStyle _bilingualStyle =
-      TranslationBilingualStyle.tertiary;
+  TranslationBilingualColor _bilingualColor =
+      TranslationBilingualColor.tertiary;
+  TranslationBilingualStyle _bilingualStyle = TranslationBilingualStyle.divider;
   TranslationBatchSettings _batchSettings = TranslationBatchSettings.defaults;
   String _sourceLanguage = 'auto';
   String _targetLanguage = 'en';
@@ -72,6 +73,7 @@ class TranslationRuntime extends ChangeNotifier {
   bool get privacyAccepted => _privacyAccepted;
   TranslationScope get scope => _scope;
   TranslationDisplayMode get displayMode => _displayMode;
+  TranslationBilingualColor get bilingualColor => _bilingualColor;
   TranslationBilingualStyle get bilingualStyle => _bilingualStyle;
   TranslationBatchSettings get batchSettings => _batchSettings;
   String get sourceLanguage => _sourceLanguage;
@@ -101,6 +103,7 @@ class TranslationRuntime extends ChangeNotifier {
     _activeProvider = _findProvider(preferences.selectedProviderId);
     _scope = preferences.scope;
     _displayMode = preferences.displayMode;
+    _bilingualColor = preferences.bilingualColor;
     _bilingualStyle = preferences.bilingualStyle;
     _batchSettings = preferences.batchSettings.isValid
         ? preferences.batchSettings
@@ -280,6 +283,13 @@ class TranslationRuntime extends ChangeNotifier {
     if (value == _bilingualStyle) return;
     _bilingualStyle = value;
     await preferences.setBilingualStyle(value);
+    notifyListeners();
+  }
+
+  Future<void> setBilingualColor(TranslationBilingualColor value) async {
+    if (value == _bilingualColor) return;
+    _bilingualColor = value;
+    await preferences.setBilingualColor(value);
     notifyListeners();
   }
 

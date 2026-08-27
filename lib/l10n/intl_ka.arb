@@ -2019,5 +2019,7 @@
     "translationDisabledGlobally": "ჯერ ჩართეთ თარგმანი აპის პარამეტრებში.",
     "translationRoomManagedGlobally": "ეს პარამეტრი კონტროლდება გლობალური თარგმანის ფარგლებით.",
     "translationEncryptedRoomExcluded": "მიმდინარე სფერო ავტომატურად არ თარგმნის დაშიფრულ ოთახებს.",
-    "translationManualOnlyRoom": "ამჟამინდელი დიაპაზონი თარგმნის მხოლოდ თქვენ მიერ ხელით არჩეულ შეტყობინებებს."
+    "translationManualOnlyRoom": "ამჟამინდელი დიაპაზონი თარგმნის მხოლოდ თქვენ მიერ ხელით არჩეულ შეტყობინებებს.",
+    "translationBilingualColor": "თარგმანის ტექსტის ფერი",
+    "translationStyleDivider": "გამყოფი"
 }

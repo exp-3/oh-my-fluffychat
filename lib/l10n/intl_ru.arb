@@ -2747,5 +2747,7 @@
     "translationDisabledGlobally": "Сначала включите перевод в настройках приложения.",
     "translationRoomManagedGlobally": "Этот параметр контролируется глобальной областью перевода.",
     "translationEncryptedRoomExcluded": "Текущая область действия не переводит зашифрованные комнаты автоматически.",
-    "translationManualOnlyRoom": "Текущая область переводит только сообщения, которые вы выбираете вручную."
+    "translationManualOnlyRoom": "Текущая область переводит только сообщения, которые вы выбираете вручную.",
+    "translationBilingualColor": "Цвет текста перевода",
+    "translationStyleDivider": "Разделитель"
 }

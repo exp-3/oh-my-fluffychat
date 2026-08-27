@@ -2455,5 +2455,7 @@
     "translationDisabledGlobally": "먼저 앱 설정에서 번역을 활성화하세요.",
     "translationRoomManagedGlobally": "이 설정은 전역 번역 범위에 의해 제어됩니다.",
     "translationEncryptedRoomExcluded": "현재 범위는 암호화된 방을 자동으로 변환하지 않습니다.",
-    "translationManualOnlyRoom": "현재 범위는 수동으로 선택한 메시지만 번역합니다."
+    "translationManualOnlyRoom": "현재 범위는 수동으로 선택한 메시지만 번역합니다.",
+    "translationBilingualColor": "번역 텍스트 색상",
+    "translationStyleDivider": "분배기"
 }

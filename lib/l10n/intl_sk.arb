@@ -1278,5 +1278,7 @@
     "translationDisabledGlobally": "Najprv povoľte preklad v nastaveniach aplikácie.",
     "translationRoomManagedGlobally": "Toto nastavenie je riadené globálnym rozsahom prekladu.",
     "translationEncryptedRoomExcluded": "Aktuálny rozsah automaticky neprekladá šifrované miestnosti.",
-    "translationManualOnlyRoom": "Aktuálny rozsah prekladá iba správy, ktoré vyberiete manuálne."
+    "translationManualOnlyRoom": "Aktuálny rozsah prekladá iba správy, ktoré vyberiete manuálne.",
+    "translationBilingualColor": "Farba textu prekladu",
+    "translationStyleDivider": "Rozdeľovač"
 }

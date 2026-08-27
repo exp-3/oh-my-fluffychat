@@ -2031,5 +2031,7 @@
     "translationDisabledGlobally": "Aktivizo fillimisht përkthimin në cilësimet e aplikacionit.",
     "translationRoomManagedGlobally": "Ky cilësim kontrollohet nga shtrirja globale e përkthimit.",
     "translationEncryptedRoomExcluded": "Shtrirja aktuale nuk i përkthen automatikisht dhomat e enkriptuara.",
-    "translationManualOnlyRoom": "Shtrirja aktuale përkthen vetëm mesazhet që ju zgjidhni me dorë."
+    "translationManualOnlyRoom": "Shtrirja aktuale përkthen vetëm mesazhet që ju zgjidhni me dorë.",
+    "translationBilingualColor": "Ngjyra e tekstit të përkthimit",
+    "translationStyleDivider": "Ndarëse"
 }

@@ -2034,5 +2034,7 @@
     "translationDisabledGlobally": "ముందుగా యాప్ సెట్టింగ్‌లలో అనువాదాన్ని ప్రారంభించండి.",
     "translationRoomManagedGlobally": "ఈ సెట్టింగ్ గ్లోబల్ ట్రాన్స్‌లేషన్ స్కోప్ ద్వారా నియంత్రించబడుతుంది.",
     "translationEncryptedRoomExcluded": "ప్రస్తుత స్కోప్ స్వయంచాలకంగా గుప్తీకరించిన గదులను అనువదించదు.",
-    "translationManualOnlyRoom": "ప్రస్తుత స్కోప్ మీరు మాన్యువల్‌గా ఎంచుకున్న సందేశాలను మాత్రమే అనువదిస్తుంది."
+    "translationManualOnlyRoom": "ప్రస్తుత స్కోప్ మీరు మాన్యువల్‌గా ఎంచుకున్న సందేశాలను మాత్రమే అనువదిస్తుంది.",
+    "translationBilingualColor": "అనువాద వచన రంగు",
+    "translationStyleDivider": "డివైడర్"
 }

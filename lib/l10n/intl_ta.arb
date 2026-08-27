@@ -2811,5 +2811,7 @@
     "translationDisabledGlobally": "முதலில் பயன்பாட்டு அமைப்புகளில் மொழிபெயர்ப்பை இயக்கவும்.",
     "translationRoomManagedGlobally": "இந்த அமைப்பு உலகளாவிய மொழிபெயர்ப்பு நோக்கத்தால் கட்டுப்படுத்தப்படுகிறது.",
     "translationEncryptedRoomExcluded": "தற்போதைய நோக்கம் மறைகுறியாக்கப்பட்ட அறைகளை தானாக மொழிபெயர்க்காது.",
-    "translationManualOnlyRoom": "தற்போதைய நோக்கம் நீங்கள் கைமுறையாக தேர்ந்தெடுக்கும் செய்திகளை மட்டுமே மொழிபெயர்க்கும்."
+    "translationManualOnlyRoom": "தற்போதைய நோக்கம் நீங்கள் கைமுறையாக தேர்ந்தெடுக்கும் செய்திகளை மட்டுமே மொழிபெயர்க்கும்.",
+    "translationBilingualColor": "மொழிபெயர்ப்பு உரை நிறம்",
+    "translationStyleDivider": "பிரிப்பான்"
 }

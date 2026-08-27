@@ -2797,5 +2797,7 @@
     "translationDisabledGlobally": "Vispirms iespējojiet tulkošanu lietotnes iestatījumos.",
     "translationRoomManagedGlobally": "Šo iestatījumu kontrolē globālā tulkošanas joma.",
     "translationEncryptedRoomExcluded": "Pašreizējais tvērums automātiski netulko šifrētās telpas.",
-    "translationManualOnlyRoom": "Pašreizējā darbības joma tulko tikai manuāli atlasītos ziņojumus."
+    "translationManualOnlyRoom": "Pašreizējā darbības joma tulko tikai manuāli atlasītos ziņojumus.",
+    "translationBilingualColor": "Tulkojuma teksta krāsa",
+    "translationStyleDivider": "Dalītājs"
 }

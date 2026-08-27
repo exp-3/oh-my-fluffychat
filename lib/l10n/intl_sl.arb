@@ -1983,5 +1983,7 @@
     "translationDisabledGlobally": "Najprej omogočite prevod v nastavitvah aplikacije.",
     "translationRoomManagedGlobally": "To nastavitev nadzira globalni obseg prevoda.",
     "translationEncryptedRoomExcluded": "Trenutni obseg ne prevaja samodejno šifriranih sob.",
-    "translationManualOnlyRoom": "Trenutni obseg prevaja samo sporočila, ki jih izberete ročno."
+    "translationManualOnlyRoom": "Trenutni obseg prevaja samo sporočila, ki jih izberete ročno.",
+    "translationBilingualColor": "Barva besedila prevoda",
+    "translationStyleDivider": "Razdelilnik"
 }

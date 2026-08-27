@@ -2768,5 +2768,7 @@
     "translationDisabledGlobally": "Najpierw włącz tłumaczenie w ustawieniach aplikacji.",
     "translationRoomManagedGlobally": "To ustawienie jest kontrolowane przez globalny zakres tłumaczenia.",
     "translationEncryptedRoomExcluded": "Obecny zakres nie tłumaczy automatycznie zaszyfrowanych pokoi.",
-    "translationManualOnlyRoom": "Bieżący zakres tłumaczy tylko wiadomości wybrane ręcznie."
+    "translationManualOnlyRoom": "Bieżący zakres tłumaczy tylko wiadomości wybrane ręcznie.",
+    "translationBilingualColor": "Kolor tekstu tłumaczenia",
+    "translationStyleDivider": "Dzielnik"
 }

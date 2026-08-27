@@ -29,6 +29,10 @@ const _selectedProviderPreference = 'chat.fluffy.translation.selected_provider';
 const _scopePreference = 'chat.fluffy.translation.scope';
 const _sourceLanguagePreference = 'chat.fluffy.translation.source_language';
 const _targetLanguagePreference = 'chat.fluffy.translation.target_language';
+const _bilingualColorPreference = 'chat.fluffy.translation.bilingual_color';
+const _bilingualLayoutPreference = 'chat.fluffy.translation.bilingual_layout';
+const _legacyBilingualStylePreference =
+    'chat.fluffy.translation.bilingual_style';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -100,6 +104,49 @@ void main() {
     expect(runtime.sourceLanguage, 'de');
     expect(runtime.targetLanguage, 'fr');
   });
+
+  test('bilingual color and style persist independently', () async {
+    SharedPreferences.setMockInitialValues({});
+    final store = await SharedPreferences.getInstance();
+    final secrets = _MemorySecrets();
+    final runtime = TranslationRuntime.forTesting();
+
+    await runtime.initialize(
+      store,
+      secrets: secrets,
+      cache: TranslationCache(secrets, _MemoryBackend()),
+    );
+
+    expect(runtime.bilingualColor, TranslationBilingualColor.tertiary);
+    expect(runtime.bilingualStyle, TranslationBilingualStyle.divider);
+
+    await runtime.setBilingualColor(TranslationBilingualColor.accent);
+    await runtime.setBilingualStyle(TranslationBilingualStyle.background);
+
+    expect(store.getString(_bilingualColorPreference), 'accent');
+    expect(store.getString(_bilingualLayoutPreference), 'background');
+  });
+
+  test(
+    'legacy background selection migrates without losing its layout',
+    () async {
+      SharedPreferences.setMockInitialValues({
+        _legacyBilingualStylePreference: 'background',
+      });
+      final store = await SharedPreferences.getInstance();
+      final secrets = _MemorySecrets();
+      final runtime = TranslationRuntime.forTesting();
+
+      await runtime.initialize(
+        store,
+        secrets: secrets,
+        cache: TranslationCache(secrets, _MemoryBackend()),
+      );
+
+      expect(runtime.bilingualColor, TranslationBilingualColor.tertiary);
+      expect(runtime.bilingualStyle, TranslationBilingualStyle.background);
+    },
+  );
 
   test(
     'does not restore enabled before the privacy notice is accepted',

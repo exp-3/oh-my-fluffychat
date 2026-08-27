@@ -156,6 +156,7 @@ class _TranslatedMessageState extends State<TranslatedMessage> {
                 timeline: widget.timeline,
                 translation: state.translation!,
                 displayMode: runtime.displayMode,
+                bilingualColor: runtime.bilingualColor,
                 bilingualStyle: runtime.bilingualStyle,
               ),
               TranslationStatus.loading => Stack(
@@ -227,6 +228,7 @@ class _TranslatedContent extends StatelessWidget {
   final Timeline timeline;
   final String translation;
   final TranslationDisplayMode displayMode;
+  final TranslationBilingualColor bilingualColor;
   final TranslationBilingualStyle bilingualStyle;
 
   const _TranslatedContent({
@@ -238,6 +240,7 @@ class _TranslatedContent extends StatelessWidget {
     required this.timeline,
     required this.translation,
     required this.displayMode,
+    required this.bilingualColor,
     required this.bilingualStyle,
   });
 
@@ -258,25 +261,28 @@ class _TranslatedContent extends StatelessWidget {
       );
     }
     final ownMessage = event.senderId == event.room.client.userID;
-    final translationColor = switch (bilingualStyle) {
-      TranslationBilingualStyle.body => textColor,
-      TranslationBilingualStyle.accent =>
+    final backgroundColor = textColor.withAlpha(38);
+    final translationColor = switch (bilingualColor) {
+      TranslationBilingualColor.body => textColor,
+      TranslationBilingualColor.accent =>
         ownMessage ? colorScheme.primaryFixed : colorScheme.primary,
-      TranslationBilingualStyle.secondary =>
+      TranslationBilingualColor.secondary =>
         ownMessage ? colorScheme.secondaryFixed : colorScheme.secondary,
-      TranslationBilingualStyle.tertiary =>
+      TranslationBilingualColor.tertiary =>
         ownMessage ? colorScheme.tertiaryFixed : colorScheme.tertiary,
-      TranslationBilingualStyle.muted => textColor.withAlpha(170),
-      TranslationBilingualStyle.background => colorScheme.onSurface,
+      TranslationBilingualColor.muted => textColor.withAlpha(170),
     };
     final background = bilingualStyle == TranslationBilingualStyle.background;
     final translatedContent = _TranslationHtml(
       event: event,
       html: translatedHtml,
       textColor: translationColor,
-      linkColor: background ? translationColor : linkColor,
+      linkColor: linkColor,
       fontSize: AppConfig.messageFontSize,
       timeline: timeline,
+      padding: background
+          ? const EdgeInsets.symmetric(horizontal: 8, vertical: 6)
+          : const EdgeInsets.fromLTRB(16, 4, 16, 8),
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -289,15 +295,16 @@ class _TranslatedContent extends StatelessWidget {
           linkColor: linkColor,
           originalFontSize: originalFontSize,
           timeline: timeline,
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
         ),
         if (!background)
           Divider(height: 1, color: translationColor.withAlpha(64)),
         if (background)
           Padding(
-            padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
+            padding: const EdgeInsets.fromLTRB(8, 2, 8, 8),
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest,
+                color: backgroundColor,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: translatedContent,
@@ -317,6 +324,7 @@ class _OriginalTranslation extends StatelessWidget {
   final Color linkColor;
   final double originalFontSize;
   final Timeline timeline;
+  final EdgeInsetsGeometry padding;
 
   const _OriginalTranslation({
     required this.event,
@@ -325,6 +333,7 @@ class _OriginalTranslation extends StatelessWidget {
     required this.linkColor,
     required this.originalFontSize,
     required this.timeline,
+    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
   });
 
   @override
@@ -335,6 +344,7 @@ class _OriginalTranslation extends StatelessWidget {
     linkColor: linkColor,
     fontSize: originalFontSize,
     timeline: timeline,
+    padding: padding,
   );
 }
 
@@ -345,6 +355,7 @@ class _TranslationHtml extends StatelessWidget {
   final Color linkColor;
   final double fontSize;
   final Timeline timeline;
+  final EdgeInsetsGeometry padding;
 
   const _TranslationHtml({
     required this.event,
@@ -353,11 +364,12 @@ class _TranslationHtml extends StatelessWidget {
     required this.linkColor,
     required this.fontSize,
     required this.timeline,
+    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
   });
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    padding: padding,
     child: HtmlMessage(
       html: html,
       textColor: textColor,

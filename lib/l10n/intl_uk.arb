@@ -2601,5 +2601,7 @@
     "translationDisabledGlobally": "Спочатку ввімкніть переклад у налаштуваннях програми.",
     "translationRoomManagedGlobally": "Цей параметр контролюється глобальною областю перекладу.",
     "translationEncryptedRoomExcluded": "Поточний обсяг не перекладає автоматично зашифровані кімнати.",
-    "translationManualOnlyRoom": "Поточний обсяг перекладає лише повідомлення, які ви вибираєте вручну."
+    "translationManualOnlyRoom": "Поточний обсяг перекладає лише повідомлення, які ви вибираєте вручну.",
+    "translationBilingualColor": "Колір тексту перекладу",
+    "translationStyleDivider": "Роздільник"
 }

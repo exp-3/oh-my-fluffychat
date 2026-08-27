@@ -2486,5 +2486,7 @@
     "translationDisabledGlobally": "Nejprve povolte překlad v nastavení aplikace.",
     "translationRoomManagedGlobally": "Toto nastavení je řízeno globálním rozsahem překladu.",
     "translationEncryptedRoomExcluded": "Aktuální rozsah automaticky nepřekládá šifrované místnosti.",
-    "translationManualOnlyRoom": "Aktuální rozsah překládá pouze zprávy, které vyberete ručně."
+    "translationManualOnlyRoom": "Aktuální rozsah překládá pouze zprávy, které vyberete ručně.",
+    "translationBilingualColor": "Barva textu překladu",
+    "translationStyleDivider": "Dělič"
 }

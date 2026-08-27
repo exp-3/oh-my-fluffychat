@@ -2764,5 +2764,7 @@
     "translationDisabledGlobally": "Aktivera översättning i appinställningarna först.",
     "translationRoomManagedGlobally": "Den här inställningen styrs av det globala översättningsomfånget.",
     "translationEncryptedRoomExcluded": "Den nuvarande omfattningen översätter inte automatiskt krypterade rum.",
-    "translationManualOnlyRoom": "Det aktuella omfånget översätter endast meddelanden du väljer manuellt."
+    "translationManualOnlyRoom": "Det aktuella omfånget översätter endast meddelanden du väljer manuellt.",
+    "translationBilingualColor": "Översättning textfärg",
+    "translationStyleDivider": "Avdelare"
 }

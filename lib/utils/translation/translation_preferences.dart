@@ -35,7 +35,10 @@ class TranslationPreferences {
   static const _enabledKey = 'chat.fluffy.translation.enabled';
   static const _scopeKey = 'chat.fluffy.translation.scope';
   static const _displayModeKey = 'chat.fluffy.translation.display_mode';
-  static const _bilingualStyleKey = 'chat.fluffy.translation.bilingual_style';
+  static const _bilingualColorKey = 'chat.fluffy.translation.bilingual_color';
+  static const _bilingualStyleKey = 'chat.fluffy.translation.bilingual_layout';
+  static const _legacyBilingualStyleKey =
+      'chat.fluffy.translation.bilingual_style';
   static const _targetLanguageKey = 'chat.fluffy.translation.target_language';
   static const _sourceLanguageKey = 'chat.fluffy.translation.source_language';
   static const _providersKey = 'chat.fluffy.translation.providers';
@@ -66,11 +69,26 @@ class TranslationPreferences {
     store.getString(_displayModeKey),
     TranslationDisplayMode.bilingual,
   );
-  TranslationBilingualStyle get bilingualStyle => _enumValue(
-    TranslationBilingualStyle.values,
-    store.getString(_bilingualStyleKey),
-    TranslationBilingualStyle.tertiary,
+  TranslationBilingualColor get bilingualColor => _enumValue(
+    TranslationBilingualColor.values,
+    store.getString(_bilingualColorKey) ??
+        store.getString(_legacyBilingualStyleKey),
+    TranslationBilingualColor.tertiary,
   );
+  TranslationBilingualStyle get bilingualStyle {
+    final saved = store.getString(_bilingualStyleKey);
+    if (saved != null) {
+      return _enumValue(
+        TranslationBilingualStyle.values,
+        saved,
+        TranslationBilingualStyle.divider,
+      );
+    }
+    return store.getString(_legacyBilingualStyleKey) == 'background'
+        ? TranslationBilingualStyle.background
+        : TranslationBilingualStyle.divider;
+  }
+
   String get sourceLanguage => store.getString(_sourceLanguageKey) ?? 'auto';
   String? get targetLanguage => store.getString(_targetLanguageKey);
   bool get privacyAccepted => store.getBool(_privacyAcceptedKey) ?? false;
@@ -101,6 +119,8 @@ class TranslationPreferences {
       store.setString(_scopeKey, value.name);
   Future<void> setDisplayMode(TranslationDisplayMode value) =>
       store.setString(_displayModeKey, value.name);
+  Future<void> setBilingualColor(TranslationBilingualColor value) =>
+      store.setString(_bilingualColorKey, value.name);
   Future<void> setBilingualStyle(TranslationBilingualStyle value) =>
       store.setString(_bilingualStyleKey, value.name);
   Future<void> setSourceLanguage(String value) =>

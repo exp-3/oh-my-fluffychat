@@ -2818,5 +2818,7 @@
     "translationDisabledGlobally": "Schakel eerst de vertaling in de app-instellingen in.",
     "translationRoomManagedGlobally": "Deze instelling wordt bepaald door het globale vertaalbereik.",
     "translationEncryptedRoomExcluded": "Het huidige bereik vertaalt gecodeerde kamers niet automatisch.",
-    "translationManualOnlyRoom": "Het huidige bereik vertaalt alleen berichten die u handmatig selecteert."
+    "translationManualOnlyRoom": "Het huidige bereik vertaalt alleen berichten die u handmatig selecteert.",
+    "translationBilingualColor": "Kleur van de vertalingstekst",
+    "translationStyleDivider": "Verdeler"
 }

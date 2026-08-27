@@ -2058,5 +2058,7 @@
     "translationDisabledGlobally": "Ative primeiro a tradução nas configurações do aplicativo.",
     "translationRoomManagedGlobally": "Esta configuração é controlada pelo escopo de tradução global.",
     "translationEncryptedRoomExcluded": "O escopo atual não traduz automaticamente salas criptografadas.",
-    "translationManualOnlyRoom": "O escopo atual traduz apenas mensagens selecionadas manualmente."
+    "translationManualOnlyRoom": "O escopo atual traduz apenas mensagens selecionadas manualmente.",
+    "translationBilingualColor": "Cor do texto de tradução",
+    "translationStyleDivider": "Divisor"
 }

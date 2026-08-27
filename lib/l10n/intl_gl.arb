@@ -2845,5 +2845,7 @@
     "translationDisabledGlobally": "Habilita primeiro a tradución na configuración da aplicación.",
     "translationRoomManagedGlobally": "Esta configuración está controlada polo ámbito da tradución global.",
     "translationEncryptedRoomExcluded": "O ámbito actual non traduce automaticamente as salas cifradas.",
-    "translationManualOnlyRoom": "O ámbito actual só traduce as mensaxes que seleccionas manualmente."
+    "translationManualOnlyRoom": "O ámbito actual só traduce as mensaxes que seleccionas manualmente.",
+    "translationBilingualColor": "Cor do texto da tradución",
+    "translationStyleDivider": "Divisor"
 }

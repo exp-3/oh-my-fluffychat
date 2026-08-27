@@ -8,14 +8,9 @@ enum TranslationScope { allRooms, unencryptedRooms, selectedRooms, manualOnly }
 
 enum TranslationDisplayMode { translatedOnly, bilingual }
 
-enum TranslationBilingualStyle {
-  body,
-  accent,
-  secondary,
-  tertiary,
-  muted,
-  background,
-}
+enum TranslationBilingualColor { body, accent, secondary, tertiary, muted }
+
+enum TranslationBilingualStyle { divider, background }
 
 class TranslationRequestMessage {
   final String text;

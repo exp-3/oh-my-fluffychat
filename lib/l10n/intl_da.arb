@@ -1918,5 +1918,7 @@
     "translationDisabledGlobally": "Aktiver oversættelse i appindstillinger først.",
     "translationRoomManagedGlobally": "Denne indstilling styres af det globale oversættelsesområde.",
     "translationEncryptedRoomExcluded": "Det nuværende omfang oversætter ikke automatisk krypterede rum.",
-    "translationManualOnlyRoom": "Det aktuelle omfang oversætter kun meddelelser, du vælger manuelt."
+    "translationManualOnlyRoom": "Det aktuelle omfang oversætter kun meddelelser, du vælger manuelt.",
+    "translationBilingualColor": "Oversættelsestekstfarve",
+    "translationStyleDivider": "Afdeler"
 }

@@ -1906,5 +1906,7 @@
     "translationDisabledGlobally": "पहले ऐप सेटिंग में अनुवाद सक्षम करें।",
     "translationRoomManagedGlobally": "यह सेटिंग वैश्विक अनुवाद दायरे द्वारा नियंत्रित होती है।",
     "translationEncryptedRoomExcluded": "वर्तमान दायरा स्वचालित रूप से एन्क्रिप्टेड कमरों का अनुवाद नहीं करता है।",
-    "translationManualOnlyRoom": "वर्तमान दायरा केवल आपके द्वारा मैन्युअल रूप से चुने गए संदेशों का अनुवाद करता है।"
+    "translationManualOnlyRoom": "वर्तमान दायरा केवल आपके द्वारा मैन्युअल रूप से चुने गए संदेशों का अनुवाद करता है।",
+    "translationBilingualColor": "अनुवाद पाठ का रंग",
+    "translationStyleDivider": "विभाजक"
 }

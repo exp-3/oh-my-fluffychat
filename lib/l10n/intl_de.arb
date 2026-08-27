@@ -2756,5 +2756,7 @@
     "translationDisabledGlobally": "Aktivieren Sie zunächst die Übersetzung in den App-Einstellungen.",
     "translationRoomManagedGlobally": "Diese Einstellung wird durch den globalen Übersetzungsbereich gesteuert.",
     "translationEncryptedRoomExcluded": "Der aktuelle Umfang übersetzt verschlüsselte Räume nicht automatisch.",
-    "translationManualOnlyRoom": "Der aktuelle Bereich übersetzt nur Nachrichten, die Sie manuell auswählen."
+    "translationManualOnlyRoom": "Der aktuelle Bereich übersetzt nur Nachrichten, die Sie manuell auswählen.",
+    "translationBilingualColor": "Farbe des Übersetzungstextes",
+    "translationStyleDivider": "Teiler"
 }

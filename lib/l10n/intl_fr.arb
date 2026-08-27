@@ -2834,5 +2834,7 @@
     "translationDisabledGlobally": "Activez d'abord la traduction dans les paramètres de l'application.",
     "translationRoomManagedGlobally": "Ce paramètre est contrôlé par la portée de traduction globale.",
     "translationEncryptedRoomExcluded": "La portée actuelle ne traduit pas automatiquement les salles chiffrées.",
-    "translationManualOnlyRoom": "La portée actuelle traduit uniquement les messages que vous sélectionnez manuellement."
+    "translationManualOnlyRoom": "La portée actuelle traduit uniquement les messages que vous sélectionnez manuellement.",
+    "translationBilingualColor": "Couleur du texte de traduction",
+    "translationStyleDivider": "Diviseur"
 }

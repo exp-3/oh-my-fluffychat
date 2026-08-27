@@ -2553,5 +2553,7 @@
     "translationDisabledGlobally": "Спачатку ўключыце пераклад у наладах праграмы.",
     "translationRoomManagedGlobally": "Гэты параметр кантралюецца глабальнай вобласцю перакладу.",
     "translationEncryptedRoomExcluded": "Бягучы аб'ём не дазваляе аўтаматычна перакладаць зашыфраваныя пакоі.",
-    "translationManualOnlyRoom": "Бягучы аб'ём перакладае толькі тыя паведамленні, якія вы выбіраеце ўручную."
+    "translationManualOnlyRoom": "Бягучы аб'ём перакладае толькі тыя паведамленні, якія вы выбіраеце ўручную.",
+    "translationBilingualColor": "Колер тэксту перакладу",
+    "translationStyleDivider": "Раздзяляльнік"
 }

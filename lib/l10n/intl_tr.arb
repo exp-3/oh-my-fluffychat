@@ -2418,5 +2418,7 @@
     "translationDisabledGlobally": "Önce uygulama ayarlarında çeviriyi etkinleştirin.",
     "translationRoomManagedGlobally": "Bu ayar genel çeviri kapsamı tarafından kontrol edilir.",
     "translationEncryptedRoomExcluded": "Mevcut kapsam şifreli odaları otomatik olarak çevirmiyor.",
-    "translationManualOnlyRoom": "Geçerli kapsam yalnızca manuel olarak seçtiğiniz iletileri çevirir."
+    "translationManualOnlyRoom": "Geçerli kapsam yalnızca manuel olarak seçtiğiniz iletileri çevirir.",
+    "translationBilingualColor": "Çeviri metni rengi",
+    "translationStyleDivider": "Bölücü"
 }

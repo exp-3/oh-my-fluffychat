@@ -1932,5 +1932,7 @@
     "translationDisabledGlobally": "เปิดใช้งานการแปลในการตั้งค่าแอปก่อน",
     "translationRoomManagedGlobally": "การตั้งค่านี้ควบคุมโดยขอบเขตการแปลส่วนกลาง",
     "translationEncryptedRoomExcluded": "ขอบเขตปัจจุบันไม่แปลห้องที่เข้ารหัสโดยอัตโนมัติ",
-    "translationManualOnlyRoom": "ขอบเขตปัจจุบันจะแปลเฉพาะข้อความที่คุณเลือกด้วยตนเองเท่านั้น"
+    "translationManualOnlyRoom": "ขอบเขตปัจจุบันจะแปลเฉพาะข้อความที่คุณเลือกด้วยตนเองเท่านั้น",
+    "translationBilingualColor": "สีข้อความแปล",
+    "translationStyleDivider": "ตัวแบ่ง"
 }

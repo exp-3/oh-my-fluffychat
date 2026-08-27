@@ -2110,5 +2110,7 @@
     "translationDisabledGlobally": "הפעל תחילה תרגום בהגדרות האפליקציה.",
     "translationRoomManagedGlobally": "הגדרה זו נשלטת על ידי היקף התרגום הגלובלי.",
     "translationEncryptedRoomExcluded": "ההיקף הנוכחי אינו מתרגם חדרים מוצפנים באופן אוטומטי.",
-    "translationManualOnlyRoom": "ההיקף הנוכחי מתרגם רק הודעות שאתה בוחר באופן ידני."
+    "translationManualOnlyRoom": "ההיקף הנוכחי מתרגם רק הודעות שאתה בוחר באופן ידני.",
+    "translationBilingualColor": "צבע טקסט תרגום",
+    "translationStyleDivider": "מחלק"
 }

@@ -2298,5 +2298,7 @@
     "translationDisabledGlobally": "Pirmiausia įgalinkite vertimą programos nustatymuose.",
     "translationRoomManagedGlobally": "Šį nustatymą valdo pasaulinė vertimo apimtis.",
     "translationEncryptedRoomExcluded": "Dabartinė apimtis automatiškai neverčia užšifruotų patalpų.",
-    "translationManualOnlyRoom": "Dabartinė apimtis verčia tik tuos pranešimus, kuriuos pasirenkate rankiniu būdu."
+    "translationManualOnlyRoom": "Dabartinė apimtis verčia tik tuos pranešimus, kuriuos pasirenkate rankiniu būdu.",
+    "translationBilingualColor": "Vertimo teksto spalva",
+    "translationStyleDivider": "Skirstytuvas"
 }

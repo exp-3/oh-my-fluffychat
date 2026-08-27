@@ -2525,5 +2525,7 @@
     "translationDisabledGlobally": "Avval ilova sozlamalarida tarjimani yoqing.",
     "translationRoomManagedGlobally": "Bu sozlama global tarjima doirasi tomonidan boshqariladi.",
     "translationEncryptedRoomExcluded": "Joriy qamrov shifrlangan xonalarni avtomatik ravishda tarjima qilmaydi.",
-    "translationManualOnlyRoom": "Joriy doira faqat siz tanlagan xabarlarni qo'lda tarjima qiladi."
+    "translationManualOnlyRoom": "Joriy doira faqat siz tanlagan xabarlarni qo'lda tarjima qiladi.",
+    "translationBilingualColor": "Tarjima matn rangi",
+    "translationStyleDivider": "Bo'luvchi"
 }

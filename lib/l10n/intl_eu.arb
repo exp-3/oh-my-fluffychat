@@ -2636,5 +2636,7 @@
     "translationDisabledGlobally": "Gaitu itzulpena aplikazioaren ezarpenetan lehenik.",
     "translationRoomManagedGlobally": "Ezarpen hau itzulpen-esparru globalak kontrolatzen du.",
     "translationEncryptedRoomExcluded": "Uneko esparruak ez ditu automatikoki itzultzen enkriptatutako gelak.",
-    "translationManualOnlyRoom": "Uneko esparruak eskuz hautatzen dituzun mezuak soilik itzultzen ditu."
+    "translationManualOnlyRoom": "Uneko esparruak eskuz hautatzen dituzun mezuak soilik itzultzen ditu.",
+    "translationBilingualColor": "Itzulpen testuaren kolorea",
+    "translationStyleDivider": "Banatzailea"
 }

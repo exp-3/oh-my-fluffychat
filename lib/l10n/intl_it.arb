@@ -2575,5 +2575,7 @@
     "translationDisabledGlobally": "Abilita prima la traduzione nelle impostazioni dell'app.",
     "translationRoomManagedGlobally": "Questa impostazione è controllata dall'ambito di traduzione globale.",
     "translationEncryptedRoomExcluded": "L'ambito attuale non traduce automaticamente le stanze crittografate.",
-    "translationManualOnlyRoom": "L'ambito corrente traduce solo i messaggi selezionati manualmente."
+    "translationManualOnlyRoom": "L'ambito corrente traduce solo i messaggi selezionati manualmente.",
+    "translationBilingualColor": "Colore del testo di traduzione",
+    "translationStyleDivider": "Divisore"
 }

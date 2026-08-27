@@ -2251,5 +2251,7 @@
     "translationDisabledGlobally": "Activați mai întâi traducerea în setările aplicației.",
     "translationRoomManagedGlobally": "Această setare este controlată de domeniul de aplicare global al traducerii.",
     "translationEncryptedRoomExcluded": "Domeniul actual de aplicare nu traduce automat camerele criptate.",
-    "translationManualOnlyRoom": "Domeniul actual de aplicare traduce doar mesajele pe care le selectați manual."
+    "translationManualOnlyRoom": "Domeniul actual de aplicare traduce doar mesajele pe care le selectați manual.",
+    "translationBilingualColor": "Culoarea textului de traducere",
+    "translationStyleDivider": "Divizor"
 }

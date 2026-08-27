@@ -2536,5 +2536,7 @@
     "translationDisabledGlobally": "Prvo omogućite prijevod u postavkama aplikacije.",
     "translationRoomManagedGlobally": "Ovom postavkom upravlja globalni opseg prijevoda.",
     "translationEncryptedRoomExcluded": "Trenutačni opseg ne prevodi automatski šifrirane sobe.",
-    "translationManualOnlyRoom": "Trenutačni opseg prevodi samo poruke koje odaberete ručno."
+    "translationManualOnlyRoom": "Trenutačni opseg prevodi samo poruke koje odaberete ručno.",
+    "translationBilingualColor": "Boja teksta prijevoda",
+    "translationStyleDivider": "Razdjelnik"
 }

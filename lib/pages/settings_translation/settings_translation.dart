@@ -322,7 +322,65 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                         ),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                          child:
+                          child: Column(
+                            children: [
+                              DropdownButtonFormField<
+                                TranslationBilingualColor
+                              >(
+                                initialValue: runtime.bilingualColor,
+                                decoration: InputDecoration(
+                                  labelText: l10n.translationBilingualColor,
+                                  prefixIcon: const Icon(
+                                    Icons.palette_outlined,
+                                  ),
+                                ),
+                                items: [
+                                  DropdownMenuItem(
+                                    value: TranslationBilingualColor.body,
+                                    child: _ColorOption(
+                                      color: theme.colorScheme.onSurface,
+                                      label: l10n.translationStyleBody,
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: TranslationBilingualColor.accent,
+                                    child: _ColorOption(
+                                      color: theme.colorScheme.primary,
+                                      label: l10n.translationStyleAccent,
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: TranslationBilingualColor.secondary,
+                                    child: _ColorOption(
+                                      color: theme.colorScheme.secondary,
+                                      label: l10n.translationStyleSecondary,
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: TranslationBilingualColor.tertiary,
+                                    child: _ColorOption(
+                                      color: theme.colorScheme.tertiary,
+                                      label: l10n.translationStyleTertiary,
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: TranslationBilingualColor.muted,
+                                    child: _ColorOption(
+                                      color: theme.colorScheme.onSurface
+                                          .withAlpha(170),
+                                      label: l10n.translationStyleMuted,
+                                    ),
+                                  ),
+                                ],
+                                onChanged:
+                                    runtime.displayMode ==
+                                        TranslationDisplayMode.bilingual
+                                    ? (color) => color == null
+                                          ? null
+                                          : runtime.setBilingualColor(color)
+                                    : null,
+                              ),
+                              const SizedBox(height: 12),
                               DropdownButtonFormField<
                                 TranslationBilingualStyle
                               >(
@@ -330,29 +388,13 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                 decoration: InputDecoration(
                                   labelText: l10n.translationBilingualStyle,
                                   prefixIcon: const Icon(
-                                    Icons.palette_outlined,
+                                    Icons.view_stream_outlined,
                                   ),
                                 ),
                                 items: [
                                   DropdownMenuItem(
-                                    value: TranslationBilingualStyle.body,
-                                    child: Text(l10n.translationStyleBody),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: TranslationBilingualStyle.accent,
-                                    child: Text(l10n.translationStyleAccent),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: TranslationBilingualStyle.secondary,
-                                    child: Text(l10n.translationStyleSecondary),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: TranslationBilingualStyle.tertiary,
-                                    child: Text(l10n.translationStyleTertiary),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: TranslationBilingualStyle.muted,
-                                    child: Text(l10n.translationStyleMuted),
+                                    value: TranslationBilingualStyle.divider,
+                                    child: Text(l10n.translationStyleDivider),
                                   ),
                                   DropdownMenuItem(
                                     value: TranslationBilingualStyle.background,
@@ -369,6 +411,8 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                           : runtime.setBilingualStyle(style)
                                     : null,
                               ),
+                            ],
+                          ),
                         ),
                         _SectionTitle(l10n.batchTranslation),
                         _NumberSetting(
@@ -450,6 +494,22 @@ class _SectionTitle extends StatelessWidget {
         fontWeight: FontWeight.bold,
       ),
     ),
+  );
+}
+
+class _ColorOption extends StatelessWidget {
+  final Color color;
+  final String label;
+
+  const _ColorOption({required this.color, required this.label});
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      Icon(Icons.circle, size: 16, color: color),
+      const SizedBox(width: 8),
+      Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
+    ],
   );
 }
 

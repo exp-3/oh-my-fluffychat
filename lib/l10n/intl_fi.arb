@@ -2513,5 +2513,7 @@
     "translationDisabledGlobally": "Ota käännös ensin käyttöön sovelluksen asetuksista.",
     "translationRoomManagedGlobally": "Tätä asetusta hallitsee yleinen käännösalue.",
     "translationEncryptedRoomExcluded": "Nykyinen laajuus ei käännä salattuja huoneita automaattisesti.",
-    "translationManualOnlyRoom": "Nykyinen laajuus kääntää vain manuaalisesti valitsemasi viestit."
+    "translationManualOnlyRoom": "Nykyinen laajuus kääntää vain manuaalisesti valitsemasi viestit.",
+    "translationBilingualColor": "Käännöstekstin väri",
+    "translationStyleDivider": "Jakaja"
 }

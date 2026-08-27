@@ -2164,5 +2164,7 @@
     "translationDisabledGlobally": "Прво омогућите превод у подешавањима апликације.",
     "translationRoomManagedGlobally": "Ово подешавање контролише глобални опсег превођења.",
     "translationEncryptedRoomExcluded": "Тренутни опсег не преводи аутоматски шифроване собе.",
-    "translationManualOnlyRoom": "Тренутни опсег преводи само поруке које одаберете ручно."
+    "translationManualOnlyRoom": "Тренутни опсег преводи само поруке које одаберете ручно.",
+    "translationBilingualColor": "Боја текста превода",
+    "translationStyleDivider": "Дивидер"
 }

@@ -2187,5 +2187,7 @@
     "translationDisabledGlobally": "まずアプリの設定で翻訳を有効にしてください。",
     "translationRoomManagedGlobally": "この設定は、グローバル変換スコープによって制御されます。",
     "translationEncryptedRoomExcluded": "現在のスコープでは、暗号化されたルームは自動的に変換されません。",
-    "translationManualOnlyRoom": "現在のスコープは、手動で選択したメッセージのみを翻訳します。"
+    "translationManualOnlyRoom": "現在のスコープは、手動で選択したメッセージのみを翻訳します。",
+    "translationBilingualColor": "翻訳テキストの色",
+    "translationStyleDivider": "ディバイダー"
 }

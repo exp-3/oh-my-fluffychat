@@ -1937,5 +1937,7 @@
     "translationDisabledGlobally": "Ενεργοποιήστε πρώτα τη μετάφραση στις ρυθμίσεις της εφαρμογής.",
     "translationRoomManagedGlobally": "Αυτή η ρύθμιση ελέγχεται από το παγκόσμιο εύρος μετάφρασης.",
     "translationEncryptedRoomExcluded": "Το τρέχον εύρος δεν μεταφράζει αυτόματα κρυπτογραφημένα δωμάτια.",
-    "translationManualOnlyRoom": "Το τρέχον εύρος μεταφράζει μόνο μηνύματα που επιλέγετε χειροκίνητα."
+    "translationManualOnlyRoom": "Το τρέχον εύρος μεταφράζει μόνο μηνύματα που επιλέγετε χειροκίνητα.",
+    "translationBilingualColor": "Χρώμα κειμένου μετάφρασης",
+    "translationStyleDivider": "Διαιρέτης"
 }

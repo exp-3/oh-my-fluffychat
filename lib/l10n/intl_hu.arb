@@ -2488,5 +2488,7 @@
     "translationDisabledGlobally": "Először engedélyezze a fordítást az alkalmazás beállításaiban.",
     "translationRoomManagedGlobally": "Ezt a beállítást a globális fordítási hatókör vezérli.",
     "translationEncryptedRoomExcluded": "A jelenlegi hatókör nem fordítja le automatikusan a titkosított szobákat.",
-    "translationManualOnlyRoom": "Az aktuális hatókör csak a kézzel kiválasztott üzeneteket fordítja le."
+    "translationManualOnlyRoom": "Az aktuális hatókör csak a kézzel kiválasztott üzeneteket fordítja le.",
+    "translationBilingualColor": "Fordítási szöveg színe",
+    "translationStyleDivider": "Elválasztó"
 }

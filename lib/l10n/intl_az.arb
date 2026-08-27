@@ -71,5 +71,7 @@
     "translationDisabledGlobally": "Əvvəlcə proqram ayarlarında tərcüməni aktivləşdirin.",
     "translationRoomManagedGlobally": "Bu parametr qlobal tərcümə sahəsi tərəfindən idarə olunur.",
     "translationEncryptedRoomExcluded": "Cari əhatə dairəsi şifrələnmiş otaqları avtomatik tərcümə etmir.",
-    "translationManualOnlyRoom": "Cari əhatə dairəsi yalnız əl ilə seçdiyiniz mesajları tərcümə edir."
+    "translationManualOnlyRoom": "Cari əhatə dairəsi yalnız əl ilə seçdiyiniz mesajları tərcümə edir.",
+    "translationBilingualColor": "Tərcümə mətninin rəngi",
+    "translationStyleDivider": "Bölücü"
 }

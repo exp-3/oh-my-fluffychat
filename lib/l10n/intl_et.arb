@@ -2851,5 +2851,7 @@
     "translationDisabledGlobally": "Esmalt lubage tõlge rakenduse seadetes.",
     "translationRoomManagedGlobally": "Seda sätet juhib globaalne tõlkeulatus.",
     "translationEncryptedRoomExcluded": "Praegune ulatus ei tõlgi automaatselt krüptitud ruume.",
-    "translationManualOnlyRoom": "Praegune ulatus tõlgib ainult need sõnumid, mille valite käsitsi."
+    "translationManualOnlyRoom": "Praegune ulatus tõlgib ainult need sõnumid, mille valite käsitsi.",
+    "translationBilingualColor": "Tõlketeksti värv",
+    "translationStyleDivider": "Jagaja"
 }

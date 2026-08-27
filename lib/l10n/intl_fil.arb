@@ -2054,5 +2054,7 @@
     "translationDisabledGlobally": "Paganahin muna ang pagsasalin sa mga setting ng app.",
     "translationRoomManagedGlobally": "Ang setting na ito ay kinokontrol ng pandaigdigang saklaw ng pagsasalin.",
     "translationEncryptedRoomExcluded": "Ang kasalukuyang saklaw ay hindi awtomatikong nagsasalin ng mga naka-encrypt na kwarto.",
-    "translationManualOnlyRoom": "Ang kasalukuyang saklaw ay nagsasalin lamang ng mga mensaheng pinili mo nang manu-mano."
+    "translationManualOnlyRoom": "Ang kasalukuyang saklaw ay nagsasalin lamang ng mga mensaheng pinili mo nang manu-mano.",
+    "translationBilingualColor": "Kulay ng teksto ng pagsasalin",
+    "translationStyleDivider": "Divider"
 }

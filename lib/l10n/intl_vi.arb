@@ -2015,5 +2015,7 @@
     "translationDisabledGlobally": "Trước tiên hãy bật dịch trong cài đặt ứng dụng.",
     "translationRoomManagedGlobally": "Cài đặt này được kiểm soát bởi phạm vi dịch toàn cầu.",
     "translationEncryptedRoomExcluded": "Phạm vi hiện tại không tự động dịch các phòng được mã hóa.",
-    "translationManualOnlyRoom": "Phạm vi hiện tại chỉ dịch các tin nhắn bạn chọn theo cách thủ công."
+    "translationManualOnlyRoom": "Phạm vi hiện tại chỉ dịch các tin nhắn bạn chọn theo cách thủ công.",
+    "translationBilingualColor": "Màu văn bản dịch",
+    "translationStyleDivider": "Dải phân cách"
 }

@@ -2561,5 +2561,7 @@
     "translationDisabledGlobally": "Activeu primer la traducció a la configuració de l'aplicació.",
     "translationRoomManagedGlobally": "Aquesta configuració està controlada per l'àmbit de traducció global.",
     "translationEncryptedRoomExcluded": "L'abast actual no tradueix automàticament les sales encriptades.",
-    "translationManualOnlyRoom": "L'àmbit actual només tradueix els missatges que seleccioneu manualment."
+    "translationManualOnlyRoom": "L'àmbit actual només tradueix els missatges que seleccioneu manualment.",
+    "translationBilingualColor": "Color del text de traducció",
+    "translationStyleDivider": "Divisor"
 }
