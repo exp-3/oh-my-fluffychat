@@ -1934,5 +1934,6 @@
     "translationEncryptedRoomExcluded": "ขอบเขตปัจจุบันไม่แปลห้องที่เข้ารหัสโดยอัตโนมัติ",
     "translationManualOnlyRoom": "ขอบเขตปัจจุบันจะแปลเฉพาะข้อความที่คุณเลือกด้วยตนเองเท่านั้น",
     "translationBilingualColor": "สีข้อความแปล",
-    "translationStyleDivider": "ตัวแบ่ง"
+    "translationStyleDivider": "ตัวแบ่ง",
+    "messageBubbleGradient": "Message bubble gradient"
 }

@@ -2562,5 +2562,6 @@
     "translationEncryptedRoomExcluded": "محدوده فعلی اتاق های رمزگذاری شده را به طور خودکار ترجمه نمی کند.",
     "translationManualOnlyRoom": "محدوده فعلی فقط پیام هایی را که به صورت دستی انتخاب می کنید ترجمه می کند.",
     "translationBilingualColor": "رنگ متن ترجمه",
-    "translationStyleDivider": "تقسیم کننده"
+    "translationStyleDivider": "تقسیم کننده",
+    "messageBubbleGradient": "Message bubble gradient"
 }

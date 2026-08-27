@@ -29,6 +29,10 @@ class SettingsStyleController extends State<SettingsStyle> {
     ThemeController.of(context).setPrimaryColor(color);
   }
 
+  Future<void> setMessageBubbleGradient(bool enabled) async {
+    await AppSettings.messageBubbleGradient.setItem(enabled);
+  }
+
   Future<void> setWallpaper() async {
     final client = Matrix.of(context).client;
     final picked = await selectFiles(context, type: FileType.image);

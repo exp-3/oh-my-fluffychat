@@ -2563,5 +2563,6 @@
     "translationEncryptedRoomExcluded": "L'abast actual no tradueix automàticament les sales encriptades.",
     "translationManualOnlyRoom": "L'àmbit actual només tradueix els missatges que seleccioneu manualment.",
     "translationBilingualColor": "Color del text de traducció",
-    "translationStyleDivider": "Divisor"
+    "translationStyleDivider": "Divisor",
+    "messageBubbleGradient": "Message bubble gradient"
 }

@@ -2515,5 +2515,6 @@
     "translationEncryptedRoomExcluded": "Nykyinen laajuus ei käännä salattuja huoneita automaattisesti.",
     "translationManualOnlyRoom": "Nykyinen laajuus kääntää vain manuaalisesti valitsemasi viestit.",
     "translationBilingualColor": "Käännöstekstin väri",
-    "translationStyleDivider": "Jakaja"
+    "translationStyleDivider": "Jakaja",
+    "messageBubbleGradient": "Message bubble gradient"
 }

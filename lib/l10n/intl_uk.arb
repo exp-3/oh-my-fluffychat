@@ -2603,5 +2603,6 @@
     "translationEncryptedRoomExcluded": "Поточний обсяг не перекладає автоматично зашифровані кімнати.",
     "translationManualOnlyRoom": "Поточний обсяг перекладає лише повідомлення, які ви вибираєте вручну.",
     "translationBilingualColor": "Колір тексту перекладу",
-    "translationStyleDivider": "Роздільник"
+    "translationStyleDivider": "Роздільник",
+    "messageBubbleGradient": "Message bubble gradient"
 }

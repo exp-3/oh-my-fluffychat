@@ -2412,5 +2412,6 @@
     "translationEncryptedRoomExcluded": "Isebtar i yellan ddaw-a sɛan aseɣwen ɣer Tmaziɣt",
     "translationManualOnlyRoom": "Aseqdec n tura yettwasuqel kan iznan i tferneḍ s ufus.",
     "translationBilingualColor": "Asegzawal n uḍris",
-    "translationStyleDivider": "Asebded"
+    "translationStyleDivider": "Asebded",
+    "messageBubbleGradient": "Message bubble gradient"
 }

@@ -2823,5 +2823,6 @@
     "translationEncryptedRoomExcluded": "Cakupan saat ini tidak secara otomatis menerjemahkan ruangan terenkripsi.",
     "translationManualOnlyRoom": "Cakupan saat ini hanya menerjemahkan pesan yang Anda pilih secara manual.",
     "translationBilingualColor": "Warna teks terjemahan",
-    "translationStyleDivider": "Pembagi"
+    "translationStyleDivider": "Pembagi",
+    "messageBubbleGradient": "Message bubble gradient"
 }

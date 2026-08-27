@@ -2770,5 +2770,6 @@
     "translationEncryptedRoomExcluded": "Obecny zakres nie tłumaczy automatycznie zaszyfrowanych pokoi.",
     "translationManualOnlyRoom": "Bieżący zakres tłumaczy tylko wiadomości wybrane ręcznie.",
     "translationBilingualColor": "Kolor tekstu tłumaczenia",
-    "translationStyleDivider": "Dzielnik"
+    "translationStyleDivider": "Dzielnik",
+    "messageBubbleGradient": "Message bubble gradient"
 }

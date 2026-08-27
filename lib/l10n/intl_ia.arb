@@ -2051,5 +2051,6 @@
     "translationDisabledGlobally": "Activa primo le traduction in le configuration del application.",
     "translationRoomManagedGlobally": "Iste configuration es controlate per le ambito global de traduction.",
     "translationEncryptedRoomExcluded": "Le ambito actual non traduce automaticamente le salas cryptate.",
-    "translationManualOnlyRoom": "Le ambito actual traduce solmente messages que tu selige manualmente."
+    "translationManualOnlyRoom": "Le ambito actual traduce solmente messages que tu selige manualmente.",
+    "messageBubbleGradient": "Message bubble gradient"
 }

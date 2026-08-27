@@ -1924,5 +1924,6 @@
     "translationEncryptedRoomExcluded": "বর্তমান সুযোগ স্বয়ংক্রিয়ভাবে এনক্রিপ্ট করা রুম অনুবাদ করে না।",
     "translationManualOnlyRoom": "বর্তমান সুযোগ শুধুমাত্র আপনার ম্যানুয়ালি নির্বাচন করা বার্তাগুলিকে অনুবাদ করে৷",
     "translationBilingualColor": "অনুবাদ পাঠ্যের রঙ",
-    "translationStyleDivider": "বিভাজক"
+    "translationStyleDivider": "বিভাজক",
+    "messageBubbleGradient": "Message bubble gradient"
 }

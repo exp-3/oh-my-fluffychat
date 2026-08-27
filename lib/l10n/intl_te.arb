@@ -2036,5 +2036,6 @@
     "translationEncryptedRoomExcluded": "ప్రస్తుత స్కోప్ స్వయంచాలకంగా గుప్తీకరించిన గదులను అనువదించదు.",
     "translationManualOnlyRoom": "ప్రస్తుత స్కోప్ మీరు మాన్యువల్‌గా ఎంచుకున్న సందేశాలను మాత్రమే అనువదిస్తుంది.",
     "translationBilingualColor": "అనువాద వచన రంగు",
-    "translationStyleDivider": "డివైడర్"
+    "translationStyleDivider": "డివైడర్",
+    "messageBubbleGradient": "Message bubble gradient"
 }

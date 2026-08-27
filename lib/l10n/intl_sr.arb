@@ -2166,5 +2166,6 @@
     "translationEncryptedRoomExcluded": "Тренутни опсег не преводи аутоматски шифроване собе.",
     "translationManualOnlyRoom": "Тренутни опсег преводи само поруке које одаберете ручно.",
     "translationBilingualColor": "Боја текста превода",
-    "translationStyleDivider": "Дивидер"
+    "translationStyleDivider": "Дивидер",
+    "messageBubbleGradient": "Message bubble gradient"
 }

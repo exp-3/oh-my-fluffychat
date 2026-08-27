@@ -2056,5 +2056,6 @@
     "translationEncryptedRoomExcluded": "Ang kasalukuyang saklaw ay hindi awtomatikong nagsasalin ng mga naka-encrypt na kwarto.",
     "translationManualOnlyRoom": "Ang kasalukuyang saklaw ay nagsasalin lamang ng mga mensaheng pinili mo nang manu-mano.",
     "translationBilingualColor": "Kulay ng teksto ng pagsasalin",
-    "translationStyleDivider": "Divider"
+    "translationStyleDivider": "Divider",
+    "messageBubbleGradient": "Message bubble gradient"
 }

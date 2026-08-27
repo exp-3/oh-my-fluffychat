@@ -1948,5 +1948,6 @@
     "translationDisabledGlobally": "請先喺應用程式設定啟用翻譯。",
     "translationRoomManagedGlobally": "呢個設定由全域翻譯範圍控制。",
     "translationEncryptedRoomExcluded": "目前範圍唔會自動翻譯加密聊天室。",
-    "translationManualOnlyRoom": "目前範圍只會翻譯你手動揀選嘅訊息。"
+    "translationManualOnlyRoom": "目前範圍只會翻譯你手動揀選嘅訊息。",
+    "messageBubbleGradient": "Message bubble gradient"
 }

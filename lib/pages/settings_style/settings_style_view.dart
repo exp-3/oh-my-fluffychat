@@ -146,6 +146,16 @@ class SettingsStyleView extends StatelessWidget {
                 ),
               ),
             ),
+            ValueListenableBuilder<bool>(
+              valueListenable: messageBubbleGradientNotifier,
+              builder: (context, enabled, _) => SwitchListTile.adaptive(
+                value: enabled,
+                onChanged: controller.setMessageBubbleGradient,
+                secondary: const Icon(Icons.gradient_outlined),
+                title: Text(L10n.of(context).messageBubbleGradient),
+                contentPadding: const EdgeInsets.only(left: 16, right: 8),
+              ),
+            ),
             StreamBuilder(
               stream: client.onSync.stream.where(
                 (syncUpdate) =>
@@ -221,23 +231,39 @@ class SettingsStyleView extends StatelessWidget {
                                         : 12,
                                     bottom: 12,
                                   ),
-                                  child: DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      color: theme.bubbleColor,
-                                      borderRadius: BorderRadius.circular(
-                                        AppConfig.borderRadius,
+                                  child: ValueListenableBuilder<bool>(
+                                    valueListenable:
+                                        messageBubbleGradientNotifier,
+                                    builder: (context, enabled, _) => DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        color: enabled
+                                            ? null
+                                            : theme.bubbleColor,
+                                        gradient: enabled
+                                            ? LinearGradient(
+                                                begin: Alignment.topCenter,
+                                                end: Alignment.bottomCenter,
+                                                colors: [
+                                                  theme.secondaryBubbleColor,
+                                                  theme.bubbleColor,
+                                                ],
+                                              )
+                                            : null,
+                                        borderRadius: BorderRadius.circular(
+                                          AppConfig.borderRadius,
+                                        ),
                                       ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 8,
-                                      ),
-                                      child: Text(
-                                        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor',
-                                        style: TextStyle(
-                                          color: theme.onBubbleColor,
-                                          fontSize: AppConfig.messageFontSize,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 8,
+                                        ),
+                                        child: Text(
+                                          'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor',
+                                          style: TextStyle(
+                                            color: theme.onBubbleColor,
+                                            fontSize: AppConfig.messageFontSize,
+                                          ),
                                         ),
                                       ),
                                     ),

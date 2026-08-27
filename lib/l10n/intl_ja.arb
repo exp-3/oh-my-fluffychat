@@ -2189,5 +2189,6 @@
     "translationEncryptedRoomExcluded": "現在のスコープでは、暗号化されたルームは自動的に変換されません。",
     "translationManualOnlyRoom": "現在のスコープは、手動で選択したメッセージのみを翻訳します。",
     "translationBilingualColor": "翻訳テキストの色",
-    "translationStyleDivider": "ディバイダー"
+    "translationStyleDivider": "ディバイダー",
+    "messageBubbleGradient": "Message bubble gradient"
 }

@@ -2420,5 +2420,6 @@
     "translationEncryptedRoomExcluded": "Mevcut kapsam şifreli odaları otomatik olarak çevirmiyor.",
     "translationManualOnlyRoom": "Geçerli kapsam yalnızca manuel olarak seçtiğiniz iletileri çevirir.",
     "translationBilingualColor": "Çeviri metni rengi",
-    "translationStyleDivider": "Bölücü"
+    "translationStyleDivider": "Bölücü",
+    "messageBubbleGradient": "Message bubble gradient"
 }

@@ -2033,5 +2033,6 @@
     "translationEncryptedRoomExcluded": "Shtrirja aktuale nuk i përkthen automatikisht dhomat e enkriptuara.",
     "translationManualOnlyRoom": "Shtrirja aktuale përkthen vetëm mesazhet që ju zgjidhni me dorë.",
     "translationBilingualColor": "Ngjyra e tekstit të përkthimit",
-    "translationStyleDivider": "Ndarëse"
+    "translationStyleDivider": "Ndarëse",
+    "messageBubbleGradient": "Message bubble gradient"
 }

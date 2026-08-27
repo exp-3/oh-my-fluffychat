@@ -2253,5 +2253,6 @@
     "translationEncryptedRoomExcluded": "Domeniul actual de aplicare nu traduce automat camerele criptate.",
     "translationManualOnlyRoom": "Domeniul actual de aplicare traduce doar mesajele pe care le selectați manual.",
     "translationBilingualColor": "Culoarea textului de traducere",
-    "translationStyleDivider": "Divizor"
+    "translationStyleDivider": "Divizor",
+    "messageBubbleGradient": "Message bubble gradient"
 }

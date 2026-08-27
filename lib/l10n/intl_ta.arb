@@ -2813,5 +2813,6 @@
     "translationEncryptedRoomExcluded": "தற்போதைய நோக்கம் மறைகுறியாக்கப்பட்ட அறைகளை தானாக மொழிபெயர்க்காது.",
     "translationManualOnlyRoom": "தற்போதைய நோக்கம் நீங்கள் கைமுறையாக தேர்ந்தெடுக்கும் செய்திகளை மட்டுமே மொழிபெயர்க்கும்.",
     "translationBilingualColor": "மொழிபெயர்ப்பு உரை நிறம்",
-    "translationStyleDivider": "பிரிப்பான்"
+    "translationStyleDivider": "பிரிப்பான்",
+    "messageBubbleGradient": "Message bubble gradient"
 }

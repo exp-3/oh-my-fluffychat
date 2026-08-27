@@ -2538,5 +2538,6 @@
     "translationEncryptedRoomExcluded": "Trenutačni opseg ne prevodi automatski šifrirane sobe.",
     "translationManualOnlyRoom": "Trenutačni opseg prevodi samo poruke koje odaberete ručno.",
     "translationBilingualColor": "Boja teksta prijevoda",
-    "translationStyleDivider": "Razdjelnik"
+    "translationStyleDivider": "Razdjelnik",
+    "messageBubbleGradient": "Message bubble gradient"
 }

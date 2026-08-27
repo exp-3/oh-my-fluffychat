@@ -926,13 +926,19 @@ class BubbleBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (ignore) return child;
-    return CustomPaint(
-      painter: BubblePainter(
-        repaint: scrollController,
-        colors: colors,
-        context: context,
-      ),
-      child: child,
+    return ValueListenableBuilder<bool>(
+      valueListenable: messageBubbleGradientNotifier,
+      builder: (context, gradientEnabled, _) {
+        if (!gradientEnabled) return child;
+        return CustomPaint(
+          painter: BubblePainter(
+            repaint: scrollController,
+            colors: colors,
+            context: context,
+          ),
+          child: child,
+        );
+      },
     );
   }
 }

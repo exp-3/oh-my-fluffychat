@@ -2555,5 +2555,6 @@
     "translationEncryptedRoomExcluded": "Бягучы аб'ём не дазваляе аўтаматычна перакладаць зашыфраваныя пакоі.",
     "translationManualOnlyRoom": "Бягучы аб'ём перакладае толькі тыя паведамленні, якія вы выбіраеце ўручную.",
     "translationBilingualColor": "Колер тэксту перакладу",
-    "translationStyleDivider": "Раздзяляльнік"
+    "translationStyleDivider": "Раздзяляльнік",
+    "messageBubbleGradient": "Message bubble gradient"
 }

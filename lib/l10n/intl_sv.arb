@@ -2766,5 +2766,6 @@
     "translationEncryptedRoomExcluded": "Den nuvarande omfattningen översätter inte automatiskt krypterade rum.",
     "translationManualOnlyRoom": "Det aktuella omfånget översätter endast meddelanden du väljer manuellt.",
     "translationBilingualColor": "Översättning textfärg",
-    "translationStyleDivider": "Avdelare"
+    "translationStyleDivider": "Avdelare",
+    "messageBubbleGradient": "Message bubble gradient"
 }

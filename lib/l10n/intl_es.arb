@@ -2673,5 +2673,6 @@
     "translationEncryptedRoomExcluded": "El alcance actual no traduce automáticamente las salas cifradas.",
     "translationManualOnlyRoom": "El alcance actual solo traduce los mensajes que usted selecciona manualmente.",
     "translationBilingualColor": "Color del texto de traducción",
-    "translationStyleDivider": "Divisor"
+    "translationStyleDivider": "Divisor",
+    "messageBubbleGradient": "Message bubble gradient"
 }

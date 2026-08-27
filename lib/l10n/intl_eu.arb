@@ -2638,5 +2638,6 @@
     "translationEncryptedRoomExcluded": "Uneko esparruak ez ditu automatikoki itzultzen enkriptatutako gelak.",
     "translationManualOnlyRoom": "Uneko esparruak eskuz hautatzen dituzun mezuak soilik itzultzen ditu.",
     "translationBilingualColor": "Itzulpen testuaren kolorea",
-    "translationStyleDivider": "Banatzailea"
+    "translationStyleDivider": "Banatzailea",
+    "messageBubbleGradient": "Message bubble gradient"
 }

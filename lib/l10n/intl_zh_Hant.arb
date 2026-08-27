@@ -1816,6 +1816,7 @@
     "hideRedactedMessages": "隱藏被刪除的訊息",
     "hideInvalidOrUnknownMessageFormats": "隱藏無效或未知的訊息格式",
     "messagesStyle": "訊息樣式：",
+    "messageBubbleGradient": "訊息氣泡漸變",
     "shareInviteLink": "分享邀請網址",
     "scanQrCode": "掃描 QR 碼",
     "oneClientLoggedOut": "您的一個客戶端已登出",

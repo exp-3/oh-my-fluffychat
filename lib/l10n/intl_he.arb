@@ -2112,5 +2112,6 @@
     "translationEncryptedRoomExcluded": "ההיקף הנוכחי אינו מתרגם חדרים מוצפנים באופן אוטומטי.",
     "translationManualOnlyRoom": "ההיקף הנוכחי מתרגם רק הודעות שאתה בוחר באופן ידני.",
     "translationBilingualColor": "צבע טקסט תרגום",
-    "translationStyleDivider": "מחלק"
+    "translationStyleDivider": "מחלק",
+    "messageBubbleGradient": "Message bubble gradient"
 }

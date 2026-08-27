@@ -2300,5 +2300,6 @@
     "translationEncryptedRoomExcluded": "Dabartinė apimtis automatiškai neverčia užšifruotų patalpų.",
     "translationManualOnlyRoom": "Dabartinė apimtis verčia tik tuos pranešimus, kuriuos pasirenkate rankiniu būdu.",
     "translationBilingualColor": "Vertimo teksto spalva",
-    "translationStyleDivider": "Skirstytuvas"
+    "translationStyleDivider": "Skirstytuvas",
+    "messageBubbleGradient": "Message bubble gradient"
 }

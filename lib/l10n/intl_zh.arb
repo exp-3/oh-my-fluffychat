@@ -1912,6 +1912,7 @@
     "setColorTheme": "设置主题颜色：",
     "invite": "邀请",
     "messagesStyle": "消息：",
+    "messageBubbleGradient": "消息气泡渐变",
     "redactedBy": "已被 {username} 删除",
     "@redactedBy": {
         "type": "String",

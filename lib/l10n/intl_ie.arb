@@ -2072,5 +2072,6 @@
     "translationDisabledGlobally": "Activa traduction in li parametres del application in prim.",
     "translationRoomManagedGlobally": "Ti parametre es controlat per li global amplitá de traduction.",
     "translationEncryptedRoomExcluded": "Li actual amplitá ne traducte automaticmen ciffrat chambres.",
-    "translationManualOnlyRoom": "Li actual amplitá traducte solmen missages que vu selecte manualmen."
+    "translationManualOnlyRoom": "Li actual amplitá traducte solmen missages que vu selecte manualmen.",
+    "messageBubbleGradient": "Message bubble gradient"
 }

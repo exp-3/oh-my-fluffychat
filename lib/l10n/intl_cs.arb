@@ -2488,5 +2488,6 @@
     "translationEncryptedRoomExcluded": "Aktuální rozsah automaticky nepřekládá šifrované místnosti.",
     "translationManualOnlyRoom": "Aktuální rozsah překládá pouze zprávy, které vyberete ručně.",
     "translationBilingualColor": "Barva textu překladu",
-    "translationStyleDivider": "Dělič"
+    "translationStyleDivider": "Dělič",
+    "messageBubbleGradient": "Message bubble gradient"
 }

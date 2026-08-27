@@ -1128,6 +1128,7 @@
         "placeholders": {}
     },
     "messagesStyle": "Messages:",
+    "messageBubbleGradient": "Message bubble gradient",
     "moderator": "Moderator",
     "@moderator": {
         "type": "String",

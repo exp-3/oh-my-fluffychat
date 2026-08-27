@@ -2853,5 +2853,6 @@
     "translationEncryptedRoomExcluded": "Praegune ulatus ei tõlgi automaatselt krüptitud ruume.",
     "translationManualOnlyRoom": "Praegune ulatus tõlgib ainult need sõnumid, mille valite käsitsi.",
     "translationBilingualColor": "Tõlketeksti värv",
-    "translationStyleDivider": "Jagaja"
+    "translationStyleDivider": "Jagaja",
+    "messageBubbleGradient": "Message bubble gradient"
 }

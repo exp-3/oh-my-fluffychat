@@ -2457,5 +2457,6 @@
     "translationEncryptedRoomExcluded": "현재 범위는 암호화된 방을 자동으로 변환하지 않습니다.",
     "translationManualOnlyRoom": "현재 범위는 수동으로 선택한 메시지만 번역합니다.",
     "translationBilingualColor": "번역 텍스트 색상",
-    "translationStyleDivider": "분배기"
+    "translationStyleDivider": "분배기",
+    "messageBubbleGradient": "Message bubble gradient"
 }

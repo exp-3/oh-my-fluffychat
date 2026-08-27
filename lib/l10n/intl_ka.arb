@@ -2021,5 +2021,6 @@
     "translationEncryptedRoomExcluded": "მიმდინარე სფერო ავტომატურად არ თარგმნის დაშიფრულ ოთახებს.",
     "translationManualOnlyRoom": "ამჟამინდელი დიაპაზონი თარგმნის მხოლოდ თქვენ მიერ ხელით არჩეულ შეტყობინებებს.",
     "translationBilingualColor": "თარგმანის ტექსტის ფერი",
-    "translationStyleDivider": "გამყოფი"
+    "translationStyleDivider": "გამყოფი",
+    "messageBubbleGradient": "Message bubble gradient"
 }

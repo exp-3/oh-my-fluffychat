@@ -2527,5 +2527,6 @@
     "translationEncryptedRoomExcluded": "Joriy qamrov shifrlangan xonalarni avtomatik ravishda tarjima qilmaydi.",
     "translationManualOnlyRoom": "Joriy doira faqat siz tanlagan xabarlarni qo'lda tarjima qiladi.",
     "translationBilingualColor": "Tarjima matn rangi",
-    "translationStyleDivider": "Bo'luvchi"
+    "translationStyleDivider": "Bo'luvchi",
+    "messageBubbleGradient": "Message bubble gradient"
 }

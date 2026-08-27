@@ -2181,5 +2181,6 @@
     "translationEncryptedRoomExcluded": "La nuna amplekso ne aŭtomate tradukas ĉifritajn ĉambrojn.",
     "translationManualOnlyRoom": "La nuna amplekso nur tradukas mesaĝojn, kiujn vi elektas permane.",
     "translationBilingualColor": "Koloro de teksto de tradukado",
-    "translationStyleDivider": "Dividilo"
+    "translationStyleDivider": "Dividilo",
+    "messageBubbleGradient": "Message bubble gradient"
 }

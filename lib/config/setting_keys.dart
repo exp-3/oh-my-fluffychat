@@ -13,6 +13,9 @@ import 'package:managed_configurations/managed_configurations.dart';
 import 'package:matrix/matrix_api_lite/utils/logs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Notifies mounted chat timelines when the bubble gradient preference changes.
+final ValueNotifier<bool> messageBubbleGradientNotifier = ValueNotifier(true);
+
 enum AppSettings<T> {
   textMessageMaxLength<int>('textMessageMaxLength', 16384),
 
@@ -36,6 +39,7 @@ enum AppSettings<T> {
     'event_id_only',
   ),
   renderHtml<bool>('chat.fluffy.renderHtml', true),
+  messageBubbleGradient<bool>('chat.fluffy.message_bubble_gradient', true),
   fontSizeFactor<double>('chat.fluffy.font_size_factor', 1.0),
   hideRedactedEvents<bool>('chat.fluffy.hideRedactedEvents', false),
   hideUnknownEvents<bool>('chat.fluffy.hideUnknownEvents', true),
@@ -101,6 +105,8 @@ enum AppSettings<T> {
 
   static Future<void> reset({bool loadWebConfigFile = true}) async {
     await AppSettings._store!.clear();
+    messageBubbleGradientNotifier.value =
+        AppSettings.messageBubbleGradient.defaultValue;
     await init(loadWebConfigFile: loadWebConfigFile);
   }
 
@@ -108,6 +114,11 @@ enum AppSettings<T> {
     if (AppSettings._store != null) return AppSettings.store;
 
     final store = AppSettings._store = await SharedPreferences.getInstance();
+    messageBubbleGradientNotifier.value =
+        Result(
+          () => store.getBool(AppSettings.messageBubbleGradient.key),
+        ).asValue?.value ??
+        AppSettings.messageBubbleGradient.defaultValue;
 
     // Migrate wrong datatype for fontSizeFactor
     final fontSizeFactorString = Result(
@@ -150,6 +161,15 @@ enum AppSettings<T> {
       }
     }
 
+    // Web configuration may provide a value for this preference when the
+    // local store did not contain one yet, so refresh the notifier after the
+    // configuration pass as well.
+    messageBubbleGradientNotifier.value =
+        Result(
+          () => store.getBool(AppSettings.messageBubbleGradient.key),
+        ).asValue?.value ??
+        AppSettings.messageBubbleGradient.defaultValue;
+
     return store;
   }
 }
@@ -185,7 +205,12 @@ extension AppSettingsBoolExtension on AppSettings<bool> {
     return value.asValue?.value ?? defaultValue;
   }
 
-  Future<void> setItem(bool value) => AppSettings.store.setBool(key, value);
+  Future<void> setItem(bool value) async {
+    await AppSettings.store.setBool(key, value);
+    if (this == AppSettings.messageBubbleGradient) {
+      messageBubbleGradientNotifier.value = value;
+    }
+  }
 }
 
 extension AppSettingsStringExtension on AppSettings<String> {

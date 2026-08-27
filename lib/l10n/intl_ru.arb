@@ -2749,5 +2749,6 @@
     "translationEncryptedRoomExcluded": "Текущая область действия не переводит зашифрованные комнаты автоматически.",
     "translationManualOnlyRoom": "Текущая область переводит только сообщения, которые вы выбираете вручную.",
     "translationBilingualColor": "Цвет текста перевода",
-    "translationStyleDivider": "Разделитель"
+    "translationStyleDivider": "Разделитель",
+    "messageBubbleGradient": "Message bubble gradient"
 }

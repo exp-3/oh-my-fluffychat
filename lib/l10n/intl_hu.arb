@@ -2490,5 +2490,6 @@
     "translationEncryptedRoomExcluded": "A jelenlegi hatókör nem fordítja le automatikusan a titkosított szobákat.",
     "translationManualOnlyRoom": "Az aktuális hatókör csak a kézzel kiválasztott üzeneteket fordítja le.",
     "translationBilingualColor": "Fordítási szöveg színe",
-    "translationStyleDivider": "Elválasztó"
+    "translationStyleDivider": "Elválasztó",
+    "messageBubbleGradient": "Message bubble gradient"
 }

@@ -2017,5 +2017,6 @@
     "translationEncryptedRoomExcluded": "Phạm vi hiện tại không tự động dịch các phòng được mã hóa.",
     "translationManualOnlyRoom": "Phạm vi hiện tại chỉ dịch các tin nhắn bạn chọn theo cách thủ công.",
     "translationBilingualColor": "Màu văn bản dịch",
-    "translationStyleDivider": "Dải phân cách"
+    "translationStyleDivider": "Dải phân cách",
+    "messageBubbleGradient": "Message bubble gradient"
 }

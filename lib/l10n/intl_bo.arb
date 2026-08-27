@@ -2033,5 +2033,6 @@
     "translationEncryptedRoomExcluded": "ད་ལྟའི་ཁྱབ་ཁོངས་ཀྱིས་གསང་བའི་ཁང་མིག་རང་འགུལ་གྱིས་སྒྱུར་མི་ཐུབ།",
     "translationManualOnlyRoom": "ད་ལྟའི་ཁྱབ་ཁོངས་ཀྱིས་ཁྱེད་ཀྱིས་ལག་ཐོག་ནས་འདེམས་པའི་འཕྲིན་ཡིག་ཁོ་ན་སྐད་སྒྱུར་བྱེད།",
     "translationBilingualColor": "སྒྱུར་ཡིག་གི་ཚོན་མདོག།",
-    "translationStyleDivider": "བགོད་ཆས།"
+    "translationStyleDivider": "བགོད་ཆས།",
+    "messageBubbleGradient": "Message bubble gradient"
 }

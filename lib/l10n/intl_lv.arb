@@ -2799,5 +2799,6 @@
     "translationEncryptedRoomExcluded": "Pašreizējais tvērums automātiski netulko šifrētās telpas.",
     "translationManualOnlyRoom": "Pašreizējā darbības joma tulko tikai manuāli atlasītos ziņojumus.",
     "translationBilingualColor": "Tulkojuma teksta krāsa",
-    "translationStyleDivider": "Dalītājs"
+    "translationStyleDivider": "Dalītājs",
+    "messageBubbleGradient": "Message bubble gradient"
 }

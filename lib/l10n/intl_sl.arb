@@ -1985,5 +1985,6 @@
     "translationEncryptedRoomExcluded": "Trenutni obseg ne prevaja samodejno šifriranih sob.",
     "translationManualOnlyRoom": "Trenutni obseg prevaja samo sporočila, ki jih izberete ročno.",
     "translationBilingualColor": "Barva besedila prevoda",
-    "translationStyleDivider": "Razdelilnik"
+    "translationStyleDivider": "Razdelilnik",
+    "messageBubbleGradient": "Message bubble gradient"
 }

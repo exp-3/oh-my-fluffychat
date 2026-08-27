@@ -2853,5 +2853,6 @@
     "translationEncryptedRoomExcluded": "Ní aistríonn an scóip reatha seomraí criptithe go huathoibríoch.",
     "translationManualOnlyRoom": "Ní aistríonn an scóip reatha ach na teachtaireachtaí a roghnaíonn tú de láimh.",
     "translationBilingualColor": "Dath téacs aistriúcháin",
-    "translationStyleDivider": "Roinnteoir"
+    "translationStyleDivider": "Roinnteoir",
+    "messageBubbleGradient": "Message bubble gradient"
 }

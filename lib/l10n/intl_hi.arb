@@ -1908,5 +1908,6 @@
     "translationEncryptedRoomExcluded": "वर्तमान दायरा स्वचालित रूप से एन्क्रिप्टेड कमरों का अनुवाद नहीं करता है।",
     "translationManualOnlyRoom": "वर्तमान दायरा केवल आपके द्वारा मैन्युअल रूप से चुने गए संदेशों का अनुवाद करता है।",
     "translationBilingualColor": "अनुवाद पाठ का रंग",
-    "translationStyleDivider": "विभाजक"
+    "translationStyleDivider": "विभाजक",
+    "messageBubbleGradient": "Message bubble gradient"
 }

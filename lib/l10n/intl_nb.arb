@@ -2831,5 +2831,6 @@
     "translationEncryptedRoomExcluded": "Det nåværende omfanget oversetter ikke automatisk krypterte rom.",
     "translationManualOnlyRoom": "Det gjeldende omfanget oversetter bare meldinger du velger manuelt.",
     "translationBilingualColor": "Oversettelsestekstfarge",
-    "translationStyleDivider": "Avdeler"
+    "translationStyleDivider": "Avdeler",
+    "messageBubbleGradient": "Message bubble gradient"
 }
