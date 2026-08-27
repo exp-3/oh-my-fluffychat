@@ -81,9 +81,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
     final source = sourceLanguage;
     final target = targetLanguage;
     _languageSave = _languageSave
-        .then(
-          (_) => runtime.setLanguages(source: source, target: target),
-        )
+        .then((_) => runtime.setLanguages(source: source, target: target))
         .onError(_handleLanguageSaveError);
   }
 

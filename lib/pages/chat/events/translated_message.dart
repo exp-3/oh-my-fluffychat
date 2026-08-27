@@ -267,7 +267,7 @@ class _TranslatedContent extends StatelessWidget {
       TranslationBilingualStyle.tertiary =>
         ownMessage ? colorScheme.tertiaryFixed : colorScheme.tertiary,
       TranslationBilingualStyle.muted => textColor.withAlpha(170),
-      TranslationBilingualStyle.background => colorScheme.onTertiaryContainer,
+      TranslationBilingualStyle.background => colorScheme.onSurface,
     };
     final background = bilingualStyle == TranslationBilingualStyle.background;
     final translatedContent = _TranslationHtml(
@@ -290,13 +290,14 @@ class _TranslatedContent extends StatelessWidget {
           originalFontSize: originalFontSize,
           timeline: timeline,
         ),
-        Divider(height: 1, color: translationColor.withAlpha(64)),
+        if (!background)
+          Divider(height: 1, color: translationColor.withAlpha(64)),
         if (background)
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: colorScheme.tertiaryContainer,
+                color: colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: translatedContent,

@@ -216,28 +216,20 @@ class ChatDetailsView extends StatelessWidget {
                                 label: L10n.of(context).stickers,
                                 icon: Icons.emoji_emotions_outlined,
                               ),
-                              if (room.pushRuleState == PushRuleState.notify)
-                                _MainChatDetailsButton(
-                                  onPressed: () => showFutureLoadingDialog(
-                                    context: context,
-                                    future: () => room.setPushRuleState(
-                                      PushRuleState.mentionsOnly,
-                                    ),
+                              _MainChatDetailsButton(
+                                onPressed: () => showFutureLoadingDialog(
+                                  context: context,
+                                  future: () => room.setPushRuleState(
+                                    room.pushRuleState == PushRuleState.notify
+                                        ? PushRuleState.mentionsOnly
+                                        : PushRuleState.notify,
                                   ),
-                                  label: L10n.of(context).mute,
-                                  icon: Icons.notifications_on_outlined,
-                                )
-                              else
-                                _MainChatDetailsButton(
-                                  onPressed: () => showFutureLoadingDialog(
-                                    context: context,
-                                    future: () => room.setPushRuleState(
-                                      PushRuleState.notify,
-                                    ),
-                                  ),
-                                  label: L10n.of(context).unmuteChat,
-                                  icon: Icons.notifications_off_outlined,
                                 ),
+                                label: L10n.of(context).mute,
+                                icon: Icons.notifications_off_outlined,
+                                isActive:
+                                    room.pushRuleState != PushRuleState.notify,
+                              ),
                               _RoomTranslationButton(room),
                             ],
                           ),
@@ -417,8 +409,9 @@ class _RoomTranslationButton extends StatelessWidget {
           RoomTranslationLockReason.none => null,
         };
         return _MainChatDetailsButton(
-          label: control.value ? l10n.stopRoomTranslation : l10n.translateRoom,
-          icon: control.value ? Icons.translate : Icons.translate_outlined,
+          label: l10n.translateRoom,
+          icon: Icons.translate_outlined,
+          isActive: control.value,
           onPressed: control.canChange
               ? () => runtime.setRoomSelected(room, !control.value)
               : () => _showLockedControlExplanation(context, subtitle!),
@@ -432,40 +425,54 @@ class _MainChatDetailsButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String label;
   final IconData icon;
+  final bool isActive;
 
   const _MainChatDetailsButton({
     required this.onPressed,
     required this.label,
     required this.icon,
+    this.isActive = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Material(
-      color: theme.colorScheme.surfaceContainerHigh,
-      borderRadius: BorderRadius.circular(AppConfig.borderRadius),
-      child: InkWell(
-        onTap: onPressed,
+    final foregroundColor = isActive
+        ? theme.colorScheme.onPrimaryContainer
+        : theme.colorScheme.secondary;
+    return Semantics(
+      button: true,
+      toggled: isActive,
+      child: Material(
+        color: isActive
+            ? theme.colorScheme.primaryContainer
+            : theme.colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(AppConfig.borderRadius),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Column(
-            crossAxisAlignment: .center,
-            mainAxisSize: .min,
-            children: [
-              Icon(icon, color: theme.colorScheme.secondary),
-              SizedBox(
-                width: 64,
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: .ellipsis,
-                  textAlign: .center,
-                  style: TextStyle(color: theme.colorScheme.secondary),
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
+            child: Column(
+              crossAxisAlignment: .center,
+              mainAxisSize: .min,
+              children: [
+                Icon(icon, color: foregroundColor),
+                SizedBox(
+                  width: 64,
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: .ellipsis,
+                    textAlign: .center,
+                    style: TextStyle(color: foregroundColor),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

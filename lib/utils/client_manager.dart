@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import 'package:collection/collection.dart';
+import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/custom_http_client.dart';
@@ -164,6 +165,11 @@ abstract class ClientManager {
       settings: const InitializationSettings(
         android: AndroidInitializationSettings('notifications_icon'),
         iOS: DarwinInitializationSettings(),
+        windows: WindowsInitializationSettings(
+          appName: 'FluffyChat',
+          appUserModelId: AppConfig.appId,
+          guid: '8699c4b9-9d52-4f4b-842f-59979f9a3525',
+        ),
       ),
     );
 
