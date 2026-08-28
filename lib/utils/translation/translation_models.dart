@@ -6,6 +6,26 @@ enum TranslationProtocol { chatCompletions, responses }
 
 enum TranslationScope { allRooms, unencryptedRooms, selectedRooms, manualOnly }
 
+enum InputTranslationMode { disabled, manual, automatic }
+
+enum InputTranslationScope { automaticRooms, allRooms }
+
+enum InputTranslationTrigger { button, longPress, doubleTap }
+
+enum InputTranslationSendMode {
+  shortOriginalLongTranslated,
+  shortTranslatedLongOriginal,
+}
+
+// Keep the longer names available to callers while the concise names are used
+// throughout the chat UI.
+typedef TranslationInputMode = InputTranslationMode;
+typedef TranslationInputScope = InputTranslationScope;
+typedef TranslationInputTrigger = InputTranslationTrigger;
+typedef TranslationInputSendMode = InputTranslationSendMode;
+typedef InputTranslationAutoSendMode = InputTranslationSendMode;
+typedef TranslationInputAutoSendMode = InputTranslationSendMode;
+
 enum TranslationDisplayMode { translatedOnly, bilingual }
 
 enum TranslationBilingualColor { body, accent, secondary, tertiary, muted }

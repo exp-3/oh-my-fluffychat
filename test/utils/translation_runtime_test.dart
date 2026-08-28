@@ -33,6 +33,14 @@ const _bilingualColorPreference = 'chat.fluffy.translation.bilingual_color';
 const _bilingualLayoutPreference = 'chat.fluffy.translation.bilingual_layout';
 const _legacyBilingualStylePreference =
     'chat.fluffy.translation.bilingual_style';
+const _inputModePreference = 'chat.fluffy.translation.input.mode';
+const _inputScopePreference = 'chat.fluffy.translation.input.scope';
+const _inputSourceLanguagePreference =
+    'chat.fluffy.translation.input.source_language';
+const _inputTargetLanguagePreference =
+    'chat.fluffy.translation.input.target_language';
+const _inputTriggerPreference = 'chat.fluffy.translation.input.trigger';
+const _inputSendModePreference = 'chat.fluffy.translation.input.send_mode';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -274,6 +282,148 @@ void main() {
     },
   );
 
+  test('input translation settings persist independently', () async {
+    final fixture = await _RuntimeFixture.create();
+    expect(fixture.runtime.inputMode, InputTranslationMode.disabled);
+    expect(fixture.runtime.inputScope, InputTranslationScope.automaticRooms);
+    expect(fixture.runtime.inputSourceLanguage, 'auto');
+    expect(fixture.runtime.inputTargetLanguage, 'en');
+    expect(
+      fixture.runtime.inputSendMode,
+      InputTranslationSendMode.shortOriginalLongTranslated,
+    );
+
+    await fixture.runtime.setInputMode(InputTranslationMode.manual);
+    await fixture.runtime.setInputScope(InputTranslationScope.allRooms);
+    await fixture.runtime.setInputLanguages(source: 'de', target: 'fr');
+    await fixture.runtime.setInputTrigger(InputTranslationTrigger.doubleTap);
+    await fixture.runtime.setInputSendMode(
+      InputTranslationSendMode.shortTranslatedLongOriginal,
+    );
+
+    expect(
+      fixture.runtime.preferences.store.getString(_inputModePreference),
+      'manual',
+    );
+    expect(
+      fixture.runtime.preferences.store.getString(_inputScopePreference),
+      'allRooms',
+    );
+    expect(
+      fixture.runtime.preferences.store.getString(
+        _inputSourceLanguagePreference,
+      ),
+      'de',
+    );
+    expect(
+      fixture.runtime.preferences.store.getString(
+        _inputTargetLanguagePreference,
+      ),
+      'fr',
+    );
+    expect(
+      fixture.runtime.preferences.store.getString(_inputTriggerPreference),
+      'doubleTap',
+    );
+    expect(
+      fixture.runtime.preferences.store.getString(_inputSendModePreference),
+      'shortTranslatedLongOriginal',
+    );
+  });
+
+  test(
+    'input translation eligibility follows mode, scope, and global state',
+    () async {
+      final fixture = await _RuntimeFixture.create();
+      final room = Room(id: '!input:example.invalid', client: fixture.client);
+      final encrypted =
+          Room(id: '!input-encrypted:example.invalid', client: fixture.client)
+            ..setState(
+              StrippedStateEvent(
+                type: EventTypes.Encryption,
+                content: {'algorithm': 'm.megolm.v1.aes-sha2'},
+                senderId: fixture.client.userID!,
+                stateKey: '',
+              ),
+            );
+
+      expect(fixture.runtime.canTranslateInput(room), isFalse);
+      await fixture.runtime.setInputMode(InputTranslationMode.automatic);
+      expect(fixture.runtime.canTranslateInput(room), isFalse);
+
+      await fixture.runtime.setInputScope(InputTranslationScope.allRooms);
+      expect(fixture.runtime.canTranslateInput(room), isTrue);
+      expect(fixture.runtime.canTranslateInput(encrypted), isTrue);
+      expect(fixture.runtime.shouldAutoTranslateInput(room), isTrue);
+      expect(fixture.runtime.canManuallyTranslateInput(room), isFalse);
+
+      await fixture.runtime.setInputSendMode(
+        InputTranslationSendMode.shortTranslatedLongOriginal,
+      );
+
+      await fixture.runtime.setInputMode(InputTranslationMode.manual);
+      expect(fixture.runtime.canManuallyTranslateInput(room), isTrue);
+      expect(fixture.runtime.shouldAutoTranslateInput(room), isFalse);
+      expect(
+        fixture.runtime.inputSendMode,
+        InputTranslationSendMode.shortTranslatedLongOriginal,
+      );
+
+      await fixture.runtime.setEnabled(false);
+      expect(fixture.runtime.canTranslateInput(room), isFalse);
+      expect(
+        fixture.runtime.inputSendMode,
+        InputTranslationSendMode.shortTranslatedLongOriginal,
+      );
+    },
+  );
+
+  test('input translation uses no event translation cache', () async {
+    final api = _RecordingApiClient();
+    final fixture = await _RuntimeFixture.create(
+      apiClient: api,
+      mergeWindowMs: 0,
+    );
+    final room = Room(
+      id: '!input-cache:example.invalid',
+      client: fixture.client,
+    );
+    await fixture.runtime.setInputMode(InputTranslationMode.manual);
+    await fixture.runtime.setInputScope(InputTranslationScope.allRooms);
+
+    expect(
+      await fixture.runtime.translateInputText(room, 'hello'),
+      'translated',
+    );
+    expect(api.calls, 1);
+    expect(fixture.backend.present, isFalse);
+    expect(
+      fixture.secrets.values,
+      isNot(contains('chat.fluffy.translation.cache_master_key')),
+    );
+  });
+
+  test('input translation response expires after a runtime change', () async {
+    final api = _ControlledApiClient();
+    final fixture = await _RuntimeFixture.create(
+      apiClient: api,
+      mergeWindowMs: 0,
+    );
+    final room = Room(
+      id: '!input-race:example.invalid',
+      client: fixture.client,
+    );
+    await fixture.runtime.setInputMode(InputTranslationMode.manual);
+    await fixture.runtime.setInputScope(InputTranslationScope.allRooms);
+
+    final translation = fixture.runtime.translateInputText(room, 'hello');
+    final call = await api.waitForCall(0);
+    await fixture.runtime.setInputLanguages(source: 'de', target: 'fr');
+    call.complete('late');
+    await expectLater(translation, throwsA(isA<StateError>()));
+    expect(fixture.backend.present, isFalse);
+  });
+
   test(
     'logout uses recorded rooms and a reattached client preserves local references',
     () async {
@@ -437,8 +587,9 @@ class _RuntimeFixture {
   final TranslationRuntime runtime;
   final Client client;
   final _MemoryBackend backend;
+  final _MemorySecrets secrets;
 
-  const _RuntimeFixture(this.runtime, this.client, this.backend);
+  const _RuntimeFixture(this.runtime, this.client, this.backend, this.secrets);
 
   static Future<_RuntimeFixture> create({
     _MemorySecrets? secrets,
@@ -468,7 +619,7 @@ class _RuntimeFixture {
       cache: TranslationCache(memorySecrets, backend),
     );
     final client = await prepareTestClient(loggedIn: true);
-    return _RuntimeFixture(runtime, client, backend);
+    return _RuntimeFixture(runtime, client, backend, memorySecrets);
   }
 }
 

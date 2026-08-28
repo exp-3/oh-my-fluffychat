@@ -3,6 +3,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+import 'dart:async';
+
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/setting_keys.dart';
@@ -10,6 +12,7 @@ import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/chat/trust_user_key_dialog.dart';
 import 'package:fluffychat/utils/markdown_context_builder.dart';
 import 'package:fluffychat/widgets/mxc_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:matrix/matrix.dart';
@@ -26,6 +29,8 @@ class InputBar extends StatelessWidget {
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onSubmitted;
+  final VoidCallback? onLongPress;
+  final VoidCallback? onDoubleTap;
   final ValueChanged<Uint8List?>? onSubmitImage;
   final FocusNode? focusNode;
   final TextEditingController? controller;
@@ -48,6 +53,8 @@ class InputBar extends StatelessWidget {
     this.onChanged,
     this.autofocus,
     this.textInputAction,
+    this.onLongPress,
+    this.onDoubleTap,
     this.readOnly = false,
     required this.suggestionEmojis,
     super.key,
@@ -398,54 +405,58 @@ class InputBar extends StatelessWidget {
         data: MediaQuery.of(context).copyWith(
           textScaler: TextScaler.linear(AppSettings.fontSizeFactor.value),
         ),
-        child: TextField(
-          controller: controller,
-          focusNode: focusNode,
-          readOnly: readOnly,
-          onEditingComplete: () {
-            // To not lose focus on iOS:
-            // https://github.com/krille-chan/fluffychat/issues/2784
-          },
-          contextMenuBuilder: (c, e) => MarkdownContextBuilder(
-            editableTextState: e,
+        child: _InputGestureDetector(
+          onLongPress: onLongPress,
+          onDoubleTap: onDoubleTap,
+          child: TextField(
             controller: controller,
-          ),
-          contentInsertionConfiguration: ContentInsertionConfiguration(
-            onContentInserted: (KeyboardInsertedContent content) async {
-              final proceed = await showTrustUserInRoomDialog(context, room);
-              if (!proceed) return;
-              final data = content.data;
-              if (data == null) return;
-
-              final file = MatrixFile(
-                mimeType: content.mimeType,
-                bytes: data,
-                name: content.uri.split('/').last,
-              );
-              room.sendFileEvent(file, shrinkImageMaxDimension: 1600);
+            focusNode: focusNode,
+            readOnly: readOnly,
+            onEditingComplete: () {
+              // To not lose focus on iOS:
+              // https://github.com/krille-chan/fluffychat/issues/2784
             },
+            contextMenuBuilder: (c, e) => MarkdownContextBuilder(
+              editableTextState: e,
+              controller: controller,
+            ),
+            contentInsertionConfiguration: ContentInsertionConfiguration(
+              onContentInserted: (KeyboardInsertedContent content) async {
+                final proceed = await showTrustUserInRoomDialog(context, room);
+                if (!proceed) return;
+                final data = content.data;
+                if (data == null) return;
+
+                final file = MatrixFile(
+                  mimeType: content.mimeType,
+                  bytes: data,
+                  name: content.uri.split('/').last,
+                );
+                room.sendFileEvent(file, shrinkImageMaxDimension: 1600);
+              },
+            ),
+            minLines: minLines,
+            maxLines: maxLines,
+            keyboardType: keyboardType,
+            textInputAction: textInputAction,
+            autofocus: autofocus!,
+            inputFormatters: [
+              LengthLimitingTextInputFormatter((maxPDUSize / 3).floor()),
+            ],
+            onSubmitted: (text) {
+              // fix for library for now
+              // it sets the types for the callback incorrectly
+              onSubmitted!(text);
+            },
+            maxLength: AppSettings.textMessageMaxLength.value,
+            decoration: decoration,
+            onChanged: (text) {
+              // fix for the library for now
+              // it sets the types for the callback incorrectly
+              onChanged!(text);
+            },
+            textCapitalization: TextCapitalization.sentences,
           ),
-          minLines: minLines,
-          maxLines: maxLines,
-          keyboardType: keyboardType,
-          textInputAction: textInputAction,
-          autofocus: autofocus!,
-          inputFormatters: [
-            LengthLimitingTextInputFormatter((maxPDUSize / 3).floor()),
-          ],
-          onSubmitted: (text) {
-            // fix for library for now
-            // it sets the types for the callback incorrectly
-            onSubmitted!(text);
-          },
-          maxLength: AppSettings.textMessageMaxLength.value,
-          decoration: decoration,
-          onChanged: (text) {
-            // fix for the library for now
-            // it sets the types for the callback incorrectly
-            onChanged!(text);
-          },
-          textCapitalization: TextCapitalization.sentences,
         ),
       ),
       optionsViewBuilder: (c, onSelected, s) {
@@ -472,4 +483,109 @@ class InputBar extends StatelessWidget {
       optionsViewOpenDirection: OptionsViewOpenDirection.up,
     );
   }
+}
+
+class _InputGestureDetector extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onLongPress;
+  final VoidCallback? onDoubleTap;
+
+  const _InputGestureDetector({
+    required this.child,
+    this.onLongPress,
+    this.onDoubleTap,
+  });
+
+  @override
+  State<_InputGestureDetector> createState() => _InputGestureDetectorState();
+}
+
+class _InputGestureDetectorState extends State<_InputGestureDetector> {
+  Timer? _longPressTimer;
+  Timer? _doubleTapTimer;
+  int? _pointer;
+  Offset? _downPosition;
+  bool _longPressFired = false;
+  DateTime? _lastTapTime;
+  Offset? _lastTapPosition;
+
+  void _onPointerDown(PointerDownEvent event) {
+    if (event.buttons != kPrimaryButton) return;
+    _pointer = event.pointer;
+    _downPosition = event.position;
+    _longPressFired = false;
+    _longPressTimer?.cancel();
+    if (widget.onLongPress != null) {
+      _longPressTimer = Timer(
+        kLongPressTimeout + const Duration(milliseconds: 75),
+        () {
+          if (_pointer == event.pointer) {
+            _longPressFired = true;
+            widget.onLongPress?.call();
+          }
+        },
+      );
+    }
+  }
+
+  void _onPointerMove(PointerMoveEvent event) {
+    final downPosition = _downPosition;
+    if (_pointer != event.pointer || downPosition == null) return;
+    if ((event.position - downPosition).distance > kTouchSlop) {
+      _cancelPointer();
+    }
+  }
+
+  void _onPointerUp(PointerUpEvent event) {
+    if (_pointer != event.pointer) return;
+    final position = event.position;
+    final now = DateTime.now();
+    _cancelPointer();
+    final lastTime = _lastTapTime;
+    final lastPosition = _lastTapPosition;
+    final isDoubleTap =
+        !_longPressFired &&
+        widget.onDoubleTap != null &&
+        lastTime != null &&
+        now.difference(lastTime) <= kDoubleTapTimeout &&
+        lastPosition != null &&
+        (position - lastPosition).distance <= kDoubleTapSlop;
+    if (isDoubleTap) {
+      _lastTapTime = null;
+      _lastTapPosition = null;
+      _doubleTapTimer?.cancel();
+      _doubleTapTimer = Timer(
+        const Duration(milliseconds: 50),
+        widget.onDoubleTap!,
+      );
+    } else {
+      _lastTapTime = now;
+      _lastTapPosition = position;
+    }
+  }
+
+  void _cancelPointer() {
+    _longPressTimer?.cancel();
+    _longPressTimer = null;
+    if (_pointer == null) _longPressFired = false;
+    _pointer = null;
+    _downPosition = null;
+  }
+
+  @override
+  void dispose() {
+    _cancelPointer();
+    _doubleTapTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Listener(
+    behavior: HitTestBehavior.deferToChild,
+    onPointerDown: _onPointerDown,
+    onPointerMove: _onPointerMove,
+    onPointerUp: _onPointerUp,
+    onPointerCancel: (_) => _cancelPointer(),
+    child: widget.child,
+  );
 }

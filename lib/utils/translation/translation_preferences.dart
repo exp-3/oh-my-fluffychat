@@ -41,6 +41,14 @@ class TranslationPreferences {
       'chat.fluffy.translation.bilingual_style';
   static const _targetLanguageKey = 'chat.fluffy.translation.target_language';
   static const _sourceLanguageKey = 'chat.fluffy.translation.source_language';
+  static const _inputModeKey = 'chat.fluffy.translation.input.mode';
+  static const _inputScopeKey = 'chat.fluffy.translation.input.scope';
+  static const _inputSourceLanguageKey =
+      'chat.fluffy.translation.input.source_language';
+  static const _inputTargetLanguageKey =
+      'chat.fluffy.translation.input.target_language';
+  static const _inputTriggerKey = 'chat.fluffy.translation.input.trigger';
+  static const _inputSendModeKey = 'chat.fluffy.translation.input.send_mode';
   static const _providersKey = 'chat.fluffy.translation.providers';
   static const _selectedProviderKey =
       'chat.fluffy.translation.selected_provider';
@@ -91,6 +99,37 @@ class TranslationPreferences {
 
   String get sourceLanguage => store.getString(_sourceLanguageKey) ?? 'auto';
   String? get targetLanguage => store.getString(_targetLanguageKey);
+  InputTranslationMode get inputMode => _enumValue(
+    InputTranslationMode.values,
+    store.getString(_inputModeKey),
+    InputTranslationMode.disabled,
+  );
+  TranslationInputMode get inputTranslationMode => inputMode;
+  InputTranslationScope get inputScope => _enumValue(
+    InputTranslationScope.values,
+    store.getString(_inputScopeKey),
+    InputTranslationScope.automaticRooms,
+  );
+  TranslationInputScope get inputTranslationScope => inputScope;
+  String get inputSourceLanguage =>
+      store.getString(_inputSourceLanguageKey) ?? 'auto';
+  String get inputTranslationSourceLanguage => inputSourceLanguage;
+  String? get inputTargetLanguage => store.getString(_inputTargetLanguageKey);
+  String? get inputTranslationTargetLanguage => inputTargetLanguage;
+  InputTranslationTrigger get inputTrigger => _enumValue(
+    InputTranslationTrigger.values,
+    store.getString(_inputTriggerKey),
+    InputTranslationTrigger.button,
+  );
+  TranslationInputTrigger get inputTranslationTrigger => inputTrigger;
+  InputTranslationSendMode get inputSendMode => _enumValue(
+    InputTranslationSendMode.values,
+    store.getString(_inputSendModeKey),
+    InputTranslationSendMode.shortOriginalLongTranslated,
+  );
+  TranslationInputSendMode get inputTranslationSendMode => inputSendMode;
+  InputTranslationAutoSendMode get inputTranslationAutoSendMode =>
+      inputSendMode;
   bool get privacyAccepted => store.getBool(_privacyAcceptedKey) ?? false;
   String? get selectedProviderId => store.getString(_selectedProviderKey);
   List<TranslationProviderConfig> get providers =>
@@ -127,6 +166,20 @@ class TranslationPreferences {
       store.setString(_sourceLanguageKey, value);
   Future<void> setTargetLanguage(String value) =>
       store.setString(_targetLanguageKey, value);
+  Future<void> setInputMode(InputTranslationMode value) =>
+      store.setString(_inputModeKey, value.name);
+  Future<void> setInputScope(InputTranslationScope value) =>
+      store.setString(_inputScopeKey, value.name);
+  Future<void> setInputSourceLanguage(String value) =>
+      store.setString(_inputSourceLanguageKey, value);
+  Future<void> setInputTargetLanguage(String value) =>
+      store.setString(_inputTargetLanguageKey, value);
+  Future<void> setInputTrigger(InputTranslationTrigger value) =>
+      store.setString(_inputTriggerKey, value.name);
+  Future<void> setInputSendMode(InputTranslationSendMode value) =>
+      store.setString(_inputSendModeKey, value.name);
+  Future<void> setInputTranslationSendMode(TranslationInputSendMode value) =>
+      setInputSendMode(value);
   Future<void> acceptPrivacyNotice() =>
       store.setBool(_privacyAcceptedKey, true);
   Future<void> selectProvider(String? id) => id == null

@@ -3,7 +3,9 @@
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite_sqlcipher/sqflite.dart' as sqfl_cipher;
 
+import '../platform_infos.dart';
 import 'translation_cache_backend_interface.dart';
 
 TranslationCacheBackend createTranslationCacheBackend() =>
@@ -19,6 +21,7 @@ class NativeTranslationCacheBackend implements TranslationCacheBackend {
   );
 
   DatabaseFactory get _factory {
+    if (PlatformInfos.isMobile) return sqfl_cipher.databaseFactory;
     sqfliteFfiInit();
     return databaseFactoryFfi;
   }

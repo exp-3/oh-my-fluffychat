@@ -44,6 +44,7 @@ class TranslationRuntime extends ChangeNotifier {
   TranslationCache? _cache;
   TranslationApiClient? _apiClient;
   TranslationBatcher? _batcher;
+  TranslationBatcher? _inputBatcher;
   final Map<String, ValueNotifier<TranslationResultState>> _states = {};
   final Map<String, ({int revision, Future<String> future})> _inFlight = {};
   final Map<String, Set<String>> _knownEditChains = {};
@@ -64,6 +65,13 @@ class TranslationRuntime extends ChangeNotifier {
   TranslationBatchSettings _batchSettings = TranslationBatchSettings.defaults;
   String _sourceLanguage = 'auto';
   String _targetLanguage = 'en';
+  InputTranslationMode _inputMode = InputTranslationMode.disabled;
+  InputTranslationScope _inputScope = InputTranslationScope.automaticRooms;
+  String _inputSourceLanguage = 'auto';
+  String _inputTargetLanguage = 'en';
+  InputTranslationTrigger _inputTrigger = InputTranslationTrigger.button;
+  InputTranslationSendMode _inputSendMode =
+      InputTranslationSendMode.shortOriginalLongTranslated;
   int _revision = 0;
   bool _providerMutationInProgress = false;
   int _enabledMutationToken = 0;
@@ -78,6 +86,20 @@ class TranslationRuntime extends ChangeNotifier {
   TranslationBatchSettings get batchSettings => _batchSettings;
   String get sourceLanguage => _sourceLanguage;
   String get targetLanguage => _targetLanguage;
+  InputTranslationMode get inputMode => _inputMode;
+  TranslationInputMode get inputTranslationMode => _inputMode;
+  InputTranslationScope get inputScope => _inputScope;
+  TranslationInputScope get inputTranslationScope => _inputScope;
+  String get inputSourceLanguage => _inputSourceLanguage;
+  String get inputTranslationSourceLanguage => _inputSourceLanguage;
+  String get inputTargetLanguage => _inputTargetLanguage;
+  String get inputTranslationTargetLanguage => _inputTargetLanguage;
+  InputTranslationTrigger get inputTrigger => _inputTrigger;
+  TranslationInputTrigger get inputTranslationTrigger => _inputTrigger;
+  InputTranslationSendMode get inputSendMode => _inputSendMode;
+  TranslationInputSendMode get inputTranslationSendMode => _inputSendMode;
+  InputTranslationAutoSendMode get inputTranslationAutoSendMode =>
+      _inputSendMode;
   int get revision => _revision;
   List<TranslationProviderConfig> get providers =>
       List.unmodifiable(_providers);
@@ -122,6 +144,24 @@ class TranslationRuntime extends ChangeNotifier {
         : isTranslationLanguage(defaultTargetLanguage)
         ? defaultTargetLanguage
         : 'en';
+    _inputMode = preferences.inputMode;
+    _inputScope = preferences.inputScope;
+    final savedInputSourceLanguage = preferences.inputSourceLanguage;
+    _inputSourceLanguage =
+        savedInputSourceLanguage == 'auto' ||
+            isTranslationLanguage(savedInputSourceLanguage)
+        ? savedInputSourceLanguage
+        : 'auto';
+    final savedInputTargetLanguage = preferences.inputTargetLanguage;
+    _inputTargetLanguage =
+        savedInputTargetLanguage != null &&
+            isTranslationLanguage(savedInputTargetLanguage)
+        ? savedInputTargetLanguage
+        : isTranslationLanguage(defaultTargetLanguage)
+        ? defaultTargetLanguage
+        : 'en';
+    _inputTrigger = preferences.inputTrigger;
+    _inputSendMode = preferences.inputSendMode;
     _privacyAccepted = preferences.privacyAccepted;
     _enabled =
         _privacyAccepted &&
@@ -145,6 +185,10 @@ class TranslationRuntime extends ChangeNotifier {
               _enabled && validResults.keys.every((task) => task.isValid()),
         );
       },
+    );
+    _inputBatcher = TranslationBatcher(
+      sender: _sendBatch,
+      settings: () => _batchSettings,
     );
     _initialized = true;
   }
@@ -317,6 +361,73 @@ class TranslationRuntime extends ChangeNotifier {
     }
   }
 
+  Future<void> setInputMode(InputTranslationMode value) async {
+    if (value == _inputMode) return;
+    _inputMode = value;
+    _bumpRevision(clearPending: true, clearStates: true);
+    await preferences.setInputMode(value);
+  }
+
+  Future<void> setInputTranslationMode(TranslationInputMode value) =>
+      setInputMode(value);
+
+  Future<void> setInputScope(InputTranslationScope value) async {
+    if (value == _inputScope) return;
+    _inputScope = value;
+    _bumpRevision(clearPending: true, clearStates: true);
+    await preferences.setInputScope(value);
+  }
+
+  Future<void> setInputTranslationScope(TranslationInputScope value) =>
+      setInputScope(value);
+
+  Future<void> setInputLanguages({
+    required String source,
+    required String target,
+  }) async {
+    final cleanSource = source.trim().isEmpty ? 'auto' : source.trim();
+    final cleanTarget = target.trim();
+    if (cleanTarget.isEmpty) throw ArgumentError.value(target, 'target');
+    if (cleanSource == _inputSourceLanguage &&
+        cleanTarget == _inputTargetLanguage) {
+      return;
+    }
+    _inputSourceLanguage = cleanSource;
+    _inputTargetLanguage = cleanTarget;
+    _bumpRevision(clearPending: true, clearStates: true);
+    await preferences.setInputSourceLanguage(cleanSource);
+    await preferences.setInputTargetLanguage(cleanTarget);
+  }
+
+  Future<void> setInputTranslationLanguages({
+    required String source,
+    required String target,
+  }) => setInputLanguages(source: source, target: target);
+
+  Future<void> setInputTrigger(InputTranslationTrigger value) async {
+    if (value == _inputTrigger) return;
+    _inputTrigger = value;
+    _bumpRevision(clearPending: true, clearStates: true);
+    await preferences.setInputTrigger(value);
+  }
+
+  Future<void> setInputTranslationTrigger(TranslationInputTrigger value) =>
+      setInputTrigger(value);
+
+  Future<void> setInputSendMode(InputTranslationSendMode value) async {
+    if (value == _inputSendMode) return;
+    _inputSendMode = value;
+    _bumpRevision(clearPending: true, clearStates: true);
+    await preferences.setInputSendMode(value);
+  }
+
+  Future<void> setInputTranslationSendMode(TranslationInputSendMode value) =>
+      setInputSendMode(value);
+
+  Future<void> setInputTranslationAutoSendMode(
+    InputTranslationAutoSendMode value,
+  ) => setInputSendMode(value);
+
   Future<void> acceptPrivacyNotice() async {
     _privacyAccepted = true;
     await preferences.acceptPrivacyNotice();
@@ -328,6 +439,7 @@ class TranslationRuntime extends ChangeNotifier {
     await preferences.saveBatchSettings(value);
     _batchSettings = value;
     _batcher?.settingsChanged();
+    _inputBatcher?.settingsChanged();
     notifyListeners();
   }
 
@@ -498,6 +610,67 @@ class TranslationRuntime extends ChangeNotifier {
     _clearRoomStates(room.id);
     _bumpRevision(clearPending: true, clearStates: false);
     await write;
+  }
+
+  bool canTranslateInput(Room room) {
+    if (!_enabled ||
+        _providerMutationInProgress ||
+        _activeProvider?.isValid != true ||
+        _inputMode == InputTranslationMode.disabled) {
+      return false;
+    }
+    return switch (_inputScope) {
+      InputTranslationScope.automaticRooms => roomControl(room).value,
+      InputTranslationScope.allRooms => true,
+    };
+  }
+
+  bool canTranslateInputInRoom(Room room) => canTranslateInput(room);
+
+  bool canManuallyTranslateInput(Room room) =>
+      _inputMode == InputTranslationMode.manual && canTranslateInput(room);
+
+  bool shouldAutoTranslateInput(Room room) =>
+      _inputMode == InputTranslationMode.automatic && canTranslateInput(room);
+
+  Future<String> translateInputText(Room room, String text) async {
+    if (text.trim().isEmpty) throw ArgumentError.value(text, 'text');
+    if (!canTranslateInput(room)) {
+      throw StateError('Input translation is not available in this room');
+    }
+    final taskRevision = _revision;
+    final provider = _activeProvider!;
+    final sourceLanguage = _inputSourceLanguage;
+    final targetLanguage = _inputTargetLanguage;
+    bool isValid() => _inputTaskValid(
+      room,
+      taskRevision,
+      provider,
+      sourceLanguage,
+      targetLanguage,
+    );
+    final result = await _inputBatcher!.add(
+      TranslationBatchKey(
+        roomId: room.id,
+        providerId: provider.id,
+        protocol: provider.protocol,
+        model: provider.model,
+        sourceLanguage: sourceLanguage,
+        targetLanguage: targetLanguage,
+        promptRevision: promptRevision,
+        runtimeRevision: taskRevision,
+      ),
+      TranslationBatchTask(
+        source: text,
+        messageType: MessageTypes.Text,
+        isValid: isValid,
+      ),
+    );
+    if (!isValid()) throw StateError('Input translation task expired');
+    if (result.trim().isEmpty) {
+      throw StateError('Input translation returned empty text');
+    }
+    return result;
   }
 
   bool canTranslateEvent(Event event) =>
@@ -794,6 +967,20 @@ class TranslationRuntime extends ChangeNotifier {
       event.messageType == messageType &&
       (manual || shouldAutoTranslate(event));
 
+  bool _inputTaskValid(
+    Room room,
+    int taskRevision,
+    TranslationProviderConfig provider,
+    String sourceLanguage,
+    String targetLanguage,
+  ) =>
+      taskRevision == _revision &&
+      _inputSourceLanguage == sourceLanguage &&
+      _inputTargetLanguage == targetLanguage &&
+      _activeProvider != null &&
+      _sameProviderConfiguration(provider, _activeProvider!) &&
+      canTranslateInput(room);
+
   TranslationCacheKey _cacheKey(
     Event event,
     String source,
@@ -928,7 +1115,10 @@ class TranslationRuntime extends ChangeNotifier {
 
   void _bumpRevision({required bool clearPending, required bool clearStates}) {
     _revision++;
-    if (clearPending) _batcher?.cancelPending();
+    if (clearPending) {
+      _batcher?.cancelPending();
+      _inputBatcher?.cancelPending();
+    }
     if (clearStates) _clearAllStates();
     notifyListeners();
   }
