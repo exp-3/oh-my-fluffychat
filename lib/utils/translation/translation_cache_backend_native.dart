@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+import 'package:matrix/matrix.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -33,8 +34,21 @@ class NativeTranslationCacheBackend implements TranslationCacheBackend {
   Future<bool> openExisting(String databaseKey) async {
     if (_database != null) return true;
     if (!await exists()) return false;
-    _database = await _open(databaseKey);
-    return true;
+    try {
+      _database = await _open(databaseKey);
+      return true;
+    } catch (error, stackTrace) {
+      // Translation results are a disposable cache. Match the main Matrix
+      // database recovery strategy and replace a file that cannot be opened
+      // (for example one created by the former, too-late PRAGMA key flow).
+      Logs().w(
+        'Unable to open translation cache database; rebuilding it',
+        error,
+        stackTrace,
+      );
+      await deleteIfExists();
+      return false;
+    }
   }
 
   @override
@@ -42,26 +56,11 @@ class NativeTranslationCacheBackend implements TranslationCacheBackend {
     _database ??= await _open(databaseKey);
   }
 
-  Future<Database> _open(String databaseKey) async => _factory.openDatabase(
-    await _databasePath,
-    options: OpenDatabaseOptions(
+  Future<Database> _open(String databaseKey) async {
+    final databasePath = await _databasePath;
+    final options = OpenDatabaseOptions(
       version: 2,
       onConfigure: (database) async {
-        await database.rawQuery('PRAGMA key = "x\'$databaseKey\'"');
-        final cipherVersionRows = await database.rawQuery(
-          'PRAGMA cipher_version',
-        );
-        final cipherVersion = cipherVersionRows.isEmpty
-            ? null
-            : cipherVersionRows.first.values.firstOrNull?.toString().trim();
-        if (cipherVersion == null || cipherVersion.isEmpty) {
-          // Throwing from onConfigure makes sqflite close the just-opened
-          // handle. Silently accepting this PRAGMA would otherwise permit a
-          // plain SQLite build to expose room/event metadata on disk.
-          throw StateError(
-            'SQLCipher is unavailable; translation cache cannot be opened',
-          );
-        }
         await database.rawQuery('PRAGMA foreign_keys = ON');
       },
       onCreate: (database, _) async {
@@ -92,8 +91,52 @@ CREATE TABLE translations (
           );
         }
       },
-    ),
-  );
+    );
+
+    // On Android/iOS the SQLCipher plugin must receive the password as part
+    // of the native open call. Applying `PRAGMA key` from onConfigure is too
+    // late: Android may execute PRAGMA journal_mode before that callback,
+    // causing an existing encrypted database to be reported as "not a
+    // database" after an app restart.
+    if (PlatformInfos.isMobile) {
+      return sqfl_cipher.openDatabase(
+        databasePath,
+        password: databaseKey,
+        version: options.version,
+        onConfigure: options.onConfigure,
+        onCreate: options.onCreate,
+        onUpgrade: options.onUpgrade,
+        onDowngrade: options.onDowngrade,
+        onOpen: options.onOpen,
+        singleInstance: true,
+      );
+    }
+
+    // Desktop uses the FFI factory. Keep its behavior aligned with the main
+    // Matrix database: migrate an existing plaintext file to SQLCipher, then
+    // apply the key during the factory's configure callback. This also means
+    // the translation database is encrypted at rest on Windows, Linux and
+    // macOS instead of relying only on per-record encryption.
+    final factory = _factory;
+    final helper = SQfLiteEncryptionHelper(
+      factory: factory,
+      path: databasePath,
+      cipher: databaseKey,
+    );
+    await helper.ensureDatabaseFileEncrypted();
+    return factory.openDatabase(
+      databasePath,
+      options: OpenDatabaseOptions(
+        version: options.version,
+        onConfigure: helper.applyPragmaKey,
+        onCreate: options.onCreate,
+        onUpgrade: options.onUpgrade,
+        onDowngrade: options.onDowngrade,
+        onOpen: options.onOpen,
+        singleInstance: true,
+      ),
+    );
+  }
 
   Database get _db =>
       _database ?? (throw StateError('Translation cache is not open'));
@@ -179,8 +222,4 @@ CREATE TABLE translations (
     await _database?.close();
     _database = null;
   }
-}
-
-extension<T> on Iterable<T> {
-  T? get firstOrNull => isEmpty ? null : first;
 }
