@@ -101,6 +101,7 @@
     "inputTranslationTriggerDoubleTap": "Kiire topeltpuudutusega sisestusväli",
     "inputTranslationPrivacyNotice": "Sisestuslihttekst saadetakse valitud kolmandast osapoolest LLM-i pakkujale.",
     "translateInput": "Tõlgi sisend",
+    "messageBubbleGradient": "Message bubble gradient",
     "about": "Rakenduse teave",
     "@about": {
         "type": "String",
@@ -2876,7 +2877,7 @@
     },
     "compressingVideo": "Pakime videot väiksemaks...",
     "shareCrashReports": "Jaga krahhilogisid",
-    "shareCrashReportsDescription": "Jaga rakenduse kokkujooksmise aruandeid automaatselt arendajatega",
+    "shareCrashReportsDescription": "Kas jagad rakenduse kokkujooksmise aruandeid automaatselt arendajatega?",
     "countActiveCallMembers": "Pooleliolevas kõnes on {count} osalejat",
     "@countActiveCallMembers": {
         "placeholders": {
@@ -2891,5 +2892,19 @@
     "incomingCall": "Telefon heliseb",
     "waitingForParticipant": "Ootan osaleja järgi…",
     "decline": "Keeldu",
-    "messageBubbleGradient": "Message bubble gradient"
+    "videoCall": "Videokõne",
+    "voiceCall": "Häälkõne",
+    "missedCall": "Märkamata kõne",
+    "callBack": "Helista tagasi",
+    "hangUp": "Lõpeta kõne",
+    "startCall": "Helista",
+    "selectCamera": "Vali kaamera",
+    "selectMicrophone": "Vali mikrofon",
+    "selectSpeaker": "Vali kõlar",
+    "toggleMicrophone": "Lülita mikrofon sisse/välja",
+    "toggleCamera": "Lülita kaamera sisse/välja",
+    "startScreensharing": "Alusta ekraanijagamist",
+    "stopScreensharing": "Lõpeta ekraanijagamine",
+    "raiseHand": "Anna käega märku",
+    "stopRaiseHand": "Lõpeta käega märkuandmine"
 }

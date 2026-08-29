@@ -2906,5 +2906,11 @@
     "stopScreensharing": "Stop screensharing",
     "raiseHand": "Raise hand",
     "stopRaiseHand": "Stop raise hand",
-    "preferSpeaker": "Prefer speaker"
+    "preferSpeaker": "Prefer speaker",
+    "unexpectedErrorOccurded": "Unfortunately, an unexpected error has occurred: {msg}",
+    "@unexpectedErrorOccurded": {
+        "placeholders": {
+            "msg": {"type": "String"}
+        }
+    }
 }
