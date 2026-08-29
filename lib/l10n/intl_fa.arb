@@ -23,8 +23,6 @@
     "translationScopeNone": "اتاقی وجود ندارد (تنظیم دستی)",
     "translationScopeAllRooms": "پیام در تمام اتاق ها",
     "translationScopeUnencryptedRooms": "پیام ها در اتاق های رمزگذاری نشده",
-    "translationScopeSelectedRooms": "پیام ها در اتاق های انتخاب شده",
-    "translationScopeManualOnly": "فقط پیام هایی که به صورت دستی انتخاب شده اند",
     "translationScopeOverrideHint": "می‌توانید این قانون را در تنظیمات هر اتاق نادیده بگیرید.",
     "sourceLanguage": "زبان پیام اصلی",
     "targetLanguage": "زبان مورد علاقه شما",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "زبان اتاق را به‌عنوان مقصد ترجمه ترجیح بده",
     "translationAutoDetect": "تشخیص خودکار",
     "requiredField": "مورد نیاز",
-    "translationDisplayMode": "حالت نمایش",
     "translatedOnly": "فقط ترجمه",
     "bilingual": "دو زبانه",
     "translationBilingualColor": "رنگ متن ترجمه",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "زبان ارتباطی اتاق",
     "roomLanguageFollowGlobal": "تنظیم نشده (پیروی از تنظیمات کلی)",
     "translateRoom": "ترجمه کنید",
-    "stopRoomTranslation": "توقف کنید",
     "translationDisabledGlobally": "ابتدا ترجمه را در تنظیمات برنامه فعال کنید.",
-    "translationRoomManagedGlobally": "این تنظیم توسط دامنه ترجمه جهانی کنترل می شود.",
-    "translationEncryptedRoomExcluded": "محدوده فعلی اتاق های رمزگذاری شده را به طور خودکار ترجمه نمی کند.",
-    "translationManualOnlyRoom": "محدوده فعلی فقط پیام هایی را که به صورت دستی انتخاب می کنید ترجمه می کند.",
     "inputTranslation": "ترجمه ورودی",
     "inputTranslationMode": "حالت ترجمه ورودی",
     "inputTranslationModeDisabled": "از کار افتاده است",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "فیلد ورودی با دو ضربه سریع",
     "inputTranslationPrivacyNotice": "متن ساده ورودی به ارائه‌دهنده شخص ثالث LLM منتخب ارسال می‌شود.",
     "translateInput": "ترجمه ورودی",
+    "messageBubbleGradient": "گرادیان حباب پیام",
     "repeatPassword": "تکرار گذرواژه",
     "about": "درباره",
     "@about": {
@@ -2599,6 +2593,5 @@
                 "type": "int"
             }
         }
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

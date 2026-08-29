@@ -23,8 +23,6 @@
     "translationScopeNone": "Geen kamers",
     "translationScopeAllRooms": "Berichten in alle kamers",
     "translationScopeUnencryptedRooms": "Berichten in niet-versleutelde kamers",
-    "translationScopeSelectedRooms": "Berichten in geselecteerde kamers",
-    "translationScopeManualOnly": "Alleen handmatig geselecteerde berichten",
     "translationScopeOverrideHint": "Regel overschrijven in kamerinstellingen",
     "sourceLanguage": "Taal van het oorspronkelijke bericht",
     "targetLanguage": "Uw voorkeurstaal",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "Kamertaal als vertaaldoel",
     "translationAutoDetect": "Automatisch detecteren",
     "requiredField": "Vereist",
-    "translationDisplayMode": "Weergavemodus",
     "translatedOnly": "Alleen vertaling",
     "bilingual": "Tweetalig",
     "translationBilingualColor": "Kleur van de vertalingstekst",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "Communicatietaal",
     "roomLanguageFollowGlobal": "Niet ingesteld",
     "translateRoom": "Vertalen",
-    "stopRoomTranslation": "Stop",
     "translationDisabledGlobally": "Schakel eerst de vertaling in de app-instellingen in.",
-    "translationRoomManagedGlobally": "Deze instelling wordt bepaald door het globale vertaalbereik.",
-    "translationEncryptedRoomExcluded": "Het huidige bereik vertaalt gecodeerde kamers niet automatisch.",
-    "translationManualOnlyRoom": "Het huidige bereik vertaalt alleen berichten die u handmatig selecteert.",
     "inputTranslation": "Invoer vertaling",
     "inputTranslationMode": "Invoervertaalmodus",
     "inputTranslationModeDisabled": "Uitgeschakeld",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "Snel dubbeltikinvoerveld",
     "inputTranslationPrivacyNotice": "Ingevoerde platte tekst wordt verzonden naar de geselecteerde externe LLM-provider.",
     "translateInput": "Vertaal invoer",
+    "messageBubbleGradient": "Kleurverloop van de tekstballon",
     "about": "Over ons",
     "@about": {
         "type": "String",
@@ -2857,6 +2851,5 @@
     "loadingMessages": "Berichten laden...",
     "buildDoesNotSupportFirebase": "Deze versie ondersteunt geen firebase cloud messaging.",
     "unableToRegisterDeviceForFirebase": "Niet in staat om het apparaat te registreren voor firebase cloud messaging.",
-    "unifiedPushDistributors": "Unified Push diensten:",
-    "messageBubbleGradient": "Message bubble gradient"
+    "unifiedPushDistributors": "Unified Push diensten:"
 }

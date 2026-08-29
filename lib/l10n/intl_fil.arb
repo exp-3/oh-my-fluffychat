@@ -22,8 +22,6 @@
     "translationScopeNone": "Walang kuwarto (manu-manong pag-setup)",
     "translationScopeAllRooms": "Mga mensahe sa lahat ng kwarto",
     "translationScopeUnencryptedRooms": "Mga mensahe sa mga hindi naka-encrypt na kwarto",
-    "translationScopeSelectedRooms": "Mga mensahe sa mga napiling kwarto",
-    "translationScopeManualOnly": "Mga manu-manong piniling mensahe lamang",
     "translationScopeOverrideHint": "Maaari mong i-override ang panuntunang ito sa mga setting ng bawat kuwarto.",
     "sourceLanguage": "Wika ng orihinal na mensahe",
     "targetLanguage": "Mas gusto mong wika",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "Mas gusto ang wika ng kuwarto bilang target ng pagsasalin",
     "translationAutoDetect": "Awtomatikong matukoy",
     "requiredField": "Kinakailangan",
-    "translationDisplayMode": "Paraan ng pagpapakita",
     "translatedOnly": "Pagsasalin lamang",
     "bilingual": "Bilingguwal",
     "translationBilingualColor": "Kulay ng teksto ng pagsasalin",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "Wika ng komunikasyon sa kuwarto",
     "roomLanguageFollowGlobal": "Hindi nakatakda (sundin ang global na setting)",
     "translateRoom": "Isalin",
-    "stopRoomTranslation": "Tumigil ka",
     "translationDisabledGlobally": "Paganahin muna ang pagsasalin sa mga setting ng app.",
-    "translationRoomManagedGlobally": "Ang setting na ito ay kinokontrol ng pandaigdigang saklaw ng pagsasalin.",
-    "translationEncryptedRoomExcluded": "Ang kasalukuyang saklaw ay hindi awtomatikong nagsasalin ng mga naka-encrypt na kwarto.",
-    "translationManualOnlyRoom": "Ang kasalukuyang saklaw ay nagsasalin lamang ng mga mensaheng pinili mo nang manu-mano.",
     "inputTranslation": "Pagsasalin ng input",
     "inputTranslationMode": "I-input ang mode ng pagsasalin",
     "inputTranslationModeDisabled": "Hindi pinagana",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "Mabilis na i-double-tap ang input field",
     "inputTranslationPrivacyNotice": "Ang input plaintext ay ipapadala sa napiling third-party na LLM provider.",
     "translateInput": "Isalin ang input",
+    "messageBubbleGradient": "Gradient ng bubble ng mensahe",
     "remove": "Tanggalin",
     "@remove": {
         "type": "String",
@@ -2093,6 +2087,5 @@
     "@noGoogleServicesWarning": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

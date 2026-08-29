@@ -23,8 +23,6 @@
     "translationScopeNone": "Ingen rom (manuelt oppsett)",
     "translationScopeAllRooms": "Meldinger i alle rom",
     "translationScopeUnencryptedRooms": "Meldinger i ukrypterte rom",
-    "translationScopeSelectedRooms": "Meldinger i utvalgte rom",
-    "translationScopeManualOnly": "Kun manuelt valgte meldinger",
     "translationScopeOverrideHint": "Du kan overstyre denne regelen i innstillingene for hvert rom.",
     "sourceLanguage": "Språket i den opprinnelige meldingen",
     "targetLanguage": "Språket du foretrekker",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "Foretrekk rommets språk som oversettelsesmål",
     "translationAutoDetect": "Oppdag automatisk",
     "requiredField": "Obligatorisk",
-    "translationDisplayMode": "Visningsmodus",
     "translatedOnly": "Kun oversettelse",
     "bilingual": "Tospråklig",
     "translationBilingualColor": "Oversettelsestekstfarge",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "Rommes kommunikasjonsspråk",
     "roomLanguageFollowGlobal": "Ikke angitt (følg global innstilling)",
     "translateRoom": "Oversett",
-    "stopRoomTranslation": "Stopp",
     "translationDisabledGlobally": "Aktiver oversettelse i appinnstillingene først.",
-    "translationRoomManagedGlobally": "Denne innstillingen styres av det globale oversettelsesomfanget.",
-    "translationEncryptedRoomExcluded": "Det nåværende omfanget oversetter ikke automatisk krypterte rom.",
-    "translationManualOnlyRoom": "Det gjeldende omfanget oversetter bare meldinger du velger manuelt.",
     "inputTranslation": "Inndataoversettelse",
     "inputTranslationMode": "Oversettelsesmodus for inndata",
     "inputTranslationModeDisabled": "Deaktivert",
@@ -100,7 +93,7 @@
     "inputTranslationTriggerDoubleTap": "Rask dobbelttrykk på inndatafeltet",
     "inputTranslationPrivacyNotice": "Input klartekst vil bli sendt til den valgte tredjeparts LLM-leverandøren.",
     "translateInput": "Oversett innspill",
-    "messageBubbleGradient": "Message bubble gradient",
+    "messageBubbleGradient": "Fargeovergang for meldingsboble",
     "about": "Om",
     "@about": {
         "type": "String",
@@ -2883,14 +2876,6 @@
     "compressingVideo": "Komprimerer video...",
     "shareCrashReports": "Del krasjrapporter",
     "shareCrashReportsDescription": "Dele automatisk krasjrapporter med utviklerne?",
-    "shareCrashReportsPrompt": "Vil du dele krasjrapporter automatisk med utviklerne? Les mer på {url} om hvilke data som deles.",
-    "@shareCrashReportsPrompt": {
-        "placeholders": {
-            "url": {
-                "type": "String"
-            }
-        }
-    },
     "allow": "Tillat",
     "deny": "Avvis",
     "enterCall": "Bli med i samtale",

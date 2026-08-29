@@ -23,8 +23,6 @@
     "translationScopeNone": "Inga rum",
     "translationScopeAllRooms": "Meddelanden i alla rum",
     "translationScopeUnencryptedRooms": "Meddelanden i okrypterade rum",
-    "translationScopeSelectedRooms": "Meddelanden i utvalda rum",
-    "translationScopeManualOnly": "Endast manuellt valda meddelanden",
     "translationScopeOverrideHint": "Regeln kan ändras i rumsinställningar",
     "sourceLanguage": "Språket i originalmeddelandet",
     "targetLanguage": "Ditt föredragna språk",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "Rummets språk som översättningsmål",
     "translationAutoDetect": "Upptäck automatiskt",
     "requiredField": "Obligatoriskt",
-    "translationDisplayMode": "Visningsläge",
     "translatedOnly": "Endast översättning",
     "bilingual": "Tvåspråkig",
     "translationBilingualColor": "Översättning textfärg",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "Rummets språk",
     "roomLanguageFollowGlobal": "Inte inställt",
     "translateRoom": "Översätt",
-    "stopRoomTranslation": "Sluta",
     "translationDisabledGlobally": "Aktivera översättning i appinställningarna först.",
-    "translationRoomManagedGlobally": "Den här inställningen styrs av det globala översättningsomfånget.",
-    "translationEncryptedRoomExcluded": "Den nuvarande omfattningen översätter inte automatiskt krypterade rum.",
-    "translationManualOnlyRoom": "Det aktuella omfånget översätter endast meddelanden du väljer manuellt.",
     "inputTranslation": "Indataöversättning",
     "inputTranslationMode": "Inmatningsöversättningsläge",
     "inputTranslationModeDisabled": "Inaktiverad",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "Snabbt dubbeltryck inmatningsfält",
     "inputTranslationPrivacyNotice": "Inmatad klartext kommer att skickas till den valda tredjeparts LLM-leverantören.",
     "translateInput": "Översätt input",
+    "messageBubbleGradient": "Meddelandebubblans färgövergång",
     "about": "Om",
     "@about": {
         "type": "String",
@@ -2803,6 +2797,5 @@
                 "type": "int"
             }
         }
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

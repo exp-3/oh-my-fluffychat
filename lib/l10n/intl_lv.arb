@@ -22,8 +22,6 @@
     "translationScopeNone": "Nav istabu (manuāla iestatīšana)",
     "translationScopeAllRooms": "Ziņas visās telpās",
     "translationScopeUnencryptedRooms": "Ziņojumi nešifrētās telpās",
-    "translationScopeSelectedRooms": "Ziņojumi atlasītajās telpās",
-    "translationScopeManualOnly": "Tikai manuāli atlasītie ziņojumi",
     "translationScopeOverrideHint": "Šo noteikumu varat mainīt katras istabas iestatījumos.",
     "sourceLanguage": "Sākotnējā ziņojuma valoda",
     "targetLanguage": "Jūsu vēlamā valoda",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "Dot priekšroku istabas valodai kā tulkošanas mērķim",
     "translationAutoDetect": "Noteikt automātiski",
     "requiredField": "Obligāti",
-    "translationDisplayMode": "Displeja režīms",
     "translatedOnly": "Tikai tulkojums",
     "bilingual": "Divvalodu",
     "translationBilingualColor": "Tulkojuma teksta krāsa",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "Istabas saziņas valoda",
     "roomLanguageFollowGlobal": "Nav iestatīts (sekot globālajiem iestatījumiem)",
     "translateRoom": "Tulkot",
-    "stopRoomTranslation": "Stop",
     "translationDisabledGlobally": "Vispirms iespējojiet tulkošanu lietotnes iestatījumos.",
-    "translationRoomManagedGlobally": "Šo iestatījumu kontrolē globālā tulkošanas joma.",
-    "translationEncryptedRoomExcluded": "Pašreizējais tvērums automātiski netulko šifrētās telpas.",
-    "translationManualOnlyRoom": "Pašreizējā darbības joma tulko tikai manuāli atlasītos ziņojumus.",
     "inputTranslation": "Ievades tulkojums",
     "inputTranslationMode": "Ievades tulkošanas režīms",
     "inputTranslationModeDisabled": "Atspējots",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "Ātri veiciet dubultskārienu ievades laukā",
     "inputTranslationPrivacyNotice": "Ievades vienkāršais teksts tiks nosūtīts atlasītajam trešās puses LLM nodrošinātājam.",
     "translateInput": "Tulkot ievadi",
+    "messageBubbleGradient": "Ziņas burbuļa gradients",
     "hugContent": "{senderName} apskauj Tevi",
     "@hugContent": {
         "type": "String",
@@ -2837,7 +2831,6 @@
     "loadingMessages": "Ielādē ziņas…",
     "buildDoesNotSupportFirebase": "Šis būvējums neatbalsta Firebase mākoņziņapmaiņu.",
     "unableToRegisterDeviceForFirebase": "Nav iespējams reģistrēt ierīci Firebase ziņapmaiņai.",
-    "messageBubbleGradient": "Message bubble gradient",
     "decline": "Noraidīt",
     "videoCallsBetaWarning": "Video zvani pašreiz ir beta iespēja. Tajos var būt nepilnības vai neparedzēta uzvedība. Mēs būsim priecīgi par atsauksmēm.",
     "noDevicesFound": "Nav atrasta neviena ierīce",
@@ -2849,17 +2842,8 @@
     "doubleTapReaction": "Atsaukšanās ar divkāršu piesišanu",
     "shareCrashReports": "Kopīgot avāriju ziņojumus",
     "shareCrashReportsDescription": "Avāriju ziņojumus automātiski kopīgot ar izstrādātājiem",
-    "shareCrashReportsPrompt": "Automātiski kopīgot avāriju ziņojumus ar izstrādātājiem? Vairāk par to, kādi dati tiek kopīgoti, var uzzināt {url}.",
-    "@shareCrashReportsPrompt": {
-        "placeholders": {
-            "url": {
-                "type": "String"
-            }
-        }
-    },
     "allow": "Atļaut",
     "deny": "Noraidīt",
-    "activeCall": "Notiekošs zvans",
     "countActiveCallMembers": "{count, plural, zero{{count} zvanā esoši dalībnieki} one{{count} zvanā esošs dalībnieks} other{{count} zvanā esoši dalībnieki}}",
     "@countActiveCallMembers": {
         "placeholders": {

@@ -24,8 +24,6 @@
     "translationScopeNone": "No rooms (manual setup)",
     "translationScopeAllRooms": "Messages in all rooms",
     "translationScopeUnencryptedRooms": "Messages in unencrypted rooms",
-    "translationScopeSelectedRooms": "Messages in selected rooms",
-    "translationScopeManualOnly": "Only manually selected messages",
     "translationScopeOverrideHint": "You can override this rule in each room's settings",
     "sourceLanguage": "Original message language",
     "targetLanguage": "Your preferred language",
@@ -33,7 +31,6 @@
     "preferRoomLanguageForInputTarget": "Prefer the room language as the translation target",
     "translationAutoDetect": "Detect automatically",
     "requiredField": "Required",
-    "translationDisplayMode": "Display mode",
     "translatedOnly": "Translation only",
     "bilingual": "Bilingual",
     "translationBilingualColor": "Translation text color",
@@ -90,11 +87,7 @@
     "roomCommunicationLanguage": "Room communication language",
     "roomLanguageFollowGlobal": "Not set (follow global)",
     "translateRoom": "Translate",
-    "stopRoomTranslation": "Stop",
     "translationDisabledGlobally": "Enable translation in app settings first.",
-    "translationRoomManagedGlobally": "This setting is controlled by the global translation scope.",
-    "translationEncryptedRoomExcluded": "The current scope does not automatically translate encrypted rooms.",
-    "translationManualOnlyRoom": "The current scope only translates messages you select manually.",
     "inputTranslation": "Input translation",
     "inputTranslationMode": "Input translation mode",
     "inputTranslationModeDisabled": "Disabled",
@@ -114,6 +107,7 @@
     "inputTranslationTriggerDoubleTap": "Quick double-tap input field",
     "inputTranslationPrivacyNotice": "Input plaintext will be sent to the selected third-party LLM provider.",
     "translateInput": "Translate input",
+    "messageBubbleGradient": "Message bubble gradient",
     "editImage": "Edit image",
     "@editImage": {
         "type": "String",
@@ -1241,7 +1235,6 @@
         "placeholders": {}
     },
     "messagesStyle": "Messages:",
-    "messageBubbleGradient": "Message bubble gradient",
     "moderator": "Moderator",
     "@moderator": {
         "type": "String",
@@ -2910,7 +2903,9 @@
     "unexpectedErrorOccurded": "Unfortunately, an unexpected error has occurred: {msg}",
     "@unexpectedErrorOccurded": {
         "placeholders": {
-            "msg": {"type": "String"}
+            "msg": {
+                "type": "String"
+            }
         }
     }
 }

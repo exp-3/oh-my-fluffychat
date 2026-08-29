@@ -23,8 +23,6 @@
     "translationScopeNone": "Нема соба (ручно подешавање)",
     "translationScopeAllRooms": "Поруке у свим собама",
     "translationScopeUnencryptedRooms": "Поруке у нешифрованим просторијама",
-    "translationScopeSelectedRooms": "Поруке у одабраним просторијама",
-    "translationScopeManualOnly": "Само ручно одабране поруке",
     "translationScopeOverrideHint": "Ово правило можете заменити у подешавањима сваке собе.",
     "sourceLanguage": "Језик изворне поруке",
     "targetLanguage": "Ваш жељени језик",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "Првенствено користи језик собе као циљ превода",
     "translationAutoDetect": "Откриј аутоматски",
     "requiredField": "Обавезно",
-    "translationDisplayMode": "Режим приказа",
     "translatedOnly": "Само превод",
     "bilingual": "Двојезично",
     "translationBilingualColor": "Боја текста превода",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "Језик комуникације собе",
     "roomLanguageFollowGlobal": "Није подешено (прати глобално)",
     "translateRoom": "Преведи",
-    "stopRoomTranslation": "Стани",
     "translationDisabledGlobally": "Прво омогућите превод у подешавањима апликације.",
-    "translationRoomManagedGlobally": "Ово подешавање контролише глобални опсег превођења.",
-    "translationEncryptedRoomExcluded": "Тренутни опсег не преводи аутоматски шифроване собе.",
-    "translationManualOnlyRoom": "Тренутни опсег преводи само поруке које одаберете ручно.",
     "inputTranslation": "Превод уноса",
     "inputTranslationMode": "Начин превођења уноса",
     "inputTranslationModeDisabled": "Онемогућено",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "Брзо двапут додирните поље за унос",
     "inputTranslationPrivacyNotice": "Унесени отворени текст ће бити послат изабраном трећем добављачу ЛЛМ.",
     "translateInput": "Преведите унос",
+    "messageBubbleGradient": "Градијент облачића поруке",
     "about": "О програму",
     "@about": {
         "type": "String",
@@ -2203,6 +2197,5 @@
                 "type": "String"
             }
         }
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

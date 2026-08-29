@@ -22,8 +22,6 @@
     "translationScopeNone": "Ei huoneita (manuaalinen asetus)",
     "translationScopeAllRooms": "Viestit kaikissa huoneissa",
     "translationScopeUnencryptedRooms": "Viestit salaamattomissa huoneissa",
-    "translationScopeSelectedRooms": "Viestit valituissa huoneissa",
-    "translationScopeManualOnly": "Vain manuaalisesti valitut viestit",
     "translationScopeOverrideHint": "Voit ohittaa tämän säännön kunkin huoneen asetuksissa.",
     "sourceLanguage": "Alkuperäisen viestin kieli",
     "targetLanguage": "Haluttu kielesi",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "Suosi huoneen kieltä käännöskohteena",
     "translationAutoDetect": "Tunnista automaattisesti",
     "requiredField": "Pakollinen",
-    "translationDisplayMode": "Näyttötila",
     "translatedOnly": "Vain käännös",
     "bilingual": "Kaksikielinen",
     "translationBilingualColor": "Käännöstekstin väri",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "Huoneen viestintäkieli",
     "roomLanguageFollowGlobal": "Ei asetettu (noudata yleistä asetusta)",
     "translateRoom": "Käännä",
-    "stopRoomTranslation": "Pysähdy",
     "translationDisabledGlobally": "Ota käännös ensin käyttöön sovelluksen asetuksista.",
-    "translationRoomManagedGlobally": "Tätä asetusta hallitsee yleinen käännösalue.",
-    "translationEncryptedRoomExcluded": "Nykyinen laajuus ei käännä salattuja huoneita automaattisesti.",
-    "translationManualOnlyRoom": "Nykyinen laajuus kääntää vain manuaalisesti valitsemasi viestit.",
     "inputTranslation": "Syötä käännös",
     "inputTranslationMode": "Syötä käännöstila",
     "inputTranslationModeDisabled": "Ei käytössä",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "Nopea kaksoisnapautussyöttökenttä",
     "inputTranslationPrivacyNotice": "Syötettävä pelkkä teksti lähetetään valitulle kolmannen osapuolen LLM-palveluntarjoajalle.",
     "translateInput": "Käännä syöttö",
+    "messageBubbleGradient": "Viestikuplan liukuväri",
     "repeatPassword": "Salasana uudelleen",
     "about": "Tietoa FluffyChatista",
     "@about": {
@@ -2552,6 +2546,5 @@
                 "type": "String"
             }
         }
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

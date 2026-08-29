@@ -23,8 +23,6 @@
     "translationScopeNone": "Không có phòng (thiết lập thủ công)",
     "translationScopeAllRooms": "Tin nhắn trong tất cả các phòng",
     "translationScopeUnencryptedRooms": "Tin nhắn trong phòng không được mã hóa",
-    "translationScopeSelectedRooms": "Tin nhắn trong các phòng đã chọn",
-    "translationScopeManualOnly": "Chỉ những tin nhắn được chọn thủ công",
     "translationScopeOverrideHint": "Bạn có thể ghi đè quy tắc này trong cài đặt từng phòng.",
     "sourceLanguage": "Ngôn ngữ của tin nhắn gốc",
     "targetLanguage": "Ngôn ngữ bạn ưa thích",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "Ưu tiên ngôn ngữ phòng làm đích dịch",
     "translationAutoDetect": "Tự động phát hiện",
     "requiredField": "Bắt buộc",
-    "translationDisplayMode": "Chế độ hiển thị",
     "translatedOnly": "Chỉ dịch",
     "bilingual": "song ngữ",
     "translationBilingualColor": "Màu văn bản dịch",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "Ngôn ngữ giao tiếp của phòng",
     "roomLanguageFollowGlobal": "Chưa đặt (theo cài đặt chung)",
     "translateRoom": "Dịch",
-    "stopRoomTranslation": "Dừng lại",
     "translationDisabledGlobally": "Trước tiên hãy bật dịch trong cài đặt ứng dụng.",
-    "translationRoomManagedGlobally": "Cài đặt này được kiểm soát bởi phạm vi dịch toàn cầu.",
-    "translationEncryptedRoomExcluded": "Phạm vi hiện tại không tự động dịch các phòng được mã hóa.",
-    "translationManualOnlyRoom": "Phạm vi hiện tại chỉ dịch các tin nhắn bạn chọn theo cách thủ công.",
     "inputTranslation": "Dịch đầu vào",
     "inputTranslationMode": "Chế độ dịch đầu vào",
     "inputTranslationModeDisabled": "Đã tắt",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "Nhấn đúp vào trường nhập nhanh",
     "inputTranslationPrivacyNotice": "Bản rõ đầu vào sẽ được gửi đến nhà cung cấp LLM bên thứ ba đã chọn.",
     "translateInput": "Dịch đầu vào",
+    "messageBubbleGradient": "Màu chuyển tiếp bong bóng tin nhắn",
     "about": "Giới thiệu",
     "@about": {
         "type": "String",
@@ -2054,6 +2048,5 @@
     "@passwordForgotten": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

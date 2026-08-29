@@ -24,8 +24,6 @@
     "translationScopeNone": "Nema soba (ručno postavljanje)",
     "translationScopeAllRooms": "Poruke u svim sobama",
     "translationScopeUnencryptedRooms": "Poruke u nešifriranim sobama",
-    "translationScopeSelectedRooms": "Poruke u odabranim sobama",
-    "translationScopeManualOnly": "Samo ručno odabrane poruke",
     "translationScopeOverrideHint": "Ovo pravilo možete nadjačati u postavkama svake sobe.",
     "sourceLanguage": "Jezik izvorne poruke",
     "targetLanguage": "Vaš željeni jezik",
@@ -33,7 +31,6 @@
     "preferRoomLanguageForInputTarget": "Preferiraj jezik sobe kao cilj prijevoda",
     "translationAutoDetect": "Otkrij automatski",
     "requiredField": "Obavezno",
-    "translationDisplayMode": "Način prikaza",
     "translatedOnly": "Samo prijevod",
     "bilingual": "Dvojezično",
     "translationBilingualColor": "Boja teksta prijevoda",
@@ -77,11 +74,7 @@
     "roomCommunicationLanguage": "Jezik komunikacije sobe",
     "roomLanguageFollowGlobal": "Nije postavljeno (slijedi globalno)",
     "translateRoom": "Prevedi",
-    "stopRoomTranslation": "stani",
     "translationDisabledGlobally": "Prvo omogućite prijevod u postavkama aplikacije.",
-    "translationRoomManagedGlobally": "Ovom postavkom upravlja globalni opseg prijevoda.",
-    "translationEncryptedRoomExcluded": "Trenutačni opseg ne prevodi automatski šifrirane sobe.",
-    "translationManualOnlyRoom": "Trenutačni opseg prevodi samo poruke koje odaberete ručno.",
     "inputTranslation": "Ulazni prijevod",
     "inputTranslationMode": "Način prijevoda unosa",
     "inputTranslationModeDisabled": "Onesposobljeno",
@@ -101,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Brzi dvostruki dodir na polje za unos",
     "inputTranslationPrivacyNotice": "Ulazni otvoreni tekst bit će poslan odabranom trećem davatelju LLM-a.",
     "translateInput": "Prevedi unos",
+    "messageBubbleGradient": "Gradijent oblačića poruke",
     "about": "Informacije",
     "@about": {
         "type": "String",
@@ -2575,6 +2569,5 @@
     "logs": "Zapisi",
     "advancedConfigs": "Napredne konfiguracije",
     "advancedConfigurations": "Napredne konfiguracije",
-    "matrixId": "Matrix ID",
-    "messageBubbleGradient": "Message bubble gradient"
+    "matrixId": "Matrix ID"
 }

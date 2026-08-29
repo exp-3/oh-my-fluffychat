@@ -22,8 +22,6 @@
     "translationScopeNone": "Null chambres (configuration manual)",
     "translationScopeAllRooms": "Missages in omni chambres",
     "translationScopeUnencryptedRooms": "Missages in non-ciffrat chambres",
-    "translationScopeSelectedRooms": "Missages in selectet chambres",
-    "translationScopeManualOnly": "Solmen manualmen selectet missages",
     "translationScopeOverrideHint": "Vu posse superscrir ti regule in li configuration de chascun chambre.",
     "sourceLanguage": "Lingue del message original",
     "targetLanguage": "Vu preferet lingue",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "Preferer li lingue del chambre quam cible de traduction",
     "translationAutoDetect": "Detecter automaticmen",
     "requiredField": "Obligatori",
-    "translationDisplayMode": "Mode de presentation",
     "translatedOnly": "Solmen traduction",
     "bilingual": "Bilingui",
     "translationBilingualColor": "Color del text traductet",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "Lingue de communication del chambre",
     "roomLanguageFollowGlobal": "Ne configurat (sequer li global configuration)",
     "translateRoom": "Traducter",
-    "stopRoomTranslation": "Stoppar",
     "translationDisabledGlobally": "Activa traduction in li parametres del application in prim.",
-    "translationRoomManagedGlobally": "Ti parametre es controlat per li global amplitá de traduction.",
-    "translationEncryptedRoomExcluded": "Li actual amplitá ne traducte automaticmen ciffrat chambres.",
-    "translationManualOnlyRoom": "Li actual amplitá traducte solmen missages que vu selecte manualmen.",
     "inputTranslation": "Traduction del intrada",
     "inputTranslationMode": "Mode de traduction del intrada",
     "inputTranslationModeDisabled": "Desactivat",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "Rapid duple pression del campo de intrada",
     "inputTranslationPrivacyNotice": "Li text simplic del intrada va esser misset al selectet provider LLM de un altri partise.",
     "translateInput": "Traducter li intrada",
+    "messageBubbleGradient": "Gradiente del bulla de missage",
     "group": "Gruppe",
     "@group": {
         "type": "String",
@@ -2109,6 +2103,5 @@
     "@areGuestsAllowedToJoin": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

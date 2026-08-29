@@ -24,8 +24,6 @@
     "translationScopeNone": "Немає кімнат (налаштування вручну)",
     "translationScopeAllRooms": "Повідомлення в усіх кімнатах",
     "translationScopeUnencryptedRooms": "Повідомлення в незашифрованих кімнатах",
-    "translationScopeSelectedRooms": "Повідомлення у вибраних кімнатах",
-    "translationScopeManualOnly": "Тільки вибрані вручну повідомлення",
     "translationScopeOverrideHint": "Це правило можна змінити в налаштуваннях кожної кімнати.",
     "sourceLanguage": "Мова оригінального повідомлення",
     "targetLanguage": "Ваша бажана мова",
@@ -33,7 +31,6 @@
     "preferRoomLanguageForInputTarget": "Надавати перевагу мові кімнати як мові перекладу",
     "translationAutoDetect": "Визначати автоматично",
     "requiredField": "Обов'язковий",
-    "translationDisplayMode": "Режим відображення",
     "translatedOnly": "Тільки переклад",
     "bilingual": "Двомовний",
     "translationBilingualColor": "Колір тексту перекладу",
@@ -77,11 +74,7 @@
     "roomCommunicationLanguage": "Мова спілкування в кімнаті",
     "roomLanguageFollowGlobal": "Не задано (глобальні налаштування)",
     "translateRoom": "Перекласти",
-    "stopRoomTranslation": "Стоп",
     "translationDisabledGlobally": "Спочатку ввімкніть переклад у налаштуваннях програми.",
-    "translationRoomManagedGlobally": "Цей параметр контролюється глобальною областю перекладу.",
-    "translationEncryptedRoomExcluded": "Поточний обсяг не перекладає автоматично зашифровані кімнати.",
-    "translationManualOnlyRoom": "Поточний обсяг перекладає лише повідомлення, які ви вибираєте вручну.",
     "inputTranslation": "Вхідний переклад",
     "inputTranslationMode": "Режим перекладу введення",
     "inputTranslationModeDisabled": "Вимкнено",
@@ -101,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Поле швидкого подвійного дотику",
     "inputTranslationPrivacyNotice": "Введений відкритий текст буде надіслано вибраному сторонньому постачальнику LLM.",
     "translateInput": "Перекласти введення",
+    "messageBubbleGradient": "Градієнт бульбашки повідомлення",
     "about": "Про застосунок",
     "@about": {
         "type": "String",
@@ -2640,6 +2634,5 @@
     },
     "deviceIdentityKey": "Ключ пристрою",
     "showMore": "Показати ще",
-    "showLess": "Показати менше",
-    "messageBubbleGradient": "Message bubble gradient"
+    "showLess": "Показати менше"
 }

@@ -22,8 +22,6 @@
     "translationScopeNone": "Ingen rum (manuel opsætning)",
     "translationScopeAllRooms": "Beskeder i alle rum",
     "translationScopeUnencryptedRooms": "Beskeder i ukrypterede rum",
-    "translationScopeSelectedRooms": "Beskeder i udvalgte rum",
-    "translationScopeManualOnly": "Kun manuelt valgte beskeder",
     "translationScopeOverrideHint": "Du kan tilsidesætte denne regel i indstillingerne for hvert rum.",
     "sourceLanguage": "Sproget i den originale besked",
     "targetLanguage": "Dit foretrukne sprog",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "Foretræk rummets sprog som oversættelsesmål",
     "translationAutoDetect": "Registrer automatisk",
     "requiredField": "Påkrævet",
-    "translationDisplayMode": "Visningstilstand",
     "translatedOnly": "Kun oversættelse",
     "bilingual": "Tosproget",
     "translationBilingualColor": "Oversættelsestekstfarve",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "Rummets kommunikationssprog",
     "roomLanguageFollowGlobal": "Ikke angivet (følg global indstilling)",
     "translateRoom": "Oversæt",
-    "stopRoomTranslation": "Stop",
     "translationDisabledGlobally": "Aktiver oversættelse i appindstillinger først.",
-    "translationRoomManagedGlobally": "Denne indstilling styres af det globale oversættelsesområde.",
-    "translationEncryptedRoomExcluded": "Det nuværende omfang oversætter ikke automatisk krypterede rum.",
-    "translationManualOnlyRoom": "Det aktuelle omfang oversætter kun meddelelser, du vælger manuelt.",
     "inputTranslation": "Input oversættelse",
     "inputTranslationMode": "Input oversættelsestilstand",
     "inputTranslationModeDisabled": "Deaktiveret",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "Hurtigt dobbelttryk indtastningsfelt",
     "inputTranslationPrivacyNotice": "Input klartekst vil blive sendt til den valgte tredjeparts LLM-udbyder.",
     "translateInput": "Oversæt input",
+    "messageBubbleGradient": "Beskedboblens farveforløb",
     "repeatPassword": "Gentag password",
     "notAnImage": "Ikke en billedfil.",
     "remove": "Fjern",
@@ -1957,6 +1951,5 @@
     "@areGuestsAllowedToJoin": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

@@ -24,8 +24,6 @@
     "translationScopeNone": "Нет комнат (ручная настройка)",
     "translationScopeAllRooms": "Сообщения во всех комнатах",
     "translationScopeUnencryptedRooms": "Сообщения в незашифрованных комнатах",
-    "translationScopeSelectedRooms": "Сообщения в выбранных комнатах",
-    "translationScopeManualOnly": "Только выбранные вручную сообщения",
     "translationScopeOverrideHint": "Это правило можно изменить в настройках каждой комнаты.",
     "sourceLanguage": "Язык исходного сообщения",
     "targetLanguage": "Предпочитаемый вами язык",
@@ -33,7 +31,6 @@
     "preferRoomLanguageForInputTarget": "Предпочитать язык комнаты как язык перевода",
     "translationAutoDetect": "Обнаруживать автоматически",
     "requiredField": "Требуется",
-    "translationDisplayMode": "Режим отображения",
     "translatedOnly": "Только перевод",
     "bilingual": "Двуязычный",
     "translationBilingualColor": "Цвет текста перевода",
@@ -77,11 +74,7 @@
     "roomCommunicationLanguage": "Язык общения в комнате",
     "roomLanguageFollowGlobal": "Не задано (следовать глобальной настройке)",
     "translateRoom": "Перевести",
-    "stopRoomTranslation": "Стоп",
     "translationDisabledGlobally": "Сначала включите перевод в настройках приложения.",
-    "translationRoomManagedGlobally": "Этот параметр контролируется глобальной областью перевода.",
-    "translationEncryptedRoomExcluded": "Текущая область действия не переводит зашифрованные комнаты автоматически.",
-    "translationManualOnlyRoom": "Текущая область переводит только сообщения, которые вы выбираете вручную.",
     "inputTranslation": "Входной перевод",
     "inputTranslationMode": "Входной режим перевода",
     "inputTranslationModeDisabled": "Отключено",
@@ -101,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Быстрое двойное касание поля ввода",
     "inputTranslationPrivacyNotice": "Входной открытый текст будет отправлен выбранному стороннему поставщику LLM.",
     "translateInput": "Перевести ввод",
+    "messageBubbleGradient": "Градиент пузыря сообщения",
     "about": "О проекте",
     "@about": {
         "type": "String",
@@ -2786,6 +2780,5 @@
         "type": "String",
         "placeholders": {}
     },
-    "messageNotDecryptable": "Не удалось расшифровать сообщение",
-    "messageBubbleGradient": "Message bubble gradient"
+    "messageNotDecryptable": "Не удалось расшифровать сообщение"
 }

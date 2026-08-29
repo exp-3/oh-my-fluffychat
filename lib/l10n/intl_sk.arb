@@ -24,8 +24,6 @@
     "translationScopeNone": "Žiadne miestnosti (manuálne nastavenie)",
     "translationScopeAllRooms": "Správy vo všetkých miestnostiach",
     "translationScopeUnencryptedRooms": "Správy v nešifrovaných miestnostiach",
-    "translationScopeSelectedRooms": "Správy vo vybratých miestnostiach",
-    "translationScopeManualOnly": "Iba manuálne vybrané správy",
     "translationScopeOverrideHint": "Toto pravidlo môžete prepísať v nastaveniach každej miestnosti.",
     "sourceLanguage": "Jazyk pôvodnej správy",
     "targetLanguage": "Váš preferovaný jazyk",
@@ -33,7 +31,6 @@
     "preferRoomLanguageForInputTarget": "Uprednostniť jazyk miestnosti ako cieľ prekladu",
     "translationAutoDetect": "Zistiť automaticky",
     "requiredField": "Povinné",
-    "translationDisplayMode": "Režim zobrazenia",
     "translatedOnly": "Iba preklad",
     "bilingual": "Dvojjazyčné",
     "translationBilingualColor": "Farba textu prekladu",
@@ -77,11 +74,7 @@
     "roomCommunicationLanguage": "Komunikačný jazyk miestnosti",
     "roomLanguageFollowGlobal": "Nenastavené (globálne nastavenie)",
     "translateRoom": "Preložiť",
-    "stopRoomTranslation": "Stop",
     "translationDisabledGlobally": "Najprv povoľte preklad v nastaveniach aplikácie.",
-    "translationRoomManagedGlobally": "Toto nastavenie je riadené globálnym rozsahom prekladu.",
-    "translationEncryptedRoomExcluded": "Aktuálny rozsah automaticky neprekladá šifrované miestnosti.",
-    "translationManualOnlyRoom": "Aktuálny rozsah prekladá iba správy, ktoré vyberiete manuálne.",
     "inputTranslation": "Vstupný preklad",
     "inputTranslationMode": "Zadajte režim prekladu",
     "inputTranslationModeDisabled": "Zakázané",
@@ -101,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Rýchle dvojité ťuknutie na vstupné pole",
     "inputTranslationPrivacyNotice": "Vstupný čistý text sa odošle vybranému poskytovateľovi LLM tretej strany.",
     "translateInput": "Preložiť vstup",
+    "messageBubbleGradient": "Farebný prechod bubliny správy",
     "about": "O aplikácii",
     "@about": {
         "type": "String",
@@ -1317,6 +1311,5 @@
     "@rotateRight": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

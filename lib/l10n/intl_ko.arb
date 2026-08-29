@@ -23,8 +23,6 @@
     "translationScopeNone": "방 없음(수동 설정)",
     "translationScopeAllRooms": "모든 방의 메시지",
     "translationScopeUnencryptedRooms": "암호화되지 않은 방의 메시지",
-    "translationScopeSelectedRooms": "선택한 채팅방의 메시지",
-    "translationScopeManualOnly": "수동으로 선택한 메시지만",
     "translationScopeOverrideHint": "각 방 설정에서 이 규칙을 재정의할 수 있습니다.",
     "sourceLanguage": "원본 메시지 언어",
     "targetLanguage": "선호하는 언어",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "방 언어를 번역 대상으로 우선 사용",
     "translationAutoDetect": "자동으로 감지",
     "requiredField": "필수",
-    "translationDisplayMode": "디스플레이 모드",
     "translatedOnly": "번역만",
     "bilingual": "이중 언어",
     "translationBilingualColor": "번역 텍스트 색상",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "방 대화 언어",
     "roomLanguageFollowGlobal": "설정 안 함(전역 설정 따르기)",
     "translateRoom": "번역하다",
-    "stopRoomTranslation": "중지",
     "translationDisabledGlobally": "먼저 앱 설정에서 번역을 활성화하세요.",
-    "translationRoomManagedGlobally": "이 설정은 전역 번역 범위에 의해 제어됩니다.",
-    "translationEncryptedRoomExcluded": "현재 범위는 암호화된 방을 자동으로 변환하지 않습니다.",
-    "translationManualOnlyRoom": "현재 범위는 수동으로 선택한 메시지만 번역합니다.",
     "inputTranslation": "입력 번역",
     "inputTranslationMode": "입력 번역 모드",
     "inputTranslationModeDisabled": "장애인",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "빠른 두 번 탭 입력 필드",
     "inputTranslationPrivacyNotice": "입력 일반 텍스트는 선택한 타사 LLM 제공업체로 전송됩니다.",
     "translateInput": "입력 번역",
+    "messageBubbleGradient": "메시지 말풍선 그라데이션",
     "about": "소개",
     "@about": {
         "type": "String",
@@ -2494,6 +2488,5 @@
                 "type": "String"
             }
         }
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

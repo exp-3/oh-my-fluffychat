@@ -24,8 +24,6 @@
     "translationScopeNone": "Ez dago gelarik (eskuzko konfigurazioa)",
     "translationScopeAllRooms": "Mezuak gela guztietan",
     "translationScopeUnencryptedRooms": "Enkriptatutako geletan mezuak",
-    "translationScopeSelectedRooms": "Mezuak hautatutako geletan",
-    "translationScopeManualOnly": "Eskuz hautatutako mezuak soilik",
     "translationScopeOverrideHint": "Arau hau gela bakoitzaren ezarpenetan gainidatz dezakezu.",
     "sourceLanguage": "Jatorrizko mezuaren hizkuntza",
     "targetLanguage": "Zure hizkuntza hobetsia",
@@ -33,7 +31,6 @@
     "preferRoomLanguageForInputTarget": "Gelaren hizkuntza itzulpen-helburu gisa lehenetsi",
     "translationAutoDetect": "Detektatu automatikoki",
     "requiredField": "Beharrezkoa",
-    "translationDisplayMode": "Bistaratzeko modua",
     "translatedOnly": "Itzulpena soilik",
     "bilingual": "Elebiduna",
     "translationBilingualColor": "Itzulpen testuaren kolorea",
@@ -77,11 +74,7 @@
     "roomCommunicationLanguage": "Gelaren komunikazio-hizkuntza",
     "roomLanguageFollowGlobal": "Ezarri gabe (ezarpen globala jarraitu)",
     "translateRoom": "Itzuli",
-    "stopRoomTranslation": "Gelditu",
     "translationDisabledGlobally": "Gaitu itzulpena aplikazioaren ezarpenetan lehenik.",
-    "translationRoomManagedGlobally": "Ezarpen hau itzulpen-esparru globalak kontrolatzen du.",
-    "translationEncryptedRoomExcluded": "Uneko esparruak ez ditu automatikoki itzultzen enkriptatutako gelak.",
-    "translationManualOnlyRoom": "Uneko esparruak eskuz hautatzen dituzun mezuak soilik itzultzen ditu.",
     "inputTranslation": "Sarrerako itzulpena",
     "inputTranslationMode": "Idatzi itzulpen modua",
     "inputTranslationModeDisabled": "Ezindua",
@@ -101,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Sakatu bizkor idazteko eremua",
     "inputTranslationPrivacyNotice": "Sarrerako testu arrunta hautatutako hirugarren LLM hornitzaileari bidaliko zaio.",
     "translateInput": "Itzuli sarrera",
+    "messageBubbleGradient": "Mezu-burbuilaren gradientea",
     "about": "Honi buruz",
     "@about": {
         "type": "String",
@@ -2675,6 +2669,5 @@
     "@passphraseNumberRequirement": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

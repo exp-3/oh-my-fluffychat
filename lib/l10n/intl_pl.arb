@@ -24,8 +24,6 @@
     "translationScopeNone": "Brak pokoi",
     "translationScopeAllRooms": "Wiadomości we wszystkich pokojach",
     "translationScopeUnencryptedRooms": "Wiadomości w niezaszyfrowanych pokojach",
-    "translationScopeSelectedRooms": "Wiadomości w wybranych pokojach",
-    "translationScopeManualOnly": "Tylko ręcznie wybrane wiadomości",
     "translationScopeOverrideHint": "Regułę można zmienić w ustawieniach pokoju",
     "sourceLanguage": "Język oryginalnej wiadomości",
     "targetLanguage": "Preferowany język",
@@ -33,7 +31,6 @@
     "preferRoomLanguageForInputTarget": "Język pokoju jako cel tłumaczenia",
     "translationAutoDetect": "Wykryj automatycznie",
     "requiredField": "Wymagane",
-    "translationDisplayMode": "Tryb wyświetlania",
     "translatedOnly": "Tylko tłumaczenie",
     "bilingual": "Dwujęzyczny",
     "translationBilingualColor": "Kolor tekstu tłumaczenia",
@@ -77,11 +74,7 @@
     "roomCommunicationLanguage": "Język pokoju",
     "roomLanguageFollowGlobal": "Nie ustawiono",
     "translateRoom": "Przetłumacz",
-    "stopRoomTranslation": "Zatrzymaj się",
     "translationDisabledGlobally": "Najpierw włącz tłumaczenie w ustawieniach aplikacji.",
-    "translationRoomManagedGlobally": "To ustawienie jest kontrolowane przez globalny zakres tłumaczenia.",
-    "translationEncryptedRoomExcluded": "Obecny zakres nie tłumaczy automatycznie zaszyfrowanych pokoi.",
-    "translationManualOnlyRoom": "Bieżący zakres tłumaczy tylko wiadomości wybrane ręcznie.",
     "inputTranslation": "Tłumaczenie wejściowe",
     "inputTranslationMode": "Tryb tłumaczenia wejścia",
     "inputTranslationModeDisabled": "Niepełnosprawny",
@@ -101,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Szybkie dwukrotne dotknięcie pola wprowadzania",
     "inputTranslationPrivacyNotice": "Wprowadzony tekst jawny zostanie wysłany do wybranego zewnętrznego dostawcy LLM.",
     "translateInput": "Przetłumacz dane wejściowe",
+    "messageBubbleGradient": "Gradient dymku wiadomości",
     "about": "O",
     "@about": {
         "type": "String",
@@ -2807,6 +2801,5 @@
     "biometricsDescription": "Za pomocą biometrycznego uwierzytelniania możesz odblokować aplikację za pomocą swojej twarzy lub odsisku palca. Możliwości zależą od twojego urządzenia.",
     "doubleTapToReact": "Podwójne dotknięcie, aby zareagować",
     "doubleTapToReactDescription": "Podwójne dotknięcie wiadomości reaguje zamiast zaznaczania tekstu",
-    "doubleTapReaction": "Reakcja podwójnego dotknięcia",
-    "messageBubbleGradient": "Message bubble gradient"
+    "doubleTapReaction": "Reakcja podwójnego dotknięcia"
 }

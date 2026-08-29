@@ -22,8 +22,6 @@
     "translationScopeNone": "Brez sob (ročna nastavitev)",
     "translationScopeAllRooms": "Sporočila v vseh sobah",
     "translationScopeUnencryptedRooms": "Sporočila v nešifriranih sobah",
-    "translationScopeSelectedRooms": "Sporočila v izbranih sobah",
-    "translationScopeManualOnly": "Samo ročno izbrana sporočila",
     "translationScopeOverrideHint": "To pravilo lahko preglasite v nastavitvah vsake sobe.",
     "sourceLanguage": "Jezik izvirnega sporočila",
     "targetLanguage": "Vaš prednostni jezik",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "Prednostno uporabi jezik sobe kot cilj prevoda",
     "translationAutoDetect": "Zaznaj samodejno",
     "requiredField": "Obvezno",
-    "translationDisplayMode": "Način prikaza",
     "translatedOnly": "Samo prevod",
     "bilingual": "Dvojezično",
     "translationBilingualColor": "Barva besedila prevoda",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "Jezik komunikacije sobe",
     "roomLanguageFollowGlobal": "Ni nastavljeno (sledi globalnemu)",
     "translateRoom": "Prevajaj",
-    "stopRoomTranslation": "Stop",
     "translationDisabledGlobally": "Najprej omogočite prevod v nastavitvah aplikacije.",
-    "translationRoomManagedGlobally": "To nastavitev nadzira globalni obseg prevoda.",
-    "translationEncryptedRoomExcluded": "Trenutni obseg ne prevaja samodejno šifriranih sob.",
-    "translationManualOnlyRoom": "Trenutni obseg prevaja samo sporočila, ki jih izberete ročno.",
     "inputTranslation": "Vhodni prevod",
     "inputTranslationMode": "Način prevajanja vnosa",
     "inputTranslationModeDisabled": "Onemogočen",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "Polje za vnos s hitrim dvojnim dotikom",
     "inputTranslationPrivacyNotice": "Vnos golega besedila bo poslan izbranemu zunanjemu ponudniku LLM.",
     "translateInput": "Prevedi vnos",
+    "messageBubbleGradient": "Barvni preliv oblačka sporočila",
     "repeatPassword": "Ponovite geslo",
     "about": "O aplikaciji",
     "@about": {
@@ -2022,6 +2016,5 @@
     "@noGoogleServicesWarning": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

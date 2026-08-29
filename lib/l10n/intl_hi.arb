@@ -22,8 +22,6 @@
     "translationScopeNone": "कोई कमरा नहीं (मैन्युअल सेटअप)",
     "translationScopeAllRooms": "सभी कमरों में संदेश",
     "translationScopeUnencryptedRooms": "अनएन्क्रिप्टेड कमरों में संदेश",
-    "translationScopeSelectedRooms": "चयनित कमरों में संदेश",
-    "translationScopeManualOnly": "केवल मैन्युअल रूप से चयनित संदेश",
     "translationScopeOverrideHint": "आप हर कमरे की सेटिंग में इस नियम को बदल सकते हैं।",
     "sourceLanguage": "मूल संदेश की भाषा",
     "targetLanguage": "आपकी पसंदीदा भाषा",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "अनुवाद लक्ष्य के रूप में कमरे की भाषा को प्राथमिकता दें",
     "translationAutoDetect": "स्वचालित रूप से पता लगाएं",
     "requiredField": "आवश्यक",
-    "translationDisplayMode": "प्रदर्शन मोड",
     "translatedOnly": "केवल अनुवाद",
     "bilingual": "द्विभाषी",
     "translationBilingualColor": "अनुवाद पाठ का रंग",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "कमरे की संचार भाषा",
     "roomLanguageFollowGlobal": "सेट नहीं (वैश्विक सेटिंग का पालन)",
     "translateRoom": "अनुवाद करें",
-    "stopRoomTranslation": "रुकें",
     "translationDisabledGlobally": "पहले ऐप सेटिंग में अनुवाद सक्षम करें।",
-    "translationRoomManagedGlobally": "यह सेटिंग वैश्विक अनुवाद दायरे द्वारा नियंत्रित होती है।",
-    "translationEncryptedRoomExcluded": "वर्तमान दायरा स्वचालित रूप से एन्क्रिप्टेड कमरों का अनुवाद नहीं करता है।",
-    "translationManualOnlyRoom": "वर्तमान दायरा केवल आपके द्वारा मैन्युअल रूप से चुने गए संदेशों का अनुवाद करता है।",
     "inputTranslation": "इनपुट अनुवाद",
     "inputTranslationMode": "इनपुट अनुवाद मोड",
     "inputTranslationModeDisabled": "विकलांग",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "त्वरित डबल-टैप इनपुट फ़ील्ड",
     "inputTranslationPrivacyNotice": "इनपुट प्लेनटेक्स्ट चयनित तृतीय पक्ष एलएलएम प्रदाता को भेजा जाएगा।",
     "translateInput": "इनपुट का अनुवाद करें",
+    "messageBubbleGradient": "संदेश बबल का ग्रेडिएंट",
     "remove": "निकालना",
     "@remove": {
         "type": "String",
@@ -1945,6 +1939,5 @@
     "@areGuestsAllowedToJoin": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

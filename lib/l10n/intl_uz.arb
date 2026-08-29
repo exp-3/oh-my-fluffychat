@@ -22,8 +22,6 @@
     "translationScopeNone": "Xonalar yo‘q (qo‘lda sozlash)",
     "translationScopeAllRooms": "Barcha xonalarda xabarlar",
     "translationScopeUnencryptedRooms": "Shifrlanmagan xonalardagi xabarlar",
-    "translationScopeSelectedRooms": "Tanlangan xonalardagi xabarlar",
-    "translationScopeManualOnly": "Faqat qo'lda tanlangan xabarlar",
     "translationScopeOverrideHint": "Bu qoidani har bir xona sozlamalarida o‘zgartirishingiz mumkin.",
     "sourceLanguage": "Asl xabar tili",
     "targetLanguage": "Siz afzal ko‘rgan til",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "Tarjima maqsadi sifatida xona tilini afzal ko‘rish",
     "translationAutoDetect": "Avtomatik aniqlash",
     "requiredField": "Majburiy",
-    "translationDisplayMode": "Ko'rsatish rejimi",
     "translatedOnly": "Faqat tarjima",
     "bilingual": "Ikki tilli",
     "translationBilingualColor": "Tarjima matn rangi",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "Xonaning aloqa tili",
     "roomLanguageFollowGlobal": "O‘rnatilmagan (global sozlamaga amal qilish)",
     "translateRoom": "Tarjima",
-    "stopRoomTranslation": "To'xtang",
     "translationDisabledGlobally": "Avval ilova sozlamalarida tarjimani yoqing.",
-    "translationRoomManagedGlobally": "Bu sozlama global tarjima doirasi tomonidan boshqariladi.",
-    "translationEncryptedRoomExcluded": "Joriy qamrov shifrlangan xonalarni avtomatik ravishda tarjima qilmaydi.",
-    "translationManualOnlyRoom": "Joriy doira faqat siz tanlagan xabarlarni qo'lda tarjima qiladi.",
     "inputTranslation": "Kirish tarjimasi",
     "inputTranslationMode": "Kirish tarjima rejimi",
     "inputTranslationModeDisabled": "O'chirilgan",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "Tezkor kiritish maydoniga ikki marta teging",
     "inputTranslationPrivacyNotice": "Kiritilgan ochiq matn tanlangan uchinchi tomon LLM provayderiga yuboriladi.",
     "translateInput": "Tarjima kiritish",
+    "messageBubbleGradient": "Xabar pufagining gradienti",
     "repeatPassword": "Parolni takrorlang",
     "notAnImage": "Rasm fayli emas.",
     "remove": "O‘chirish",
@@ -2564,6 +2558,5 @@
     "advancedConfigurations": "Kengaytirilgan sozlamalar",
     "@mute": {
         "description": "This should be a very short string because there is not much space in the button!"
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

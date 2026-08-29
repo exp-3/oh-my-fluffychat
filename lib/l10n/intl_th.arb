@@ -22,8 +22,6 @@
     "translationScopeNone": "ไม่มีห้อง (ตั้งค่าด้วยตนเอง)",
     "translationScopeAllRooms": "ข้อความในทุกห้อง",
     "translationScopeUnencryptedRooms": "ข้อความในห้องที่ไม่ได้เข้ารหัส",
-    "translationScopeSelectedRooms": "ข้อความในห้องที่เลือก",
-    "translationScopeManualOnly": "เฉพาะข้อความที่เลือกด้วยตนเองเท่านั้น",
     "translationScopeOverrideHint": "คุณสามารถแทนที่กฎนี้ได้ในการตั้งค่าของแต่ละห้อง",
     "sourceLanguage": "ภาษาของข้อความต้นฉบับ",
     "targetLanguage": "ภาษาที่คุณต้องการ",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "ใช้ภาษาของห้องเป็นภาษาเป้าหมายการแปล",
     "translationAutoDetect": "ตรวจจับโดยอัตโนมัติ",
     "requiredField": "จำเป็น",
-    "translationDisplayMode": "โหมดการแสดงผล",
     "translatedOnly": "การแปลเท่านั้น",
     "bilingual": "สองภาษา",
     "translationBilingualColor": "สีข้อความแปล",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "ภาษาสื่อสารของห้อง",
     "roomLanguageFollowGlobal": "ยังไม่ได้ตั้งค่า (ตามการตั้งค่าทั่วไป)",
     "translateRoom": "แปล",
-    "stopRoomTranslation": "หยุด",
     "translationDisabledGlobally": "เปิดใช้งานการแปลในการตั้งค่าแอปก่อน",
-    "translationRoomManagedGlobally": "การตั้งค่านี้ควบคุมโดยขอบเขตการแปลส่วนกลาง",
-    "translationEncryptedRoomExcluded": "ขอบเขตปัจจุบันไม่แปลห้องที่เข้ารหัสโดยอัตโนมัติ",
-    "translationManualOnlyRoom": "ขอบเขตปัจจุบันจะแปลเฉพาะข้อความที่คุณเลือกด้วยตนเองเท่านั้น",
     "inputTranslation": "อินพุตการแปล",
     "inputTranslationMode": "ป้อนโหมดการแปล",
     "inputTranslationModeDisabled": "ปิดการใช้งาน",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "ช่องป้อนข้อมูลแตะสองครั้งอย่างรวดเร็ว",
     "inputTranslationPrivacyNotice": "ข้อความธรรมดาที่ป้อนจะถูกส่งไปยังผู้ให้บริการ LLM บุคคลที่สามที่เลือก",
     "translateInput": "อินพุตแปล",
+    "messageBubbleGradient": "การไล่ระดับสีของบับเบิลข้อความ",
     "hugContent": "{senderName} กอดคุณ",
     "@hugContent": {
         "type": "String",
@@ -1971,6 +1965,5 @@
     "@noGoogleServicesWarning": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

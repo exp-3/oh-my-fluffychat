@@ -22,8 +22,6 @@
     "translationScopeNone": "గదులు లేవు (మాన్యువల్ సెటప్)",
     "translationScopeAllRooms": "అన్ని గదుల్లో సందేశాలు",
     "translationScopeUnencryptedRooms": "గుప్తీకరించని గదులలో సందేశాలు",
-    "translationScopeSelectedRooms": "ఎంచుకున్న గదులలో సందేశాలు",
-    "translationScopeManualOnly": "మాన్యువల్‌గా ఎంచుకున్న సందేశాలు మాత్రమే",
     "translationScopeOverrideHint": "ప్రతి గది సెట్టింగ్‌లలో ఈ నియమాన్ని మార్చవచ్చు.",
     "sourceLanguage": "అసలు సందేశం భాష",
     "targetLanguage": "మీకు ఇష్టమైన భాష",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "అనువాద లక్ష్యంగా గది భాషకు ప్రాధాన్యత ఇవ్వండి",
     "translationAutoDetect": "స్వయంచాలకంగా గుర్తించండి",
     "requiredField": "అవసరం",
-    "translationDisplayMode": "ప్రదర్శన మోడ్",
     "translatedOnly": "అనువాదం మాత్రమే",
     "bilingual": "ద్విభాషా",
     "translationBilingualColor": "అనువాద వచన రంగు",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "గది కమ్యూనికేషన్ భాష",
     "roomLanguageFollowGlobal": "సెట్ చేయలేదు (గ్లోబల్ సెట్టింగ్‌ను అనుసరించండి)",
     "translateRoom": "అనువదించు",
-    "stopRoomTranslation": "ఆపు",
     "translationDisabledGlobally": "ముందుగా యాప్ సెట్టింగ్‌లలో అనువాదాన్ని ప్రారంభించండి.",
-    "translationRoomManagedGlobally": "ఈ సెట్టింగ్ గ్లోబల్ ట్రాన్స్‌లేషన్ స్కోప్ ద్వారా నియంత్రించబడుతుంది.",
-    "translationEncryptedRoomExcluded": "ప్రస్తుత స్కోప్ స్వయంచాలకంగా గుప్తీకరించిన గదులను అనువదించదు.",
-    "translationManualOnlyRoom": "ప్రస్తుత స్కోప్ మీరు మాన్యువల్‌గా ఎంచుకున్న సందేశాలను మాత్రమే అనువదిస్తుంది.",
     "inputTranslation": "ఇన్‌పుట్ అనువాదం",
     "inputTranslationMode": "ఇన్‌పుట్ అనువాద మోడ్",
     "inputTranslationModeDisabled": "వికలాంగుడు",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "త్వరిత డబుల్-ట్యాప్ ఇన్‌పుట్ ఫీల్డ్",
     "inputTranslationPrivacyNotice": "ఎంచుకున్న థర్డ్-పార్టీ LLM ప్రొవైడర్‌కు ఇన్‌పుట్ సాదా వచనం పంపబడుతుంది.",
     "translateInput": "ఇన్‌పుట్‌ని అనువదించండి",
+    "messageBubbleGradient": "సందేశ బబుల్ గ్రేడియెంట్",
     "notAnImage": "ఇమేజ్ ఫైల్ కాదు.",
     "repeatPassword": "పాస్‌వర్డ్‌ను పునరావృతం చేయండి",
     "remove": "తొలగించు",
@@ -2073,6 +2067,5 @@
     "@areGuestsAllowedToJoin": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

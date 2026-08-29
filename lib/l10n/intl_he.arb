@@ -23,8 +23,6 @@
     "translationScopeNone": "אין חדרים (הגדרה ידנית)",
     "translationScopeAllRooms": "הודעות בכל החדרים",
     "translationScopeUnencryptedRooms": "הודעות בחדרים לא מוצפנים",
-    "translationScopeSelectedRooms": "הודעות בחדרים נבחרים",
-    "translationScopeManualOnly": "רק הודעות שנבחרו ידנית",
     "translationScopeOverrideHint": "ניתן לעקוף כלל זה בהגדרות של כל חדר.",
     "sourceLanguage": "שפת ההודעה המקורית",
     "targetLanguage": "השפה המועדפת עליך",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "העדף את שפת החדר כיעד התרגום",
     "translationAutoDetect": "זיהוי אוטומטי",
     "requiredField": "חובה",
-    "translationDisplayMode": "מצב תצוגה",
     "translatedOnly": "תרגום בלבד",
     "bilingual": "דו לשוני",
     "translationBilingualColor": "צבע טקסט תרגום",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "שפת התקשורת בחדר",
     "roomLanguageFollowGlobal": "לא מוגדר (עקוב אחר ההגדרה הכללית)",
     "translateRoom": "תרגם",
-    "stopRoomTranslation": "עצור",
     "translationDisabledGlobally": "הפעל תחילה תרגום בהגדרות האפליקציה.",
-    "translationRoomManagedGlobally": "הגדרה זו נשלטת על ידי היקף התרגום הגלובלי.",
-    "translationEncryptedRoomExcluded": "ההיקף הנוכחי אינו מתרגם חדרים מוצפנים באופן אוטומטי.",
-    "translationManualOnlyRoom": "ההיקף הנוכחי מתרגם רק הודעות שאתה בוחר באופן ידני.",
     "inputTranslation": "תרגום קלט",
     "inputTranslationMode": "מצב תרגום קלט",
     "inputTranslationModeDisabled": "מושבת",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "שדה קלט לחיצה כפולה מהירה",
     "inputTranslationPrivacyNotice": "קלט טקסט רגיל יישלח לספק ה-LLM של הצד השלישי שנבחר.",
     "translateInput": "תרגם קלט",
+    "messageBubbleGradient": "מעבר צבע בבועת ההודעה",
     "about": "אודות",
     "@about": {
         "type": "String",
@@ -2149,6 +2143,5 @@
     "@unbanFromChat": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

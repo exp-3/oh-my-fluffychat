@@ -24,8 +24,6 @@
     "translationScopeNone": "部屋なし（手動設定）",
     "translationScopeAllRooms": "すべての部屋にメッセージ",
     "translationScopeUnencryptedRooms": "暗号化されていないルーム内のメッセージ",
-    "translationScopeSelectedRooms": "選択したルームのメッセージ",
-    "translationScopeManualOnly": "手動で選択されたメッセージのみ",
     "translationScopeOverrideHint": "このルールは各部屋の設定で上書きできます。",
     "sourceLanguage": "元のメッセージの言語",
     "targetLanguage": "あなたの優先言語",
@@ -33,7 +31,6 @@
     "preferRoomLanguageForInputTarget": "部屋の言語を翻訳先として優先",
     "translationAutoDetect": "自動検出",
     "requiredField": "必須",
-    "translationDisplayMode": "表示モード",
     "translatedOnly": "翻訳のみ",
     "bilingual": "バイリンガル",
     "translationBilingualColor": "翻訳テキストの色",
@@ -77,11 +74,7 @@
     "roomCommunicationLanguage": "部屋のコミュニケーション言語",
     "roomLanguageFollowGlobal": "未設定（グローバル設定に従う）",
     "translateRoom": "翻訳する",
-    "stopRoomTranslation": "停止",
     "translationDisabledGlobally": "まずアプリの設定で翻訳を有効にしてください。",
-    "translationRoomManagedGlobally": "この設定は、グローバル変換スコープによって制御されます。",
-    "translationEncryptedRoomExcluded": "現在のスコープでは、暗号化されたルームは自動的に変換されません。",
-    "translationManualOnlyRoom": "現在のスコープは、手動で選択したメッセージのみを翻訳します。",
     "inputTranslation": "入力翻訳",
     "inputTranslationMode": "入力変換モード",
     "inputTranslationModeDisabled": "障害者",
@@ -101,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "クイックダブルタップ入力フィールド",
     "inputTranslationPrivacyNotice": "入力された平文は、選択されたサードパーティ LLM プロバイダーに送信されます。",
     "translateInput": "入力を翻訳する",
+    "messageBubbleGradient": "メッセージバブルのグラデーション",
     "about": "このアプリについて",
     "@about": {
         "type": "String",
@@ -2226,6 +2220,5 @@
     "today": "今日",
     "yesterday": "昨日",
     "replyInThread": "スレッドで返信",
-    "select": "選択",
-    "messageBubbleGradient": "Message bubble gradient"
+    "select": "選択"
 }

@@ -23,8 +23,6 @@
     "translationScopeNone": "Neniuj ĉambroj (mana agordo)",
     "translationScopeAllRooms": "Mesaĝoj en ĉiuj ĉambroj",
     "translationScopeUnencryptedRooms": "Mesaĝoj en neĉifritaj ĉambroj",
-    "translationScopeSelectedRooms": "Mesaĝoj en elektitaj ĉambroj",
-    "translationScopeManualOnly": "Nur mane elektitaj mesaĝoj",
     "translationScopeOverrideHint": "Vi povas anstataŭigi ĉi tiun regulon en la agordoj de ĉiu ĉambro.",
     "sourceLanguage": "Lingvo de la originala mesaĝo",
     "targetLanguage": "Via preferata lingvo",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "Preferi la ĉambran lingvon kiel tradukcelon",
     "translationAutoDetect": "Detekti aŭtomate",
     "requiredField": "Bezonata",
-    "translationDisplayMode": "Montra reĝimo",
     "translatedOnly": "Traduko nur",
     "bilingual": "Dulingva",
     "translationBilingualColor": "Koloro de teksto de tradukado",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "Komunika lingvo de la ĉambro",
     "roomLanguageFollowGlobal": "Ne agordita (sekvi tutmondan agordon)",
     "translateRoom": "Traduki",
-    "stopRoomTranslation": "Haltu",
     "translationDisabledGlobally": "Unue ebligu tradukadon en agordoj de la aplikaĵo.",
-    "translationRoomManagedGlobally": "Ĉi tiu agordo estas regata de la tutmonda tradukamplekso.",
-    "translationEncryptedRoomExcluded": "La nuna amplekso ne aŭtomate tradukas ĉifritajn ĉambrojn.",
-    "translationManualOnlyRoom": "La nuna amplekso nur tradukas mesaĝojn, kiujn vi elektas permane.",
     "inputTranslation": "Eniga traduko",
     "inputTranslationMode": "Eniga tradukreĝimo",
     "inputTranslationModeDisabled": "Malebligita",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "Rapida duoble-frapa enigokampo",
     "inputTranslationPrivacyNotice": "Eniga klarteksto estos sendita al la elektita triaparta LLM-provizanto.",
     "translateInput": "Traduki enigo",
+    "messageBubbleGradient": "Kolortransiro de mesaĝa veziko",
     "about": "Prio",
     "@about": {
         "type": "String",
@@ -2218,6 +2212,5 @@
                 "type": "String"
             }
         }
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

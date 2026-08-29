@@ -23,8 +23,6 @@
     "translationScopeNone": "কোনও রুম নেই (ম্যানুয়াল সেটআপ)",
     "translationScopeAllRooms": "সব কক্ষে বার্তা",
     "translationScopeUnencryptedRooms": "এনক্রিপ্ট করা রুমে বার্তা",
-    "translationScopeSelectedRooms": "নির্বাচিত কক্ষে বার্তা",
-    "translationScopeManualOnly": "শুধুমাত্র ম্যানুয়ালি নির্বাচিত বার্তা",
     "translationScopeOverrideHint": "প্রতিটি রুমের সেটিংসে এই নিয়মটি পরিবর্তন করতে পারেন।",
     "sourceLanguage": "মূল বার্তার ভাষা",
     "targetLanguage": "আপনার পছন্দের ভাষা",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "অনুবাদের লক্ষ্য হিসেবে রুমের ভাষা পছন্দ করুন",
     "translationAutoDetect": "স্বয়ংক্রিয়ভাবে সনাক্ত করুন",
     "requiredField": "প্রয়োজন",
-    "translationDisplayMode": "প্রদর্শন মোড",
     "translatedOnly": "শুধুমাত্র অনুবাদ",
     "bilingual": "দ্বিভাষিক",
     "translationBilingualColor": "অনুবাদ পাঠ্যের রঙ",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "রুমের যোগাযোগের ভাষা",
     "roomLanguageFollowGlobal": "সেট করা হয়নি (গ্লোবাল সেটিং অনুসরণ)",
     "translateRoom": "অনুবাদ করুন",
-    "stopRoomTranslation": "থামো",
     "translationDisabledGlobally": "প্রথমে অ্যাপ সেটিংসে অনুবাদ সক্ষম করুন।",
-    "translationRoomManagedGlobally": "এই সেটিংটি বিশ্বব্যাপী অনুবাদের সুযোগ দ্বারা নিয়ন্ত্রিত হয়।",
-    "translationEncryptedRoomExcluded": "বর্তমান সুযোগ স্বয়ংক্রিয়ভাবে এনক্রিপ্ট করা রুম অনুবাদ করে না।",
-    "translationManualOnlyRoom": "বর্তমান সুযোগ শুধুমাত্র আপনার ম্যানুয়ালি নির্বাচন করা বার্তাগুলিকে অনুবাদ করে৷",
     "inputTranslation": "ইনপুট অনুবাদ",
     "inputTranslationMode": "ইনপুট অনুবাদ মোড",
     "inputTranslationModeDisabled": "অক্ষম",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "দ্রুত ডবল-ট্যাপ ইনপুট ক্ষেত্র",
     "inputTranslationPrivacyNotice": "ইনপুট প্লেইনটেক্সট নির্বাচিত তৃতীয় পক্ষের এলএলএম প্রদানকারীর কাছে পাঠানো হবে।",
     "translateInput": "ইনপুট অনুবাদ করুন",
+    "messageBubbleGradient": "বার্তা বুদবুদের গ্রেডিয়েন্ট",
     "about": "সম্পর্কে",
     "@about": {
         "type": "String",
@@ -1961,6 +1955,5 @@
     "@unbanFromChat": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

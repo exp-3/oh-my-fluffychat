@@ -23,8 +23,6 @@
     "translationScopeNone": "無（手動設定）",
     "translationScopeAllRooms": "所有聊天室嘅訊息",
     "translationScopeUnencryptedRooms": "未加密聊天室嘅訊息",
-    "translationScopeSelectedRooms": "已揀選聊天室嘅訊息",
-    "translationScopeManualOnly": "只翻譯手動揀選嘅訊息",
     "translationScopeOverrideHint": "你可以喺每個聊天室嘅設定入面覆寫呢條規則",
     "sourceLanguage": "原始訊息語言",
     "targetLanguage": "你嘅慣用語言",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "優先用聊天室語言做翻譯目標語言",
     "translationAutoDetect": "自動偵測",
     "requiredField": "必填",
-    "translationDisplayMode": "顯示模式",
     "translatedOnly": "只顯示譯文",
     "bilingual": "雙語對照",
     "translationBilingualColor": "譯文字體顏色",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "聊天室交流語言",
     "roomLanguageFollowGlobal": "未設定（跟隨全域設定）",
     "translateRoom": "翻譯",
-    "stopRoomTranslation": "停止",
     "translationDisabledGlobally": "請先喺應用程式設定啟用翻譯。",
-    "translationRoomManagedGlobally": "呢個設定由全域翻譯範圍控制。",
-    "translationEncryptedRoomExcluded": "目前範圍唔會自動翻譯加密聊天室。",
-    "translationManualOnlyRoom": "目前範圍只會翻譯你手動揀選嘅訊息。",
     "inputTranslation": "輸入翻譯",
     "inputTranslationMode": "輸入翻譯模式",
     "inputTranslationModeDisabled": "停用",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "快速撳兩下輸入框",
     "inputTranslationPrivacyNotice": "輸入框明文會傳送畀所揀嘅第三方 LLM 供應商。",
     "translateInput": "翻譯輸入內容",
+    "messageBubbleGradient": "訊息氣泡漸變色",
     "areYouSureYouWantToLogout": "係咪確定要 log out？",
     "@areYouSureYouWantToLogout": {
         "type": "String",
@@ -209,7 +203,7 @@
             }
         }
     },
-    "account": "Account",
+    "account": "帳戶",
     "@account": {
         "type": "String",
         "placeholders": {}
@@ -233,7 +227,7 @@
         }
     },
     "addToSpace": "加落去空間嗰度",
-    "admin": "Admin",
+    "admin": "管理員",
     "@admin": {
         "type": "String",
         "placeholders": {}
@@ -1985,6 +1979,5 @@
     "@noGoogleServicesWarning": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

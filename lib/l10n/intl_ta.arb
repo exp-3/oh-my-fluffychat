@@ -23,8 +23,6 @@
     "translationScopeNone": "அறைகள் இல்லை (கைமுறை அமைப்பு)",
     "translationScopeAllRooms": "எல்லா அறைகளிலும் செய்திகள்",
     "translationScopeUnencryptedRooms": "குறியாக்கம் செய்யப்படாத அறைகளில் உள்ள செய்திகள்",
-    "translationScopeSelectedRooms": "தேர்ந்தெடுக்கப்பட்ட அறைகளில் செய்திகள்",
-    "translationScopeManualOnly": "கைமுறையாக தேர்ந்தெடுக்கப்பட்ட செய்திகள் மட்டுமே",
     "translationScopeOverrideHint": "ஒவ்வொரு அறையின் அமைப்புகளிலும் இந்த விதியை மாற்றலாம்.",
     "sourceLanguage": "அசல் செய்தியின் மொழி",
     "targetLanguage": "நீங்கள் விரும்பும் மொழி",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "அறையின் மொழியை மொழிபெயர்ப்பு இலக்காக முன்னுரிமை அளி",
     "translationAutoDetect": "தானாக கண்டறியவும்",
     "requiredField": "தேவை",
-    "translationDisplayMode": "காட்சி முறை",
     "translatedOnly": "மொழிபெயர்ப்பு மட்டுமே",
     "bilingual": "இருமொழி",
     "translationBilingualColor": "மொழிபெயர்ப்பு உரை நிறம்",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "அறையின் தொடர்பு மொழி",
     "roomLanguageFollowGlobal": "அமைக்கப்படவில்லை (உலகளாவிய அமைப்பைப் பின்பற்று)",
     "translateRoom": "மொழிபெயர்",
-    "stopRoomTranslation": "நிறுத்து",
     "translationDisabledGlobally": "முதலில் பயன்பாட்டு அமைப்புகளில் மொழிபெயர்ப்பை இயக்கவும்.",
-    "translationRoomManagedGlobally": "இந்த அமைப்பு உலகளாவிய மொழிபெயர்ப்பு நோக்கத்தால் கட்டுப்படுத்தப்படுகிறது.",
-    "translationEncryptedRoomExcluded": "தற்போதைய நோக்கம் மறைகுறியாக்கப்பட்ட அறைகளை தானாக மொழிபெயர்க்காது.",
-    "translationManualOnlyRoom": "தற்போதைய நோக்கம் நீங்கள் கைமுறையாக தேர்ந்தெடுக்கும் செய்திகளை மட்டுமே மொழிபெயர்க்கும்.",
     "inputTranslation": "உள்ளீடு மொழிபெயர்ப்பு",
     "inputTranslationMode": "உள்ளீடு மொழிபெயர்ப்பு முறை",
     "inputTranslationModeDisabled": "முடக்கப்பட்டது",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "விரைவு இருமுறை தட்டவும் உள்ளீட்டு புலம்",
     "inputTranslationPrivacyNotice": "தேர்ந்தெடுக்கப்பட்ட மூன்றாம் தரப்பு LLM வழங்குநருக்கு உள்ளீடு எளிய உரை அனுப்பப்படும்.",
     "translateInput": "உள்ளீட்டை மொழிபெயர்க்கவும்",
+    "messageBubbleGradient": "செய்திக் குமிழியின் நிறச்சரிவு",
     "acceptedTheInvitation": "👍 {username} அழைப்பை ஏற்றுக்கொண்டது",
     "@acceptedTheInvitation": {
         "type": "String",
@@ -2850,6 +2844,5 @@
     "loadingMessages": "செய்திகளை ஏற்றுகிறது...",
     "buildDoesNotSupportFirebase": "இந்த பில்ட் ஃபயர்பேச் முகில் மெசேசிங்கை ஆதரிக்காது.",
     "unableToRegisterDeviceForFirebase": "ஃபயர்பேச் முகில் மெசேசிங்கிற்கான சாதனத்தைப் பதிவு செய்ய முடியவில்லை.",
-    "unifiedPushDistributors": "ஒருங்கிணைந்த புச் விநியோகச்தர்கள்:",
-    "messageBubbleGradient": "Message bubble gradient"
+    "unifiedPushDistributors": "ஒருங்கிணைந்த புச் விநியோகச்தர்கள்:"
 }

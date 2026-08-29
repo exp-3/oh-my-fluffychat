@@ -22,8 +22,6 @@
     "translationScopeNone": "Nenhuma sala (configuração manual)",
     "translationScopeAllRooms": "Mensagens em todos os quartos",
     "translationScopeUnencryptedRooms": "Mensagens em salas não encriptadas",
-    "translationScopeSelectedRooms": "Mensagens em salas selecionadas",
-    "translationScopeManualOnly": "Apenas as mensagens selecionadas manualmente",
     "translationScopeOverrideHint": "Pode substituir esta regra nas definições de cada sala.",
     "sourceLanguage": "Idioma da mensagem original",
     "targetLanguage": "O seu idioma preferido",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "Preferir o idioma da sala como destino da tradução",
     "translationAutoDetect": "Detetar automaticamente",
     "requiredField": "Obrigatório",
-    "translationDisplayMode": "Modo de visualização",
     "translatedOnly": "Somente tradução",
     "bilingual": "Bilíngue",
     "translationBilingualColor": "Cor do texto de tradução",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "Idioma de comunicação da sala",
     "roomLanguageFollowGlobal": "Não definido (seguir configuração global)",
     "translateRoom": "Traduzir",
-    "stopRoomTranslation": "Pare",
     "translationDisabledGlobally": "Ative primeiro a tradução nas definições da aplicação.",
-    "translationRoomManagedGlobally": "Esta configuração é controlada pelo âmbito de tradução global.",
-    "translationEncryptedRoomExcluded": "O âmbito atual não traduz automaticamente salas encriptadas.",
-    "translationManualOnlyRoom": "O âmbito atual traduz apenas as mensagens selecionadas manualmente.",
     "inputTranslation": "Tradução de entrada",
     "inputTranslationMode": "Modo de tradução de entrada",
     "inputTranslationModeDisabled": "Desativado",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "Campo de entrada rápido de duplo toque",
     "inputTranslationPrivacyNotice": "O texto simples de entrada será enviado para o fornecedor LLM externo selecionado.",
     "translateInput": "Traduzir entrada",
+    "messageBubbleGradient": "Gradiente do balão de mensagem",
     "repeatPassword": "Repete a palavra-passe",
     "about": "Acerca de",
     "@about": {
@@ -2300,6 +2294,5 @@
     "@discardEdits": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

@@ -22,8 +22,6 @@
     "translationScopeNone": "Nulle cameras (configuration manual)",
     "translationScopeAllRooms": "Messages in tote le salas",
     "translationScopeUnencryptedRooms": "Messages in salas non cryptate",
-    "translationScopeSelectedRooms": "Messages in salas seligite",
-    "translationScopeManualOnly": "Solmente messages seligite manualmente",
     "translationScopeOverrideHint": "Tu pote superscriber iste regula in le configuration de cata camera.",
     "sourceLanguage": "Lingua del message original",
     "targetLanguage": "Tu lingua preferite",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "Preferer le lingua del camera como destination de traduction",
     "translationAutoDetect": "Deteger automaticamente",
     "requiredField": "Requirite",
-    "translationDisplayMode": "Modo de visualisation",
     "translatedOnly": "Solmente traduction",
     "bilingual": "Bilingue",
     "translationBilingualColor": "Color del texto traducite",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "Lingua de communication del camera",
     "roomLanguageFollowGlobal": "Non configurate (sequer le configuration global)",
     "translateRoom": "Traducer",
-    "stopRoomTranslation": "Stoppar",
     "translationDisabledGlobally": "Activa primo le traduction in le configuration del application.",
-    "translationRoomManagedGlobally": "Iste configuration es controlate per le ambito global de traduction.",
-    "translationEncryptedRoomExcluded": "Le ambito actual non traduce automaticamente le salas cryptate.",
-    "translationManualOnlyRoom": "Le ambito actual traduce solmente messages que tu selige manualmente.",
     "inputTranslation": "Traduction del texto inserite",
     "inputTranslationMode": "Modo de traduction del entrata",
     "inputTranslationModeDisabled": "Disactivate",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "Duo pression rapide del campo de entrata",
     "inputTranslationPrivacyNotice": "Le texto clar del entrata essera inviate al fornitor LLM tertie seligite.",
     "translateInput": "Traducer texto inserite",
+    "messageBubbleGradient": "Gradiente del bulla del message",
     "repeatPassword": "Repeter le contrasigno",
     "notAnImage": "Non es un file de imagine.",
     "remove": "Remover",
@@ -2088,6 +2082,5 @@
     "@areGuestsAllowedToJoin": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

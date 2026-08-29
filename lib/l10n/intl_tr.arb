@@ -24,8 +24,6 @@
     "translationScopeNone": "Oda yok (manuel kurulum)",
     "translationScopeAllRooms": "Tüm odalarda mesajlar",
     "translationScopeUnencryptedRooms": "Şifrelenmemiş odalardaki mesajlar",
-    "translationScopeSelectedRooms": "Seçilen odalardaki mesajlar",
-    "translationScopeManualOnly": "Yalnızca manuel olarak seçilen mesajlar",
     "translationScopeOverrideHint": "Bu kuralı her odanın ayarlarından geçersiz kılabilirsiniz.",
     "sourceLanguage": "Orijinal mesajın dili",
     "targetLanguage": "Tercih ettiğiniz dil",
@@ -33,7 +31,6 @@
     "preferRoomLanguageForInputTarget": "Oda dilini çeviri hedefi olarak tercih et",
     "translationAutoDetect": "Otomatik olarak algıla",
     "requiredField": "Gerekli",
-    "translationDisplayMode": "Ekran modu",
     "translatedOnly": "Yalnızca çeviri",
     "bilingual": "İki dilli",
     "translationBilingualColor": "Çeviri metni rengi",
@@ -77,11 +74,7 @@
     "roomCommunicationLanguage": "Oda iletişim dili",
     "roomLanguageFollowGlobal": "Ayarlanmadı (genel ayarı takip et)",
     "translateRoom": "Çevir",
-    "stopRoomTranslation": "Durdur",
     "translationDisabledGlobally": "Önce uygulama ayarlarında çeviriyi etkinleştirin.",
-    "translationRoomManagedGlobally": "Bu ayar genel çeviri kapsamı tarafından kontrol edilir.",
-    "translationEncryptedRoomExcluded": "Mevcut kapsam şifreli odaları otomatik olarak çevirmiyor.",
-    "translationManualOnlyRoom": "Geçerli kapsam yalnızca manuel olarak seçtiğiniz iletileri çevirir.",
     "inputTranslation": "Giriş çevirisi",
     "inputTranslationMode": "Giriş çeviri modu",
     "inputTranslationModeDisabled": "Devre dışı",
@@ -101,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Hızlı çift dokunuşla giriş alanı",
     "inputTranslationPrivacyNotice": "Giriş düz metni seçilen üçüncü taraf LLM sağlayıcısına gönderilecektir.",
     "translateInput": "Çeviri girişi",
+    "messageBubbleGradient": "Mesaj balonu gradyanı",
     "about": "Hakkında",
     "@about": {
         "type": "String",
@@ -2457,6 +2451,5 @@
                 "type": "String"
             }
         }
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

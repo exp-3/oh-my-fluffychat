@@ -22,8 +22,6 @@
     "translationScopeNone": "Κανένα δωμάτιο (χειροκίνητη ρύθμιση)",
     "translationScopeAllRooms": "Μηνύματα σε όλα τα δωμάτια",
     "translationScopeUnencryptedRooms": "Μηνύματα σε μη κρυπτογραφημένα δωμάτια",
-    "translationScopeSelectedRooms": "Μηνύματα σε επιλεγμένα δωμάτια",
-    "translationScopeManualOnly": "Μόνο μη αυτόματα επιλεγμένα μηνύματα",
     "translationScopeOverrideHint": "Μπορείτε να παρακάμψετε αυτόν τον κανόνα στις ρυθμίσεις κάθε δωματίου.",
     "sourceLanguage": "Γλώσσα του αρχικού μηνύματος",
     "targetLanguage": "Η προτιμώμενη γλώσσα σας",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "Προτίμηση της γλώσσας δωματίου ως στόχου μετάφρασης",
     "translationAutoDetect": "Εντοπισμός αυτόματα",
     "requiredField": "Απαιτείται",
-    "translationDisplayMode": "Λειτουργία εμφάνισης",
     "translatedOnly": "Μόνο μετάφραση",
     "bilingual": "Δίγλωσσο",
     "translationBilingualColor": "Χρώμα κειμένου μετάφρασης",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "Γλώσσα επικοινωνίας δωματίου",
     "roomLanguageFollowGlobal": "Δεν έχει οριστεί (ακολούθηση καθολικής ρύθμισης)",
     "translateRoom": "Μετάφραση",
-    "stopRoomTranslation": "Σταμάτα",
     "translationDisabledGlobally": "Ενεργοποιήστε πρώτα τη μετάφραση στις ρυθμίσεις της εφαρμογής.",
-    "translationRoomManagedGlobally": "Αυτή η ρύθμιση ελέγχεται από το παγκόσμιο εύρος μετάφρασης.",
-    "translationEncryptedRoomExcluded": "Το τρέχον εύρος δεν μεταφράζει αυτόματα κρυπτογραφημένα δωμάτια.",
-    "translationManualOnlyRoom": "Το τρέχον εύρος μεταφράζει μόνο μηνύματα που επιλέγετε χειροκίνητα.",
     "inputTranslation": "Εισαγωγή μετάφρασης",
     "inputTranslationMode": "Λειτουργία μετάφρασης εισαγωγής",
     "inputTranslationModeDisabled": "ΑμεΑ",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "Γρήγορο πεδίο εισαγωγής με διπλό πάτημα",
     "inputTranslationPrivacyNotice": "Η εισαγωγή απλού κειμένου θα σταλεί στον επιλεγμένο τρίτο πάροχο LLM.",
     "translateInput": "Μετάφραση εισόδου",
+    "messageBubbleGradient": "Διαβάθμιση φυσαλίδας μηνύματος",
     "hugContent": "{senderName} σε αγκαλιάζει",
     "@hugContent": {
         "type": "String",
@@ -1976,6 +1970,5 @@
     "@noGoogleServicesWarning": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

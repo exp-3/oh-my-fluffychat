@@ -23,8 +23,6 @@
     "translationScopeNone": "Cap sala (configuració manual)",
     "translationScopeAllRooms": "Missatges a totes les sales",
     "translationScopeUnencryptedRooms": "Missatges en sales sense xifrar",
-    "translationScopeSelectedRooms": "Missatges a les sales seleccionades",
-    "translationScopeManualOnly": "Només missatges seleccionats manualment",
     "translationScopeOverrideHint": "Podeu substituir aquesta regla a la configuració de cada sala.",
     "sourceLanguage": "Idioma del missatge original",
     "targetLanguage": "La vostra llengua preferida",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "Preferir la llengua de la sala com a destinació de traducció",
     "translationAutoDetect": "Detecta automàticament",
     "requiredField": "Obligatori",
-    "translationDisplayMode": "Mode de visualització",
     "translatedOnly": "Només traducció",
     "bilingual": "Bilingüe",
     "translationBilingualColor": "Color del text de traducció",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "Llengua de comunicació de la sala",
     "roomLanguageFollowGlobal": "No establert (seguir la configuració global)",
     "translateRoom": "Traduir",
-    "stopRoomTranslation": "Atureu-vos",
     "translationDisabledGlobally": "Activeu primer la traducció a la configuració de l'aplicació.",
-    "translationRoomManagedGlobally": "Aquesta configuració està controlada per l'àmbit de traducció global.",
-    "translationEncryptedRoomExcluded": "L'abast actual no tradueix automàticament les sales encriptades.",
-    "translationManualOnlyRoom": "L'àmbit actual només tradueix els missatges que seleccioneu manualment.",
     "inputTranslation": "Traducció d'entrada",
     "inputTranslationMode": "Mode de traducció d'entrada",
     "inputTranslationModeDisabled": "Inhabilitat",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "Camp d'entrada ràpid de doble toc",
     "inputTranslationPrivacyNotice": "El text senzill d'entrada s'enviarà al proveïdor de LLM de tercers seleccionat.",
     "translateInput": "Tradueix l'entrada",
+    "messageBubbleGradient": "Degradat de la bombolla de missatge",
     "about": "Quant a",
     "@about": {
         "type": "String",
@@ -2600,6 +2594,5 @@
     "support": "Aporta",
     "setLowPriority": "Estableix una prioritat baixa",
     "unsetLowPriority": "Restableix la prioritat",
-    "playSoundOnNotification": "Notificacions sonores",
-    "messageBubbleGradient": "Message bubble gradient"
+    "playSoundOnNotification": "Notificacions sonores"
 }

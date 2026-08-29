@@ -24,8 +24,6 @@
     "translationScopeNone": "Ningunha sala (configuración manual)",
     "translationScopeAllRooms": "Mensaxes en todas as salas",
     "translationScopeUnencryptedRooms": "Mensaxes en salas sen cifrar",
-    "translationScopeSelectedRooms": "Mensaxes nas salas seleccionadas",
-    "translationScopeManualOnly": "Só as mensaxes seleccionadas manualmente",
     "translationScopeOverrideHint": "Podes substituír esta regra na configuración de cada sala.",
     "sourceLanguage": "Lingua da mensaxe orixinal",
     "targetLanguage": "A súa lingua preferida",
@@ -33,7 +31,6 @@
     "preferRoomLanguageForInputTarget": "Preferir o idioma da sala como destino da tradución",
     "translationAutoDetect": "Detecta automaticamente",
     "requiredField": "Obrigatorio",
-    "translationDisplayMode": "Modo de visualización",
     "translatedOnly": "Só tradución",
     "bilingual": "Bilingüe",
     "translationBilingualColor": "Cor do texto da tradución",
@@ -77,11 +74,7 @@
     "roomCommunicationLanguage": "Idioma de comunicación da sala",
     "roomLanguageFollowGlobal": "Non establecido (seguir a configuración global)",
     "translateRoom": "Traducir",
-    "stopRoomTranslation": "Pare",
     "translationDisabledGlobally": "Habilita primeiro a tradución na configuración da aplicación.",
-    "translationRoomManagedGlobally": "Esta configuración está controlada polo ámbito da tradución global.",
-    "translationEncryptedRoomExcluded": "O ámbito actual non traduce automaticamente as salas cifradas.",
-    "translationManualOnlyRoom": "O ámbito actual só traduce as mensaxes que seleccionas manualmente.",
     "inputTranslation": "Tradución de entrada",
     "inputTranslationMode": "Modo de tradución de entrada",
     "inputTranslationModeDisabled": "Desactivado",
@@ -101,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Toca dúas veces o campo de entrada rápido",
     "inputTranslationPrivacyNotice": "O texto claro de entrada enviarase ao provedor de LLM de terceiros seleccionado.",
     "translateInput": "Traducir entrada",
+    "messageBubbleGradient": "Degradado da burbulla da mensaxe",
     "about": "Acerca de",
     "@about": {
         "type": "String",
@@ -2884,6 +2878,5 @@
     },
     "enterCall": "Entrar na chamada",
     "videoCallsBetaWarning": "As chamadas de vídeo son unha función en probas. Podería haber fallos ou comportamentos non agardados. Apreciamos que nos contes que tal funcionan.",
-    "noDevicesFound": "Non se atopan dispositivos",
-    "messageBubbleGradient": "Message bubble gradient"
+    "noDevicesFound": "Non se atopan dispositivos"
 }

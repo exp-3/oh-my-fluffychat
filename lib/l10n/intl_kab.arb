@@ -23,8 +23,6 @@
     "translationScopeNone": "Ulac tixxamin (asebded s ufus)",
     "translationScopeAllRooms": "Izen di yal taxxamt",
     "translationScopeUnencryptedRooms": "Izen deg texxamin ur nettwakkes ara",
-    "translationScopeSelectedRooms": "Izen deg texxamin yettwafernen",
-    "translationScopeManualOnly": "Ala iznan yettwafernen s ufus",
     "translationScopeOverrideHint": "Tzemreḍ ad tesneflid taluft-a deg yiɣewwaren n yal taxxamt.",
     "sourceLanguage": "Tutlayt n yizen amezwaru",
     "targetLanguage": "Tutlayt i tḥemmleḍ",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "Smenyif tutlayt n texxamt am yiswi n tsuqilt",
     "translationAutoDetect": "Nadi s wudem awurman",
     "requiredField": "Yettawsra",
-    "translationDisplayMode": "Askar n uskan",
     "translatedOnly": "Tutlayt kan",
     "bilingual": "Tutlayt tis snat",
     "translationBilingualColor": "Asegzawal n uḍris",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "Tutlayt n umyawaḍ n texxamt",
     "roomLanguageFollowGlobal": "Ur tettwasebded ara (ḍfer aɣewwaṛ amatu)",
     "translateRoom": "Suqel",
-    "stopRoomTranslation": "Ḥbes",
     "translationDisabledGlobally": "Snifel tasuqilt deg yiɣewwaren n usebter amezwaru.",
-    "translationRoomManagedGlobally": "Isebtaren i sɛan azday ɣer \"World Translation\"",
-    "translationEncryptedRoomExcluded": "Isebtar i yellan ddaw-a sɛan aseɣwen ɣer Tmaziɣt",
-    "translationManualOnlyRoom": "Aseqdec n tura yettwasuqel kan iznan i tferneḍ s ufus.",
     "inputTranslation": "Tutlayt n inekcum",
     "inputTranslationMode": "Asnulfu n usnulfu",
     "inputTranslationModeDisabled": "Yettwakkes urmad",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "Asekcem s tɣawla",
     "inputTranslationPrivacyNotice": "Isebtaren i sɛan azday ɣer \"LLM\"",
     "translateInput": "Snifel asenker",
+    "messageBubbleGradient": "Gradient n tebulleṭ n yizenan",
     "repeatPassword": "Ales awal n uɛeddi",
     "notAnImage": "Mačči d afaylu n tugna.",
     "remove": "Kkes",
@@ -2449,6 +2443,5 @@
                 "type": "String"
             }
         }
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

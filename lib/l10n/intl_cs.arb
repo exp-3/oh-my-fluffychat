@@ -24,8 +24,6 @@
     "translationScopeNone": "Žádné místnosti (ruční nastavení)",
     "translationScopeAllRooms": "Zprávy ve všech místnostech",
     "translationScopeUnencryptedRooms": "Zprávy v nešifrovaných místnostech",
-    "translationScopeSelectedRooms": "Zprávy ve vybraných místnostech",
-    "translationScopeManualOnly": "Pouze ručně vybrané zprávy",
     "translationScopeOverrideHint": "Toto pravidlo můžete změnit v nastavení každé místnosti.",
     "sourceLanguage": "Jazyk původní zprávy",
     "targetLanguage": "Váš preferovaný jazyk",
@@ -33,7 +31,6 @@
     "preferRoomLanguageForInputTarget": "Upřednostnit jazyk místnosti jako cíl překladu",
     "translationAutoDetect": "Detekovat automaticky",
     "requiredField": "Povinné",
-    "translationDisplayMode": "Režim zobrazení",
     "translatedOnly": "Pouze překlad",
     "bilingual": "Dvojjazyčné",
     "translationBilingualColor": "Barva textu překladu",
@@ -77,11 +74,7 @@
     "roomCommunicationLanguage": "Komunikační jazyk místnosti",
     "roomLanguageFollowGlobal": "Nenastaveno (použít globální nastavení)",
     "translateRoom": "Přeložit",
-    "stopRoomTranslation": "Přestaň",
     "translationDisabledGlobally": "Nejprve povolte překlad v nastavení aplikace.",
-    "translationRoomManagedGlobally": "Toto nastavení je řízeno globálním rozsahem překladu.",
-    "translationEncryptedRoomExcluded": "Aktuální rozsah automaticky nepřekládá šifrované místnosti.",
-    "translationManualOnlyRoom": "Aktuální rozsah překládá pouze zprávy, které vyberete ručně.",
     "inputTranslation": "Vstupní překlad",
     "inputTranslationMode": "Vstupní režim překladu",
     "inputTranslationModeDisabled": "Zakázáno",
@@ -101,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Rychlé dvojité poklepání na vstupní pole",
     "inputTranslationPrivacyNotice": "Vstupní prostý text bude odeslán vybranému poskytovateli LLM třetí strany.",
     "translateInput": "Přeložit vstup",
+    "messageBubbleGradient": "Barevný přechod bubliny zprávy",
     "about": "O aplikaci",
     "@about": {
         "type": "String",
@@ -2525,6 +2519,5 @@
                 "type": "String"
             }
         }
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

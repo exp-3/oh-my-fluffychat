@@ -24,8 +24,6 @@
     "translationScopeNone": "Nincsenek szobák (kézi beállítás)",
     "translationScopeAllRooms": "Üzenetek minden szobában",
     "translationScopeUnencryptedRooms": "Üzenetek titkosítatlan szobákban",
-    "translationScopeSelectedRooms": "Üzenetek a kiválasztott szobákban",
-    "translationScopeManualOnly": "Csak manuálisan kiválasztott üzenetek",
     "translationScopeOverrideHint": "Ezt a szabályt minden szoba beállításaiban felülírhatja.",
     "sourceLanguage": "Az eredeti üzenet nyelve",
     "targetLanguage": "Az Ön által előnyben részesített nyelv",
@@ -33,7 +31,6 @@
     "preferRoomLanguageForInputTarget": "A szoba nyelvének előnyben részesítése fordítási célként",
     "translationAutoDetect": "Automatikus észlelés",
     "requiredField": "Kötelező",
-    "translationDisplayMode": "Megjelenítési mód",
     "translatedOnly": "Csak fordítás",
     "bilingual": "Kétnyelvű",
     "translationBilingualColor": "Fordítási szöveg színe",
@@ -77,11 +74,7 @@
     "roomCommunicationLanguage": "A szoba kommunikációs nyelve",
     "roomLanguageFollowGlobal": "Nincs beállítva (globális beállítás követése)",
     "translateRoom": "Fordítás",
-    "stopRoomTranslation": "Állj",
     "translationDisabledGlobally": "Először engedélyezze a fordítást az alkalmazás beállításaiban.",
-    "translationRoomManagedGlobally": "Ezt a beállítást a globális fordítási hatókör vezérli.",
-    "translationEncryptedRoomExcluded": "A jelenlegi hatókör nem fordítja le automatikusan a titkosított szobákat.",
-    "translationManualOnlyRoom": "Az aktuális hatókör csak a kézzel kiválasztott üzeneteket fordítja le.",
     "inputTranslation": "Bemeneti fordítás",
     "inputTranslationMode": "Beviteli fordítási mód",
     "inputTranslationModeDisabled": "Letiltva",
@@ -101,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Gyors dupla koppintás beviteli mező",
     "inputTranslationPrivacyNotice": "A beviteli egyszerű szöveget a rendszer elküldi a kiválasztott harmadik fél LLM-szolgáltatónak.",
     "translateInput": "Bemenet fordítása",
+    "messageBubbleGradient": "Üzenetbuborék színátmenete",
     "about": "Névjegy",
     "@about": {
         "type": "String",
@@ -2527,6 +2521,5 @@
                 "type": "String"
             }
         }
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

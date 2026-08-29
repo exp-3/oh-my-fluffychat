@@ -23,8 +23,6 @@
     "translationScopeNone": "Nenhuma sala (configuração manual)",
     "translationScopeAllRooms": "Mensagens em todos os quartos",
     "translationScopeUnencryptedRooms": "Mensagens em salas não criptografadas",
-    "translationScopeSelectedRooms": "Mensagens em salas selecionadas",
-    "translationScopeManualOnly": "Apenas mensagens selecionadas manualmente",
     "translationScopeOverrideHint": "Pode substituir esta regra nas definições de cada sala.",
     "sourceLanguage": "Idioma da mensagem original",
     "targetLanguage": "O seu idioma preferido",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "Preferir o idioma da sala como destino da tradução",
     "translationAutoDetect": "Detectar automaticamente",
     "requiredField": "Obrigatório",
-    "translationDisplayMode": "Modo de exibição",
     "translatedOnly": "Somente tradução",
     "bilingual": "Bilíngue",
     "translationBilingualColor": "Cor do texto de tradução",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "Idioma de comunicação da sala",
     "roomLanguageFollowGlobal": "Não definido (seguir configuração global)",
     "translateRoom": "Traduzir",
-    "stopRoomTranslation": "Pare",
     "translationDisabledGlobally": "Ative primeiro a tradução nas configurações do aplicativo.",
-    "translationRoomManagedGlobally": "Esta configuração é controlada pelo escopo de tradução global.",
-    "translationEncryptedRoomExcluded": "O escopo atual não traduz automaticamente salas criptografadas.",
-    "translationManualOnlyRoom": "O escopo atual traduz apenas mensagens selecionadas manualmente.",
     "inputTranslation": "Tradução de entrada",
     "inputTranslationMode": "Modo de tradução de entrada",
     "inputTranslationModeDisabled": "Desativado",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "Campo de entrada rápido de toque duplo",
     "inputTranslationPrivacyNotice": "O texto simples de entrada será enviado ao provedor LLM terceirizado selecionado.",
     "translateInput": "Traduzir entrada",
+    "messageBubbleGradient": "Gradiente do balão de mensagem",
     "copiedToClipboard": "Copiada para a área de transferência",
     "@copiedToClipboard": {
         "type": "String",
@@ -2097,6 +2091,5 @@
     "@unbanFromChat": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

@@ -24,8 +24,6 @@
     "translationScopeNone": "Keine Räume (manuelle Einrichtung)",
     "translationScopeAllRooms": "Nachrichten in allen Räumen",
     "translationScopeUnencryptedRooms": "Nachrichten in unverschlüsselten Räumen",
-    "translationScopeSelectedRooms": "Nachrichten in ausgewählten Räumen",
-    "translationScopeManualOnly": "Nur manuell ausgewählte Nachrichten",
     "translationScopeOverrideHint": "Diese Regel kann in den Einstellungen jedes Raums überschrieben werden.",
     "sourceLanguage": "Sprache der Originalnachricht",
     "targetLanguage": "Ihre bevorzugte Sprache",
@@ -33,7 +31,6 @@
     "preferRoomLanguageForInputTarget": "Raumsprache als Übersetzungsziel bevorzugen",
     "translationAutoDetect": "Automatisch erkennen",
     "requiredField": "Erforderlich",
-    "translationDisplayMode": "Anzeigemodus",
     "translatedOnly": "Nur Übersetzung",
     "bilingual": "Zweisprachig",
     "translationBilingualColor": "Farbe des Übersetzungstextes",
@@ -77,11 +74,7 @@
     "roomCommunicationLanguage": "Kommunikationssprache des Raums",
     "roomLanguageFollowGlobal": "Nicht festgelegt (global folgen)",
     "translateRoom": "Übersetzen",
-    "stopRoomTranslation": "Stopp",
     "translationDisabledGlobally": "Aktivieren Sie zunächst die Übersetzung in den App-Einstellungen.",
-    "translationRoomManagedGlobally": "Diese Einstellung wird durch den globalen Übersetzungsbereich gesteuert.",
-    "translationEncryptedRoomExcluded": "Der aktuelle Umfang übersetzt verschlüsselte Räume nicht automatisch.",
-    "translationManualOnlyRoom": "Der aktuelle Bereich übersetzt nur Nachrichten, die Sie manuell auswählen.",
     "inputTranslation": "Eingabeübersetzung",
     "inputTranslationMode": "Eingabeübersetzungsmodus",
     "inputTranslationModeDisabled": "Deaktiviert",
@@ -101,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Schnelles Doppeltippen auf das Eingabefeld",
     "inputTranslationPrivacyNotice": "Der eingegebene Klartext wird an den ausgewählten LLM-Drittanbieter gesendet.",
     "translateInput": "Eingabe übersetzen",
+    "messageBubbleGradient": "Farbverlauf der Nachrichtenblase",
     "about": "Über",
     "@about": {
         "type": "String",
@@ -2795,6 +2789,5 @@
     "edited": "(bearbeitet)",
     "couldNotBeSent": "Konnte nicht gesendet werden",
     "yesterday": "Gestern",
-    "resetRecoveryKey": "Wiederherstellungsschlüssel zurücksetzen",
-    "messageBubbleGradient": "Message bubble gradient"
+    "resetRecoveryKey": "Wiederherstellungsschlüssel zurücksetzen"
 }

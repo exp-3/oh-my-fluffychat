@@ -24,8 +24,6 @@
     "translationScopeNone": "Ninguna sala (configuración manual)",
     "translationScopeAllRooms": "Mensajes en todas las habitaciones.",
     "translationScopeUnencryptedRooms": "Mensajes en salas no cifradas",
-    "translationScopeSelectedRooms": "Mensajes en salas seleccionadas",
-    "translationScopeManualOnly": "Sólo mensajes seleccionados manualmente",
     "translationScopeOverrideHint": "Puedes anular esta regla en la configuración de cada sala.",
     "sourceLanguage": "Idioma del mensaje original",
     "targetLanguage": "Su idioma preferido",
@@ -33,7 +31,6 @@
     "preferRoomLanguageForInputTarget": "Preferir el idioma de la sala como destino de traducción",
     "translationAutoDetect": "Detectar automáticamente",
     "requiredField": "Requerido",
-    "translationDisplayMode": "Modo de visualización",
     "translatedOnly": "Sólo traducción",
     "bilingual": "Bilingue",
     "translationBilingualColor": "Color del texto de traducción",
@@ -77,11 +74,7 @@
     "roomCommunicationLanguage": "Idioma de comunicación de la sala",
     "roomLanguageFollowGlobal": "No establecido (seguir configuración global)",
     "translateRoom": "Traducir",
-    "stopRoomTranslation": "Detener",
     "translationDisabledGlobally": "Primero habilite la traducción en la configuración de la aplicación.",
-    "translationRoomManagedGlobally": "Esta configuración está controlada por el ámbito de traducción global.",
-    "translationEncryptedRoomExcluded": "El alcance actual no traduce automáticamente las salas cifradas.",
-    "translationManualOnlyRoom": "El alcance actual solo traduce los mensajes que usted selecciona manualmente.",
     "inputTranslation": "Traducción de entrada",
     "inputTranslationMode": "Modo de traducción de entrada",
     "inputTranslationModeDisabled": "Discapacitado",
@@ -101,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Campo de entrada rápida de doble toque",
     "inputTranslationPrivacyNotice": "El texto sin formato ingresado se enviará al proveedor externo de LLM seleccionado.",
     "translateInput": "Traducir entrada",
+    "messageBubbleGradient": "Degradado de la burbuja de mensaje",
     "about": "Acerca de",
     "@about": {
         "type": "String",
@@ -2710,6 +2704,5 @@
         }
     },
     "compressingVideo": "Comprimiendo video...",
-    "deviceIdentityKey": "Dispositivo de llave de identidad",
-    "messageBubbleGradient": "Message bubble gradient"
+    "deviceIdentityKey": "Dispositivo de llave de identidad"
 }

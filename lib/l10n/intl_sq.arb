@@ -22,8 +22,6 @@
     "translationScopeNone": "Nuk ka dhoma (konfigurim manual)",
     "translationScopeAllRooms": "Mesazhe në të gjitha dhomat",
     "translationScopeUnencryptedRooms": "Mesazhe në dhoma të pakriptuara",
-    "translationScopeSelectedRooms": "Mesazhet në dhomat e zgjedhura",
-    "translationScopeManualOnly": "Vetëm mesazhe të zgjedhura manualisht",
     "translationScopeOverrideHint": "Mund ta anashkaloni këtë rregull te cilësimet e çdo dhome.",
     "sourceLanguage": "Gjuha e mesazhit origjinal",
     "targetLanguage": "Gjuha juaj e preferuar",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "Prefero gjuhën e dhomës si objektiv përkthimi",
     "translationAutoDetect": "Zbulo automatikisht",
     "requiredField": "E detyrueshme",
-    "translationDisplayMode": "Modaliteti i shfaqjes",
     "translatedOnly": "Vetëm përkthim",
     "bilingual": "Dygjuhëshe",
     "translationBilingualColor": "Ngjyra e tekstit të përkthimit",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "Gjuha e komunikimit të dhomës",
     "roomLanguageFollowGlobal": "E pacaktuar (ndiq cilësimin global)",
     "translateRoom": "Përkthejeni",
-    "stopRoomTranslation": "Ndalo",
     "translationDisabledGlobally": "Aktivizo fillimisht përkthimin në cilësimet e aplikacionit.",
-    "translationRoomManagedGlobally": "Ky cilësim kontrollohet nga shtrirja globale e përkthimit.",
-    "translationEncryptedRoomExcluded": "Shtrirja aktuale nuk i përkthen automatikisht dhomat e enkriptuara.",
-    "translationManualOnlyRoom": "Shtrirja aktuale përkthen vetëm mesazhet që ju zgjidhni me dorë.",
     "inputTranslation": "Përkthimi i hyrjes",
     "inputTranslationMode": "Mënyra e përkthimit të hyrjes",
     "inputTranslationModeDisabled": "I paaftë",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "Fusha e hyrjes me prekje të shpejtë dy herë",
     "inputTranslationPrivacyNotice": "Shkrimi i tekstit të thjeshtë do t'i dërgohet ofruesit të zgjedhur të palës së tretë të LLM.",
     "translateInput": "Përkthe hyrjen",
+    "messageBubbleGradient": "Gradienti i flluskës së mesazhit",
     "@showPassword": {
         "type": "String",
         "placeholders": {}
@@ -2070,6 +2064,5 @@
     "@areGuestsAllowedToJoin": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

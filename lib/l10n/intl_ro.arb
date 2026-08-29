@@ -23,8 +23,6 @@
     "translationScopeNone": "Nicio cameră (configurare manuală)",
     "translationScopeAllRooms": "Mesaje în toate camerele",
     "translationScopeUnencryptedRooms": "Mesaje în camere necriptate",
-    "translationScopeSelectedRooms": "Mesaje în camerele selectate",
-    "translationScopeManualOnly": "Doar mesajele selectate manual",
     "translationScopeOverrideHint": "Poți suprascrie această regulă în setările fiecărei camere.",
     "sourceLanguage": "Limba mesajului original",
     "targetLanguage": "Limba preferată de dvs",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "Preferă limba camerei ca țintă de traducere",
     "translationAutoDetect": "Detectează automat",
     "requiredField": "Obligatoriu",
-    "translationDisplayMode": "Modul de afișare",
     "translatedOnly": "Doar traducere",
     "bilingual": "Bilingv",
     "translationBilingualColor": "Culoarea textului de traducere",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "Limba de comunicare a camerei",
     "roomLanguageFollowGlobal": "Nesetat (urmează setarea globală)",
     "translateRoom": "Traduceți",
-    "stopRoomTranslation": "Opreste-te",
     "translationDisabledGlobally": "Activați mai întâi traducerea în setările aplicației.",
-    "translationRoomManagedGlobally": "Această setare este controlată de domeniul de aplicare global al traducerii.",
-    "translationEncryptedRoomExcluded": "Domeniul actual de aplicare nu traduce automat camerele criptate.",
-    "translationManualOnlyRoom": "Domeniul actual de aplicare traduce doar mesajele pe care le selectați manual.",
     "inputTranslation": "Traducere de intrare",
     "inputTranslationMode": "Introduceți modul de traducere",
     "inputTranslationModeDisabled": "Dezactivat",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "Atingeți rapid de două ori câmpul de introducere",
     "inputTranslationPrivacyNotice": "Textul simplu introdus va fi trimis furnizorului LLM terț selectat.",
     "translateInput": "Traduceți intrarea",
+    "messageBubbleGradient": "Gradientul bulei mesajului",
     "about": "Despre",
     "@about": {
         "type": "String",
@@ -2290,6 +2284,5 @@
                 "type": "String"
             }
         }
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

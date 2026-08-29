@@ -22,8 +22,6 @@
     "translationScopeNone": "ཁང་པ་མེད། (ལག་ཐོག་སྒྲིག་འཇུག)",
     "translationScopeAllRooms": "ཁང་མིག་ཚང་མའི་ནང་གི་བརྡ་འཕྲིན།",
     "translationScopeUnencryptedRooms": "གསང་གྲངས་མེད་པའི་ཁང་པའི་ནང་གི་འཕྲིན་ཡིག།",
-    "translationScopeSelectedRooms": "འདེམས་སྒྲུག་བྱས་པའི་ཁང་མིག་ནང་གི་བརྡ་འཕྲིན།",
-    "translationScopeManualOnly": "ལག་ཐོག་ནས་བདམས་པའི་འཕྲིན་ཡིག་ཁོ་ན།",
     "translationScopeOverrideHint": "ཁང་པ་རེ་རེའི་སྒྲིག་འཇུག་ནས་སྒྲིག་འགོད་འདི་བརྗེ་ཐུབ།",
     "sourceLanguage": "གསལ་བཤད་གཏམ་གྱི་སྐད་ཡིག།",
     "targetLanguage": "ཁྱེད་ཀྱི་དགའ་མོས་སྐད་ཡིག།",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "ཁང་པའི་སྐད་ཡིག་ལ་བསྒྱུར་བའི་དམིགས་ཡུལ་གྱི་གཙོ་བོ་བྱེད།",
     "translationAutoDetect": "རང་འགུལ་གྱིས་ཤེས་རྟོགས་ཐུབ་པ།",
     "requiredField": "དགོས་མཁོ།",
-    "translationDisplayMode": "གསལ་སྟོན་ཐབས་ལམ།",
     "translatedOnly": "ཡིག་སྒྱུར་རྐྱང་རྐྱང་།",
     "bilingual": "སྐད་གཉིས།",
     "translationBilingualColor": "སྒྱུར་ཡིག་གི་ཚོན་མདོག།",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "ཁང་པའི་འབྲེལ་མཐུད་སྐད་ཡིག",
     "roomLanguageFollowGlobal": "གཏན་འབེབས་མེད (ཁྱབ་ཁོངས་སྒྲིག་འཇུག་རྗེས་སུ་འབྲང་)",
     "translateRoom": "བསྒྱུར།",
-    "stopRoomTranslation": "མཚམས་འཇོག་པ།",
     "translationDisabledGlobally": "དང་པོ་མཉེན་ཆས་སྒྲིག་སྟངས་ནང་སྐད་སྒྱུར་བྱེད་ཐུབ།",
-    "translationRoomManagedGlobally": "སྒྲིག་སྟངས་འདི་གོ་ལ་ཧྲིལ་པོའི་ཡིག་སྒྱུར་ཁྱབ་ཁོངས་ཀྱིས་ཚོད་འཛིན་བྱེད་ཀྱི་ཡོད།",
-    "translationEncryptedRoomExcluded": "ད་ལྟའི་ཁྱབ་ཁོངས་ཀྱིས་གསང་བའི་ཁང་མིག་རང་འགུལ་གྱིས་སྒྱུར་མི་ཐུབ།",
-    "translationManualOnlyRoom": "ད་ལྟའི་ཁྱབ་ཁོངས་ཀྱིས་ཁྱེད་ཀྱིས་ལག་ཐོག་ནས་འདེམས་པའི་འཕྲིན་ཡིག་ཁོ་ན་སྐད་སྒྱུར་བྱེད།",
     "inputTranslation": "ནང་འཇུག་ཡིག་སྒྱུར།",
     "inputTranslationMode": "ནང་འཇུག་ཡིག་སྒྱུར་ཐབས་ལམ།",
     "inputTranslationModeDisabled": "དབང་པོ་སྐྱོན་ཅན།",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "མགྱོགས་མྱུར་ཐེངས་གཉིས་རྡེབ་ནང་འཇུག་ས་ཁོངས།",
     "inputTranslationPrivacyNotice": "ནང་འཇུག་ཡིག་ཆ་གཙང་མ་དེ་འདེམས་སྒྲུག་བྱས་པའི་ཕྱོགས་གསུམ་པའི་LLMམཁོ་སྤྲོད་བྱེད་མཁན་ལ་གཏོང་རྒྱུ་རེད།",
     "translateInput": "ནང་འཇུག་བསྒྱུར།",
+    "messageBubbleGradient": "འཕྲིན་ཡིག་གི་ལྦུ་བའི་རིམ་འགྱུར།",
     "@showPassword": {
         "type": "String",
         "placeholders": {}
@@ -2070,6 +2064,5 @@
     "@areGuestsAllowedToJoin": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

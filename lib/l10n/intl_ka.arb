@@ -22,8 +22,6 @@
     "translationScopeNone": "ოთახები არ არის (ხელით დაყენება)",
     "translationScopeAllRooms": "შეტყობინებები ყველა ოთახში",
     "translationScopeUnencryptedRooms": "შეტყობინებები დაშიფრულ ოთახებში",
-    "translationScopeSelectedRooms": "შეტყობინებები შერჩეულ ოთახებში",
-    "translationScopeManualOnly": "მხოლოდ ხელით შერჩეული შეტყობინებები",
     "translationScopeOverrideHint": "ამ წესის გადაფარვა თითოეული ოთახის პარამეტრებიდან შეგიძლიათ.",
     "sourceLanguage": "ორიგინალი შეტყობინების ენა",
     "targetLanguage": "თქვენთვის სასურველი ენა",
@@ -31,7 +29,6 @@
     "preferRoomLanguageForInputTarget": "ოთახის ენის გამოყენება თარგმნის სამიზნედ",
     "translationAutoDetect": "ამოცნობა ავტომატურად",
     "requiredField": "საჭირო",
-    "translationDisplayMode": "ჩვენების რეჟიმი",
     "translatedOnly": "მხოლოდ თარგმანი",
     "bilingual": "ორენოვანი",
     "translationBilingualColor": "თარგმანის ტექსტის ფერი",
@@ -75,11 +72,7 @@
     "roomCommunicationLanguage": "ოთახის საკომუნიკაციო ენა",
     "roomLanguageFollowGlobal": "არ არის დაყენებული (გლობალურის მიყოლა)",
     "translateRoom": "თარგმნეთ",
-    "stopRoomTranslation": "გაჩერდი",
     "translationDisabledGlobally": "ჯერ ჩართეთ თარგმანი აპის პარამეტრებში.",
-    "translationRoomManagedGlobally": "ეს პარამეტრი კონტროლდება გლობალური თარგმანის ფარგლებით.",
-    "translationEncryptedRoomExcluded": "მიმდინარე სფერო ავტომატურად არ თარგმნის დაშიფრულ ოთახებს.",
-    "translationManualOnlyRoom": "ამჟამინდელი დიაპაზონი თარგმნის მხოლოდ თქვენ მიერ ხელით არჩეულ შეტყობინებებს.",
     "inputTranslation": "შეყვანის თარგმანი",
     "inputTranslationMode": "შეყვანის თარგმანის რეჟიმი",
     "inputTranslationModeDisabled": "გამორთულია",
@@ -99,6 +92,7 @@
     "inputTranslationTriggerDoubleTap": "სწრაფი ორჯერ შეხებით შეყვანის ველი",
     "inputTranslationPrivacyNotice": "შეყვანილი მარტივი ტექსტი გაეგზავნება არჩეულ მესამე მხარის LLM პროვაიდერს.",
     "translateInput": "შეყვანის თარგმნა",
+    "messageBubbleGradient": "შეტყობინების ბუშტის გრადიენტი",
     "alias": "მეტსახელი",
     "@alias": {
         "type": "String",
@@ -2058,6 +2052,5 @@
     "@noGoogleServicesWarning": {
         "type": "String",
         "placeholders": {}
-    },
-    "messageBubbleGradient": "Message bubble gradient"
+    }
 }

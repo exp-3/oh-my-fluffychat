@@ -23,8 +23,6 @@
     "translationScopeNone": "Tidak ada ruang (pengaturan manual)",
     "translationScopeAllRooms": "Pesan di semua ruangan",
     "translationScopeUnencryptedRooms": "Pesan di ruangan tidak terenkripsi",
-    "translationScopeSelectedRooms": "Pesan di ruangan tertentu",
-    "translationScopeManualOnly": "Hanya pesan yang dipilih secara manual",
     "translationScopeOverrideHint": "Anda dapat mengganti aturan ini di pengaturan setiap ruang.",
     "sourceLanguage": "Bahasa pesan asli",
     "targetLanguage": "Bahasa pilihan Anda",
@@ -32,7 +30,6 @@
     "preferRoomLanguageForInputTarget": "Utamakan bahasa ruang sebagai target terjemahan",
     "translationAutoDetect": "Deteksi secara otomatis",
     "requiredField": "Diperlukan",
-    "translationDisplayMode": "Modus tampilan",
     "translatedOnly": "Terjemahan saja",
     "bilingual": "Dwibahasa",
     "translationBilingualColor": "Warna teks terjemahan",
@@ -76,11 +73,7 @@
     "roomCommunicationLanguage": "Bahasa komunikasi ruang",
     "roomLanguageFollowGlobal": "Belum diatur (ikuti pengaturan global)",
     "translateRoom": "Terjemahkan",
-    "stopRoomTranslation": "Berhenti",
     "translationDisabledGlobally": "Aktifkan terjemahan di pengaturan aplikasi terlebih dahulu.",
-    "translationRoomManagedGlobally": "Pengaturan ini dikendalikan oleh cakupan terjemahan global.",
-    "translationEncryptedRoomExcluded": "Cakupan saat ini tidak secara otomatis menerjemahkan ruangan terenkripsi.",
-    "translationManualOnlyRoom": "Cakupan saat ini hanya menerjemahkan pesan yang Anda pilih secara manual.",
     "inputTranslation": "Terjemahan masukan",
     "inputTranslationMode": "Masukkan mode terjemahan",
     "inputTranslationModeDisabled": "Dinonaktifkan",
@@ -100,6 +93,7 @@
     "inputTranslationTriggerDoubleTap": "Ketuk dua kali bidang masukan dengan cepat",
     "inputTranslationPrivacyNotice": "Teks biasa masukan akan dikirim ke penyedia LLM pihak ketiga yang dipilih.",
     "translateInput": "Terjemahkan masukan",
+    "messageBubbleGradient": "Gradien gelembung pesan",
     "setAsCanonicalAlias": "Atur sebagai alias utama",
     "@setAsCanonicalAlias": {
         "type": "String",
@@ -2860,6 +2854,5 @@
     "unifiedPushDistributors": "Distributor Unified Push:",
     "doubleTapToReact": "Ketuk dua kali untuk bereaksi",
     "doubleTapToReactDescription": "Ketuk dua kali pada pesan untuk bereaksi alih-alih memilih teks",
-    "doubleTapReaction": "Reaksi ketuk dua kali",
-    "messageBubbleGradient": "Message bubble gradient"
+    "doubleTapReaction": "Reaksi ketuk dua kali"
 }
