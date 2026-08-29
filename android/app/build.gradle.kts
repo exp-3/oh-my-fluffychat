@@ -11,6 +11,22 @@ if (file("google-services.json").exists()) {
     apply(plugin = "com.google.gms.google-services")
 }
 
+val supportedAndroidAbis = setOf("armeabi-v7a", "arm64-v8a", "x86_64")
+val configuredAndroidAbis = providers.gradleProperty("fluffychatAndroidAbis")
+    .orNull
+    ?.split(',')
+    ?.map { it.trim() }
+    ?.filter { it.isNotEmpty() }
+    ?.distinct()
+    ?.takeIf { it.isNotEmpty() }
+val androidAbis = configuredAndroidAbis ?: listOf("arm64-v8a")
+require(androidAbis.all { it in supportedAndroidAbis }) {
+    "Unsupported Android ABI in fluffychatAndroidAbis: ${androidAbis - supportedAndroidAbis}"
+}
+val excludedAndroidAbis = supportedAndroidAbis
+    .filter { it !in androidAbis }
+    .map { "**/$it/**" }
+
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4") // For flutter_local_notifications // Workaround for: https://github.com/MaikuB/flutter_local_notifications/issues/2286
     implementation("androidx.core:core-ktx:1.17.0") // For Android Auto
@@ -71,18 +87,14 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        ndk { // Workaround for https://github.com/flutter/flutter/issues/162153#issuecomment-2612443642
-            abiFilters += listOf("arm64-v8a")
+        ndk {
+            abiFilters += androidAbis
         }
     }
 
     packaging {
         jniLibs {
-            excludes += setOf(
-                "**/armeabi-v7a/**",
-                "**/x86/**",
-                "**/x86_64/**",
-            )
+            excludes += excludedAndroidAbis + "**/x86/**"
         }
     }
 

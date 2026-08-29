@@ -1,8 +1,5 @@
 name: "Free up space"
-
-inputs:
-  target:
-    required: true
+description: "Remove unused preinstalled tools from GitHub-hosted Ubuntu runners"
 
 runs:
   using: "composite"
