@@ -1,4 +1,119 @@
 {
+    "@@locale": "en",
+    "@@last_modified": "2021-08-14 12:38:37.885451",
+    "translation": "Translation",
+    "enableTranslation": "Enable LLM translation",
+    "translationPrivacyNotice": "Message plaintext will be sent to the selected third-party LLM provider.",
+    "translationProviderRequired": "Add and select a provider with an API key before enabling translation.",
+    "translationProviders": "Translation providers",
+    "noTranslationProviders": "No translation providers configured",
+    "addTranslationProvider": "Add translation provider",
+    "editTranslationProvider": "Edit translation provider",
+    "deleteTranslationProvider": "Delete provider",
+    "providerName": "Provider name",
+    "translationEndpoint": "API endpoint",
+    "translationEndpointIsComplete": "This is a complete API endpoint",
+    "translationProtocol": "API protocol",
+    "model": "Model",
+    "apiKey": "API key",
+    "leaveEmptyToKeepCurrent": "Leave empty to keep the current value",
+    "translationProviderTestPassed": "Provider test passed",
+    "test": "Test",
+    "automaticTranslation": "Automatic translation",
+    "automaticTranslationScope": "Automatic translation scope",
+    "translationScopeNone": "No rooms (manual setup)",
+    "translationScopeAllRooms": "Messages in all rooms",
+    "translationScopeUnencryptedRooms": "Messages in unencrypted rooms",
+    "translationScopeSelectedRooms": "Messages in selected rooms",
+    "translationScopeManualOnly": "Only manually selected messages",
+    "translationScopeOverrideHint": "You can override this rule in each room's settings",
+    "sourceLanguage": "Original message language",
+    "targetLanguage": "Your preferred language",
+    "preferRoomLanguageForSource": "Prefer the room language as the input language",
+    "preferRoomLanguageForInputTarget": "Prefer the room language as the translation target",
+    "translationAutoDetect": "Detect automatically",
+    "requiredField": "Required",
+    "translationDisplayMode": "Display mode",
+    "translatedOnly": "Translation only",
+    "bilingual": "Bilingual",
+    "translationBilingualColor": "Translation text color",
+    "translationBilingualStyle": "Bilingual style",
+    "translationStyleBody": "Body",
+    "translationStyleAccent": "Accent",
+    "translationStyleSecondary": "Secondary",
+    "translationStyleTertiary": "Tertiary",
+    "translationStyleMuted": "Muted",
+    "translationStyleDivider": "Divider",
+    "translationStyleBackground": "Background",
+    "batchTranslation": "Batch translation",
+    "translationMergeWait": "Merge wait",
+    "translationMaxMessages": "Maximum messages per batch",
+    "translationMaxCharacters": "Maximum characters per batch",
+    "translationStructureRetries": "Malformed response retries",
+    "decrease": "Decrease",
+    "increase": "Increase",
+    "changesHaveBeenSaved": "Changes have been saved",
+    "translationCache": "Translation cache",
+    "cleanInvalidTranslationCache": "Clean obsolete cache",
+    "clearTranslationCache": "Clear all translation cache",
+    "noTranslationCache": "There is no translation cache to clean.",
+    "translationCacheCleared": "Translation cache cleared",
+    "translationCacheCleanupResult": "Checked {checked}, retained {retained}, deleted {deleted}.",
+    "@translationCacheCleanupResult": {
+        "placeholders": {
+            "checked": {
+                "type": "int"
+            },
+            "retained": {
+                "type": "int"
+            },
+            "deleted": {
+                "type": "int"
+            }
+        }
+    },
+    "translateSelectedMessages": "Translate selected messages",
+    "translationFailed": "Translation failed",
+    "automaticTranslationForThisRoom": "Automatically translate this room",
+    "roomAutomaticTranslation": "Room automatic translation",
+    "roomTranslationFollowDefault": "Follow default",
+    "roomTranslationAlwaysOn": "Always on",
+    "roomTranslationAlwaysOff": "Always off",
+    "translationDefaultForRoom": "Default: {scope}",
+    "@translationDefaultForRoom": {
+        "placeholders": {
+            "scope": {
+                "type": "String"
+            }
+        }
+    },
+    "roomCommunicationLanguage": "Room communication language",
+    "roomLanguageFollowGlobal": "Not set (follow global)",
+    "translateRoom": "Translate",
+    "stopRoomTranslation": "Stop",
+    "translationDisabledGlobally": "Enable translation in app settings first.",
+    "translationRoomManagedGlobally": "This setting is controlled by the global translation scope.",
+    "translationEncryptedRoomExcluded": "The current scope does not automatically translate encrypted rooms.",
+    "translationManualOnlyRoom": "The current scope only translates messages you select manually.",
+    "inputTranslation": "Input translation",
+    "inputTranslationMode": "Input translation mode",
+    "inputTranslationModeDisabled": "Disabled",
+    "inputTranslationModeManual": "Use translation manually",
+    "inputTranslationModeAutomatic": "Translate when sending",
+    "inputTranslationScope": "Input translation availability",
+    "inputTranslationScopeAutomaticRooms": "Rooms with automatic translation enabled",
+    "inputTranslationScopeAllRooms": "Available in all rooms",
+    "inputSourceLanguage": "Common input language",
+    "inputTargetLanguage": "Translation target language",
+    "inputTranslationSendModeTitle": "Message send button behavior",
+    "inputTranslationSendModeLongTrans": "Long press sends translation",
+    "inputTranslationSendModeShortTrans": "Short press sends translation",
+    "inputTranslationTrigger": "Translation trigger method",
+    "inputTranslationTriggerButton": "Translation button",
+    "inputTranslationTriggerLongPress": "Long press input field",
+    "inputTranslationTriggerDoubleTap": "Quick double-tap input field",
+    "inputTranslationPrivacyNotice": "Input plaintext will be sent to the selected third-party LLM provider.",
+    "translateInput": "Translate input",
     "editImage": "Edit image",
     "@editImage": {
         "type": "String",
@@ -49,8 +164,6 @@
         "type": "String",
         "placeholders": {}
     },
-    "@@locale": "en",
-    "@@last_modified": "2021-08-14 12:38:37.885451",
     "repeatPassword": "Repeat password",
     "notAnImage": "Not an image file.",
     "remove": "Remove",
@@ -2793,105 +2906,5 @@
     "stopScreensharing": "Stop screensharing",
     "raiseHand": "Raise hand",
     "stopRaiseHand": "Stop raise hand",
-    "translation": "Translation",
-    "enableTranslation": "Enable LLM translation",
-    "translationPrivacyNotice": "Message plaintext will be sent to the selected third-party LLM provider.",
-    "translationProviderRequired": "Add and select a provider with an API key before enabling translation.",
-    "translationProviders": "Translation providers",
-    "noTranslationProviders": "No translation providers configured",
-    "addTranslationProvider": "Add translation provider",
-    "editTranslationProvider": "Edit translation provider",
-    "deleteTranslationProvider": "Delete provider",
-    "providerName": "Provider name",
-    "translationEndpoint": "API endpoint",
-    "translationEndpointIsComplete": "This is a complete API endpoint",
-    "translationProtocol": "API protocol",
-    "model": "Model",
-    "apiKey": "API key",
-    "leaveEmptyToKeepCurrent": "Leave empty to keep the current value",
-    "translationProviderTestPassed": "Provider test passed",
-    "test": "Test",
-    "automaticTranslation": "Automatic translation",
-    "automaticTranslationScope": "Automatic translation scope",
-    "translationScopeNone": "No rooms (manual setup)",
-    "translationScopeAllRooms": "Messages in all rooms",
-    "translationScopeUnencryptedRooms": "Messages in unencrypted rooms",
-    "translationScopeSelectedRooms": "Messages in selected rooms",
-    "translationScopeManualOnly": "Only manually selected messages",
-    "sourceLanguage": "Original message language",
-    "targetLanguage": "Your preferred language",
-    "translationScopeOverrideHint": "You can override this rule in each room's settings.",
-    "preferRoomLanguageForSource": "Prefer the room language as the input language",
-    "preferRoomLanguageForInputTarget": "Prefer the room language as the translation target",
-    "translationAutoDetect": "Detect automatically",
-    "requiredField": "Required",
-    "translationDisplayMode": "Display mode",
-    "translatedOnly": "Translation only",
-    "bilingual": "Bilingual",
-    "translationBilingualColor": "Translation text color",
-    "translationBilingualStyle": "Bilingual style",
-    "translationStyleBody": "Body",
-    "translationStyleAccent": "Accent",
-    "translationStyleSecondary": "Secondary",
-    "translationStyleTertiary": "Tertiary",
-    "translationStyleMuted": "Muted",
-    "translationStyleDivider": "Divider",
-    "translationStyleBackground": "Background",
-    "batchTranslation": "Batch translation",
-    "translationMergeWait": "Merge wait",
-    "translationMaxMessages": "Maximum messages per batch",
-    "translationMaxCharacters": "Maximum characters per batch",
-    "translationStructureRetries": "Malformed response retries",
-    "decrease": "Decrease",
-    "increase": "Increase",
-    "changesHaveBeenSaved": "Changes have been saved",
-    "translationCache": "Translation cache",
-    "cleanInvalidTranslationCache": "Clean obsolete cache",
-    "clearTranslationCache": "Clear all translation cache",
-    "noTranslationCache": "There is no translation cache to clean.",
-    "translationCacheCleared": "Translation cache cleared",
-    "translationCacheCleanupResult": "Checked {checked}, retained {retained}, deleted {deleted}.",
-    "@translationCacheCleanupResult": {
-        "placeholders": {
-            "checked": {"type": "int"},
-            "retained": {"type": "int"},
-            "deleted": {"type": "int"}
-        }
-    },
-    "translateSelectedMessages": "Translate selected messages",
-    "translationFailed": "Translation failed",
-    "automaticTranslationForThisRoom": "Automatically translate this room",
-    "roomAutomaticTranslation": "Room automatic translation",
-    "roomTranslationFollowDefault": "Follow default",
-    "roomTranslationAlwaysOn": "Always on",
-    "roomTranslationAlwaysOff": "Always off",
-    "translationDefaultForRoom": "Default: {scope}",
-    "@translationDefaultForRoom": {"placeholders": {"scope": {"type": "String"}}},
-    "roomCommunicationLanguage": "Room communication language",
-    "roomLanguageFollowGlobal": "Not set (follow global)",
-    "translateRoom": "Translate",
-    "stopRoomTranslation": "Stop",
-    "translationDisabledGlobally": "Enable translation in app settings first.",
-    "translationRoomManagedGlobally": "This setting is controlled by the global translation scope.",
-    "translationEncryptedRoomExcluded": "The current scope does not automatically translate encrypted rooms.",
-    "translationManualOnlyRoom": "The current scope only translates messages you select manually."
-    ,"inputTranslation": "Input translation"
-    ,"inputTranslationMode": "Input translation mode"
-    ,"inputTranslationModeDisabled": "Disabled"
-    ,"inputTranslationModeManual": "Use translation manually"
-    ,"inputTranslationModeAutomatic": "Translate when sending"
-    ,"inputTranslationScope": "Input translation availability"
-    ,"inputTranslationScopeAutomaticRooms": "Rooms with automatic translation enabled"
-    ,"inputTranslationScopeAllRooms": "Available in all rooms"
-    ,"inputSourceLanguage": "Common input language"
-    ,"inputTargetLanguage": "Translation target language"
-    ,"inputTranslationTrigger": "Trigger method"
-    ,"inputTranslationTriggerButton": "Translation button"
-    ,"inputTranslationTriggerLongPress": "Long press input field"
-    ,"inputTranslationTriggerDoubleTap": "Quick double-tap input field"
-    ,"inputTranslationSendModeShortOriginalLongTranslated": "Short press sends original, long press sends translation"
-    ,"inputTranslationSendModeShortTranslatedLongOriginal": "Short press sends translation, long press sends original"
-    ,"inputTranslationPrivacyNotice": "Input plaintext will be sent to the selected third-party LLM provider."
-    ,"translateInput": "Translate input"
-    ,"preferSpeaker": "Prefer speaker"
+    "preferSpeaker": "Prefer speaker"
 }

@@ -637,8 +637,8 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                           key: ValueKey(runtime.inputSendMode),
                                           initialValue: runtime.inputSendMode,
                                           decoration: InputDecoration(
-                                            labelText:
-                                                l10n.inputTranslationTrigger,
+                                             labelText:
+                                                 l10n.inputTranslationSendModeTitle,
                                             prefixIcon: const Icon(
                                               Icons.touch_app_outlined,
                                             ),
@@ -648,7 +648,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                               value: InputTranslationSendMode
                                                   .shortOriginalLongTranslated,
                                               child: Text(
-                                                l10n.inputTranslationSendModeShortOriginalLongTranslated,
+                                                l10n.inputTranslationSendModeLongTrans,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
@@ -656,7 +656,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                               value: InputTranslationSendMode
                                                   .shortTranslatedLongOriginal,
                                               child: Text(
-                                                l10n.inputTranslationSendModeShortTranslatedLongOriginal,
+                                                l10n.inputTranslationSendModeShortTrans,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
