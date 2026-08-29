@@ -41,6 +41,10 @@ class TranslationPreferences {
       'chat.fluffy.translation.bilingual_style';
   static const _targetLanguageKey = 'chat.fluffy.translation.target_language';
   static const _sourceLanguageKey = 'chat.fluffy.translation.source_language';
+  static const _preferRoomLanguageForSourceKey =
+      'chat.fluffy.translation.prefer_room_language_source';
+  static const _preferRoomLanguageForInputTargetKey =
+      'chat.fluffy.translation.prefer_room_language_input_target';
   static const _inputModeKey = 'chat.fluffy.translation.input.mode';
   static const _inputScopeKey = 'chat.fluffy.translation.input.scope';
   static const _inputSourceLanguageKey =
@@ -54,6 +58,7 @@ class TranslationPreferences {
       'chat.fluffy.translation.selected_provider';
   static const _privacyAcceptedKey = 'chat.fluffy.translation.privacy_accepted';
   static const _roomSelectionPrefix = 'chat.fluffy.translation.selected_room.';
+  static const _roomLanguagePrefix = 'chat.fluffy.translation.room_language.';
   static const _mergeWindowKey = 'chat.fluffy.translation.batch.merge_ms';
   static const _maxMessagesKey = 'chat.fluffy.translation.batch.max_messages';
   static const _maxCharactersKey =
@@ -67,11 +72,19 @@ class TranslationPreferences {
   const TranslationPreferences(this.store, this.secrets);
 
   bool get enabled => store.getBool(_enabledKey) ?? false;
-  TranslationScope get scope => _enumValue(
-    TranslationScope.values,
-    store.getString(_scopeKey),
-    TranslationScope.manualOnly,
-  );
+  TranslationScope get scope {
+    final saved = _enumValue(
+      TranslationScope.values,
+      store.getString(_scopeKey),
+      TranslationScope.none,
+    );
+    return switch (saved) {
+      TranslationScope.allRooms => TranslationScope.allRooms,
+      TranslationScope.unencryptedRooms => TranslationScope.unencryptedRooms,
+      TranslationScope.none => TranslationScope.none,
+    };
+  }
+
   TranslationDisplayMode get displayMode => _enumValue(
     TranslationDisplayMode.values,
     store.getString(_displayModeKey),
@@ -98,6 +111,10 @@ class TranslationPreferences {
   }
 
   String get sourceLanguage => store.getString(_sourceLanguageKey) ?? 'auto';
+  bool get preferRoomLanguageForSource =>
+      store.getBool(_preferRoomLanguageForSourceKey) ?? false;
+  bool get preferRoomLanguageForInputTarget =>
+      store.getBool(_preferRoomLanguageForInputTargetKey) ?? true;
   String? get targetLanguage => store.getString(_targetLanguageKey);
   InputTranslationMode get inputMode => _enumValue(
     InputTranslationMode.values,
@@ -150,8 +167,16 @@ class TranslationPreferences {
         TranslationBatchSettings.defaults.malformedResponseRetries,
   );
 
+  /// The per-room automatic translation override. Null means follow default.
+  bool? roomTranslationOverride(String userId, String roomId) =>
+      store.getBool(_roomKey(userId, roomId));
+
+  @Deprecated('Use roomTranslationOverride')
   bool roomSelected(String userId, String roomId) =>
-      store.getBool(_roomKey(userId, roomId)) ?? false;
+      roomTranslationOverride(userId, roomId) ?? false;
+
+  String? roomLanguage(String userId, String roomId) =>
+      store.getString(_roomLanguageKey(userId, roomId));
 
   Future<void> setEnabled(bool value) => store.setBool(_enabledKey, value);
   Future<void> setScope(TranslationScope value) =>
@@ -164,6 +189,10 @@ class TranslationPreferences {
       store.setString(_bilingualStyleKey, value.name);
   Future<void> setSourceLanguage(String value) =>
       store.setString(_sourceLanguageKey, value);
+  Future<void> setPreferRoomLanguageForSource(bool value) =>
+      store.setBool(_preferRoomLanguageForSourceKey, value);
+  Future<void> setPreferRoomLanguageForInputTarget(bool value) =>
+      store.setBool(_preferRoomLanguageForInputTargetKey, value);
   Future<void> setTargetLanguage(String value) =>
       store.setString(_targetLanguageKey, value);
   Future<void> setInputMode(InputTranslationMode value) =>
@@ -189,6 +218,19 @@ class TranslationPreferences {
       .setString(_providersKey, TranslationProviderConfig.encodeList(value));
   Future<void> setRoomSelected(String userId, String roomId, bool value) =>
       store.setBool(_roomKey(userId, roomId), value);
+
+  Future<void> setRoomTranslationOverride(
+    String userId,
+    String roomId,
+    bool? value,
+  ) => value == null
+      ? store.remove(_roomKey(userId, roomId))
+      : store.setBool(_roomKey(userId, roomId), value);
+
+  Future<void> setRoomLanguage(String userId, String roomId, String? value) =>
+      value == null || value.trim().isEmpty
+      ? store.remove(_roomLanguageKey(userId, roomId))
+      : store.setString(_roomLanguageKey(userId, roomId), value.trim());
 
   Future<void> saveBatchSettings(TranslationBatchSettings value) async {
     if (!value.isValid) throw ArgumentError.value(value, 'value');
@@ -220,4 +262,7 @@ class TranslationPreferences {
 
   static String _roomKey(String userId, String roomId) =>
       '$_roomSelectionPrefix${base64UrlEncode(utf8.encode(jsonEncode([userId, roomId])))}';
+
+  static String _roomLanguageKey(String userId, String roomId) =>
+      '$_roomLanguagePrefix${base64UrlEncode(utf8.encode(jsonEncode([userId, roomId])))}';
 }

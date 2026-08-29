@@ -7,10 +7,12 @@ import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
 import 'package:fluffychat/pages/chat_details/participant_list_item.dart';
+import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:fluffychat/utils/translation/translation_languages.dart';
+import 'package:fluffychat/utils/translation/translation_models.dart';
 import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/utils/verified_room_extension.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/chat_settings_popup_menu.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
@@ -371,23 +373,6 @@ class _RoomTranslationButton extends StatelessWidget {
   final Room room;
   const _RoomTranslationButton(this.room);
 
-  Future<void> _showLockedControlExplanation(
-    BuildContext context,
-    String message,
-  ) async {
-    final l10n = L10n.of(context);
-    final result = await showOkCancelAlertDialog(
-      context: context,
-      title: l10n.automaticTranslationForThisRoom,
-      message: message,
-      okLabel: l10n.settings,
-      cancelLabel: l10n.cancel,
-    );
-    if (result == OkCancelResult.ok && context.mounted) {
-      context.go('/rooms/settings/translation');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final runtime = TranslationRuntime.instance;
@@ -396,25 +381,114 @@ class _RoomTranslationButton extends StatelessWidget {
       builder: (context, _) {
         final control = runtime.roomControl(room);
         final l10n = L10n.of(context);
-        final subtitle = switch (control.reason) {
-          RoomTranslationLockReason.globallyDisabled =>
-            l10n.translationDisabledGlobally,
-          RoomTranslationLockReason.encryptedExcluded =>
-            l10n.translationEncryptedRoomExcluded,
-          RoomTranslationLockReason.manualOnly =>
-            l10n.translationManualOnlyRoom,
-          RoomTranslationLockReason.allRooms ||
-          RoomTranslationLockReason.unencryptedOnly =>
-            l10n.translationRoomManagedGlobally,
-          RoomTranslationLockReason.none => null,
-        };
         return _MainChatDetailsButton(
           label: l10n.translateRoom,
           icon: Icons.translate_outlined,
           isActive: control.value,
-          onPressed: control.canChange
-              ? () => runtime.setRoomSelected(room, !control.value)
-              : () => _showLockedControlExplanation(context, subtitle!),
+          onPressed: () => showAdaptiveBottomSheet<void>(
+            context: context,
+            builder: (_) => _RoomTranslationSettingsSheet(room),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _RoomTranslationSettingsSheet extends StatelessWidget {
+  final Room room;
+  const _RoomTranslationSettingsSheet(this.room);
+
+  @override
+  Widget build(BuildContext context) {
+    final runtime = TranslationRuntime.instance;
+    final l10n = L10n.of(context);
+    return AnimatedBuilder(
+      animation: runtime,
+      builder: (context, _) {
+        final control = runtime.roomControl(room);
+        final language = runtime.roomLanguage(room);
+        final defaultLabel = switch (runtime.scope) {
+          TranslationScope.allRooms => l10n.translationScopeAllRooms,
+          TranslationScope.unencryptedRooms =>
+            l10n.translationScopeUnencryptedRooms,
+          TranslationScope.none => l10n.translationScopeNone,
+        };
+        return SafeArea(
+          child: ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+            children: [
+              Text(
+                l10n.automaticTranslationForThisRoom,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                key: ValueKey(('translation', control.overrideValue)),
+                initialValue: control.overrideValue == null
+                    ? 'default'
+                    : control.overrideValue!
+                    ? 'on'
+                    : 'off',
+                isExpanded: true,
+                decoration: InputDecoration(
+                  labelText: l10n.roomAutomaticTranslation,
+                ),
+                items: [
+                  DropdownMenuItem(
+                    value: 'default',
+                    child: Text(l10n.roomTranslationFollowDefault),
+                  ),
+                  DropdownMenuItem(
+                    value: 'on',
+                    child: Text(l10n.roomTranslationAlwaysOn),
+                  ),
+                  DropdownMenuItem(
+                    value: 'off',
+                    child: Text(l10n.roomTranslationAlwaysOff),
+                  ),
+                ],
+                onChanged: control.canChange
+                    ? (value) => runtime.setRoomTranslationOverride(
+                        room,
+                        value == 'default' ? null : value == 'on',
+                      )
+                    : null,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                control.reason == RoomTranslationLockReason.globallyDisabled
+                    ? l10n.translationDisabledGlobally
+                    : l10n.translationDefaultForRoom(defaultLabel),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                key: ValueKey(('language', language)),
+                initialValue: language ?? '',
+                isExpanded: true,
+                decoration: InputDecoration(
+                  labelText: l10n.roomCommunicationLanguage,
+                ),
+                items: [
+                  DropdownMenuItem(
+                    value: '',
+                    child: Text(l10n.roomLanguageFollowGlobal),
+                  ),
+                  for (final item in translationLanguages)
+                    DropdownMenuItem(
+                      value: item.code,
+                      child: Text('${item.name} (${item.code})'),
+                    ),
+                ],
+                onChanged: (value) => runtime.setRoomLanguage(
+                  room,
+                  value == null || value.isEmpty ? null : value,
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

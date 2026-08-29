@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:fluffychat/utils/translation/translation_api_client.dart';
 import 'package:fluffychat/utils/translation/translation_cache.dart';
 import 'package:fluffychat/utils/translation/translation_cache_backend_interface.dart';
+import 'package:fluffychat/utils/translation/translation_languages.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
 import 'package:fluffychat/utils/translation/translation_preferences.dart';
 import 'package:fluffychat/utils/translation/translation_runtime.dart';
@@ -70,7 +71,33 @@ void main() {
   });
 
   test(
-    'language defaults use automatic source and the resolved UI locale',
+    'room preferences use nullable overrides and account-scoped languages',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final store = await SharedPreferences.getInstance();
+      final preferences = TranslationPreferences(store, _MemorySecrets());
+
+      expect(preferences.roomTranslationOverride('@a:test', '!r:test'), isNull);
+      await preferences.setRoomTranslationOverride('@a:test', '!r:test', true);
+      expect(preferences.roomTranslationOverride('@a:test', '!r:test'), isTrue);
+      await preferences.setRoomTranslationOverride('@a:test', '!r:test', false);
+      expect(
+        preferences.roomTranslationOverride('@a:test', '!r:test'),
+        isFalse,
+      );
+      await preferences.setRoomTranslationOverride('@a:test', '!r:test', null);
+      expect(preferences.roomTranslationOverride('@a:test', '!r:test'), isNull);
+
+      await preferences.setRoomLanguage('@a:test', '!r:test', 'de');
+      expect(preferences.roomLanguage('@a:test', '!r:test'), 'de');
+      expect(preferences.roomLanguage('@b:test', '!r:test'), isNull);
+      await preferences.setRoomLanguage('@a:test', '!r:test', null);
+      expect(preferences.roomLanguage('@a:test', '!r:test'), isNull);
+    },
+  );
+
+  test(
+    'language defaults use automatic source and the system target',
     () async {
       SharedPreferences.setMockInitialValues({});
       final store = await SharedPreferences.getInstance();
@@ -85,14 +112,40 @@ void main() {
       );
 
       expect(runtime.sourceLanguage, 'auto');
-      expect(runtime.targetLanguage, 'zh-Hant');
+      expect(runtime.targetLanguage, systemTranslationLanguageCode);
     },
   );
 
-  test('valid saved languages win and unknown values use defaults', () async {
+  test(
+    'valid saved languages win and unknown values use system default',
+    () async {
+      SharedPreferences.setMockInitialValues({
+        _sourceLanguagePreference: 'unknown-source',
+        _targetLanguagePreference: 'unknown-target',
+      });
+      final store = await SharedPreferences.getInstance();
+      final secrets = _MemorySecrets();
+      final runtime = TranslationRuntime.forTesting();
+
+      await runtime.initialize(
+        store,
+        defaultTargetLanguage: 'ja',
+        secrets: secrets,
+        cache: TranslationCache(secrets, _MemoryBackend()),
+      );
+
+      expect(runtime.sourceLanguage, 'auto');
+      expect(runtime.targetLanguage, systemTranslationLanguageCode);
+
+      await runtime.setLanguages(source: 'de', target: 'fr');
+      expect(runtime.sourceLanguage, 'de');
+      expect(runtime.targetLanguage, 'fr');
+    },
+  );
+
+  test('system target language follows the resolved app locale', () async {
     SharedPreferences.setMockInitialValues({
-      _sourceLanguagePreference: 'unknown-source',
-      _targetLanguagePreference: 'unknown-target',
+      _targetLanguagePreference: systemTranslationLanguageCode,
     });
     final store = await SharedPreferences.getInstance();
     final secrets = _MemorySecrets();
@@ -100,17 +153,19 @@ void main() {
 
     await runtime.initialize(
       store,
-      defaultTargetLanguage: 'ja',
+      defaultTargetLanguage: 'zh-Hant',
       secrets: secrets,
       cache: TranslationCache(secrets, _MemoryBackend()),
     );
 
-    expect(runtime.sourceLanguage, 'auto');
-    expect(runtime.targetLanguage, 'ja');
-
-    await runtime.setLanguages(source: 'de', target: 'fr');
-    expect(runtime.sourceLanguage, 'de');
+    expect(runtime.targetLanguage, systemTranslationLanguageCode);
+    await runtime.setLanguages(source: 'auto', target: 'fr');
     expect(runtime.targetLanguage, 'fr');
+    await runtime.setLanguages(
+      source: 'auto',
+      target: systemTranslationLanguageCode,
+    );
+    expect(runtime.targetLanguage, systemTranslationLanguageCode);
   });
 
   test('bilingual color and style persist independently', () async {
@@ -184,7 +239,7 @@ void main() {
   );
 
   test(
-    'room controls implement every scope and encryption combination',
+    'room controls combine global defaults with nullable overrides',
     () async {
       final fixture = await _RuntimeFixture.create();
       final unencrypted = Room(
@@ -206,44 +261,54 @@ void main() {
       _expectControl(
         fixture.runtime.roomControl(unencrypted),
         value: true,
-        canChange: false,
-        reason: RoomTranslationLockReason.allRooms,
+        canChange: true,
+        reason: RoomTranslationLockReason.none,
       );
       _expectControl(
         fixture.runtime.roomControl(encrypted),
         value: true,
-        canChange: false,
-        reason: RoomTranslationLockReason.allRooms,
+        canChange: true,
+        reason: RoomTranslationLockReason.none,
       );
 
       await fixture.runtime.setScope(TranslationScope.unencryptedRooms);
       _expectControl(
         fixture.runtime.roomControl(unencrypted),
         value: true,
-        canChange: false,
-        reason: RoomTranslationLockReason.unencryptedOnly,
+        canChange: true,
+        reason: RoomTranslationLockReason.none,
       );
       _expectControl(
         fixture.runtime.roomControl(encrypted),
         value: false,
-        canChange: false,
-        reason: RoomTranslationLockReason.encryptedExcluded,
+        canChange: true,
+        reason: RoomTranslationLockReason.none,
       );
 
-      await fixture.runtime.setScope(TranslationScope.selectedRooms);
+      await fixture.runtime.setScope(TranslationScope.none);
       _expectControl(
         fixture.runtime.roomControl(unencrypted),
         value: false,
         canChange: true,
         reason: RoomTranslationLockReason.none,
       );
-      await fixture.runtime.setRoomSelected(unencrypted, true);
+      await fixture.runtime.setRoomTranslationOverride(unencrypted, true);
       _expectControl(
         fixture.runtime.roomControl(unencrypted),
         value: true,
         canChange: true,
         reason: RoomTranslationLockReason.none,
       );
+
+      await fixture.runtime.setRoomTranslationOverride(unencrypted, false);
+      _expectControl(
+        fixture.runtime.roomControl(unencrypted),
+        value: false,
+        canChange: true,
+        reason: RoomTranslationLockReason.none,
+      );
+      await fixture.runtime.setRoomTranslationOverride(unencrypted, null);
+      expect(fixture.runtime.roomControl(unencrypted).value, isFalse);
 
       final otherClient = await prepareTestClient(loggedIn: true, id: 'other');
       otherClient.setUserId('@bob:example.invalid');
@@ -258,20 +323,6 @@ void main() {
         reason: RoomTranslationLockReason.none,
       );
 
-      await fixture.runtime.setScope(TranslationScope.manualOnly);
-      _expectControl(
-        fixture.runtime.roomControl(unencrypted),
-        value: false,
-        canChange: false,
-        reason: RoomTranslationLockReason.manualOnly,
-      );
-      _expectControl(
-        fixture.runtime.roomControl(encrypted),
-        value: false,
-        canChange: false,
-        reason: RoomTranslationLockReason.manualOnly,
-      );
-
       await fixture.runtime.setEnabled(false);
       _expectControl(
         fixture.runtime.roomControl(unencrypted),
@@ -284,6 +335,8 @@ void main() {
 
   test('input translation settings persist independently', () async {
     final fixture = await _RuntimeFixture.create();
+    expect(fixture.runtime.preferRoomLanguageForSource, isFalse);
+    expect(fixture.runtime.preferRoomLanguageForInputTarget, isTrue);
     expect(fixture.runtime.inputMode, InputTranslationMode.disabled);
     expect(fixture.runtime.inputScope, InputTranslationScope.automaticRooms);
     expect(fixture.runtime.inputSourceLanguage, 'auto');
@@ -601,7 +654,7 @@ class _RuntimeFixture {
       _privacyPreference: true,
       _providersPreference: TranslationProviderConfig.encodeList([_provider]),
       _selectedProviderPreference: _provider.id,
-      _scopePreference: TranslationScope.manualOnly.name,
+      _scopePreference: TranslationScope.none.name,
       'chat.fluffy.translation.batch.merge_ms': mergeWindowMs,
     });
     final store = await SharedPreferences.getInstance();

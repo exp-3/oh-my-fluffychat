@@ -5,9 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('batch settings defaults and boundaries are valid', () {
-    expect(TranslationBatchSettings.defaults.mergeWindowMs, 100);
-    expect(TranslationBatchSettings.defaults.maxMessages, 4);
-    expect(TranslationBatchSettings.defaults.maxCharacters, 1000);
+    expect(TranslationBatchSettings.defaults.mergeWindowMs, 1000);
+    expect(TranslationBatchSettings.defaults.maxMessages, 5);
+    expect(TranslationBatchSettings.defaults.maxCharacters, 3000);
     expect(TranslationBatchSettings.defaults.malformedResponseRetries, 2);
     expect(
       const TranslationBatchSettings(

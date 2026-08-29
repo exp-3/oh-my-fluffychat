@@ -245,6 +245,10 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                             ),
                             items: [
                               DropdownMenuItem(
+                                value: TranslationScope.none,
+                                child: Text(l10n.translationScopeNone),
+                              ),
+                              DropdownMenuItem(
                                 value: TranslationScope.allRooms,
                                 child: Text(l10n.translationScopeAllRooms),
                               ),
@@ -254,17 +258,19 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                   l10n.translationScopeUnencryptedRooms,
                                 ),
                               ),
-                              DropdownMenuItem(
-                                value: TranslationScope.selectedRooms,
-                                child: Text(l10n.translationScopeSelectedRooms),
-                              ),
-                              DropdownMenuItem(
-                                value: TranslationScope.manualOnly,
-                                child: Text(l10n.translationScopeManualOnly),
-                              ),
                             ],
                             onChanged: (scope) =>
                                 scope == null ? null : runtime.setScope(scope),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                          child: Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: Text(
+                              l10n.translationScopeOverrideHint,
+                              style: theme.textTheme.bodySmall,
+                            ),
                           ),
                         ),
                         Padding(
@@ -277,9 +283,6 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                   isExpanded: true,
                                   decoration: InputDecoration(
                                     labelText: l10n.sourceLanguage,
-                                    prefixIcon: const Icon(
-                                      Icons.language_outlined,
-                                    ),
                                   ),
                                   items: [
                                     DropdownMenuItem(
@@ -310,9 +313,12 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                   isExpanded: true,
                                   decoration: InputDecoration(
                                     labelText: l10n.targetLanguage,
-                                    prefixIcon: const Icon(Icons.flag_outlined),
                                   ),
                                   items: [
+                                    DropdownMenuItem(
+                                      value: systemTranslationLanguageCode,
+                                      child: Text(l10n.systemTheme),
+                                    ),
                                     for (final language in translationLanguages)
                                       DropdownMenuItem(
                                         value: language.code,
@@ -332,6 +338,13 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                               ),
                             ],
                           ),
+                        ),
+                        CheckboxListTile.adaptive(
+                          title: Text(l10n.preferRoomLanguageForSource),
+                          value: runtime.preferRoomLanguageForSource,
+                          onChanged: (value) => value == null
+                              ? null
+                              : runtime.setPreferRoomLanguageForSource(value),
                         ),
                         SwitchListTile.adaptive(
                           secondary: const Icon(Icons.view_agenda_outlined),
@@ -482,11 +495,10 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                             child: Column(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    16,
-                                    12,
-                                    16,
-                                    0,
+                                  padding: const EdgeInsets.only(
+                                    left: 16,
+                                    top: 12,
+                                    right: 16,
                                   ),
                                   child:
                                       DropdownButtonFormField<
@@ -522,11 +534,10 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                       ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    16,
-                                    12,
-                                    16,
-                                    0,
+                                  padding: const EdgeInsets.only(
+                                    left: 16,
+                                    top: 12,
+                                    right: 16,
                                   ),
                                   child: Row(
                                     children: [
@@ -536,9 +547,6 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                           isExpanded: true,
                                           decoration: InputDecoration(
                                             labelText: l10n.inputSourceLanguage,
-                                            prefixIcon: const Icon(
-                                              Icons.language_outlined,
-                                            ),
                                           ),
                                           items: [
                                             DropdownMenuItem(
@@ -575,9 +583,6 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                           isExpanded: true,
                                           decoration: InputDecoration(
                                             labelText: l10n.inputTargetLanguage,
-                                            prefixIcon: const Icon(
-                                              Icons.flag_outlined,
-                                            ),
                                           ),
                                           items: [
                                             for (final language
@@ -604,12 +609,24 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                     ],
                                   ),
                                 ),
+                                CheckboxListTile.adaptive(
+                                  title: Text(
+                                    l10n.preferRoomLanguageForInputTarget,
+                                  ),
+                                  value:
+                                      runtime.preferRoomLanguageForInputTarget,
+                                  onChanged: (value) => value == null
+                                      ? null
+                                      : runtime
+                                            .setPreferRoomLanguageForInputTarget(
+                                              value,
+                                            ),
+                                ),
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    16,
-                                    12,
-                                    16,
-                                    0,
+                                  padding: const EdgeInsets.only(
+                                    left: 16,
+                                    top: 12,
+                                    right: 16,
                                   ),
                                   child:
                                       runtime.inputMode ==

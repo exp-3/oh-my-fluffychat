@@ -27,8 +27,14 @@ class RoomTranslationControl {
   final bool value;
   final bool canChange;
   final RoomTranslationLockReason reason;
+  final bool? overrideValue;
 
-  const RoomTranslationControl(this.value, this.canChange, this.reason);
+  const RoomTranslationControl(
+    this.value,
+    this.canChange,
+    this.reason, {
+    this.overrideValue,
+  });
 }
 
 class TranslationRuntime extends ChangeNotifier {
@@ -57,14 +63,17 @@ class TranslationRuntime extends ChangeNotifier {
   bool _initialized = false;
   bool _enabled = false;
   bool _privacyAccepted = false;
-  TranslationScope _scope = TranslationScope.manualOnly;
+  TranslationScope _scope = TranslationScope.none;
   TranslationDisplayMode _displayMode = TranslationDisplayMode.bilingual;
   TranslationBilingualColor _bilingualColor =
       TranslationBilingualColor.tertiary;
   TranslationBilingualStyle _bilingualStyle = TranslationBilingualStyle.divider;
   TranslationBatchSettings _batchSettings = TranslationBatchSettings.defaults;
   String _sourceLanguage = 'auto';
-  String _targetLanguage = 'en';
+  String _targetLanguage = systemTranslationLanguageCode;
+  String _systemTargetLanguage = 'en';
+  bool _preferRoomLanguageForSource = false;
+  bool _preferRoomLanguageForInputTarget = true;
   InputTranslationMode _inputMode = InputTranslationMode.disabled;
   InputTranslationScope _inputScope = InputTranslationScope.automaticRooms;
   String _inputSourceLanguage = 'auto';
@@ -94,6 +103,9 @@ class TranslationRuntime extends ChangeNotifier {
   String get inputTranslationSourceLanguage => _inputSourceLanguage;
   String get inputTargetLanguage => _inputTargetLanguage;
   String get inputTranslationTargetLanguage => _inputTargetLanguage;
+  bool get preferRoomLanguageForSource => _preferRoomLanguageForSource;
+  bool get preferRoomLanguageForInputTarget =>
+      _preferRoomLanguageForInputTarget;
   InputTranslationTrigger get inputTrigger => _inputTrigger;
   TranslationInputTrigger get inputTranslationTrigger => _inputTrigger;
   InputTranslationSendMode get inputSendMode => _inputSendMode;
@@ -124,6 +136,9 @@ class TranslationRuntime extends ChangeNotifier {
     _providers = preferences.providers;
     _activeProvider = _findProvider(preferences.selectedProviderId);
     _scope = preferences.scope;
+    _preferRoomLanguageForSource = preferences.preferRoomLanguageForSource;
+    _preferRoomLanguageForInputTarget =
+        preferences.preferRoomLanguageForInputTarget;
     _displayMode = preferences.displayMode;
     _bilingualColor = preferences.bilingualColor;
     _bilingualStyle = preferences.bilingualStyle;
@@ -137,13 +152,14 @@ class TranslationRuntime extends ChangeNotifier {
         ? savedSourceLanguage
         : 'auto';
     final savedTargetLanguage = preferences.targetLanguage;
-    _targetLanguage =
-        savedTargetLanguage != null &&
-            isTranslationLanguage(savedTargetLanguage)
-        ? savedTargetLanguage
-        : isTranslationLanguage(defaultTargetLanguage)
+    _systemTargetLanguage = isTranslationLanguage(defaultTargetLanguage)
         ? defaultTargetLanguage
         : 'en';
+    _targetLanguage =
+        savedTargetLanguage != null &&
+            isTranslationTargetLanguage(savedTargetLanguage)
+        ? savedTargetLanguage
+        : systemTranslationLanguageCode;
     _inputMode = preferences.inputMode;
     _inputScope = preferences.inputScope;
     final savedInputSourceLanguage = preferences.inputSourceLanguage;
@@ -381,6 +397,20 @@ class TranslationRuntime extends ChangeNotifier {
   Future<void> setInputTranslationScope(TranslationInputScope value) =>
       setInputScope(value);
 
+  Future<void> setPreferRoomLanguageForSource(bool value) async {
+    if (value == _preferRoomLanguageForSource) return;
+    _preferRoomLanguageForSource = value;
+    _bumpRevision(clearPending: true, clearStates: true);
+    await preferences.setPreferRoomLanguageForSource(value);
+  }
+
+  Future<void> setPreferRoomLanguageForInputTarget(bool value) async {
+    if (value == _preferRoomLanguageForInputTarget) return;
+    _preferRoomLanguageForInputTarget = value;
+    _bumpRevision(clearPending: true, clearStates: true);
+    await preferences.setPreferRoomLanguageForInputTarget(value);
+  }
+
   Future<void> setInputLanguages({
     required String source,
     required String target,
@@ -562,47 +592,38 @@ class TranslationRuntime extends ChangeNotifier {
   }
 
   RoomTranslationControl roomControl(Room room) {
+    final overrideValue = preferences.roomTranslationOverride(
+      room.client.userID ?? '',
+      room.id,
+    );
     if (!_enabled) {
-      return const RoomTranslationControl(
+      return RoomTranslationControl(
         false,
         false,
         RoomTranslationLockReason.globallyDisabled,
+        overrideValue: overrideValue,
       );
     }
-    return switch (_scope) {
-      TranslationScope.allRooms => const RoomTranslationControl(
-        true,
-        false,
-        RoomTranslationLockReason.allRooms,
-      ),
-      TranslationScope.unencryptedRooms =>
-        room.encrypted
-            ? const RoomTranslationControl(
-                false,
-                false,
-                RoomTranslationLockReason.encryptedExcluded,
-              )
-            : const RoomTranslationControl(
-                true,
-                false,
-                RoomTranslationLockReason.unencryptedOnly,
-              ),
-      TranslationScope.selectedRooms => RoomTranslationControl(
-        preferences.roomSelected(room.client.userID ?? '', room.id),
-        true,
-        RoomTranslationLockReason.none,
-      ),
-      TranslationScope.manualOnly => const RoomTranslationControl(
-        false,
-        false,
-        RoomTranslationLockReason.manualOnly,
-      ),
+    final defaultValue = switch (_scope) {
+      TranslationScope.allRooms => true,
+      TranslationScope.unencryptedRooms => !room.encrypted,
+      TranslationScope.none => false,
     };
+    return RoomTranslationControl(
+      overrideValue ?? defaultValue,
+      true,
+      RoomTranslationLockReason.none,
+      overrideValue: overrideValue,
+    );
   }
 
   Future<void> setRoomSelected(Room room, bool value) async {
-    if (!_enabled || _scope != TranslationScope.selectedRooms) return;
-    final write = preferences.setRoomSelected(
+    await setRoomTranslationOverride(room, value);
+  }
+
+  Future<void> setRoomTranslationOverride(Room room, bool? value) async {
+    if (!_enabled) return;
+    final write = preferences.setRoomTranslationOverride(
       room.client.userID ?? '',
       room.id,
       value,
@@ -610,6 +631,23 @@ class TranslationRuntime extends ChangeNotifier {
     _clearRoomStates(room.id);
     _bumpRevision(clearPending: true, clearStates: false);
     await write;
+  }
+
+  String? roomLanguage(Room room) =>
+      switch (preferences.roomLanguage(room.client.userID ?? '', room.id)) {
+        final value when value != null && isTranslationLanguage(value) => value,
+        _ => null,
+      };
+
+  Future<void> setRoomLanguage(Room room, String? value) async {
+    final clean = value?.trim();
+    if (clean != null && clean.isNotEmpty && !isTranslationLanguage(clean)) {
+      throw ArgumentError.value(value, 'value');
+    }
+    if (roomLanguage(room) == clean) return;
+    await preferences.setRoomLanguage(room.client.userID ?? '', room.id, clean);
+    _clearRoomStates(room.id);
+    _bumpRevision(clearPending: true, clearStates: false);
   }
 
   bool canTranslateInput(Room room) {
@@ -641,7 +679,7 @@ class TranslationRuntime extends ChangeNotifier {
     final taskRevision = _revision;
     final provider = _activeProvider!;
     final sourceLanguage = _inputSourceLanguage;
-    final targetLanguage = _inputTargetLanguage;
+    final targetLanguage = _inputTargetLanguageForRoom(room);
     bool isValid() => _inputTaskValid(
       room,
       taskRevision,
@@ -767,8 +805,8 @@ class TranslationRuntime extends ChangeNotifier {
         providerId: provider.id,
         protocol: provider.protocol,
         model: provider.model,
-        sourceLanguage: _sourceLanguage,
-        targetLanguage: _targetLanguage,
+        sourceLanguage: _sourceLanguageForRoom(event.room),
+        targetLanguage: _effectiveTargetLanguage,
         promptRevision: promptRevision,
         runtimeRevision: taskRevision,
       );
@@ -976,7 +1014,7 @@ class TranslationRuntime extends ChangeNotifier {
   ) =>
       taskRevision == _revision &&
       _inputSourceLanguage == sourceLanguage &&
-      _inputTargetLanguage == targetLanguage &&
+      _inputTargetLanguageForRoom(room) == targetLanguage &&
       _activeProvider != null &&
       _sameProviderConfiguration(provider, _activeProvider!) &&
       canTranslateInput(room);
@@ -989,8 +1027,8 @@ class TranslationRuntime extends ChangeNotifier {
     roomId: event.room.id,
     eventId: event.eventId,
     source: source,
-    sourceLanguage: _sourceLanguage,
-    targetLanguage: _targetLanguage,
+    sourceLanguage: _sourceLanguageForRoom(event.room),
+    targetLanguage: _effectiveTargetLanguage,
     semanticRevision: semanticRevisionForProvider(provider),
     messageType: event.messageType,
   );
@@ -1015,14 +1053,33 @@ class TranslationRuntime extends ChangeNotifier {
       event.eventId,
       sourceForEvent(event),
       event.messageType,
-      _sourceLanguage,
-      _targetLanguage,
+      _sourceLanguageForRoom(event.room),
+      _effectiveTargetLanguage,
       provider?.id ?? '',
       provider?.protocol.name ?? '',
       provider?.model ?? '',
       provider?.requestEndpoint.toString() ?? '',
       promptRevision.toString(),
     ].join('\u0000');
+  }
+
+  String get _effectiveTargetLanguage =>
+      _targetLanguage == systemTranslationLanguageCode
+      ? _systemTargetLanguage
+      : _targetLanguage;
+
+  String _sourceLanguageForRoom(Room room) {
+    final language = roomLanguage(room);
+    return _preferRoomLanguageForSource && language != null
+        ? language
+        : _sourceLanguage;
+  }
+
+  String _inputTargetLanguageForRoom(Room room) {
+    final language = roomLanguage(room);
+    return _preferRoomLanguageForInputTarget && language != null
+        ? language
+        : _inputTargetLanguage;
   }
 
   TranslationProviderConfig? _findProvider(String? id) {

@@ -4,7 +4,7 @@ import 'dart:convert';
 
 enum TranslationProtocol { chatCompletions, responses }
 
-enum TranslationScope { allRooms, unencryptedRooms, selectedRooms, manualOnly }
+enum TranslationScope { none, allRooms, unencryptedRooms }
 
 enum InputTranslationMode { disabled, manual, automatic }
 
@@ -138,9 +138,9 @@ class TranslationBatchSettings {
   final int malformedResponseRetries;
 
   const TranslationBatchSettings({
-    this.mergeWindowMs = 100,
-    this.maxMessages = 4,
-    this.maxCharacters = 1000,
+    this.mergeWindowMs = 1000,
+    this.maxMessages = 5,
+    this.maxCharacters = 3000,
     this.malformedResponseRetries = 2,
   });
 

@@ -748,8 +748,7 @@ class ChatController extends State<ChatPageWithRoom>
     final translateRequested =
         translateOnSend &&
         runtime.inputMode == InputTranslationMode.automatic &&
-        !inputSnapshot.startsWith('/') &&
-        editEvent == null;
+        !inputSnapshot.startsWith('/');
     if (translateRequested) {
       // A translated send is an explicit action. If the room or provider is
       // no longer eligible, do not silently send the source text instead.
