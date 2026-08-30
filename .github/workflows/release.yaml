@@ -9,10 +9,6 @@ concurrency:
   group: release_workflow
   cancel-in-progress: true
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 permissions:
   contents: write
 
@@ -107,10 +103,25 @@ jobs:
           : "${ANDROID_KEYSTORE_BASE64:?ANDROID_KEYSTORE_BASE64 is not configured}"
           : "${ANDROID_KEYSTORE_PASSWORD:?ANDROID_KEYSTORE_PASSWORD is not configured}"
 
-          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/release.jks
-          KEYSTORE_INFO="$(keytool -list -v -J-Duser.language=en -J-Duser.country=US \
+          if ! printf '%s' "$ANDROID_KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > android/release.jks; then
+            echo "ANDROID_KEYSTORE_BASE64 is not valid Base64." >&2
+            exit 1
+          fi
+          if [[ ! -s android/release.jks ]]; then
+            echo "ANDROID_KEYSTORE_BASE64 decoded to an empty keystore." >&2
+            exit 1
+          fi
+
+          if ! KEYSTORE_INFO="$(keytool \
+            -J-Duser.language=en \
+            -J-Duser.country=US \
+            -list -v \
             -keystore android/release.jks \
-            -storepass "$ANDROID_KEYSTORE_PASSWORD" 2>/dev/null)"
+            -storepass "$ANDROID_KEYSTORE_PASSWORD" 2>&1)"; then
+            echo "Unable to open the Android keystore. Check ANDROID_KEYSTORE_BASE64 and ANDROID_KEYSTORE_PASSWORD." >&2
+            printf '%s\n' "$KEYSTORE_INFO" | tail -n 3 >&2
+            exit 1
+          fi
           KEY_ALIAS="$(printf '%s\n' "$KEYSTORE_INFO" | awk '
             /^Alias name: / { alias = substr($0, index($0, ": ") + 2) }
             /^Entry type: (PrivateKeyEntry|SecretKeyEntry)$/ { print alias; exit }
@@ -156,6 +167,46 @@ jobs:
         if: always()
         run: rm -f android/release.jks android/key.properties
 
+  build_windows:
+    runs-on: windows-latest
+    env:
+      PUB_CACHE: ${{ runner.temp }}/pub-cache
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: .tool_versions.yaml
+          cache: true
+      - uses: dtolnay/rust-toolchain@stable
+      - run: flutter pub get
+      - name: Build Windows Release
+        run: flutter build windows --release
+      - name: Include Windows runtime files
+        shell: pwsh
+        run: |
+          $bundle = "build\windows\x64\runner\Release"
+          Copy-Item -Path "C:\Windows\System32\msvcp140.dll" -Destination $bundle
+          Copy-Item -Path "C:\Windows\System32\vcruntime140.dll" -Destination $bundle
+          Copy-Item -Path "C:\Windows\System32\vcruntime140_1.dll" -Destination $bundle
+          Copy-Item -Path "$bundle\sqlite3.dll" -Destination "$bundle\libsqlcipher.dll" -ErrorAction SilentlyContinue
+      - name: Create Windows release archive
+        shell: pwsh
+        run: Compress-Archive -Path "build\windows\x64\runner\Release\*" -DestinationPath "fluffychat-windows.zip"
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-release-x64
+          path: fluffychat-windows.zip
+      - name: Attach Windows archive to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: fluffychat-windows.zip
+          asset_name: fluffychat-windows.zip
+          asset_content_type: application/zip
+
   build_linux:
     strategy:
       matrix:
@@ -184,30 +235,3 @@ jobs:
           asset_path: fluffychat-linux-${{ matrix.arch }}.tar.gz
           asset_name: fluffychat-linux-${{ matrix.arch }}.tar.gz
           asset_content_type: application/gzip
-
-  deploy_docker:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v7
-      - name: Log in to the Container registry
-        uses: docker/login-action@v4.6.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}

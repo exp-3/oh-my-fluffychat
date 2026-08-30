@@ -84,6 +84,14 @@ if(PLUGIN_BUNDLED_LIBRARIES)
   install(FILES "${PLUGIN_BUNDLED_LIBRARIES}"
     DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
     COMPONENT Runtime)
+
+  # The Matrix SDK expects libsqlcipher.dll on Windows while the plugin ships
+  # sqlite3.dll. Keep both names in the application bundle.
+  install(CODE "
+    if(EXISTS \"\${INSTALL_BUNDLE_LIB_DIR}/sqlite3.dll\")
+      execute_process(COMMAND \${CMAKE_COMMAND} -E copy \"\${INSTALL_BUNDLE_LIB_DIR}/sqlite3.dll\" \"\${INSTALL_BUNDLE_LIB_DIR}/libsqlcipher.dll\")
+    endif()
+  " COMPONENT Runtime)
 endif()
 
 # Copy native assets provided by package build hooks into the application bundle.

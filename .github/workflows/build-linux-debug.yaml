@@ -1,0 +1,38 @@
+name: Linux Debug Build
+
+on:
+  workflow_run:
+    workflows:
+      - Pull Request Workflow
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  build_debug_linux:
+    if: >-
+      ${{
+        github.event.workflow_run.conclusion == 'success' &&
+        (github.event.workflow_run.event == 'pull_request' ||
+        github.event.workflow_run.event == 'merge_group')
+      }}
+    strategy:
+      matrix:
+        arch: [ x64, arm64 ]
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest'}}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install git wget curl clang cmake ninja-build pkg-config libgtk-3-dev libblkid-dev liblzma-dev libjsoncpp-dev cmake-data libsecret-1-dev libsecret-1-0 librhash0 libssl-dev libwebkit2gtk-4.1-dev libpulse-dev -y
+      - run: echo "FLUTTER_VERSION=$(yq '.environment.flutter' < .tool_versions.yaml)" >> $GITHUB_ENV
+      - name: Install Flutter
+        run: |
+          git clone --branch ${{ env.FLUTTER_VERSION }} https://github.com/flutter/flutter.git
+          ./flutter/bin/flutter doctor
+      - uses: dtolnay/rust-toolchain@stable
+      - run: ./flutter/bin/flutter pub get
+      - run: ./flutter/bin/flutter build linux --target-platform linux-${{ matrix.arch }}

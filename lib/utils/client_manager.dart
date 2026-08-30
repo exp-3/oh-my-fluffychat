@@ -158,6 +158,10 @@ abstract class ClientManager {
       html.Notification(title, body: body);
       return;
     }
+    if (PlatformInfos.isWindows) {
+      // Windows notification settings are not available in the desktop build.
+      return;
+    }
 
     final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 

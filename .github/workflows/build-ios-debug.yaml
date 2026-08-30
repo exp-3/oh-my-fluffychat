@@ -1,0 +1,35 @@
+name: iOS Debug Build
+
+on:
+  workflow_run:
+    workflows:
+      - Pull Request Workflow
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  build_debug_ios:
+    if: >-
+      ${{
+        github.event.workflow_run.conclusion == 'success' &&
+        (github.event.workflow_run.event == 'pull_request' ||
+        github.event.workflow_run.event == 'merge_group')
+      }}
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: .tool_versions.yaml
+      - name: Use specific XCode version
+        run: sudo xcode-select --switch /Applications/Xcode_26.3.app
+      - run: brew install sqlcipher
+      - uses: dtolnay/rust-toolchain@stable
+      - run: ./scripts/add-firebase-messaging.sh
+      - run: flutter pub get
+      - run: flutter build ios --no-codesign

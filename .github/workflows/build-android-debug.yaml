@@ -1,0 +1,46 @@
+name: Android Debug Build
+
+on:
+  workflow_run:
+    workflows:
+      - Pull Request Workflow
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  build_debug_apk:
+    if: >-
+      ${{
+        github.event.workflow_run.conclusion == 'success' &&
+        (github.event.workflow_run.event == 'pull_request' ||
+        github.event.workflow_run.event == 'merge_group')
+      }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: ./.github/actions/free_up_space
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: .tool_versions.yaml
+          cache: true
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Cache Gradle
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+      - run: ./scripts/add-firebase-messaging.sh
+      - run: flutter build apk --debug --target-platform android-x64
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: debug-apk-x64
+          path: build/app/outputs/flutter-apk/app-debug.apk

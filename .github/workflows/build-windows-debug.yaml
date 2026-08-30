@@ -1,0 +1,66 @@
+name: Windows Debug Build
+
+on:
+  workflow_run:
+    workflows:
+      - Pull Request Workflow
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  build_debug_windows:
+    if: >-
+      ${{
+        github.event.workflow_run.conclusion == 'success' &&
+        ((github.event.workflow_run.event == 'push' &&
+        github.event.workflow_run.head_branch == 'main') ||
+        github.event.workflow_run.event == 'pull_request' ||
+        github.event.workflow_run.event == 'merge_group')
+      }}
+    runs-on: windows-latest
+    env:
+      PUB_CACHE: ${{ runner.temp }}/pub-cache
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: .tool_versions.yaml
+          cache: true
+      - uses: dtolnay/rust-toolchain@stable
+      - run: flutter pub get
+      - name: Build Debug Windows
+        run: flutter build windows --debug
+      - name: Include Windows runtime files
+        shell: pwsh
+        run: |
+          $bundle = "build\windows\x64\runner\Debug"
+          Copy-Item -Path "C:\Windows\System32\msvcp140.dll" -Destination $bundle -ErrorAction SilentlyContinue
+          Copy-Item -Path "C:\Windows\System32\vcruntime140.dll" -Destination $bundle -ErrorAction SilentlyContinue
+          Copy-Item -Path "C:\Windows\System32\vcruntime140_1.dll" -Destination $bundle -ErrorAction SilentlyContinue
+          Copy-Item -Path "$bundle\sqlite3.dll" -Destination "$bundle\libsqlcipher.dll" -ErrorAction SilentlyContinue
+
+          $vsInstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+          if ($vsInstallPath) {
+            $msvcDebugRuntime = Get-ChildItem "$vsInstallPath\VC\Redist\MSVC\*\debug_nonredist\x64\Microsoft.VC*.DebugCRT\*.dll" -ErrorAction SilentlyContinue
+            foreach ($dll in $msvcDebugRuntime) {
+              Copy-Item -Path $dll.FullName -Destination $bundle -ErrorAction SilentlyContinue
+            }
+          }
+
+          $ucrt = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\ucrt\ucrtbased.dll" -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($ucrt) {
+            Copy-Item -Path $ucrt.FullName -Destination $bundle -ErrorAction SilentlyContinue
+          }
+      - name: Create Windows debug archive
+        shell: pwsh
+        run: Compress-Archive -Path "build\windows\x64\runner\Debug\*" -DestinationPath "fluffychat-windows-debug.zip"
+      - name: Upload Debug Windows
+        uses: actions/upload-artifact@v7
+        with:
+          name: debug-windows-x64
+          path: fluffychat-windows-debug.zip
