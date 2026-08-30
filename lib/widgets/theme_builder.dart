@@ -34,8 +34,7 @@ class ThemeBuilder extends StatefulWidget {
   State<ThemeBuilder> createState() => ThemeController();
 }
 
-class ThemeController extends State<ThemeBuilder>
-    with WidgetsBindingObserver {
+class ThemeController extends State<ThemeBuilder> with WidgetsBindingObserver {
   static const _windowThemeChannel = MethodChannel('fluffychat/window_theme');
 
   SharedPreferences? _sharedPreferences;

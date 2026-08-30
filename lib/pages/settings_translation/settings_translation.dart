@@ -640,8 +640,8 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                           key: ValueKey(runtime.inputSendMode),
                                           initialValue: runtime.inputSendMode,
                                           decoration: InputDecoration(
-                                             labelText:
-                                                 l10n.inputTranslationSendModeTitle,
+                                            labelText: l10n
+                                                .inputTranslationSendModeTitle,
                                             prefixIcon: const Icon(
                                               Icons.touch_app_outlined,
                                             ),

@@ -67,9 +67,7 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
         if (!create && event.oldVersion == 0) {
           final transaction = request.transaction;
           if (transaction == null) {
-            throw StateError(
-              'IndexedDB upgrade transaction is unavailable',
-            );
+            throw StateError('IndexedDB upgrade transaction is unavailable');
           }
           absent = true;
           transaction.abort();
@@ -82,10 +80,7 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
             web.IDBObjectStoreParameters(keyPath: 'cache_key'.toJS),
           );
           store.createIndex('room_id', 'room_id'.toJS);
-          store.createIndex(
-            'event_id',
-            ['room_id'.toJS, 'event_id'.toJS].toJS,
-          );
+          store.createIndex('event_id', ['room_id'.toJS, 'event_id'.toJS].toJS);
         }
       } catch (error, stackTrace) {
         request.transaction?.abort();
@@ -109,7 +104,9 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
     }.toJS;
     request.onblocked = (web.Event event) {
       if (!completer.isCompleted) {
-        completer.completeError(StateError('IndexedDB open request is blocked'));
+        completer.completeError(
+          StateError('IndexedDB open request is blocked'),
+        );
       }
     }.toJS;
     request.onsuccess = (web.Event event) {
