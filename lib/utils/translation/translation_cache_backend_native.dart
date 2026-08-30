@@ -41,16 +41,12 @@ class NativeTranslationCacheBackend implements TranslationCacheBackend {
       _database = await _open(databaseKey);
       return true;
     } catch (error, stackTrace) {
-      // Translation results are a disposable cache. Match the main Matrix
-      // database recovery strategy and replace a file that cannot be opened
-      // (for example one created by the former, too-late PRAGMA key flow).
       Logs().w(
-        'Unable to open translation cache database; rebuilding it',
+        'Unable to open translation cache database; preserving it',
         error,
         stackTrace,
       );
-      await deleteIfExists();
-      return false;
+      rethrow;
     }
   }
 

@@ -1,6 +1,8 @@
 {
     "@@locale": "eu",
     "@@last_modified": "2021-08-14 12:41:10.062383",
+    "databaseInitializationFailed": "Ezin izan da artxibo lokala hasieratu",
+    "databaseInitializationFailedBody": "Ezin izan da ireki «{clientName}»(r)en artxibo lokala. Baliteke hondatuta egotea edo exekuzio-osagai bat falta izatea.\n\nBerrezartzeak betiko ezabatuko du gailu honetako artxibo lokala. Zerbitzariko datuak berriro sinkroniza daitezke, baina bidali gabeko edo lokalean soilik gordetako datuak gal daitezke. Berrezarri nahi duzu?",
     "translation": "Itzulpena",
     "enableTranslation": "Gaitu LLM itzulpena",
     "translationPrivacyNotice": "Mezuaren testu arrunta hautatutako hirugarren LLM hornitzaileari bidaliko zaio.",

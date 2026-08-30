@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.967351",
+    "databaseInitializationFailed": "Kunne ikke initialisere lokalt arkiv",
+    "databaseInitializationFailedBody": "Det lokale arkivet for «{clientName}» kunne ikke åpnes. Det kan være skadet, eller en nødvendig kjøretidskomponent kan mangle.\n\nTilbakestilling sletter det lokale arkivet på denne enheten permanent. Serverdata kan synkroniseres på nytt, men data som ikke er sendt eller bare er lagret lokalt, kan gå tapt. Vil du tilbakestille det?",
     "translation": "Oversettelse",
     "enableTranslation": "Aktiver LLM-oversettelse",
     "translationPrivacyNotice": "Meldingsklartekst vil bli sendt til den valgte tredjeparts LLM-leverandøren.",

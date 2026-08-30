@@ -1,4 +1,6 @@
 {
+    "databaseInitializationFailed": "Le initialisation del archivo local ha fallite",
+    "databaseInitializationFailedBody": "Le archivo local pro “{clientName}” non poteva esser aperite. Illo pote esser corrumpite, o un componente de execution requirite pote mancar.\n\nLe reinitialisation dele permanentemente le archivo local de iste dispositivo. Le datos del servitor pote esser synchronisate de novo, ma datos non inviate o salvate solmente localmente pote perder se. Vole tu reinitialisar lo?",
     "translation": "Traduction",
     "enableTranslation": "Activar le traduction LLM",
     "translationPrivacyNotice": "Le texto clar del message essera inviate al fornitor LLM tertie seligite.",

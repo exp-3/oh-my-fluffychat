@@ -1,4 +1,6 @@
 {
+    "databaseInitializationFailed": "Nisja e arkivit vendor dështoi",
+    "databaseInitializationFailedBody": "Arkivi vendor për “{clientName}” nuk mund të hapej. Mund të jetë dëmtuar ose mund të mungojë një përbërës i nevojshëm i kohës së ekzekutimit.\n\nRivendosja e fshin përgjithmonë arkivin vendor të kësaj pajisjeje. Të dhënat e serverit mund të sinkronizohen përsëri, por të dhënat e padërguara ose të ruajtura vetëm lokalisht mund të humbasin. Dëshironi ta rivendosni?",
     "translation": "Përkthimi",
     "enableTranslation": "Aktivizo përkthimin LLM",
     "translationPrivacyNotice": "Tekst i thjeshtë i mesazhit do t'i dërgohet ofruesit të zgjedhur të palës së tretë të LLM.",

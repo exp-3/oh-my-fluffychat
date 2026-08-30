@@ -1,6 +1,8 @@
 {
     "@@locale": "cs",
     "@@last_modified": "2021-08-14 12:41:10.131133",
+    "databaseInitializationFailed": "Inicializace místního archivu se nezdařila",
+    "databaseInitializationFailedBody": "Místní archiv pro „{clientName}“ se nepodařilo otevřít. Může být poškozený nebo může chybět některá požadovaná součást běhového prostředí.\n\nResetováním se místní archiv v tomto zařízení trvale odstraní. Data ze serveru lze znovu synchronizovat, ale neodeslaná data nebo data uložená pouze místně mohou být ztracena. Chcete jej resetovat?",
     "translation": "Překlad",
     "enableTranslation": "Povolit překlad LLM",
     "translationPrivacyNotice": "Nešifrovaný text zprávy bude odeslán vybranému poskytovateli LLM třetí strany.",

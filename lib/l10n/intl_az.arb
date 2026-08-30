@@ -1,4 +1,6 @@
 {
+    "databaseInitializationFailed": "Yerli arxivin başladılması uğursuz oldu",
+    "databaseInitializationFailedBody": "\"{clientName}\" üçün yerli arxivi açmaq mümkün olmadı. O zədələnmiş ola bilər və ya tələb olunan icra mühiti komponenti çatışmaya bilər.\n\nSıfırlama bu cihazdakı yerli arxivi həmişəlik siləcək. Server məlumatları yenidən sinxronlaşdırıla bilər, lakin göndərilməmiş və ya yalnız yerli saxlanılan məlumatlar itə bilər. Onu sıfırlamaq istəyirsiniz?",
     "translation": "Tərcümə",
     "enableTranslation": "LLM tərcüməsini aktivləşdirin",
     "translationPrivacyNotice": "Mesajın açıq mətni seçilmiş üçüncü tərəf LLM provayderinə göndəriləcək.",

@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.925971",
+    "databaseInitializationFailed": "Falha ao inicializar o arquivo local",
+    "databaseInitializationFailedBody": "Não foi possível abrir o arquivo local de \"{clientName}\". Ele pode estar corrompido ou pode estar faltando um componente de execução necessário.\n\nA redefinição exclui permanentemente o arquivo local deste dispositivo. Os dados do servidor podem ser sincronizados novamente, mas dados não enviados ou salvos apenas localmente podem ser perdidos. Deseja redefini-lo?",
     "translation": "Tradução",
     "enableTranslation": "Habilitar tradução LLM",
     "translationPrivacyNotice": "O texto simples da mensagem será enviado ao provedor LLM terceirizado selecionado.",

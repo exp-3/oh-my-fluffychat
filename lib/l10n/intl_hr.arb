@@ -1,6 +1,8 @@
 {
     "@@locale": "hr",
     "@@last_modified": "2021-08-14 12:41:10.025984",
+    "databaseInitializationFailed": "Pokretanje lokalne arhive nije uspjelo",
+    "databaseInitializationFailedBody": "Lokalna arhiva za „{clientName}” nije se mogla otvoriti. Možda je oštećena ili nedostaje potrebna komponenta za izvođenje.\n\nVraćanjem na početno stanje trajno se briše lokalna arhiva na ovom uređaju. Podaci s poslužitelja mogu se ponovno sinkronizirati, ali neposlani ili samo lokalno spremljeni podaci mogu se izgubiti. Želite li je vratiti na početno stanje?",
     "translation": "Prijevod",
     "enableTranslation": "Omogući LLM prijevod",
     "translationPrivacyNotice": "Čisti tekst poruke bit će poslan odabranom trećem davatelju LLM-a.",

@@ -1,4 +1,6 @@
 {
+    "databaseInitializationFailed": "Paikallisen arkiston alustaminen epäonnistui",
+    "databaseInitializationFailedBody": "Kohteen ”{clientName}” paikallista arkistoa ei voitu avata. Se voi olla vioittunut tai vaadittu suorituksenaikainen komponentti saattaa puuttua.\n\nNollaaminen poistaa tämän laitteen paikallisen arkiston pysyvästi. Palvelimen tiedot voidaan synkronoida uudelleen, mutta lähettämättömät tai vain paikallisesti tallennetut tiedot voivat kadota. Haluatko nollata sen?",
     "translation": "Käännös",
     "enableTranslation": "Ota LLM-käännös käyttöön",
     "translationPrivacyNotice": "Viestin pelkkä teksti lähetetään valitulle kolmannen osapuolen LLM-palveluntarjoajalle.",

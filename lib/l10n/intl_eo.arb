@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:10.107750",
+    "databaseInitializationFailed": "Inicialigo de loka arkivo malsukcesis",
+    "databaseInitializationFailedBody": "La loka arkivo por “{clientName}” ne povis esti malfermita. Ĝi eble estas difektita, aŭ bezonata rultempa komponanto eble mankas.\n\nRestarigo por ĉiam forigas la lokan arkivon de ĉi tiu aparato. Servilaj datumoj povas esti denove sinkronigitaj, sed nesenditaj aŭ nur loke konservitaj datumoj povas perdiĝi. Ĉu vi volas restarigi ĝin?",
     "translation": "Traduko",
     "enableTranslation": "Ebligu LLM-tradukadon",
     "translationPrivacyNotice": "Mesaĝa klarteksto estos sendita al la elektita triaparta LLM-provizanto.",

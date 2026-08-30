@@ -1,6 +1,8 @@
 {
     "@@locale": "tr",
     "@@last_modified": "2021-08-14 12:41:09.803728",
+    "databaseInitializationFailed": "Yerel arşiv başlatılamadı",
+    "databaseInitializationFailedBody": "\"{clientName}\" yerel arşivi açılamadı. Arşiv bozulmuş veya gerekli bir çalışma zamanı bileşeni eksik olabilir.\n\nSıfırlama, bu cihazdaki yerel arşivi kalıcı olarak siler. Sunucu verileri yeniden eşitlenebilir ancak gönderilmemiş veya yalnızca yerel olarak kaydedilmiş veriler kaybolabilir. Sıfırlamak istiyor musunuz?",
     "translation": "Çeviri",
     "enableTranslation": "Yüksek Lisans çevirisini etkinleştir",
     "translationPrivacyNotice": "Mesaj düz metni seçilen üçüncü taraf LLM sağlayıcısına gönderilecektir.",

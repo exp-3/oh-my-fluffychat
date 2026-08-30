@@ -1,4 +1,6 @@
 {
+    "databaseInitializationFailed": "Theip ar thúsú na cartlainne logánta",
+    "databaseInitializationFailedBody": "Níorbh fhéidir an chartlann logánta do “{clientName}” a oscailt. D’fhéadfadh sí a bheith truaillithe, nó d’fhéadfadh comhpháirt riachtanach ama rite a bheith ar iarraidh.\n\nScriosfaidh athshocrú cartlann logánta an ghléis seo go buan. Is féidir sonraí an fhreastalaí a shioncronú arís, ach d’fhéadfaí sonraí nár seoladh nó sonraí logánta amháin a chailleadh. Ar mhaith leat í a athshocrú?",
     "translation": "Aistriúchán",
     "enableTranslation": "Cumasaigh aistriúchán LLM",
     "translationPrivacyNotice": "Seolfar gnáth-théacs na teachtaireachta chuig an soláthraí LLM tríú páirtí roghnaithe.",

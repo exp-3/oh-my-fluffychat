@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:10.002360",
+    "databaseInitializationFailed": "Inisialisasi arsip lokal gagal",
+    "databaseInitializationFailedBody": "Arsip lokal untuk \"{clientName}\" tidak dapat dibuka. Arsip mungkin rusak, atau komponen runtime yang diperlukan mungkin tidak tersedia.\n\nReset akan menghapus arsip lokal perangkat ini secara permanen. Data server dapat disinkronkan kembali, tetapi data yang belum dikirim atau hanya disimpan secara lokal mungkin hilang. Apakah Anda ingin meresetnya?",
     "translation": "Terjemahan",
     "enableTranslation": "Aktifkan terjemahan LLM",
     "translationPrivacyNotice": "Teks biasa pesan akan dikirim ke penyedia LLM pihak ketiga yang dipilih.",

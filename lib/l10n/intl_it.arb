@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.992206",
+    "databaseInitializationFailed": "Inizializzazione dell’archivio locale non riuscita",
+    "databaseInitializationFailedBody": "Non è stato possibile aprire l’archivio locale di “{clientName}”. Potrebbe essere danneggiato oppure potrebbe mancare un componente di runtime necessario.\n\nLa reimpostazione elimina definitivamente l’archivio locale di questo dispositivo. I dati del server possono essere sincronizzati di nuovo, ma i dati non inviati o salvati solo localmente potrebbero andare persi. Vuoi reimpostarlo?",
     "translation": "Traduzione",
     "enableTranslation": "Abilita la traduzione LLM",
     "translationPrivacyNotice": "Il testo normale del messaggio verrà inviato al provider LLM di terze parti selezionato.",

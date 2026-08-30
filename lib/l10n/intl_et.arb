@@ -1,6 +1,8 @@
 {
     "@@locale": "et",
     "@@last_modified": "2021-08-14 12:41:10.079944",
+    "databaseInitializationFailed": "Kohaliku arhiivi käivitamine nurjus",
+    "databaseInitializationFailedBody": "„{clientName}” kohalikku arhiivi ei saanud avada. See võib olla kahjustatud või puudub vajalik käituskeskkonna komponent.\n\nLähtestamine kustutab selle seadme kohaliku arhiivi jäädavalt. Serveri andmeid saab uuesti sünkroonida, kuid saatmata või ainult kohalikult salvestatud andmed võivad kaotsi minna. Kas soovite selle lähtestada?",
     "translation": "Tõlge",
     "enableTranslation": "Luba LLM-i tõlge",
     "translationPrivacyNotice": "Sõnumi lihttekst saadetakse valitud kolmandast osapoolest LLM-i pakkujale.",

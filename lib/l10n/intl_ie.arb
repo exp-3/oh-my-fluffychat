@@ -1,4 +1,6 @@
 {
+    "databaseInitializationFailed": "Initialisation del local archive ne successat",
+    "databaseInitializationFailedBody": "Li local archive por “{clientName}” ne posset esser apert. It fórsan es coruptet, o un necessi component de execution manca.\n\nReinitialisation va permanentmen deleter li local archive de ti-ci aparate. Li data del servitor posse esser sincronisat denov, ma data ne misset o conservat solmen localmen posse esser perdit. Esque vu vole reinitialisar it?",
     "translation": "Traduction",
     "enableTranslation": "Activar traduction LLM",
     "translationPrivacyNotice": "Li text simplic del missage va esser misset al selectet provider LLM de un altri partise.",

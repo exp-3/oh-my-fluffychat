@@ -18,6 +18,18 @@ import 'package:sqflite_sqlcipher/sqflite.dart' as sqfl_cipher;
 import 'package:universal_html/html.dart' as html;
 
 import 'cipher.dart';
+import 'reset_database_store.dart';
+
+class MatrixDatabaseInitializationFailure implements Exception {
+  final String clientName;
+  final Object cause;
+
+  const MatrixDatabaseInitializationFailure(this.clientName, this.cause);
+
+  @override
+  String toString() =>
+      'Unable to initialize the local archive for "$clientName": $cause';
+}
 
 Future<DatabaseApi> flutterMatrixSdkDatabaseBuilder(String clientName) async {
   try {
@@ -38,15 +50,21 @@ Future<DatabaseApi> flutterMatrixSdkDatabaseBuilder(String clientName) async {
       Logs().e('Unable to send error notification', e, s);
     }
 
-    // Delete database file:
-    if (!kIsWeb) {
-      final dbFile = File(await _getDatabasePath(clientName));
-      if (await dbFile.exists()) await dbFile.delete();
-    }
-
-    // Try again
-    return await _constructDatabase(clientName);
+    // Initialization can also fail because a required runtime library is
+    // missing or temporarily unavailable. Never treat every startup failure
+    // as database corruption: deleting and recreating the database here would
+    // destroy otherwise valid user data. Surface the original error and leave
+    // recovery to an explicit, user-approved action.
+    Error.throwWithStackTrace(
+      MatrixDatabaseInitializationFailure(clientName, e),
+      s,
+    );
   }
+}
+
+Future<void> resetMatrixSdkDatabase(String clientName) async {
+  final nativePath = kIsWeb ? null : await _getDatabasePath(clientName);
+  await resetDatabaseStore(clientName, nativePath: nativePath);
 }
 
 Future<Directory?> getFileStorageLocation() async {

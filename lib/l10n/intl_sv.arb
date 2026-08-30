@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.835634",
+    "databaseInitializationFailed": "Det lokala arkivet kunde inte initieras",
+    "databaseInitializationFailedBody": "Det lokala arkivet för ”{clientName}” kunde inte öppnas. Det kan vara skadat eller så kan en nödvändig körningskomponent saknas.\n\nEn återställning tar permanent bort enhetens lokala arkiv. Serverdata kan synkroniseras igen, men data som inte har skickats eller bara sparats lokalt kan gå förlorade. Vill du återställa det?",
     "translation": "Översättning",
     "enableTranslation": "Aktivera LLM-översättning",
     "translationPrivacyNotice": "Meddelande i klartext kommer att skickas till den valda tredjepartsleverantören av LLM.",

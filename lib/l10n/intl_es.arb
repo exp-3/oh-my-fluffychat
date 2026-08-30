@@ -1,6 +1,8 @@
 {
     "@@locale": "es",
     "@@last_modified": "2021-08-14 12:41:10.097243",
+    "databaseInitializationFailed": "Error al inicializar el archivo local",
+    "databaseInitializationFailedBody": "No se pudo abrir el archivo local de «{clientName}». Puede estar dañado o puede faltar un componente de tiempo de ejecución necesario.\n\nAl restablecerlo, se elimina de forma permanente el archivo local de este dispositivo. Los datos del servidor se pueden volver a sincronizar, pero podrían perderse los datos sin enviar o guardados únicamente de forma local. ¿Quieres restablecerlo?",
     "translation": "Traducción",
     "enableTranslation": "Habilitar traducción LLM",
     "translationPrivacyNotice": "El texto sin formato del mensaje se enviará al proveedor externo de LLM seleccionado.",

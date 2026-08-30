@@ -1,4 +1,6 @@
 {
+    "databaseInitializationFailed": "Nabigo ang pagsisimula ng lokal na archive",
+    "databaseInitializationFailedBody": "Hindi mabuksan ang lokal na archive para sa \"{clientName}\". Maaaring sira ito, o maaaring may nawawalang kinakailangang runtime component.\n\nKapag ni-reset, permanenteng mabubura ang lokal na archive ng device na ito. Maaaring i-sync muli ang data ng server, ngunit maaaring mawala ang hindi pa naipadala o lokal lamang na data. Gusto mo ba itong i-reset?",
     "translation": "Pagsasalin",
     "enableTranslation": "Paganahin ang pagsasalin ng LLM",
     "translationPrivacyNotice": "Ipapadala ang plaintext ng mensahe sa napiling third-party na LLM provider.",

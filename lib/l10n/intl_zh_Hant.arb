@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.708353",
+    "databaseInitializationFailed": "本機封存初始化失敗",
+    "databaseInitializationFailedBody": "無法開啟「{clientName}」的本機封存。封存可能已損壞，或缺少必要的執行階段元件。\n\n重設將永久刪除此裝置上的本機封存。伺服器上的資料可以重新同步，但尚未傳送或僅儲存在本機的資料可能遺失。是否重設？",
     "translation": "翻譯",
     "enableTranslation": "啟用 LLM 翻譯",
     "translationPrivacyNotice": "訊息明文將傳送給所選的第三方 LLM 供應商。",

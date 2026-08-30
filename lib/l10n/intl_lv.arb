@@ -1,4 +1,6 @@
 {
+    "databaseInitializationFailed": "Neizdevās inicializēt vietējo arhīvu",
+    "databaseInitializationFailedBody": "Neizdevās atvērt “{clientName}” vietējo arhīvu. Tas var būt bojāts vai arī var trūkt nepieciešama izpildlaika komponenta.\n\nAtiestatot šīs ierīces vietējais arhīvs tiks neatgriezeniski dzēsts. Servera datus var sinhronizēt atkārtoti, taču nenosūtīti vai tikai lokāli saglabāti dati var tikt zaudēti. Vai vēlaties to atiestatīt?",
     "translation": "Tulkošana",
     "enableTranslation": "Iespējot LLM tulkošanu",
     "translationPrivacyNotice": "Ziņojuma vienkāršais teksts tiks nosūtīts atlasītajam trešās puses LLM nodrošinātājam.",

@@ -1,5 +1,7 @@
 {
     "@@locale": "kab",
+    "databaseInitializationFailed": "Asekker n uɣbar adigan ur yeddi ara",
+    "databaseInitializationFailedBody": "Ur izmir ara ad yeldi uɣbar adigan n “{clientName}”. Ahat yerreẓ neɣ ixuṣṣ uferdis n uselkem ilaqen.\n\nAles n uwennez ad yekkes i lebda aɣbar adigan seg yibenk-a. Isefka n uqeddac zemren ad ttwasemtawin tikelt-nniḍen, maca isefka ur nettwazen ara neɣ i yettwaskelsen kan s wudem adigan zemren ad ruḥen. Tebɣiḍ ad talseḍ awennez?",
     "translation": "Tasuqilt",
     "enableTranslation": "Snulfu tasuqilt LLM",
     "translationPrivacyNotice": "Asebter n yizen ad yettwazen ɣer uqeddac wis kraḍ LLM yettwafernen.",

@@ -1,4 +1,6 @@
 {
+    "databaseInitializationFailed": "Mahalliy arxivni ishga tushirib bo‘lmadi",
+    "databaseInitializationFailedBody": "“{clientName}” uchun mahalliy arxivni ochib bo‘lmadi. U buzilgan bo‘lishi yoki zarur ish muhiti komponenti yetishmasligi mumkin.\n\nTiklash ushbu qurilmadagi mahalliy arxivni butunlay o‘chiradi. Server ma’lumotlarini qayta sinxronlash mumkin, ammo yuborilmagan yoki faqat mahalliy saqlangan ma’lumotlar yo‘qolishi mumkin. Uni tiklamoqchimisiz?",
     "translation": "Tarjima",
     "enableTranslation": "LLM tarjimasini yoqing",
     "translationPrivacyNotice": "Xabarning ochiq matni tanlangan uchinchi tomon LLM provayderiga yuboriladi.",

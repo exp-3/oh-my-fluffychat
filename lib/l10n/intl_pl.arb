@@ -1,6 +1,8 @@
 {
     "@@locale": "pl",
     "@@last_modified": "2021-08-14 12:41:09.943634",
+    "databaseInitializationFailed": "Nie udało się zainicjować lokalnego archiwum",
+    "databaseInitializationFailedBody": "Nie udało się otworzyć lokalnego archiwum dla „{clientName}”. Może ono być uszkodzone lub może brakować wymaganego składnika środowiska uruchomieniowego.\n\nResetowanie trwale usuwa lokalne archiwum z tego urządzenia. Dane z serwera można zsynchronizować ponownie, ale niewysłane lub zapisane wyłącznie lokalnie dane mogą zostać utracone. Czy chcesz je zresetować?",
     "translation": "Tłumaczenie",
     "enableTranslation": "Włącz tłumaczenie LLM",
     "translationPrivacyNotice": "Wiadomość w postaci zwykłego tekstu zostanie wysłana do wybranego zewnętrznego dostawcy LLM.",

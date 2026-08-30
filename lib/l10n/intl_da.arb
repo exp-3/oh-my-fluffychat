@@ -1,4 +1,6 @@
 {
+    "databaseInitializationFailed": "Initialisering af lokalt arkiv mislykkedes",
+    "databaseInitializationFailedBody": "Det lokale arkiv for \"{clientName}\" kunne ikke åbnes. Det kan være beskadiget, eller en nødvendig runtimekomponent mangler muligvis.\n\nNulstilling sletter denne enheds lokale arkiv permanent. Serverdata kan synkroniseres igen, men data, der ikke er sendt eller kun er gemt lokalt, kan gå tabt. Vil du nulstille det?",
     "translation": "Oversættelse",
     "enableTranslation": "Aktiver LLM-oversættelse",
     "translationPrivacyNotice": "Meddelelsen i klartekst vil blive sendt til den valgte tredjeparts LLM-udbyder.",

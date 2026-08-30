@@ -1,6 +1,8 @@
 {
     "@@locale": "hu",
     "@@last_modified": "2021-08-14 12:41:10.016566",
+    "databaseInitializationFailed": "A helyi archívum inicializálása sikertelen",
+    "databaseInitializationFailedBody": "A(z) „{clientName}” helyi archívumát nem sikerült megnyitni. Lehet, hogy sérült, vagy hiányzik egy szükséges futtatókörnyezeti összetevő.\n\nAz alaphelyzetbe állítás véglegesen törli az eszköz helyi archívumát. A szerver adatai újra szinkronizálhatók, de az el nem küldött vagy csak helyben tárolt adatok elveszhetnek. Szeretnéd alaphelyzetbe állítani?",
     "translation": "Fordítás",
     "enableTranslation": "LLM fordítás engedélyezése",
     "translationPrivacyNotice": "Az üzenet egyszerű szövegét a kiválasztott harmadik fél LLM-szolgáltatónak küldi el.",

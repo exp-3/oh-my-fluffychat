@@ -1,6 +1,8 @@
 {
     "@@locale": "zh",
     "@@last_modified": "2021-08-14 12:41:09.767805",
+    "databaseInitializationFailed": "本地存档初始化失败",
+    "databaseInitializationFailedBody": "无法打开“{clientName}”的本地存档。存档可能已损坏，或者缺少必要的运行组件。\n\n重置将永久删除此设备上的本地存档。服务器上的数据可以重新同步，但尚未发送或仅保存在本地的数据可能丢失。是否重置？",
     "translation": "翻译",
     "enableTranslation": "启用 LLM 翻译",
     "translationPrivacyNotice": "消息明文将发送给所选的第三方 LLM 供应商。",

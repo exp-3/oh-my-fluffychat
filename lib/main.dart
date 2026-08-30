@@ -12,6 +12,7 @@ import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/client_manager.dart';
 import 'package:fluffychat/utils/error_reporter.dart';
+import 'package:fluffychat/utils/matrix_sdk_extensions/flutter_matrix_dart_sdk_database/builder.dart';
 import 'package:fluffychat/utils/notification_background_handler.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/utils/start_push_foreground_service.dart';
@@ -27,6 +28,7 @@ import 'package:universal_html/universal_html.dart' as web;
 
 import 'config/setting_keys.dart';
 import 'utils/background_push.dart';
+import 'widgets/database_recovery_app.dart';
 import 'widgets/fluffy_chat_app.dart';
 
 ReceivePort? mainIsolateReceivePort;
@@ -93,7 +95,16 @@ void main(List<String> args) => runZonedGuarded(() async {
       AppLifecycleState.detached == WidgetsBinding.instance.lifecycleState) {
     await ForegroundServices.startService('background_push');
 
-    final clients = await ClientManager.getClients(store: store);
+    late final List<Client> clients;
+    try {
+      clients = await ClientManager.getClients(store: store);
+    } on MatrixDatabaseInitializationFailure catch (failure, stackTrace) {
+      Logs().e('Unable to initialize the local archive', failure, stackTrace);
+      WidgetsBinding.instance.addObserver(
+        DatabaseRecoveryAppStarter(failure, store),
+      );
+      return;
+    }
 
     // Do not send online presences when app is in background fetch mode.
     for (final client in clients) {
@@ -112,7 +123,14 @@ void main(List<String> args) => runZonedGuarded(() async {
     return;
   }
 
-  final clients = await ClientManager.getClients(store: store);
+  late final List<Client> clients;
+  try {
+    clients = await ClientManager.getClients(store: store);
+  } on MatrixDatabaseInitializationFailure catch (failure, stackTrace) {
+    Logs().e('Unable to initialize the local archive', failure, stackTrace);
+    startDatabaseRecoveryGui(failure, store);
+    return;
+  }
 
   // Started in foreground mode.
   Logs().i(
@@ -120,6 +138,24 @@ void main(List<String> args) => runZonedGuarded(() async {
   );
   await startGui(clients, store);
 }, ErrorReporter.onFlutterError);
+
+void startDatabaseRecoveryGui(
+  MatrixDatabaseInitializationFailure failure,
+  SharedPreferences store,
+) {
+  runApp(
+    DatabaseRecoveryApp(
+      failure: failure,
+      recover: (currentFailure, {required reset}) async {
+        if (reset) {
+          await resetMatrixSdkDatabase(currentFailure.clientName);
+        }
+        final clients = await ClientManager.getClients(store: store);
+        await startGui(clients, store);
+      },
+    ),
+  );
+}
 
 /// Fetch the pincode for the applock and start the flutter engine.
 Future<void> startGui(List<Client> clients, SharedPreferences store) async {
@@ -184,5 +220,22 @@ class AppStarter with WidgetsBindingObserver {
     startGui(clients, store);
     // We must make sure that the GUI is only started once.
     guiStarted = true;
+  }
+}
+
+/// Starts the recovery UI once a background-only Android process gains a UI.
+class DatabaseRecoveryAppStarter with WidgetsBindingObserver {
+  final MatrixDatabaseInitializationFailure failure;
+  final SharedPreferences store;
+  bool guiStarted = false;
+
+  DatabaseRecoveryAppStarter(this.failure, this.store);
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (guiStarted || state == AppLifecycleState.detached) return;
+    guiStarted = true;
+    WidgetsBinding.instance.removeObserver(this);
+    startDatabaseRecoveryGui(failure, store);
   }
 }

@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.918296",
+    "databaseInitializationFailed": "Inițializarea arhivei locale a eșuat",
+    "databaseInitializationFailedBody": "Arhiva locală pentru „{clientName}” nu a putut fi deschisă. Este posibil să fie deteriorată sau să lipsească o componentă de execuție necesară.\n\nResetarea șterge definitiv arhiva locală de pe acest dispozitiv. Datele de pe server pot fi sincronizate din nou, dar datele netrimise sau salvate numai local se pot pierde. Doriți să o resetați?",
     "translation": "Traducere",
     "enableTranslation": "Activați traducerea LLM",
     "translationPrivacyNotice": "Textul simplu al mesajului va fi trimis furnizorului LLM terț selectat.",

@@ -1,6 +1,8 @@
 {
     "@@locale": "sk",
     "@@last_modified": "2021-08-14 12:41:09.879987",
+    "databaseInitializationFailed": "Inicializácia miestneho archívu zlyhala",
+    "databaseInitializationFailedBody": "Miestny archív pre „{clientName}“ sa nepodarilo otvoriť. Môže byť poškodený alebo môže chýbať požadovaná súčasť behového prostredia.\n\nObnovením sa miestny archív v tomto zariadení natrvalo odstráni. Údaje zo servera možno znova synchronizovať, no neodoslané údaje alebo údaje uložené iba lokálne sa môžu stratiť. Chcete ho obnoviť?",
     "translation": "Preklad",
     "enableTranslation": "Povoliť preklad LLM",
     "translationPrivacyNotice": "Čistý text správy bude odoslaný vybranému poskytovateľovi LLM tretej strany.",

@@ -1,6 +1,8 @@
 {
     "@@locale": "ja",
     "@@last_modified": "2021-08-14 12:41:09.978060",
+    "databaseInitializationFailed": "ローカルアーカイブの初期化に失敗しました",
+    "databaseInitializationFailedBody": "「{clientName}」のローカルアーカイブを開けませんでした。アーカイブが破損しているか、必要なランタイムコンポーネントが不足している可能性があります。\n\nリセットすると、このデバイスのローカルアーカイブは完全に削除されます。サーバー上のデータは再同期できますが、未送信のデータやローカルにのみ保存されたデータは失われる可能性があります。リセットしますか？",
     "translation": "翻訳",
     "enableTranslation": "LLM 変換を有効にする",
     "translationPrivacyNotice": "メッセージの平文は、選択したサードパーティ LLM プロバイダーに送信されます。",

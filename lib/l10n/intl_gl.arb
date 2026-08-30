@@ -1,6 +1,8 @@
 {
     "@@locale": "gl",
     "@@last_modified": "2021-08-14 12:41:10.040321",
+    "databaseInitializationFailed": "Fallou a inicialización do arquivo local",
+    "databaseInitializationFailedBody": "Non se puido abrir o arquivo local de «{clientName}». Pode estar danado ou pode faltar un compoñente necesario do contorno de execución.\n\nAo restablecelo, eliminarase permanentemente o arquivo local deste dispositivo. Os datos do servidor pódense sincronizar de novo, pero poderían perderse os datos non enviados ou gardados só localmente. Queres restablecelo?",
     "translation": "Tradución",
     "enableTranslation": "Activa a tradución LLM",
     "translationPrivacyNotice": "O texto sin formato da mensaxe enviarase ao provedor de LLM de terceiros seleccionado.",

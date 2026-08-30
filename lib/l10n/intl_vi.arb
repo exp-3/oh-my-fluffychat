@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.781172",
+    "databaseInitializationFailed": "Không thể khởi tạo kho lưu trữ cục bộ",
+    "databaseInitializationFailedBody": "Không thể mở kho lưu trữ cục bộ của \"{clientName}\". Kho lưu trữ có thể bị hỏng hoặc thiếu một thành phần thời gian chạy bắt buộc.\n\nViệc đặt lại sẽ xóa vĩnh viễn kho lưu trữ cục bộ trên thiết bị này. Dữ liệu trên máy chủ có thể được đồng bộ lại, nhưng dữ liệu chưa gửi hoặc chỉ được lưu cục bộ có thể bị mất. Bạn có muốn đặt lại không?",
     "translation": "Dịch thuật",
     "enableTranslation": "Bật dịch LLM",
     "translationPrivacyNotice": "Bản rõ tin nhắn sẽ được gửi đến nhà cung cấp LLM bên thứ ba đã chọn.",

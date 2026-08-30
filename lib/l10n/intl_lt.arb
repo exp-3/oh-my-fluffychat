@@ -1,4 +1,6 @@
 {
+    "databaseInitializationFailed": "Nepavyko inicijuoti vietinio archyvo",
+    "databaseInitializationFailedBody": "Nepavyko atverti „{clientName}“ vietinio archyvo. Jis gali būti sugadintas arba gali trūkti būtino vykdymo aplinkos komponento.\n\nNustačius iš naujo, šio įrenginio vietinis archyvas bus visam laikui ištrintas. Serverio duomenis galima sinchronizuoti iš naujo, tačiau neišsiųsti arba tik vietoje saugomi duomenys gali būti prarasti. Ar norite nustatyti jį iš naujo?",
     "translation": "Vertimas",
     "enableTranslation": "Įgalinti LLM vertimą",
     "translationPrivacyNotice": "Pranešimas paprastas tekstas bus išsiųstas pasirinktam trečiosios šalies LLM teikėjui.",

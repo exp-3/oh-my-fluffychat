@@ -1,4 +1,6 @@
 {
+    "databaseInitializationFailed": "Falha ao inicializar o arquivo local",
+    "databaseInitializationFailedBody": "Não foi possível abrir o arquivo local de «{clientName}». Pode estar danificado ou pode faltar um componente de execução necessário.\n\nA reposição elimina permanentemente o arquivo local deste dispositivo. Os dados do servidor podem ser sincronizados novamente, mas os dados não enviados ou guardados apenas localmente podem ser perdidos. Pretende repô-lo?",
     "translation": "Tradução",
     "enableTranslation": "Ativar tradução LLM",
     "translationPrivacyNotice": "O texto simples da mensagem será enviado para o fornecedor LLM externo selecionado.",

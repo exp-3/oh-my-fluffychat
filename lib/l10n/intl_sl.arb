@@ -1,4 +1,6 @@
 {
+    "databaseInitializationFailed": "Inicializacija lokalnega arhiva ni uspela",
+    "databaseInitializationFailedBody": "Lokalnega arhiva za »{clientName}« ni bilo mogoče odpreti. Morda je poškodovan ali pa manjka zahtevana izvajalna komponenta.\n\nPonastavitev trajno izbriše lokalni arhiv v tej napravi. Podatke s strežnika je mogoče znova sinhronizirati, vendar se lahko neposlani ali samo lokalno shranjeni podatki izgubijo. Ali ga želite ponastaviti?",
     "translation": "Prevajanje",
     "enableTranslation": "Omogoči LLM prevod",
     "translationPrivacyNotice": "Govo besedilo sporočila bo poslano izbranemu zunanjemu ponudniku LLM.",

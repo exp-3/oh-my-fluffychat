@@ -1,5 +1,7 @@
 {
     "@@locale": "yue",
+    "databaseInitializationFailed": "本機封存初始化失敗",
+    "databaseInitializationFailedBody": "無法開啟「{clientName}」嘅本機封存。封存可能已經損壞，或者欠缺必要嘅執行階段元件。\n\n重設會永久刪除呢部裝置上嘅本機封存。伺服器上嘅資料可以重新同步，但未傳送或者只儲存喺本機嘅資料可能會遺失。要唔要重設？",
     "translation": "翻譯",
     "enableTranslation": "啟用 LLM 翻譯",
     "translationPrivacyNotice": "訊息明文會傳送畀所選嘅第三方 LLM 供應商。",

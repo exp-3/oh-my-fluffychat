@@ -1,6 +1,8 @@
 {
     "@@locale": "fr",
     "@@last_modified": "2021-08-14 12:41:10.051787",
+    "databaseInitializationFailed": "Échec de l’initialisation de l’archive locale",
+    "databaseInitializationFailedBody": "Impossible d’ouvrir l’archive locale de « {clientName} ». Elle est peut-être endommagée ou un composant d’exécution requis est manquant.\n\nLa réinitialisation supprime définitivement l’archive locale de cet appareil. Les données du serveur peuvent être resynchronisées, mais les données non envoyées ou uniquement locales risquent d’être perdues. Voulez-vous la réinitialiser ?",
     "translation": "Traduction",
     "enableTranslation": "Activer la traduction LLM",
     "translationPrivacyNotice": "Le texte brut du message sera envoyé au fournisseur LLM tiers sélectionné.",

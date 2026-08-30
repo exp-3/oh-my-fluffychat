@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.955292",
+    "databaseInitializationFailed": "Initialisatie van lokaal archief mislukt",
+    "databaseInitializationFailedBody": "Het lokale archief voor ‘{clientName}’ kon niet worden geopend. Het is mogelijk beschadigd of er ontbreekt een vereist runtimeonderdeel.\n\nBij opnieuw instellen wordt het lokale archief op dit apparaat permanent verwijderd. Servergegevens kunnen opnieuw worden gesynchroniseerd, maar niet-verzonden of uitsluitend lokaal opgeslagen gegevens kunnen verloren gaan. Wil je het opnieuw instellen?",
     "translation": "Vertaling",
     "enableTranslation": "Schakel LLM-vertaling in",
     "translationPrivacyNotice": "Het bericht wordt in platte tekst verzonden naar de geselecteerde externe LLM-provider.",

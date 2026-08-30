@@ -1,6 +1,8 @@
 {
     "@@locale": "de",
     "@@last_modified": "2021-08-14 12:41:10.119255",
+    "databaseInitializationFailed": "Initialisierung des lokalen Archivs fehlgeschlagen",
+    "databaseInitializationFailedBody": "Das lokale Archiv für „{clientName}“ konnte nicht geöffnet werden. Es ist möglicherweise beschädigt oder eine erforderliche Laufzeitkomponente fehlt.\n\nBeim Zurücksetzen wird das lokale Archiv auf diesem Gerät dauerhaft gelöscht. Serverdaten können erneut synchronisiert werden, aber nicht gesendete oder nur lokal gespeicherte Daten können verloren gehen. Möchtest du es zurücksetzen?",
     "translation": "Übersetzung",
     "enableTranslation": "Aktivieren Sie die LLM-Übersetzung",
     "translationPrivacyNotice": "Der Klartext der Nachricht wird an den ausgewählten LLM-Drittanbieter gesendet.",

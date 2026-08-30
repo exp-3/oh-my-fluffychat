@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:10.145728",
+    "databaseInitializationFailed": "Ha fallat la inicialització de l’arxiu local",
+    "databaseInitializationFailedBody": "No s’ha pogut obrir l’arxiu local de «{clientName}». Pot estar malmès o pot faltar un component d’execució necessari.\n\nEn restablir-lo, l’arxiu local d’aquest dispositiu se suprimirà permanentment. Les dades del servidor es poden tornar a sincronitzar, però es poden perdre les dades no enviades o desades només localment. El voleu restablir?",
     "translation": "Traducció",
     "enableTranslation": "Activa la traducció LLM",
     "translationPrivacyNotice": "El text sense format del missatge s'enviarà al proveïdor LLM de tercers seleccionat.",
