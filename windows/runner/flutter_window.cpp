@@ -1,6 +1,9 @@
 #include "flutter_window.h"
 
 #include <optional>
+#include <variant>
+
+#include <flutter/standard_method_codec.h>
 
 #include "flutter/generated_plugin_registrant.h"
 
@@ -25,11 +28,33 @@ bool FlutterWindow::OnCreate() {
     return false;
   }
   RegisterPlugins(flutter_controller_->engine());
+
+  window_theme_channel_ =
+      std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+          flutter_controller_->engine()->messenger(),
+          "fluffychat/window_theme",
+          &flutter::StandardMethodCodec::GetInstance());
+  window_theme_channel_->SetMethodCallHandler(
+      [this](const auto& call, auto result) {
+        if (call.method_name() == "setTitleBarDarkMode") {
+          const auto* arguments = call.arguments();
+          const bool enabled =
+              arguments != nullptr && std::holds_alternative<bool>(*arguments)
+                  ? std::get<bool>(*arguments)
+                  : false;
+          SetTitleBarDarkMode(enabled);
+          result->Success();
+          return;
+        }
+        result->NotImplemented();
+      });
+
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
   return true;
 }
 
 void FlutterWindow::OnDestroy() {
+  window_theme_channel_.reset();
   if (flutter_controller_) {
     flutter_controller_ = nullptr;
   }

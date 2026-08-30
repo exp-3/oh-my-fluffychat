@@ -6,6 +6,8 @@
 import 'package:collection/collection.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:fluffychat/utils/color_value.dart';
+import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,7 +34,10 @@ class ThemeBuilder extends StatefulWidget {
   State<ThemeBuilder> createState() => ThemeController();
 }
 
-class ThemeController extends State<ThemeBuilder> {
+class ThemeController extends State<ThemeBuilder>
+    with WidgetsBindingObserver {
+  static const _windowThemeChannel = MethodChannel('fluffychat/window_theme');
+
   SharedPreferences? _sharedPreferences;
   ThemeMode? _themeMode;
   Color? _primaryColor;
@@ -40,6 +45,24 @@ class ThemeController extends State<ThemeBuilder> {
   ThemeMode get themeMode => _themeMode ?? ThemeMode.system;
 
   Color? get primaryColor => _primaryColor;
+
+  Brightness get _effectiveBrightness {
+    if (themeMode == ThemeMode.dark) return Brightness.dark;
+    if (themeMode == ThemeMode.light) return Brightness.light;
+    return WidgetsBinding.instance.platformDispatcher.platformBrightness;
+  }
+
+  Future<void> _updateWindowTheme() async {
+    if (!PlatformInfos.isWindows) return;
+    try {
+      await _windowThemeChannel.invokeMethod<void>(
+        'setTitleBarDarkMode',
+        _effectiveBrightness == Brightness.dark,
+      );
+    } on MissingPluginException {
+      // The Windows runner may not be available in tests or other platforms.
+    }
+  }
 
   static ThemeController of(BuildContext context) =>
       Provider.of<ThemeController>(context, listen: false);
@@ -57,6 +80,7 @@ class ThemeController extends State<ThemeBuilder> {
       );
       _primaryColor = rawColor == null ? null : Color(rawColor);
     });
+    _updateWindowTheme();
   }
 
   Future<void> setThemeMode(ThemeMode newThemeMode) async {
@@ -66,6 +90,7 @@ class ThemeController extends State<ThemeBuilder> {
     setState(() {
       _themeMode = newThemeMode;
     });
+    _updateWindowTheme();
   }
 
   Future<void> setPrimaryColor(Color? newPrimaryColor) async {
@@ -86,8 +111,20 @@ class ThemeController extends State<ThemeBuilder> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback(_loadData);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    if (themeMode == ThemeMode.system) _updateWindowTheme();
   }
 
   @override

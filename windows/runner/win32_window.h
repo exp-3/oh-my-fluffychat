@@ -48,6 +48,9 @@ class Win32Window {
   // window properties. Returns nullptr if the window has been destroyed.
   HWND GetHandle();
 
+  // Updates the native title bar color to match the application's theme.
+  void SetTitleBarDarkMode(bool enabled);
+
   // If true, closing this window will quit the application.
   void SetQuitOnClose(bool quit_on_close);
 

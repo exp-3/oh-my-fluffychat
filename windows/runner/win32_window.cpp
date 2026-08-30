@@ -1,5 +1,6 @@
 #include "win32_window.h"
 
+#include <dwmapi.h>
 #include <flutter_windows.h>
 
 #include "resource.h"
@@ -7,6 +8,12 @@
 namespace {
 
 constexpr const wchar_t kWindowClassName[] = L"FLUTTER_RUNNER_WIN32_WINDOW";
+
+// This value is unavailable in older Windows SDKs, while the attribute is
+// supported by Windows 10 version 1809 and later.
+#ifndef DWMWA_USE_IMMERSIVE_DARK_MODE
+#define DWMWA_USE_IMMERSIVE_DARK_MODE 20
+#endif
 
 // The number of Win32Window objects that currently exist.
 static int g_active_window_count = 0;
@@ -229,6 +236,19 @@ RECT Win32Window::GetClientArea() {
 
 HWND Win32Window::GetHandle() {
   return window_handle_;
+}
+
+void Win32Window::SetTitleBarDarkMode(bool enabled) {
+  if (!window_handle_) return;
+
+  const BOOL dark_mode = enabled ? TRUE : FALSE;
+  if (SUCCEEDED(DwmSetWindowAttribute(
+          window_handle_, DWMWA_USE_IMMERSIVE_DARK_MODE, &dark_mode,
+          sizeof(dark_mode)))) {
+    SetWindowPos(window_handle_, nullptr, 0, 0, 0, 0,
+                 SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE |
+                     SWP_FRAMECHANGED);
+  }
 }
 
 void Win32Window::SetQuitOnClose(bool quit_on_close) {
