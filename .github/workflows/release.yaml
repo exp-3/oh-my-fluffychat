@@ -32,11 +32,6 @@ jobs:
         run: flutter build web --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/ --release --source-maps --base-href "/web/"
       - name: Create archive
         run: tar -czf fluffychat-web.tar.gz build/web/
-      - name: Upload Web Build
-        uses: actions/upload-artifact@v7
-        with:
-          name: Web Build
-          path: fluffychat-web.tar.gz
       - name: Upload to release
         uses: actions/upload-release-asset@v1
         env:
@@ -149,11 +144,6 @@ jobs:
         run: |
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)"
           "$APKSIGNER" verify --verbose --print-certs "release-apks/fluffychat-android-${{ matrix.id }}.apk"
-      - name: Upload ${{ matrix.id }} release APK
-        uses: actions/upload-artifact@v7
-        with:
-          name: android-release-apk-${{ matrix.id }}
-          path: release-apks/fluffychat-android-${{ matrix.id }}.apk
       - name: Attach ${{ matrix.id }} APK to release
         uses: actions/upload-release-asset@v1
         env:
@@ -196,11 +186,6 @@ jobs:
       - name: Create Windows release archive
         shell: pwsh
         run: Compress-Archive -Path "build\windows\x64\runner\Release\*" -DestinationPath "fluffychat-windows.zip"
-      - name: Upload Windows artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: windows-release-x64
-          path: fluffychat-windows.zip
       - name: Attach Windows archive to release
         uses: actions/upload-release-asset@v1
         env:

@@ -37,6 +37,7 @@ jobs:
         with:
           name: debug-apk-arm64-v8a
           path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 7
 
   build_windows:
     runs-on: windows-latest
@@ -84,3 +85,4 @@ jobs:
         with:
           name: debug-windows-x64
           path: fluffychat-windows-debug.zip
+          retention-days: 7
