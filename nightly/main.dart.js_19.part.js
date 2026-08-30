@@ -1,8 +1,8 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var B,A={
-dDY(d){return new A.G3(B.dB(d))},
-dDZ(){return new A.MW(B.dB("pt_BR"))},
-dE_(){return new A.MX(B.dB("pt_PT"))},
+dDZ(d){return new A.G3(B.dB(d))},
+dE_(){return new A.MW(B.dB("pt_BR"))},
+dE0(){return new A.MX(B.dB("pt_PT"))},
 G3:function G3(d){this.a=d},
 MW:function MW(d){this.a=d},
 MX:function MX(d){this.a=d}},C
@@ -1958,5 +1958,5 @@ x(A.G3,C.aV)
 w(A.G3,[A.MW,A.MX])})()
 B.ee(b.typeUniverse,JSON.parse('{"G3":{"aV":[]},"MW":{"aV":[]},"MX":{"aV":[]}}'))
 var y={V:" alterou a visibilidade do hist\xf3rico para: ",s:"Adicione e selecione um provedor com uma chave de API antes de ativar a tradu\xe7\xe3o.",b:"Ative primeiro a tradu\xe7\xe3o nas configura\xe7\xf5es do aplicativo.",J:"Comportamento do bot\xe3o de envio de mensagens",x:"Deixe em branco para manter o valor atual",t:"N\xe3o definido (seguir configura\xe7\xe3o global)",c:"O texto simples da mensagem ser\xe1 enviado ao provedor LLM terceirizado selecionado.",r:"O texto simples de entrada ser\xe1 enviado ao provedor LLM terceirizado selecionado.",p:"Pode substituir esta regra nas defini\xe7\xf5es de cada sala.",u:"Preferir o idioma da sala como destino da tradu\xe7\xe3o",S:"Preferir o idioma da sala como idioma de entrada"}};
-(a=>{a["VRk+jvMnGucQNAOaIyPjoQ7MtAc="]=a.current})($__dart_deferred_initializers__);
+(a=>{a["PPfU78aWasxqqOsNi/xjgoSwXnM="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_19.part.js.map
