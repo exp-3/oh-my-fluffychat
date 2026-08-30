@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+#
+# SPDX-FileCopyrightText: 2026 exp-3
+# SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """Render all checked-in application icons from their SVG master files.
 
 Run from any working directory with::
