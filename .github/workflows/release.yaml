@@ -14,6 +14,7 @@ permissions:
 
 jobs:
   build_web:
+    if: startsWith(github.event.release.tag_name, 'v')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -57,9 +58,7 @@ jobs:
       - name: Copy FluffyChat web into it
         run: |
           mkdir public/web
-          mkdir public/nightly
           cp -r build/web/* public/web/
-          cp -r build/web/* public/nightly/
           echo "fluffychat.im" >> public/CNAME
       - name: Deploy to GitHub Pages
         if: startsWith(github.ref, 'refs/tags/v')
@@ -71,6 +70,7 @@ jobs:
           cname: fluffychat.im
 
   build_release_apks:
+    if: startsWith(github.event.release.tag_name, 'v')
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -168,11 +168,13 @@ jobs:
         run: rm -f android/release.jks android/key.properties
 
   build_windows:
+    if: startsWith(github.event.release.tag_name, 'v')
     runs-on: windows-latest
-    env:
-      PUB_CACHE: ${{ runner.temp }}/pub-cache
     steps:
       - uses: actions/checkout@v7
+      - name: Configure Flutter Pub cache
+        shell: pwsh
+        run: '"PUB_CACHE=$env:RUNNER_TEMP\pub-cache" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append'
       - uses: subosito/flutter-action@v2
         with:
           flutter-version-file: .tool_versions.yaml
@@ -208,6 +210,7 @@ jobs:
           asset_content_type: application/zip
 
   build_linux:
+    if: startsWith(github.event.release.tag_name, 'v')
     strategy:
       matrix:
         arch: [ x64, arm64 ]
