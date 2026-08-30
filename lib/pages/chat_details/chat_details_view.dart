@@ -477,10 +477,7 @@ class _RoomTranslationSettingsSheet extends StatelessWidget {
                     child: Text(l10n.roomLanguageFollowGlobal),
                   ),
                   for (final item in translationLanguages)
-                    DropdownMenuItem(
-                      value: item.code,
-                      child: Text('${item.name} (${item.code})'),
-                    ),
+                    DropdownMenuItem(value: item.code, child: Text(item.name)),
                 ],
                 onChanged: (value) => runtime.setRoomLanguage(
                   room,

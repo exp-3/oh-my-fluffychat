@@ -206,6 +206,7 @@ class SettingsView extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.privacy_tip_outlined),
               title: Text(L10n.of(context).privacy),
+              trailing: const Icon(Icons.open_in_new_outlined),
               onTap: () => launchUrlString(AppSettings.privacyPolicy.value),
             ),
             ListTile(

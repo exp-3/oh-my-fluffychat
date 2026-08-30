@@ -296,8 +296,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                       DropdownMenuItem(
                                         value: language.code,
                                         child: Text(
-                                          '${language.name} '
-                                          '(${language.code})',
+                                          language.name,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
@@ -326,8 +325,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                       DropdownMenuItem(
                                         value: language.code,
                                         child: Text(
-                                          '${language.name} '
-                                          '(${language.code})',
+                                          language.name,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
@@ -563,8 +561,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                               DropdownMenuItem(
                                                 value: language.code,
                                                 child: Text(
-                                                  '${language.name} '
-                                                  '(${language.code})',
+                                                  language.name,
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                 ),
@@ -593,8 +590,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                               DropdownMenuItem(
                                                 value: language.code,
                                                 child: Text(
-                                                  '${language.name} '
-                                                  '(${language.code})',
+                                                  language.name,
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                 ),
