@@ -13,6 +13,9 @@ import 'translation_cache_backend_interface.dart';
 @JS('window.indexedDB')
 external web.IDBFactory? get _indexedDb;
 
+// Selected through the conditional export; dart_code_linter cannot resolve
+// this Web branch when checking the native configuration.
+// ignore: unused-code
 TranslationCacheBackend createTranslationCacheBackend() =>
     WebTranslationCacheBackend();
 

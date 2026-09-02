@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   build_web:
-    if: startsWith(github.event.release.tag_name, 'v')
+    if: github.event.release.tag_name == 'Release_Build'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -33,30 +33,29 @@ jobs:
       - name: Create archive
         run: tar -czf fluffychat-web.tar.gz build/web/
       - name: Upload to release
-        uses: actions/upload-release-asset@v1
+        if: github.event.release.tag_name == 'Release_Build'
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: fluffychat-web.tar.gz
-          asset_name: fluffychat-web.tar.gz
-          asset_content_type: application/gzip
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" fluffychat-web.tar.gz --repo "${{ github.repository }}" --clobber
       - name: Clone fluffychat website
+        if: github.event.release.tag_name == 'Release_Build'
         run: |
           git clone https://github.com/krille-chan/fluffychat-website.git
       - name: Build website
+        if: github.event.release.tag_name == 'Release_Build'
         working-directory: fluffychat-website
         run: |
           npm ci
           npm run build
           mv out ../public
       - name: Copy FluffyChat web into it
+        if: github.event.release.tag_name == 'Release_Build'
         run: |
           mkdir public/web
           cp -r build/web/* public/web/
           echo "fluffychat.im" >> public/CNAME
       - name: Deploy to GitHub Pages
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.event.release.tag_name == 'Release_Build'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ github.token }}
@@ -65,7 +64,8 @@ jobs:
           cname: fluffychat.im
 
   build_release_apks:
-    if: startsWith(github.event.release.tag_name, 'v')
+    name: Build release APK (${{ matrix.id }})
+    if: github.event.release.tag_name == 'Release_Build'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -145,20 +145,16 @@ jobs:
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)"
           "$APKSIGNER" verify --verbose --print-certs "release-apks/fluffychat-android-${{ matrix.id }}.apk"
       - name: Attach ${{ matrix.id }} APK to release
-        uses: actions/upload-release-asset@v1
+        if: github.event.release.tag_name == 'Release_Build'
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: release-apks/fluffychat-android-${{ matrix.id }}.apk
-          asset_name: fluffychat-android-${{ matrix.id }}.apk
-          asset_content_type: application/vnd.android.package-archive
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" "release-apks/fluffychat-android-${{ matrix.id }}.apk" --repo "${{ github.repository }}" --clobber
       - name: Remove Android signing files
         if: always()
         run: rm -f android/release.jks android/key.properties
 
   build_windows:
-    if: startsWith(github.event.release.tag_name, 'v')
+    if: github.event.release.tag_name == 'Release_Build'
     runs-on: windows-latest
     env:
       CL: /D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS
@@ -187,17 +183,12 @@ jobs:
         shell: pwsh
         run: Compress-Archive -Path "build\windows\x64\runner\Release\*" -DestinationPath "fluffychat-windows.zip"
       - name: Attach Windows archive to release
-        uses: actions/upload-release-asset@v1
+        if: github.event.release.tag_name == 'Release_Build'
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: fluffychat-windows.zip
-          asset_name: fluffychat-windows.zip
-          asset_content_type: application/zip
-
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" fluffychat-windows.zip --repo "${{ github.repository }}" --clobber
   build_linux:
-    if: startsWith(github.event.release.tag_name, 'v')
+    if: github.event.release.tag_name == 'Release_Build'
     strategy:
       matrix:
         arch: [ x64, arm64 ]
@@ -217,11 +208,7 @@ jobs:
       - name: Create archive
         run: tar -czf fluffychat-linux-${{ matrix.arch }}.tar.gz -C build/linux/${{ matrix.arch }}/release/bundle/ .
       - name: Upload to release
-        uses: actions/upload-release-asset@v1
+        if: github.event.release.tag_name == 'Release_Build'
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: fluffychat-linux-${{ matrix.arch }}.tar.gz
-          asset_name: fluffychat-linux-${{ matrix.arch }}.tar.gz
-          asset_content_type: application/gzip
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" "fluffychat-linux-${{ matrix.arch }}.tar.gz" --repo "${{ github.repository }}" --clobber

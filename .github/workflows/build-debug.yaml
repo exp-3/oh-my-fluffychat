@@ -1,88 +1,138 @@
 name: Debug Builds
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-  merge_group:
+   release:
+      types:
+         - created
 
 permissions:
-  contents: read
+   contents: read
 
 jobs:
-  build_android:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: ./.github/actions/free_up_space
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version-file: .tool_versions.yaml
-          cache: true
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Cache Gradle
-        uses: actions/cache@v6
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: gradle-${{ runner.os }}-
-      - run: ./scripts/add-firebase-messaging.sh
-      - name: Build arm64 Debug APK
-        run: flutter build apk --debug --target-platform android-arm64 --android-project-arg=fluffychatAndroidAbis=arm64-v8a
-      - name: Upload arm64 Debug APK
-        uses: actions/upload-artifact@v7
-        with:
-          name: debug-apk-arm64-v8a
-          path: build/app/outputs/flutter-apk/app-debug.apk
-          retention-days: 7
+   build_android:
+      if: github.event.release.tag_name == 'Debug_Build'
+      runs-on: ubuntu-latest
+      steps:
+         - uses: actions/checkout@v7
+         - uses: ./.github/actions/free_up_space
+         - uses: subosito/flutter-action@v2
+           with:
+              flutter-version-file: .tool_versions.yaml
+              cache: true
+         - uses: dtolnay/rust-toolchain@stable
+         - name: Cache Gradle
+           uses: actions/cache@v6
+           with:
+              path: |
+                 ~/.gradle/caches
+                 ~/.gradle/wrapper
+              key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+              restore-keys: gradle-${{ runner.os }}-
+         - run: ./scripts/add-firebase-messaging.sh
+         - name: Prepare Android signing
+           if: github.event.release.tag_name == 'Debug_Build'
+           shell: bash
+           env:
+              ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+              ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+           run: |
+              set -euo pipefail
+              : "${ANDROID_KEYSTORE_BASE64:?ANDROID_KEYSTORE_BASE64 is not configured}"
+              : "${ANDROID_KEYSTORE_PASSWORD:?ANDROID_KEYSTORE_PASSWORD is not configured}"
 
-  build_windows:
-    runs-on: windows-latest
-    env:
-      CL: /D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS
-    steps:
-      - uses: actions/checkout@v7
-      - name: Configure Flutter Pub cache
-        shell: pwsh
-        run: '"PUB_CACHE=$env:RUNNER_TEMP\pub-cache" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append'
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version-file: .tool_versions.yaml
-          cache: true
-      - uses: dtolnay/rust-toolchain@stable
-      - run: flutter pub get
-      - name: Build Debug Windows
-        run: flutter build windows --debug
-      - name: Include Windows runtime files
-        shell: pwsh
-        run: |
-          $bundle = "build\windows\x64\runner\Debug"
-          Copy-Item -Path "C:\Windows\System32\msvcp140.dll" -Destination $bundle -ErrorAction SilentlyContinue
-          Copy-Item -Path "C:\Windows\System32\vcruntime140.dll" -Destination $bundle -ErrorAction SilentlyContinue
-          Copy-Item -Path "C:\Windows\System32\vcruntime140_1.dll" -Destination $bundle -ErrorAction SilentlyContinue
-          Copy-Item -Path "$bundle\sqlite3.dll" -Destination "$bundle\libsqlcipher.dll" -ErrorAction SilentlyContinue
+              if ! printf '%s' "$ANDROID_KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > android/release.jks; then
+                echo "ANDROID_KEYSTORE_BASE64 is not valid Base64." >&2
+                exit 1
+              fi
+              if [[ ! -s android/release.jks ]]; then
+                echo "ANDROID_KEYSTORE_BASE64 decoded to an empty keystore." >&2
+                exit 1
+              fi
 
-          $vsInstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
-          if ($vsInstallPath) {
-            $msvcDebugRuntime = Get-ChildItem "$vsInstallPath\VC\Redist\MSVC\*\debug_nonredist\x64\Microsoft.VC*.DebugCRT\*.dll" -ErrorAction SilentlyContinue
-            foreach ($dll in $msvcDebugRuntime) {
-              Copy-Item -Path $dll.FullName -Destination $bundle -ErrorAction SilentlyContinue
-            }
-          }
+              if ! KEYSTORE_INFO="$(keytool \
+                -J-Duser.language=en \
+                -J-Duser.country=US \
+                -list -v \
+                -keystore android/release.jks \
+                -storepass "$ANDROID_KEYSTORE_PASSWORD" 2>&1)"; then
+                echo "Unable to open the Android keystore. Check ANDROID_KEYSTORE_BASE64 and ANDROID_KEYSTORE_PASSWORD." >&2
+                printf '%s\n' "$KEYSTORE_INFO" | tail -n 3 >&2
+                exit 1
+              fi
+              KEY_ALIAS="$(printf '%s\n' "$KEYSTORE_INFO" | awk '
+                /^Alias name: / { alias = substr($0, index($0, ": ") + 2) }
+                /^Entry type: (PrivateKeyEntry|SecretKeyEntry)$/ { print alias; exit }
+              ' | head -n 1)"
+              unset KEYSTORE_INFO
+              if [[ -z "$KEY_ALIAS" ]]; then
+                echo "No key alias was found in the Android keystore." >&2
+                exit 1
+              fi
 
-          $ucrt = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\ucrt\ucrtbased.dll" -ErrorAction SilentlyContinue | Select-Object -First 1
-          if ($ucrt) {
-            Copy-Item -Path $ucrt.FullName -Destination $bundle -ErrorAction SilentlyContinue
-          }
-      - name: Create Windows debug archive
-        shell: pwsh
-        run: Compress-Archive -Path "build\windows\x64\runner\Debug\*" -DestinationPath "fluffychat-windows-debug.zip"
-      - name: Upload Debug Windows
-        uses: actions/upload-artifact@v7
-        with:
-          name: debug-windows-x64
-          path: fluffychat-windows-debug.zip
-          retention-days: 7
+              {
+                printf 'storePassword=%s\n' "$ANDROID_KEYSTORE_PASSWORD"
+                printf 'keyPassword=%s\n' "$ANDROID_KEYSTORE_PASSWORD"
+                printf 'keyAlias=%s\n' "$KEY_ALIAS"
+                printf 'storeFile=../release.jks\n'
+              } > android/key.properties
+              chmod 600 android/release.jks android/key.properties
+         - name: Build arm64 Debug APK
+           run: flutter build apk --debug --target-platform android-arm64 --android-project-arg=fluffychatAndroidAbis=arm64-v8a
+         - name: Upload arm64 Debug APK
+           uses: actions/upload-artifact@v7
+           with:
+              name: debug-apk-arm64-v8a
+              path: build/app/outputs/flutter-apk/app-debug.apk
+              retention-days: 7
+         - name: Remove Android signing files
+           if: always()
+           run: rm -f android/release.jks android/key.properties
+
+   build_windows:
+      if: github.event.release.tag_name == 'Debug_Build'
+      runs-on: windows-latest
+      env:
+         CL: /D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS
+      steps:
+         - uses: actions/checkout@v7
+         - name: Configure Flutter Pub cache
+           shell: pwsh
+           run: '"PUB_CACHE=$env:RUNNER_TEMP\pub-cache" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append'
+         - uses: subosito/flutter-action@v2
+           with:
+              flutter-version-file: .tool_versions.yaml
+              cache: true
+         - uses: dtolnay/rust-toolchain@stable
+         - run: flutter pub get
+         - name: Build Debug Windows
+           run: flutter build windows --debug
+         - name: Include Windows runtime files
+           shell: pwsh
+           run: |
+              $bundle = "build\windows\x64\runner\Debug"
+              Copy-Item -Path "C:\Windows\System32\msvcp140.dll" -Destination $bundle -ErrorAction SilentlyContinue
+              Copy-Item -Path "C:\Windows\System32\vcruntime140.dll" -Destination $bundle -ErrorAction SilentlyContinue
+              Copy-Item -Path "C:\Windows\System32\vcruntime140_1.dll" -Destination $bundle -ErrorAction SilentlyContinue
+              Copy-Item -Path "$bundle\sqlite3.dll" -Destination "$bundle\libsqlcipher.dll" -ErrorAction SilentlyContinue
+
+              $vsInstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+              if ($vsInstallPath) {
+                $msvcDebugRuntime = Get-ChildItem "$vsInstallPath\VC\Redist\MSVC\*\debug_nonredist\x64\Microsoft.VC*.DebugCRT\*.dll" -ErrorAction SilentlyContinue
+                foreach ($dll in $msvcDebugRuntime) {
+                  Copy-Item -Path $dll.FullName -Destination $bundle -ErrorAction SilentlyContinue
+                }
+              }
+
+              $ucrt = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\ucrt\ucrtbased.dll" -ErrorAction SilentlyContinue | Select-Object -First 1
+              if ($ucrt) {
+                Copy-Item -Path $ucrt.FullName -Destination $bundle -ErrorAction SilentlyContinue
+              }
+         - name: Create Windows debug archive
+           shell: pwsh
+           run: Compress-Archive -Path "build\windows\x64\runner\Debug\*" -DestinationPath "fluffychat-windows-debug.zip"
+         - name: Upload Debug Windows
+           uses: actions/upload-artifact@v7
+           with:
+              name: debug-windows-x64
+              path: fluffychat-windows-debug.zip
+              retention-days: 7

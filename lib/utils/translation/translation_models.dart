@@ -27,7 +27,6 @@ typedef TranslationInputScope = InputTranslationScope;
 typedef TranslationInputTrigger = InputTranslationTrigger;
 typedef TranslationInputSendMode = InputTranslationSendMode;
 typedef InputTranslationAutoSendMode = InputTranslationSendMode;
-typedef TranslationInputAutoSendMode = InputTranslationSendMode;
 
 enum TranslationDisplayMode { translatedOnly, bilingual }
 
