@@ -2636,5 +2636,13 @@
     },
     "deviceIdentityKey": "Ключ пристрою",
     "showMore": "Показати ще",
-    "showLess": "Показати менше"
+    "showLess": "Показати менше",
+    "unexpectedErrorOccurded": "На жаль сталася неочікувана помилка: {msg}",
+    "@unexpectedErrorOccurded": {
+        "placeholders": {
+            "msg": {
+                "type": "String"
+            }
+        }
+    }
 }

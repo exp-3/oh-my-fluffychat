@@ -2899,5 +2899,26 @@
     "stopScreensharing": "停止屏幕分享",
     "raiseHand": "举手",
     "stopRaiseHand": "停止举手",
-    "preferSpeaker": "偏好扬声器"
+    "preferSpeaker": "偏好扬声器",
+    "unexpectedErrorOccurded": "不幸发生了意外错误：{msg}",
+    "@unexpectedErrorOccurded": {
+        "placeholders": {
+            "msg": {
+                "type": "String"
+            }
+        }
+    },
+    "accountsAndSettings": "账户和设置",
+    "@accountsAndSettings": {
+        "type": "String",
+        "placeholders": {}
+    },
+    "incomingCallFrom": "{user} 的来电",
+    "@incomingCallFrom": {
+        "placeholders": {
+            "user": {
+                "type": "String"
+            }
+        }
+    }
 }
