@@ -46,7 +46,6 @@ class ArchiveController extends State<Archive> {
 
   Future<void> forgetAllAction() async {
     final archive = this.archive;
-    final client = Matrix.of(context).client;
     if (archive.isEmpty) return;
     if (await showOkCancelAlertDialog(
           useRootNavigator: false,
@@ -80,7 +79,6 @@ class ArchiveController extends State<Archive> {
         }
       },
     );
-    client.clearArchivesFromCache();
     setState(() {});
   }
 
