@@ -10,7 +10,7 @@ permissions:
 
 jobs:
    build_android:
-      if: github.event.release.tag_name == 'Debug_Build'
+      if: contains(github.event.release.body, 'Debug_Build')
       runs-on: ubuntu-latest
       steps:
          - uses: actions/checkout@v7
@@ -30,7 +30,7 @@ jobs:
               restore-keys: gradle-${{ runner.os }}-
          - run: ./scripts/add-firebase-messaging.sh
          - name: Prepare Android signing
-           if: github.event.release.tag_name == 'Debug_Build'
+           if: contains(github.event.release.body, 'Debug_Build')
            shell: bash
            env:
               ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -89,7 +89,7 @@ jobs:
            run: rm -f android/release.jks android/key.properties
 
    build_windows:
-      if: github.event.release.tag_name == 'Debug_Build'
+      if: contains(github.event.release.body, 'Debug_Build')
       runs-on: windows-latest
       env:
          CL: /D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS

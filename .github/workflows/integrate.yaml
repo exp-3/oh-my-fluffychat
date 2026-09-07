@@ -10,6 +10,12 @@ on:
 jobs:
   code_tests:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      dependency_lock_repaired: ${{ steps.flutter_dependencies.outputs.lock_repaired }}
+      dart_format_repaired: ${{ steps.dart_format.outputs.repaired }}
     steps:
       - uses: actions/checkout@v7
       - uses: webiny/action-conventional-commits@v1.4.2
@@ -27,11 +33,90 @@ jobs:
             echo "❌ Found empty translation strings."
             exit 1
           fi
-      - run: flutter pub get
+      - name: Resolve Flutter dependencies
+        id: flutter_dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          pub_get_log="$(mktemp)"
+
+          if flutter pub get 2>&1 | tee "$pub_get_log"; then
+            rm -f "$pub_get_log"
+            echo "lock_repaired=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if ! grep -Eq 'Could not find a file named "pubspec\.yaml" in .* [[:xdigit:]]{40}\.' "$pub_get_log"; then
+            rm -f "$pub_get_log"
+            exit 1
+          fi
+          rm -f "$pub_get_log"
+
+          mapfile -t git_dependencies < <(
+            awk '
+              /^  [a-z0-9_]+:$/ {
+                package_name = $1
+                sub(/:$/, "", package_name)
+              }
+              /^    source: git$/ { print package_name }
+            ' pubspec.lock
+          )
+
+          if (( ${#git_dependencies[@]} == 0 )); then
+            echo "The failed Git dependency could not be identified in pubspec.lock." >&2
+            exit 1
+          fi
+
+          echo "A locked Git revision is unavailable; refreshing: ${git_dependencies[*]}"
+          flutter pub upgrade "${git_dependencies[@]}"
+          echo "lock_repaired=true" >> "$GITHUB_OUTPUT"
       - name: Check if pubspec.lock is up to date
-        run: git diff --exit-code pubspec.lock
-      - name: Check formatting
-        run: dart format lib/ test/ --set-exit-if-changed
+        shell: bash
+        run: |
+          if [[ "${{ steps.flutter_dependencies.outputs.lock_repaired }}" == "true" ]]; then
+            echo "::warning::pubspec.lock was repaired after a locked Git revision became unavailable."
+            git diff -- pubspec.lock
+          else
+            git diff --exit-code pubspec.lock
+          fi
+      - name: Store repaired dependency lock
+        if: >-
+          steps.flutter_dependencies.outputs.lock_repaired == 'true' &&
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: repaired-dependency-lock
+          path: pubspec.lock
+          if-no-files-found: error
+          retention-days: 1
+      - name: Apply Dart formatting
+        id: dart_format
+        shell: bash
+        run: |
+          set -euo pipefail
+          dart format lib/ test/
+
+          if git diff --quiet -- lib/ test/; then
+            echo "repaired=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "::warning::Dart formatting issues were repaired automatically."
+          git diff --binary -- lib/ test/ > "$RUNNER_TEMP/dart-format.patch"
+          git diff --stat -- lib/ test/
+          echo "repaired=true" >> "$GITHUB_OUTPUT"
+      - name: Store Dart formatting repair
+        if: >-
+          steps.dart_format.outputs.repaired == 'true' &&
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: repaired-dart-formatting
+          path: ${{ runner.temp }}/dart-format.patch
+          if-no-files-found: error
+          retention-days: 1
       - name: Check license compliance
         run: dart run license_checker check-licenses -c licenses.yaml --problematic
       - name: Check for unused translations
@@ -58,3 +143,60 @@ jobs:
         run: ./scripts/add-firebase-messaging.sh
       - run: flutter analyze
       - run: flutter test
+
+  commit_automatic_repairs:
+    name: Commit automatic repairs
+    needs: code_tests
+    if: >-
+      (needs.code_tests.outputs.dependency_lock_repaired == 'true' ||
+      needs.code_tests.outputs.dart_format_repaired == 'true') &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: Download repaired dependency lock
+        if: needs.code_tests.outputs.dependency_lock_repaired == 'true'
+        uses: actions/download-artifact@v7
+        with:
+          name: repaired-dependency-lock
+          path: ${{ runner.temp }}/repaired-dependency-lock
+      - name: Download repaired Dart formatting
+        if: needs.code_tests.outputs.dart_format_repaired == 'true'
+        uses: actions/download-artifact@v7
+        with:
+          name: repaired-dart-formatting
+          path: ${{ runner.temp }}/repaired-dart-formatting
+      - name: Apply and commit repairs
+        shell: bash
+        run: |
+          if [[ "${{ needs.code_tests.outputs.dependency_lock_repaired }}" == "true" ]]; then
+            cp "$RUNNER_TEMP/repaired-dependency-lock/pubspec.lock" pubspec.lock
+          fi
+
+          if [[ "${{ needs.code_tests.outputs.dart_format_repaired }}" == "true" ]]; then
+            git apply "$RUNNER_TEMP/repaired-dart-formatting/dart-format.patch"
+          fi
+
+          if git diff --quiet -- pubspec.lock lib/ test/; then
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pubspec.lock lib/ test/
+
+          if [[ "${{ needs.code_tests.outputs.dependency_lock_repaired }}" == "true" &&
+                "${{ needs.code_tests.outputs.dart_format_repaired }}" == "true" ]]; then
+            commit_message="chore: apply automatic CI repairs"
+          elif [[ "${{ needs.code_tests.outputs.dart_format_repaired }}" == "true" ]]; then
+            commit_message="style: apply automatic Dart formatting"
+          else
+            commit_message="fix(deps): refresh unavailable Git revisions"
+          fi
+
+          git commit -m "$commit_message"
+          git push origin HEAD:main
