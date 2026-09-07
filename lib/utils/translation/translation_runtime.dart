@@ -674,6 +674,13 @@ class TranslationRuntime extends ChangeNotifier {
   bool shouldAutoTranslateInput(Room room) =>
       _inputMode == InputTranslationMode.automatic && canTranslateInput(room);
 
+  bool shouldTranslateInputOnSend(Room room, {bool? requested}) {
+    if (!shouldAutoTranslateInput(room)) return false;
+    return requested ??
+        _inputSendMode ==
+            InputTranslationSendMode.shortTranslatedLongOriginal;
+  }
+
   Future<String> translateInputText(Room room, String text) async {
     if (text.trim().isEmpty) throw ArgumentError.value(text, 'text');
     if (!canTranslateInput(room)) {

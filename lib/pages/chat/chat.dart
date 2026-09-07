@@ -30,7 +30,6 @@ import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/other_party_can_receive.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/utils/show_scaffold_dialog.dart';
-import 'package:fluffychat/utils/translation/translation_models.dart';
 import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
@@ -718,11 +717,10 @@ class ChatController extends State<ChatPageWithRoom>
     if (inputSnapshot.trim().isEmpty) return;
     final runtime = TranslationRuntime.instance;
     final sendRevision = runtime.revision;
-    final translateOnSend =
-        translate ??
-        (runtime.inputMode == InputTranslationMode.automatic &&
-            runtime.inputSendMode ==
-                InputTranslationSendMode.shortTranslatedLongOriginal);
+    final translateOnSend = runtime.shouldTranslateInputOnSend(
+      room,
+      requested: translate,
+    );
     final proceed = await showTrustUserInRoomDialog(context, room);
     if (!mounted || !proceed) return;
     if (sendController.text != inputSnapshot) return;
@@ -743,12 +741,16 @@ class ChatController extends State<ChatPageWithRoom>
       parseCommands = false;
     }
     if (!mounted || sendController.text != inputSnapshot) return;
-    if (translateOnSend && runtime.revision != sendRevision) return;
+    if (translateOnSend &&
+        runtime.revision != sendRevision &&
+        runtime.enabled) {
+      return;
+    }
 
     var textToSend = inputSnapshot;
     final translateRequested =
         translateOnSend &&
-        runtime.inputMode == InputTranslationMode.automatic &&
+        runtime.shouldAutoTranslateInput(room) &&
         !inputSnapshot.startsWith('/');
     if (translateRequested) {
       // A translated send is an explicit action. If the room or provider is

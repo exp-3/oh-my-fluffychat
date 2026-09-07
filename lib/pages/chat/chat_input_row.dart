@@ -46,12 +46,10 @@ class ChatInputRow extends StatelessWidget {
         controller.sendController.text.trim().isNotEmpty &&
         translationRuntime.inputTrigger == InputTranslationTrigger.button &&
         translationRuntime.canManuallyTranslateInput(controller.room);
-    final automaticInputTranslation =
-        translationRuntime.inputMode == InputTranslationMode.automatic;
-    final shortPressTranslates =
-        automaticInputTranslation &&
-        translationRuntime.inputSendMode ==
-            InputTranslationSendMode.shortTranslatedLongOriginal;
+    final automaticInputTranslation = translationRuntime
+        .shouldAutoTranslateInput(controller.room);
+    final shortPressTranslates = translationRuntime
+        .shouldTranslateInputOnSend(controller.room);
 
     if (!controller.room.otherPartyCanReceiveMessages) {
       return Center(

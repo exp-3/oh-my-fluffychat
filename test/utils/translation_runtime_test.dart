@@ -434,6 +434,33 @@ void main() {
     },
   );
 
+  test('disabled global translation bypasses every input send mode', () async {
+    final fixture = await _RuntimeFixture.create();
+    final room = Room(
+      id: '!input-send:example.invalid',
+      client: fixture.client,
+    );
+    await fixture.runtime.setInputMode(InputTranslationMode.automatic);
+    await fixture.runtime.setInputScope(InputTranslationScope.allRooms);
+    await fixture.runtime.setInputSendMode(
+      InputTranslationSendMode.shortTranslatedLongOriginal,
+    );
+
+    expect(fixture.runtime.shouldTranslateInputOnSend(room), isTrue);
+    expect(
+      fixture.runtime.shouldTranslateInputOnSend(room, requested: false),
+      isFalse,
+    );
+
+    await fixture.runtime.setEnabled(false);
+
+    expect(fixture.runtime.shouldTranslateInputOnSend(room), isFalse);
+    expect(
+      fixture.runtime.shouldTranslateInputOnSend(room, requested: true),
+      isFalse,
+    );
+  });
+
   test('input translation uses no event translation cache', () async {
     final api = _RecordingApiClient();
     final fixture = await _RuntimeFixture.create(
