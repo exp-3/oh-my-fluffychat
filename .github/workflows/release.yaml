@@ -178,7 +178,6 @@ jobs:
           Copy-Item -Path "C:\Windows\System32\msvcp140.dll" -Destination $bundle
           Copy-Item -Path "C:\Windows\System32\vcruntime140.dll" -Destination $bundle
           Copy-Item -Path "C:\Windows\System32\vcruntime140_1.dll" -Destination $bundle
-          Copy-Item -Path "$bundle\sqlite3.dll" -Destination "$bundle\libsqlcipher.dll" -ErrorAction SilentlyContinue
       - name: Create Windows release archive
         shell: pwsh
         run: Compress-Archive -Path "build\windows\x64\runner\Release\*" -DestinationPath "fluffychat-windows.zip"
