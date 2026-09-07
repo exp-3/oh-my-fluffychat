@@ -113,7 +113,6 @@ jobs:
               Copy-Item -Path "C:\Windows\System32\msvcp140.dll" -Destination $bundle -ErrorAction SilentlyContinue
               Copy-Item -Path "C:\Windows\System32\vcruntime140.dll" -Destination $bundle -ErrorAction SilentlyContinue
               Copy-Item -Path "C:\Windows\System32\vcruntime140_1.dll" -Destination $bundle -ErrorAction SilentlyContinue
-              Copy-Item -Path "$bundle\sqlite3.dll" -Destination "$bundle\libsqlcipher.dll" -ErrorAction SilentlyContinue
 
               $vsInstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
               if ($vsInstallPath) {

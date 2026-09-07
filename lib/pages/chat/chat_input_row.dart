@@ -48,8 +48,9 @@ class ChatInputRow extends StatelessWidget {
         translationRuntime.canManuallyTranslateInput(controller.room);
     final automaticInputTranslation = translationRuntime
         .shouldAutoTranslateInput(controller.room);
-    final shortPressTranslates = translationRuntime
-        .shouldTranslateInputOnSend(controller.room);
+    final shortPressTranslates = translationRuntime.shouldTranslateInputOnSend(
+      controller.room,
+    );
 
     if (!controller.room.otherPartyCanReceiveMessages) {
       return Center(

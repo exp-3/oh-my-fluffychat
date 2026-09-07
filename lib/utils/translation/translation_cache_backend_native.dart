@@ -7,9 +7,7 @@ import 'package:matrix/matrix.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:sqflite_sqlcipher/sqflite.dart' as sqfl_cipher;
 
-import '../platform_infos.dart';
 import 'translation_cache_backend_interface.dart';
 
 TranslationCacheBackend createTranslationCacheBackend() =>
@@ -18,17 +16,12 @@ TranslationCacheBackend createTranslationCacheBackend() =>
 class NativeTranslationCacheBackend implements TranslationCacheBackend {
   Database? _database;
   String? _path;
+  final DatabaseFactory _factory = createDatabaseFactoryFfi();
 
   Future<String> get _databasePath async => _path ??= path.join(
     (await getApplicationSupportDirectory()).path,
     'fluffychat_translation_cache.db',
   );
-
-  DatabaseFactory get _factory {
-    if (PlatformInfos.isMobile) return sqfl_cipher.databaseFactory;
-    sqfliteFfiInit();
-    return databaseFactoryFfi;
-  }
 
   @override
   Future<bool> exists() async => _factory.databaseExists(await _databasePath);
@@ -92,38 +85,16 @@ CREATE TABLE translations (
       },
     );
 
-    // On Android/iOS the SQLCipher plugin must receive the password as part
-    // of the native open call. Applying `PRAGMA key` from onConfigure is too
-    // late: Android may execute PRAGMA journal_mode before that callback,
-    // causing an existing encrypted database to be reported as "not a
-    // database" after an app restart.
-    if (PlatformInfos.isMobile) {
-      return sqfl_cipher.openDatabase(
-        databasePath,
-        password: databaseKey,
-        version: options.version,
-        onConfigure: options.onConfigure,
-        onCreate: options.onCreate,
-        onUpgrade: options.onUpgrade,
-        onDowngrade: options.onDowngrade,
-        onOpen: options.onOpen,
-        singleInstance: true,
-      );
-    }
-
-    // Desktop uses the FFI factory. Keep its behavior aligned with the main
-    // Matrix database: migrate an existing plaintext file to SQLCipher, then
-    // apply the key during the factory's configure callback. This also means
-    // the translation database is encrypted at rest on Windows, Linux and
-    // macOS instead of relying only on per-record encryption.
-    final factory = _factory;
+    // Use the same FFI-provided SQLCipher implementation as the main Matrix
+    // database on every native platform. Existing plaintext files are
+    // migrated before the key is applied during the configure callback.
     final helper = SQfLiteEncryptionHelper(
-      factory: factory,
+      factory: _factory,
       path: databasePath,
       cipher: databaseKey,
     );
     await helper.ensureDatabaseFileEncrypted();
-    return factory.openDatabase(
+    return _factory.openDatabase(
       databasePath,
       options: OpenDatabaseOptions(
         version: options.version,
