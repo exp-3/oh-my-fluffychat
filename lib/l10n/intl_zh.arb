@@ -75,8 +75,6 @@
     "translateRoom": "翻译",
     "translationDisabledGlobally": "请先在应用设置中启用翻译。",
     "inputTranslation": "输入翻译",
-    "inputTranslationMode": "输入翻译模式",
-    "inputTranslationModeDisabled": "禁用",
     "inputTranslationModeManual": "手动使用翻译",
     "inputTranslationModeAutomatic": "发送时翻译",
     "inputTranslationScope": "输入翻译可用范围",

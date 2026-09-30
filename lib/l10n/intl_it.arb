@@ -74,8 +74,6 @@
     "translateRoom": "Traduci",
     "translationDisabledGlobally": "Abilita prima la traduzione nelle impostazioni dell'app.",
     "inputTranslation": "Traduzione di input",
-    "inputTranslationMode": "Modalità di traduzione dell'input",
-    "inputTranslationModeDisabled": "Disabilitato",
     "inputTranslationModeManual": "Usa la traduzione manualmente",
     "inputTranslationModeAutomatic": "Traduci durante l'invio",
     "inputTranslationScope": "Disponibilità di traduzione in ingresso",

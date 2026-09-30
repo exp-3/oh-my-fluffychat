@@ -73,8 +73,6 @@
     "translateRoom": "Μετάφραση",
     "translationDisabledGlobally": "Ενεργοποιήστε πρώτα τη μετάφραση στις ρυθμίσεις της εφαρμογής.",
     "inputTranslation": "Εισαγωγή μετάφρασης",
-    "inputTranslationMode": "Λειτουργία μετάφρασης εισαγωγής",
-    "inputTranslationModeDisabled": "ΑμεΑ",
     "inputTranslationModeManual": "Χειροκίνητη χρήση μετάφρασης",
     "inputTranslationModeAutomatic": "Μετάφραση κατά την αποστολή",
     "inputTranslationScope": "Διαθεσιμότητα μετάφρασης εισόδου",

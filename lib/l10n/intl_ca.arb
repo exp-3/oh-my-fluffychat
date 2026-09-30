@@ -74,8 +74,6 @@
     "translateRoom": "Traduir",
     "translationDisabledGlobally": "Activeu primer la traducció a la configuració de l'aplicació.",
     "inputTranslation": "Traducció d'entrada",
-    "inputTranslationMode": "Mode de traducció d'entrada",
-    "inputTranslationModeDisabled": "Inhabilitat",
     "inputTranslationModeManual": "Utilitza la traducció manualment",
     "inputTranslationModeAutomatic": "Tradueix quan s'envia",
     "inputTranslationScope": "Disponibilitat de traducció d'entrada",

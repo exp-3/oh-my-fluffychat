@@ -73,8 +73,6 @@
     "translateRoom": "བསྒྱུར།",
     "translationDisabledGlobally": "དང་པོ་མཉེན་ཆས་སྒྲིག་སྟངས་ནང་སྐད་སྒྱུར་བྱེད་ཐུབ།",
     "inputTranslation": "ནང་འཇུག་ཡིག་སྒྱུར།",
-    "inputTranslationMode": "ནང་འཇུག་ཡིག་སྒྱུར་ཐབས་ལམ།",
-    "inputTranslationModeDisabled": "དབང་པོ་སྐྱོན་ཅན།",
     "inputTranslationModeManual": "ལག་ཐོག་ནས་བསྒྱུར་བ་སྤྱོད།",
     "inputTranslationModeAutomatic": "གཏོང་སྐབས་སྐད་སྒྱུར་བྱེད་པ།",
     "inputTranslationScope": "ནང་འཇུག་ཡིག་སྒྱུར་ཡོད་པ།",

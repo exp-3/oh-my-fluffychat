@@ -75,8 +75,6 @@
     "translateRoom": "Itzuli",
     "translationDisabledGlobally": "Gaitu itzulpena aplikazioaren ezarpenetan lehenik.",
     "inputTranslation": "Sarrerako itzulpena",
-    "inputTranslationMode": "Idatzi itzulpen modua",
-    "inputTranslationModeDisabled": "Ezindua",
     "inputTranslationModeManual": "Erabili itzulpena eskuz",
     "inputTranslationModeAutomatic": "Itzuli bidaltzean",
     "inputTranslationScope": "Itzulpenaren erabilgarritasuna",

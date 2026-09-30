@@ -75,8 +75,6 @@
     "translateRoom": "Prevedi",
     "translationDisabledGlobally": "Prvo omogućite prijevod u postavkama aplikacije.",
     "inputTranslation": "Ulazni prijevod",
-    "inputTranslationMode": "Način prijevoda unosa",
-    "inputTranslationModeDisabled": "Onesposobljeno",
     "inputTranslationModeManual": "Ručno koristi prijevod",
     "inputTranslationModeAutomatic": "Prevesti prilikom slanja",
     "inputTranslationScope": "Dostupnost prijevoda unosa",

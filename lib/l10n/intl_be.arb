@@ -73,8 +73,6 @@
     "translateRoom": "Перакласці",
     "translationDisabledGlobally": "Спачатку ўключыце пераклад у наладах праграмы.",
     "inputTranslation": "Пераклад уводу",
-    "inputTranslationMode": "Рэжым перакладу ўводу",
-    "inputTranslationModeDisabled": "Інваліды",
     "inputTranslationModeManual": "Выкарыстоўваць пераклад уручную",
     "inputTranslationModeAutomatic": "Перакласці пры адпраўцы",
     "inputTranslationScope": "Даступнасць перакладу ўводу",

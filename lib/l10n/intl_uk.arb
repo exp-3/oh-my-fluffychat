@@ -75,8 +75,6 @@
     "translateRoom": "Перекласти",
     "translationDisabledGlobally": "Спочатку ввімкніть переклад у налаштуваннях програми.",
     "inputTranslation": "Вхідний переклад",
-    "inputTranslationMode": "Режим перекладу введення",
-    "inputTranslationModeDisabled": "Вимкнено",
     "inputTranslationModeManual": "Використовувати переклад вручну",
     "inputTranslationModeAutomatic": "Перекласти при відправці",
     "inputTranslationScope": "Доступність перекладу введення",

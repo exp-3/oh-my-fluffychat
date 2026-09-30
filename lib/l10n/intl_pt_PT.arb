@@ -73,8 +73,6 @@
     "translateRoom": "Traduzir",
     "translationDisabledGlobally": "Ative primeiro a tradução nas definições da aplicação.",
     "inputTranslation": "Tradução de entrada",
-    "inputTranslationMode": "Modo de tradução de entrada",
-    "inputTranslationModeDisabled": "Desativado",
     "inputTranslationModeManual": "Usar a tradução manualmente",
     "inputTranslationModeAutomatic": "Traduzir ao enviar",
     "inputTranslationScope": "Disponibilidade de tradução de entrada",

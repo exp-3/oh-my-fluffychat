@@ -73,8 +73,6 @@
     "translateRoom": "Përkthejeni",
     "translationDisabledGlobally": "Aktivizo fillimisht përkthimin në cilësimet e aplikacionit.",
     "inputTranslation": "Përkthimi i hyrjes",
-    "inputTranslationMode": "Mënyra e përkthimit të hyrjes",
-    "inputTranslationModeDisabled": "I paaftë",
     "inputTranslationModeManual": "Përdor përkthimin manualisht",
     "inputTranslationModeAutomatic": "Përkthejeni kur dërgoni",
     "inputTranslationScope": "Disponueshmëria e përkthimit të hyrjes",

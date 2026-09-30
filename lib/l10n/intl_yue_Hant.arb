@@ -74,8 +74,6 @@
     "translateRoom": "翻譯",
     "translationDisabledGlobally": "請先喺應用程式設定啟用翻譯。",
     "inputTranslation": "輸入翻譯",
-    "inputTranslationMode": "輸入翻譯模式",
-    "inputTranslationModeDisabled": "停用",
     "inputTranslationModeManual": "手動使用翻譯",
     "inputTranslationModeAutomatic": "傳送時翻譯",
     "inputTranslationScope": "輸入翻譯可用範圍",

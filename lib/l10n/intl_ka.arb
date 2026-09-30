@@ -73,8 +73,6 @@
     "translateRoom": "თარგმნეთ",
     "translationDisabledGlobally": "ჯერ ჩართეთ თარგმანი აპის პარამეტრებში.",
     "inputTranslation": "შეყვანის თარგმანი",
-    "inputTranslationMode": "შეყვანის თარგმანის რეჟიმი",
-    "inputTranslationModeDisabled": "გამორთულია",
     "inputTranslationModeManual": "თარგმანის ხელით გამოყენება",
     "inputTranslationModeAutomatic": "თარგმნეთ გაგზავნისას",
     "inputTranslationScope": "შეყვანის თარგმანის ხელმისაწვდომობა",

@@ -75,8 +75,6 @@
     "translateRoom": "Fordítás",
     "translationDisabledGlobally": "Először engedélyezze a fordítást az alkalmazás beállításaiban.",
     "inputTranslation": "Bemeneti fordítás",
-    "inputTranslationMode": "Beviteli fordítási mód",
-    "inputTranslationModeDisabled": "Letiltva",
     "inputTranslationModeManual": "Fordítás kézi használata",
     "inputTranslationModeAutomatic": "Fordítás küldéskor",
     "inputTranslationScope": "Bemeneti fordítás elérhetősége",

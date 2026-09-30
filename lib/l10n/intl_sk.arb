@@ -75,8 +75,6 @@
     "translateRoom": "Preložiť",
     "translationDisabledGlobally": "Najprv povoľte preklad v nastaveniach aplikácie.",
     "inputTranslation": "Vstupný preklad",
-    "inputTranslationMode": "Zadajte režim prekladu",
-    "inputTranslationModeDisabled": "Zakázané",
     "inputTranslationModeManual": "Použiť preklad manuálne",
     "inputTranslationModeAutomatic": "Preložiť pri odosielaní",
     "inputTranslationScope": "Dostupnosť prekladu vstupov",

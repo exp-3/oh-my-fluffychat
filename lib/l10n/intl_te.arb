@@ -73,8 +73,6 @@
     "translateRoom": "అనువదించు",
     "translationDisabledGlobally": "ముందుగా యాప్ సెట్టింగ్‌లలో అనువాదాన్ని ప్రారంభించండి.",
     "inputTranslation": "ఇన్‌పుట్ అనువాదం",
-    "inputTranslationMode": "ఇన్‌పుట్ అనువాద మోడ్",
-    "inputTranslationModeDisabled": "వికలాంగుడు",
     "inputTranslationModeManual": "అనువాదాన్ని మాన్యువల్‌గా ఉపయోగించండి",
     "inputTranslationModeAutomatic": "పంపేటప్పుడు అనువదించండి",
     "inputTranslationScope": "ఇన్‌పుట్ అనువాద లభ్యత",

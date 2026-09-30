@@ -74,8 +74,6 @@
     "translateRoom": "மொழிபெயர்",
     "translationDisabledGlobally": "முதலில் பயன்பாட்டு அமைப்புகளில் மொழிபெயர்ப்பை இயக்கவும்.",
     "inputTranslation": "உள்ளீடு மொழிபெயர்ப்பு",
-    "inputTranslationMode": "உள்ளீடு மொழிபெயர்ப்பு முறை",
-    "inputTranslationModeDisabled": "முடக்கப்பட்டது",
     "inputTranslationModeManual": "மொழிபெயர்ப்பை கைமுறையாகப் பயன்படுத்தவும்",
     "inputTranslationModeAutomatic": "அனுப்பும் போது மொழிபெயர்க்கவும்",
     "inputTranslationScope": "உள்ளீடு மொழிபெயர்ப்பு கிடைக்கும்",

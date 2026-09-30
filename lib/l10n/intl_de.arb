@@ -75,8 +75,6 @@
     "translateRoom": "Übersetzen",
     "translationDisabledGlobally": "Aktivieren Sie zunächst die Übersetzung in den App-Einstellungen.",
     "inputTranslation": "Eingabeübersetzung",
-    "inputTranslationMode": "Eingabeübersetzungsmodus",
-    "inputTranslationModeDisabled": "Deaktiviert",
     "inputTranslationModeManual": "Übersetzung manuell verwenden",
     "inputTranslationModeAutomatic": "Beim Senden übersetzen",
     "inputTranslationScope": "Verfügbarkeit der Eingabeübersetzung",

@@ -73,8 +73,6 @@
     "translateRoom": "Oversæt",
     "translationDisabledGlobally": "Aktiver oversættelse i appindstillinger først.",
     "inputTranslation": "Input oversættelse",
-    "inputTranslationMode": "Input oversættelsestilstand",
-    "inputTranslationModeDisabled": "Deaktiveret",
     "inputTranslationModeManual": "Brug oversættelse manuelt",
     "inputTranslationModeAutomatic": "Oversæt ved afsendelse",
     "inputTranslationScope": "Tilgængelighed af inputoversættelse",

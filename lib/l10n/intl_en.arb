@@ -95,8 +95,6 @@
     "translateRoom": "Translate",
     "translationDisabledGlobally": "Enable translation in app settings first.",
     "inputTranslation": "Input translation",
-    "inputTranslationMode": "Input translation mode",
-    "inputTranslationModeDisabled": "Disabled",
     "inputTranslationModeManual": "Use translation manually",
     "inputTranslationModeAutomatic": "Translate when sending",
     "inputTranslationScope": "Input translation availability",

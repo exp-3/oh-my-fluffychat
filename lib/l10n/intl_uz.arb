@@ -73,8 +73,6 @@
     "translateRoom": "Tarjima",
     "translationDisabledGlobally": "Avval ilova sozlamalarida tarjimani yoqing.",
     "inputTranslation": "Kirish tarjimasi",
-    "inputTranslationMode": "Kirish tarjima rejimi",
-    "inputTranslationModeDisabled": "O'chirilgan",
     "inputTranslationModeManual": "Tarjimadan qo‘lda foydalanish",
     "inputTranslationModeAutomatic": "Yuborayotganda tarjima qiling",
     "inputTranslationScope": "Kirish tarjimasi mavjudligi",

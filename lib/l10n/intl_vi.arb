@@ -74,8 +74,6 @@
     "translateRoom": "Dịch",
     "translationDisabledGlobally": "Trước tiên hãy bật dịch trong cài đặt ứng dụng.",
     "inputTranslation": "Dịch đầu vào",
-    "inputTranslationMode": "Chế độ dịch đầu vào",
-    "inputTranslationModeDisabled": "Đã tắt",
     "inputTranslationModeManual": "Dùng bản dịch thủ công",
     "inputTranslationModeAutomatic": "Dịch khi gửi",
     "inputTranslationScope": "Tính khả dụng của bản dịch đầu vào",

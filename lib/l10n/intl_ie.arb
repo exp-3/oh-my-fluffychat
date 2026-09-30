@@ -73,8 +73,6 @@
     "translateRoom": "Traducter",
     "translationDisabledGlobally": "Activa traduction in li parametres del application in prim.",
     "inputTranslation": "Traduction del intrada",
-    "inputTranslationMode": "Mode de traduction del intrada",
-    "inputTranslationModeDisabled": "Desactivat",
     "inputTranslationModeManual": "Usar li traduction manualmen",
     "inputTranslationModeAutomatic": "Traducter al inviar",
     "inputTranslationScope": "Disponibilitá del traduction del intrada",

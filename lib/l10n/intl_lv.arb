@@ -73,8 +73,6 @@
     "translateRoom": "Tulkot",
     "translationDisabledGlobally": "Vispirms iespējojiet tulkošanu lietotnes iestatījumos.",
     "inputTranslation": "Ievades tulkojums",
-    "inputTranslationMode": "Ievades tulkošanas režīms",
-    "inputTranslationModeDisabled": "Atspējots",
     "inputTranslationModeManual": "Izmantot tulkojumu manuāli",
     "inputTranslationModeAutomatic": "Tulkot sūtot",
     "inputTranslationScope": "Ievades tulkojumu pieejamība",

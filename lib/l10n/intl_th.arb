@@ -73,8 +73,6 @@
     "translateRoom": "แปล",
     "translationDisabledGlobally": "เปิดใช้งานการแปลในการตั้งค่าแอปก่อน",
     "inputTranslation": "อินพุตการแปล",
-    "inputTranslationMode": "ป้อนโหมดการแปล",
-    "inputTranslationModeDisabled": "ปิดการใช้งาน",
     "inputTranslationModeManual": "ใช้การแปลด้วยตนเอง",
     "inputTranslationModeAutomatic": "แปลเมื่อส่ง",
     "inputTranslationScope": "ความพร้อมในการแปลอินพุต",

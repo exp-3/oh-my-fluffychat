@@ -74,8 +74,6 @@
     "translateRoom": "Traduki",
     "translationDisabledGlobally": "Unue ebligu tradukadon en agordoj de la aplikaĵo.",
     "inputTranslation": "Eniga traduko",
-    "inputTranslationMode": "Eniga tradukreĝimo",
-    "inputTranslationModeDisabled": "Malebligita",
     "inputTranslationModeManual": "Uzi tradukon permane",
     "inputTranslationModeAutomatic": "Traduku dum sendado",
     "inputTranslationScope": "Eniga tradukhavebleco",

@@ -74,8 +74,6 @@
     "translateRoom": "Översätt",
     "translationDisabledGlobally": "Aktivera översättning i appinställningarna först.",
     "inputTranslation": "Indataöversättning",
-    "inputTranslationMode": "Inmatningsöversättningsläge",
-    "inputTranslationModeDisabled": "Inaktiverad",
     "inputTranslationModeManual": "Använd översättning manuellt",
     "inputTranslationModeAutomatic": "Översätt när du skickar",
     "inputTranslationScope": "Tillgänglighet för indataöversättning",

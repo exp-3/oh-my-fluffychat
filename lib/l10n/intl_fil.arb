@@ -73,8 +73,6 @@
     "translateRoom": "Isalin",
     "translationDisabledGlobally": "Paganahin muna ang pagsasalin sa mga setting ng app.",
     "inputTranslation": "Pagsasalin ng input",
-    "inputTranslationMode": "I-input ang mode ng pagsasalin",
-    "inputTranslationModeDisabled": "Hindi pinagana",
     "inputTranslationModeManual": "Manu-manong gamitin ang salin",
     "inputTranslationModeAutomatic": "Isalin kapag nagpapadala",
     "inputTranslationScope": "Availability ng pagsasalin ng input",

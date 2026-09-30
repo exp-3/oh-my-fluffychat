@@ -75,8 +75,6 @@
     "translateRoom": "Перевести",
     "translationDisabledGlobally": "Сначала включите перевод в настройках приложения.",
     "inputTranslation": "Входной перевод",
-    "inputTranslationMode": "Входной режим перевода",
-    "inputTranslationModeDisabled": "Отключено",
     "inputTranslationModeManual": "Использовать перевод вручную",
     "inputTranslationModeAutomatic": "Перевести при отправке",
     "inputTranslationScope": "Доступность перевода ввода",

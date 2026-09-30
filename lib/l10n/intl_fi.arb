@@ -73,8 +73,6 @@
     "translateRoom": "Käännä",
     "translationDisabledGlobally": "Ota käännös ensin käyttöön sovelluksen asetuksista.",
     "inputTranslation": "Syötä käännös",
-    "inputTranslationMode": "Syötä käännöstila",
-    "inputTranslationModeDisabled": "Ei käytössä",
     "inputTranslationModeManual": "Käytä käännöstä manuaalisesti",
     "inputTranslationModeAutomatic": "Käännä lähettäessäsi",
     "inputTranslationScope": "Tuloksen käännösten saatavuus",

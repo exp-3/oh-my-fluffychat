@@ -74,8 +74,6 @@
     "translateRoom": "অনুবাদ করুন",
     "translationDisabledGlobally": "প্রথমে অ্যাপ সেটিংসে অনুবাদ সক্ষম করুন।",
     "inputTranslation": "ইনপুট অনুবাদ",
-    "inputTranslationMode": "ইনপুট অনুবাদ মোড",
-    "inputTranslationModeDisabled": "অক্ষম",
     "inputTranslationModeManual": "অনুবাদ ম্যানুয়ালি ব্যবহার করুন",
     "inputTranslationModeAutomatic": "পাঠানোর সময় অনুবাদ করুন",
     "inputTranslationScope": "ইনপুট অনুবাদ প্রাপ্যতা",

@@ -75,8 +75,6 @@
     "translateRoom": "Çevir",
     "translationDisabledGlobally": "Önce uygulama ayarlarında çeviriyi etkinleştirin.",
     "inputTranslation": "Giriş çevirisi",
-    "inputTranslationMode": "Giriş çeviri modu",
-    "inputTranslationModeDisabled": "Devre dışı",
     "inputTranslationModeManual": "Çeviriyi manuel kullan",
     "inputTranslationModeAutomatic": "Gönderirken çevir",
     "inputTranslationScope": "Giriş çeviri kullanılabilirliği",

@@ -73,8 +73,6 @@
     "translateRoom": "Tərcümə et",
     "translationDisabledGlobally": "Əvvəlcə proqram ayarlarında tərcüməni aktivləşdirin.",
     "inputTranslation": "Tərcümə daxil edin",
-    "inputTranslationMode": "Giriş tərcümə rejimi",
-    "inputTranslationModeDisabled": "Əlil",
     "inputTranslationModeManual": "Tərcümədən əl ilə istifadə et",
     "inputTranslationModeAutomatic": "Göndərərkən tərcümə edin",
     "inputTranslationScope": "Giriş tərcüməsinin mövcudluğu",

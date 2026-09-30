@@ -73,8 +73,6 @@
     "translateRoom": "Išversti",
     "translationDisabledGlobally": "Pirmiausia įgalinkite vertimą programos nustatymuose.",
     "inputTranslation": "Įvesties vertimas",
-    "inputTranslationMode": "Įvesties vertimo režimas",
-    "inputTranslationModeDisabled": "Išjungta",
     "inputTranslationModeManual": "Naudoti vertimą rankiniu būdu",
     "inputTranslationModeAutomatic": "Išverskite siunčiant",
     "inputTranslationScope": "Įvesties vertimo prieinamumas",

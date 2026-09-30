@@ -74,8 +74,6 @@
     "translateRoom": "Traduceți",
     "translationDisabledGlobally": "Activați mai întâi traducerea în setările aplicației.",
     "inputTranslation": "Traducere de intrare",
-    "inputTranslationMode": "Introduceți modul de traducere",
-    "inputTranslationModeDisabled": "Dezactivat",
     "inputTranslationModeManual": "Folosește traducerea manual",
     "inputTranslationModeAutomatic": "Traduceți la trimitere",
     "inputTranslationScope": "Disponibilitatea traducerii de intrare",

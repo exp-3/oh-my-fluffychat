@@ -74,8 +74,6 @@
     "translateRoom": "ترجمه کنید",
     "translationDisabledGlobally": "ابتدا ترجمه را در تنظیمات برنامه فعال کنید.",
     "inputTranslation": "ترجمه ورودی",
-    "inputTranslationMode": "حالت ترجمه ورودی",
-    "inputTranslationModeDisabled": "از کار افتاده است",
     "inputTranslationModeManual": "استفاده دستی از ترجمه",
     "inputTranslationModeAutomatic": "هنگام ارسال ترجمه کنید",
     "inputTranslationScope": "در دسترس بودن ترجمه ورودی",

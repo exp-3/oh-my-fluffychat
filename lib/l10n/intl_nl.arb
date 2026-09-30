@@ -74,8 +74,6 @@
     "translateRoom": "Vertalen",
     "translationDisabledGlobally": "Schakel eerst de vertaling in de app-instellingen in.",
     "inputTranslation": "Invoer vertaling",
-    "inputTranslationMode": "Invoervertaalmodus",
-    "inputTranslationModeDisabled": "Uitgeschakeld",
     "inputTranslationModeManual": "Vertaling handmatig gebruiken",
     "inputTranslationModeAutomatic": "Vertalen bij verzending",
     "inputTranslationScope": "Beschikbaarheid van invoervertalingen",

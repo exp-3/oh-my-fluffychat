@@ -75,8 +75,6 @@
     "translateRoom": "翻訳する",
     "translationDisabledGlobally": "まずアプリの設定で翻訳を有効にしてください。",
     "inputTranslation": "入力翻訳",
-    "inputTranslationMode": "入力変換モード",
-    "inputTranslationModeDisabled": "障害者",
     "inputTranslationModeManual": "手動で翻訳を使用",
     "inputTranslationModeAutomatic": "送信時に翻訳する",
     "inputTranslationScope": "入力翻訳の可用性",

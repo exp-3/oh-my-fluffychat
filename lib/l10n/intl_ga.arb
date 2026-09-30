@@ -73,8 +73,6 @@
     "translateRoom": "Aistrigh",
     "translationDisabledGlobally": "Cumasaigh aistriúchán i socruithe aipe ar dtús.",
     "inputTranslation": "Aistriúchán ionchuir",
-    "inputTranslationMode": "Modh aistriúcháin ionchuir",
-    "inputTranslationModeDisabled": "faoi mhíchumas",
     "inputTranslationModeManual": "Úsáid an t-aistriúchán de láimh",
     "inputTranslationModeAutomatic": "Aistrigh agus tú á sheoladh",
     "inputTranslationScope": "Infhaighteacht aistriúcháin ionchuir",

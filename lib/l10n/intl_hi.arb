@@ -73,8 +73,6 @@
     "translateRoom": "अनुवाद करें",
     "translationDisabledGlobally": "पहले ऐप सेटिंग में अनुवाद सक्षम करें।",
     "inputTranslation": "इनपुट अनुवाद",
-    "inputTranslationMode": "इनपुट अनुवाद मोड",
-    "inputTranslationModeDisabled": "विकलांग",
     "inputTranslationModeManual": "अनुवाद का मैन्युअल उपयोग करें",
     "inputTranslationModeAutomatic": "भेजते समय अनुवाद करें",
     "inputTranslationScope": "इनपुट अनुवाद उपलब्धता",

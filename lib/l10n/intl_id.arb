@@ -74,8 +74,6 @@
     "translateRoom": "Terjemahkan",
     "translationDisabledGlobally": "Aktifkan terjemahan di pengaturan aplikasi terlebih dahulu.",
     "inputTranslation": "Terjemahan masukan",
-    "inputTranslationMode": "Masukkan mode terjemahan",
-    "inputTranslationModeDisabled": "Dinonaktifkan",
     "inputTranslationModeManual": "Gunakan terjemahan secara manual",
     "inputTranslationModeAutomatic": "Terjemahkan saat mengirim",
     "inputTranslationScope": "Ketersediaan terjemahan masukan",

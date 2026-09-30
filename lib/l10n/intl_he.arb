@@ -74,8 +74,6 @@
     "translateRoom": "תרגם",
     "translationDisabledGlobally": "הפעל תחילה תרגום בהגדרות האפליקציה.",
     "inputTranslation": "תרגום קלט",
-    "inputTranslationMode": "מצב תרגום קלט",
-    "inputTranslationModeDisabled": "מושבת",
     "inputTranslationModeManual": "שימוש ידני בתרגום",
     "inputTranslationModeAutomatic": "תרגם בעת השליחה",
     "inputTranslationScope": "זמינות תרגום קלט",
