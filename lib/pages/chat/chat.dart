@@ -506,7 +506,6 @@ class ChatController extends State<ChatPageWithRoom>
       if (readMarkerEventIndex > 1) {
         Logs().v('Scroll up to visible event', readMarkerEventId);
         scrollToEventId(readMarkerEventId, highlightEvent: false);
-        return;
       } else if (readMarkerEventId.isNotEmpty && readMarkerEventIndex == -1) {
         _showScrollUpMaterialBanner(readMarkerEventId);
       }
@@ -603,8 +602,10 @@ class ChatController extends State<ChatPageWithRoom>
     // We are already setting a read marker
     if (_setReadMarkerFuture != null) return;
 
+    final setOnLatestEvent = eventId == null;
+
     // We only set read marker if we are at the bottom
-    if (_scrolledUp) return;
+    if (_scrolledUp && setOnLatestEvent) return;
 
     // We do not set read marker if we offer user the scroll up banner
     if (scrollUpBannerEventId != null) return;
@@ -620,19 +621,24 @@ class ChatController extends State<ChatPageWithRoom>
       return;
     }
 
-    final setOnLatestEvent = eventId == null;
-    eventId ??= timeline.events
-        .firstWhereOrNull(
-          (event) => room.pushRuleState == PushRuleState.notify
-              ? room.client.pushruleEvaluator.match(event).notify
-              : {
-                      EventTypes.Message,
-                      EventTypes.Encrypted,
-                      EventTypes.Sticker,
-                    }.contains(event.type) &&
-                    event.eventId.isValidMatrixIdStrict(),
-        )
-        ?.eventId;
+    eventId ??= timeline.events.firstWhereOrNull((event) {
+      if (room.client.pushruleEvaluator.match(event).notify) {
+        return true;
+      }
+      final original = event.originalSource;
+      if (original != null &&
+          room.client.pushruleEvaluator
+              .match(Event.fromMatrixEvent(original, room))
+              .notify) {
+        return true;
+      }
+      return false;
+    })?.eventId;
+
+    if (setOnLatestEvent && (room.hasNewMessages || room.isUnread)) {
+      eventId ??=
+          room.lastEvent?.eventId ?? timeline.events.firstOrNull?.eventId;
+    }
 
     // There is no event we could place a read marker
     if (eventId == null) return;
@@ -658,7 +664,7 @@ class ChatController extends State<ChatPageWithRoom>
           eventId: eventId,
           public: AppSettings.sendPublicReadReceipts.value,
         )
-        .then((_) {
+        .whenComplete(() {
           _setReadMarkerFuture = null;
         });
   }
@@ -867,6 +873,26 @@ class ChatController extends State<ChatPageWithRoom>
         files: [
           clipboardImageToXFile(image, isWindows: PlatformInfos.isWindows),
         ],
+        room: room,
+        outerContext: context,
+        threadRootEventId: activeThreadId,
+        threadLastEventId: threadLastEventId,
+      ),
+    );
+  }
+
+  Future<void> openGalleryAction() async {
+    inputFocus.unfocus();
+    final files = await ImagePicker().pickMultipleMedia(
+      requestFullMetadata: false,
+    );
+    if (files.isEmpty) return;
+    if (!mounted) return;
+
+    await showAdaptiveDialog(
+      context: context,
+      builder: (c) => SendFileDialog(
+        files: files,
         room: room,
         outerContext: context,
         threadRootEventId: activeThreadId,
@@ -1556,11 +1582,14 @@ class ChatController extends State<ChatPageWithRoom>
     room.client.getConfig();
 
     switch (choice) {
-      case AddPopupMenuActions.media:
-        sendFileAction(type: FileType.media);
-        return;
       case AddPopupMenuActions.file:
         sendFileAction();
+        return;
+      case AddPopupMenuActions.image:
+        sendFileAction(type: FileType.image);
+        return;
+      case AddPopupMenuActions.video:
+        sendFileAction(type: FileType.video);
         return;
       case AddPopupMenuActions.poll:
         showAdaptiveBottomSheet(
@@ -1786,7 +1815,8 @@ class ChatController extends State<ChatPageWithRoom>
 }
 
 enum AddPopupMenuActions {
-  media,
+  image,
+  video,
   file,
   poll,
   photoCamera,

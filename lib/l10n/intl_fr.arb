@@ -2093,7 +2093,6 @@
     "globalChatId": "Identifiant global de la discussion",
     "accessAndVisibility": "Accès et visibilité",
     "accessAndVisibilityDescription": "Qui est autorisé à rejoindre cette discussion et comment la discussion peut être découverte.",
-    "calls": "Appels",
     "customEmojisAndStickers": "Émoticônes et autocollants personnalisés",
     "hideRedactedMessages": "Cacher les messages supprimés",
     "pleaseEnterYourCurrentPassword": "Veuillez saisir votre mot de passe actuel",
@@ -2925,5 +2924,15 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "updateAvailable": "Mise à jour {version} disponible",
+    "@updateAvailable": {
+        "type": "String",
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    },
+    "download": "Télécharger"
 }

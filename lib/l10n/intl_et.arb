@@ -2220,7 +2220,6 @@
     "knock": "Koputa uksele",
     "appLockDescription": "Kui sa rakendust parasjagu ei kasuta, siis lukusta ta PIN-koodiga",
     "accessAndVisibility": "Hõlbustus, ligipääsetavus ja nähtavus",
-    "calls": "Kõned",
     "customEmojisAndStickers": "Kohandatud emotikonid ja kleepsud",
     "customEmojisAndStickersBody": "Lisa või jaga kohandatud emotikone või kleepsupakke, mida võiks kasutada igas vestluses.",
     "hideRedactedMessages": "Peida muudetud sõnumid",
@@ -2925,5 +2924,15 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "updateAvailable": "Uus versioon on saadaval: {version}",
+    "@updateAvailable": {
+        "type": "String",
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    },
+    "download": "Laadi alla"
 }

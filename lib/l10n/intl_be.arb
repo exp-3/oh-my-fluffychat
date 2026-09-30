@@ -820,7 +820,6 @@
     "globalChatId": "ID габальнага чату",
     "accessAndVisibility": "Даступнасць і бачнасць",
     "accessAndVisibilityDescription": "Каму дазволена далучацца да гэтага чату і як ён можа быць знойдзены.",
-    "calls": "Выклікі",
     "customEmojisAndStickers": "Карыстальніцкія эмодзі і стыкеры",
     "customEmojisAndStickersBody": "Дадаць ці падзяліцца карыстальніцкімі эмодзі ці стыкерамі, што могуць быць ужыты ў любым чаце.",
     "emoteShortcode": "Скарачэнне эмодзі",
@@ -2912,5 +2911,15 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "updateAvailable": "Абнаўленне да {version} даступна",
+    "@updateAvailable": {
+        "type": "String",
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    },
+    "download": "Спампаваць"
 }
