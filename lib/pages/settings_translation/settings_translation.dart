@@ -227,138 +227,136 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                 if (enabled) ...[
                   Divider(color: theme.dividerColor),
                   Column(
-                      children: [
-                        _SectionTitle(l10n.automaticTranslation),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: DropdownButtonFormField<TranslationScope>(
-                            initialValue: runtime.scope,
-                            decoration: InputDecoration(
-                              labelText: l10n.automaticTranslationScope,
-                              prefixIcon: const Icon(
-                                Icons.auto_awesome_outlined,
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
-                            ),
-                            items: [
-                              DropdownMenuItem(
-                                value: TranslationScope.none,
-                                child: Text(l10n.translationScopeNone),
-                              ),
-                              DropdownMenuItem(
-                                value: TranslationScope.allRooms,
-                                child: Text(l10n.translationScopeAllRooms),
-                              ),
-                              DropdownMenuItem(
-                                value: TranslationScope.unencryptedRooms,
-                                child: Text(
-                                  l10n.translationScopeUnencryptedRooms,
-                                ),
-                              ),
-                            ],
-                            onChanged: (scope) =>
-                                scope == null ? null : runtime.setScope(scope),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-                          child: Align(
-                            alignment: AlignmentDirectional.centerStart,
-                            child: Text(
-                              l10n.translationScopeOverrideHint,
-                              style: theme.textTheme.bodySmall,
+                    children: [
+                      _SectionTitle(l10n.automaticTranslation),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: DropdownButtonFormField<TranslationScope>(
+                          initialValue: runtime.scope,
+                          decoration: InputDecoration(
+                            labelText: l10n.automaticTranslationScope,
+                            prefixIcon: const Icon(Icons.auto_awesome_outlined),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
                             ),
                           ),
+                          items: [
+                            DropdownMenuItem(
+                              value: TranslationScope.none,
+                              child: Text(l10n.translationScopeNone),
+                            ),
+                            DropdownMenuItem(
+                              value: TranslationScope.allRooms,
+                              child: Text(l10n.translationScopeAllRooms),
+                            ),
+                            DropdownMenuItem(
+                              value: TranslationScope.unencryptedRooms,
+                              child: Text(
+                                l10n.translationScopeUnencryptedRooms,
+                              ),
+                            ),
+                          ],
+                          onChanged: (scope) =>
+                              scope == null ? null : runtime.setScope(scope),
                         ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                        child: Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Text(
+                            l10n.translationScopeOverrideHint,
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                initialValue: sourceLanguage,
+                                isExpanded: true,
+                                decoration: InputDecoration(
+                                  labelText: l10n.sourceLanguage,
+                                ),
+                                items: [
+                                  DropdownMenuItem(
+                                    value: 'auto',
+                                    child: Text(l10n.translationAutoDetect),
+                                  ),
+                                  for (final language in translationLanguages)
+                                    DropdownMenuItem(
+                                      value: language.code,
+                                      child: Text(
+                                        language.name,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                ],
+                                onChanged: (value) {
+                                  if (value == null) return;
+                                  setState(() => sourceLanguage = value);
+                                  _saveLanguages();
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                initialValue: targetLanguage,
+                                isExpanded: true,
+                                decoration: InputDecoration(
+                                  labelText: l10n.targetLanguage,
+                                ),
+                                items: [
+                                  DropdownMenuItem(
+                                    value: systemTranslationLanguageCode,
+                                    child: Text(l10n.systemTheme),
+                                  ),
+                                  for (final language in translationLanguages)
+                                    DropdownMenuItem(
+                                      value: language.code,
+                                      child: Text(
+                                        language.name,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                ],
+                                onChanged: (value) {
+                                  if (value == null) return;
+                                  setState(() => targetLanguage = value);
+                                  _saveLanguages();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      CheckboxListTile.adaptive(
+                        title: Text(l10n.preferRoomLanguageForSource),
+                        value: runtime.preferRoomLanguageForSource,
+                        onChanged: (value) => value == null
+                            ? null
+                            : runtime.setPreferRoomLanguageForSource(value),
+                      ),
+                      SwitchListTile.adaptive(
+                        secondary: const Icon(Icons.view_agenda_outlined),
+                        title: Text(l10n.bilingual),
+                        value:
+                            runtime.displayMode ==
+                            TranslationDisplayMode.bilingual,
+                        onChanged: (bilingual) => runtime.setDisplayMode(
+                          bilingual
+                              ? TranslationDisplayMode.bilingual
+                              : TranslationDisplayMode.translatedOnly,
+                        ),
+                      ),
+                      if (runtime.displayMode ==
+                          TranslationDisplayMode.bilingual)
                         Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: DropdownButtonFormField<String>(
-                                  initialValue: sourceLanguage,
-                                  isExpanded: true,
-                                  decoration: InputDecoration(
-                                    labelText: l10n.sourceLanguage,
-                                  ),
-                                  items: [
-                                    DropdownMenuItem(
-                                      value: 'auto',
-                                      child: Text(l10n.translationAutoDetect),
-                                    ),
-                                    for (final language in translationLanguages)
-                                      DropdownMenuItem(
-                                        value: language.code,
-                                        child: Text(
-                                          language.name,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                  ],
-                                  onChanged: (value) {
-                                    if (value == null) return;
-                                    setState(() => sourceLanguage = value);
-                                    _saveLanguages();
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: DropdownButtonFormField<String>(
-                                  initialValue: targetLanguage,
-                                  isExpanded: true,
-                                  decoration: InputDecoration(
-                                    labelText: l10n.targetLanguage,
-                                  ),
-                                  items: [
-                                    DropdownMenuItem(
-                                      value: systemTranslationLanguageCode,
-                                      child: Text(l10n.systemTheme),
-                                    ),
-                                    for (final language in translationLanguages)
-                                      DropdownMenuItem(
-                                        value: language.code,
-                                        child: Text(
-                                          language.name,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                  ],
-                                  onChanged: (value) {
-                                    if (value == null) return;
-                                    setState(() => targetLanguage = value);
-                                    _saveLanguages();
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        CheckboxListTile.adaptive(
-                          title: Text(l10n.preferRoomLanguageForSource),
-                          value: runtime.preferRoomLanguageForSource,
-                          onChanged: (value) => value == null
-                              ? null
-                              : runtime.setPreferRoomLanguageForSource(value),
-                        ),
-                        SwitchListTile.adaptive(
-                          secondary: const Icon(Icons.view_agenda_outlined),
-                          title: Text(l10n.bilingual),
-                          value:
-                              runtime.displayMode ==
-                              TranslationDisplayMode.bilingual,
-                          onChanged: (bilingual) => runtime.setDisplayMode(
-                            bilingual
-                                ? TranslationDisplayMode.bilingual
-                                : TranslationDisplayMode.translatedOnly,
-                          ),
-                        ),
-                        if (runtime.displayMode ==
-                            TranslationDisplayMode.bilingual)
-                          Padding(
                           padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                           child: Column(
                             children: [
@@ -444,274 +442,274 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                             ],
                           ),
                         ),
-                        Divider(color: theme.dividerColor),
-                        _SectionTitle(l10n.inputTranslation),
-                        SwitchListTile.adaptive(
-                          title: Text(l10n.inputTranslationModeManual),
-                          value: runtime.manualInputTranslationEnabled,
-                          onChanged: runtime.setManualInputTranslationEnabled,
-                        ),
-                        if (runtime.manualInputTranslationEnabled)
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 32,
-                              top: 12,
-                              right: 16,
-                              bottom: 12,
-                            ),
-                            child: DropdownButtonFormField<InputTranslationTrigger>(
-                              key: ValueKey(runtime.inputTrigger),
-                              initialValue: runtime.inputTrigger,
-                              decoration: InputDecoration(
-                                labelText: l10n.inputTranslationTrigger,
-                                prefixIcon: const Icon(Icons.touch_app_outlined),
-                              ),
-                              items: [
-                                DropdownMenuItem(
-                                  value: InputTranslationTrigger.button,
-                                  child: Text(l10n.inputTranslationTriggerButton),
-                                ),
-                                DropdownMenuItem(
-                                  value: InputTranslationTrigger.longPress,
-                                  child: Text(
-                                    l10n.inputTranslationTriggerLongPress,
-                                  ),
-                                ),
-                                DropdownMenuItem(
-                                  value: InputTranslationTrigger.doubleTap,
-                                  child: Text(
-                                    l10n.inputTranslationTriggerDoubleTap,
-                                  ),
-                                ),
-                              ],
-                              onChanged: (trigger) => trigger == null
-                                  ? null
-                                  : runtime.setInputTrigger(trigger),
-                            ),
+                      Divider(color: theme.dividerColor),
+                      _SectionTitle(l10n.inputTranslation),
+                      SwitchListTile.adaptive(
+                        title: Text(l10n.inputTranslationModeManual),
+                        value: runtime.manualInputTranslationEnabled,
+                        onChanged: runtime.setManualInputTranslationEnabled,
+                      ),
+                      if (runtime.manualInputTranslationEnabled)
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 32,
+                            top: 12,
+                            right: 16,
+                            bottom: 12,
                           ),
-                        SwitchListTile.adaptive(
-                          title: Text(l10n.inputTranslationModeAutomatic),
-                          value: runtime.automaticInputTranslationEnabled,
-                          onChanged: runtime.setAutomaticInputTranslationEnabled,
-                        ),
-                        if (runtime.automaticInputTranslationEnabled)
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 32,
-                              top: 12,
-                              right: 16,
-                              bottom: 12,
-                            ),
-                            child: DropdownButtonFormField<InputTranslationSendMode>(
-                              key: ValueKey(runtime.inputSendMode),
-                              initialValue: runtime.inputSendMode,
-                              decoration: InputDecoration(
-                                labelText: l10n.inputTranslationSendModeTitle,
-                                prefixIcon: const Icon(Icons.touch_app_outlined),
+                          child:
+                              DropdownButtonFormField<InputTranslationTrigger>(
+                                key: ValueKey(runtime.inputTrigger),
+                                initialValue: runtime.inputTrigger,
+                                decoration: InputDecoration(
+                                  labelText: l10n.inputTranslationTrigger,
+                                  prefixIcon: const Icon(
+                                    Icons.touch_app_outlined,
+                                  ),
+                                ),
+                                items: [
+                                  DropdownMenuItem(
+                                    value: InputTranslationTrigger.button,
+                                    child: Text(
+                                      l10n.inputTranslationTriggerButton,
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: InputTranslationTrigger.longPress,
+                                    child: Text(
+                                      l10n.inputTranslationTriggerLongPress,
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: InputTranslationTrigger.doubleTap,
+                                    child: Text(
+                                      l10n.inputTranslationTriggerDoubleTap,
+                                    ),
+                                  ),
+                                ],
+                                onChanged: (trigger) => trigger == null
+                                    ? null
+                                    : runtime.setInputTrigger(trigger),
                               ),
-                              items: [
-                                DropdownMenuItem(
-                                  value: InputTranslationSendMode
-                                      .shortOriginalLongTranslated,
-                                  child: Text(
-                                    l10n.inputTranslationSendModeLongTrans,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                DropdownMenuItem(
-                                  value: InputTranslationSendMode
-                                      .shortTranslatedLongOriginal,
-                                  child: Text(
-                                    l10n.inputTranslationSendModeShortTrans,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                              onChanged: (mode) => mode == null
-                                  ? null
-                                  : runtime.setInputSendMode(mode),
-                            ),
+                        ),
+                      SwitchListTile.adaptive(
+                        title: Text(l10n.inputTranslationModeAutomatic),
+                        value: runtime.automaticInputTranslationEnabled,
+                        onChanged: runtime.setAutomaticInputTranslationEnabled,
+                      ),
+                      if (runtime.automaticInputTranslationEnabled)
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 32,
+                            top: 12,
+                            right: 16,
+                            bottom: 12,
                           ),
-                        IgnorePointer(
-                          ignoring:
-                              runtime.inputMode ==
-                              InputTranslationMode.disabled,
-                          child: Opacity(
-                            opacity:
-                                runtime.inputMode ==
-                                    InputTranslationMode.disabled
-                                ? 0.5
-                                : 1,
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 16,
-                                    top: 12,
-                                    right: 16,
+                          child:
+                              DropdownButtonFormField<InputTranslationSendMode>(
+                                key: ValueKey(runtime.inputSendMode),
+                                initialValue: runtime.inputSendMode,
+                                decoration: InputDecoration(
+                                  labelText: l10n.inputTranslationSendModeTitle,
+                                  prefixIcon: const Icon(
+                                    Icons.touch_app_outlined,
                                   ),
-                                  child:
-                                      DropdownButtonFormField<
-                                        InputTranslationScope
-                                      >(
-                                        key: ValueKey(runtime.inputScope),
-                                        initialValue: runtime.inputScope,
-                                        decoration: InputDecoration(
-                                          labelText: l10n.inputTranslationScope,
-                                          prefixIcon: const Icon(
-                                            Icons.meeting_room_outlined,
+                                ),
+                                items: [
+                                  DropdownMenuItem(
+                                    value: InputTranslationSendMode
+                                        .shortOriginalLongTranslated,
+                                    child: Text(
+                                      l10n.inputTranslationSendModeLongTrans,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: InputTranslationSendMode
+                                        .shortTranslatedLongOriginal,
+                                    child: Text(
+                                      l10n.inputTranslationSendModeShortTrans,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                                onChanged: (mode) => mode == null
+                                    ? null
+                                    : runtime.setInputSendMode(mode),
+                              ),
+                        ),
+                      IgnorePointer(
+                        ignoring:
+                            runtime.inputMode == InputTranslationMode.disabled,
+                        child: Opacity(
+                          opacity:
+                              runtime.inputMode == InputTranslationMode.disabled
+                              ? 0.5
+                              : 1,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  top: 12,
+                                  right: 16,
+                                ),
+                                child:
+                                    DropdownButtonFormField<
+                                      InputTranslationScope
+                                    >(
+                                      key: ValueKey(runtime.inputScope),
+                                      initialValue: runtime.inputScope,
+                                      decoration: InputDecoration(
+                                        labelText: l10n.inputTranslationScope,
+                                        prefixIcon: const Icon(
+                                          Icons.meeting_room_outlined,
+                                        ),
+                                      ),
+                                      items: [
+                                        DropdownMenuItem(
+                                          value: InputTranslationScope
+                                              .automaticRooms,
+                                          child: Text(
+                                            l10n.inputTranslationScopeAutomaticRooms,
                                           ),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: InputTranslationScope.allRooms,
+                                          child: Text(
+                                            l10n.inputTranslationScopeAllRooms,
+                                          ),
+                                        ),
+                                      ],
+                                      onChanged: (scope) => scope == null
+                                          ? null
+                                          : runtime.setInputScope(scope),
+                                    ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  top: 12,
+                                  right: 16,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: DropdownButtonFormField<String>(
+                                        initialValue: inputSourceLanguage,
+                                        isExpanded: true,
+                                        decoration: InputDecoration(
+                                          labelText: l10n.inputSourceLanguage,
                                         ),
                                         items: [
                                           DropdownMenuItem(
-                                            value: InputTranslationScope
-                                                .automaticRooms,
+                                            value: 'auto',
                                             child: Text(
-                                              l10n.inputTranslationScopeAutomaticRooms,
+                                              l10n.translationAutoDetect,
                                             ),
                                           ),
-                                          DropdownMenuItem(
-                                            value:
-                                                InputTranslationScope.allRooms,
-                                            child: Text(
-                                              l10n.inputTranslationScopeAllRooms,
-                                            ),
-                                          ),
-                                        ],
-                                        onChanged: (scope) => scope == null
-                                            ? null
-                                            : runtime.setInputScope(scope),
-                                      ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 16,
-                                    top: 12,
-                                    right: 16,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: DropdownButtonFormField<String>(
-                                          initialValue: inputSourceLanguage,
-                                          isExpanded: true,
-                                          decoration: InputDecoration(
-                                            labelText: l10n.inputSourceLanguage,
-                                          ),
-                                          items: [
+                                          for (final language
+                                              in translationLanguages)
                                             DropdownMenuItem(
-                                              value: 'auto',
+                                              value: language.code,
                                               child: Text(
-                                                l10n.translationAutoDetect,
+                                                language.name,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
-                                            for (final language
-                                                in translationLanguages)
-                                              DropdownMenuItem(
-                                                value: language.code,
-                                                child: Text(
-                                                  language.name,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                          ],
-                                          onChanged: (value) {
-                                            if (value == null) return;
-                                            setState(
-                                              () => inputSourceLanguage = value,
-                                            );
-                                            _saveInputLanguages();
-                                          },
-                                        ),
+                                        ],
+                                        onChanged: (value) {
+                                          if (value == null) return;
+                                          setState(
+                                            () => inputSourceLanguage = value,
+                                          );
+                                          _saveInputLanguages();
+                                        },
                                       ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: DropdownButtonFormField<String>(
-                                          initialValue: inputTargetLanguage,
-                                          isExpanded: true,
-                                          decoration: InputDecoration(
-                                            labelText: l10n.inputTargetLanguage,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: DropdownButtonFormField<String>(
+                                        initialValue: inputTargetLanguage,
+                                        isExpanded: true,
+                                        decoration: InputDecoration(
+                                          labelText: l10n.inputTargetLanguage,
+                                        ),
+                                        items: [
+                                          for (final language
+                                              in translationLanguages)
+                                            DropdownMenuItem(
+                                              value: language.code,
+                                              child: Text(
+                                                language.name,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                        ],
+                                        onChanged: (value) {
+                                          if (value == null) return;
+                                          setState(
+                                            () => inputTargetLanguage = value,
+                                          );
+                                          _saveInputLanguages();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              CheckboxListTile.adaptive(
+                                title: Text(
+                                  l10n.preferRoomLanguageForInputTarget,
+                                ),
+                                value: runtime.preferRoomLanguageForInputTarget,
+                                onChanged: (value) => value == null
+                                    ? null
+                                    : runtime
+                                          .setPreferRoomLanguageForInputTarget(
+                                            value,
                                           ),
-                                          items: [
-                                            for (final language
-                                                in translationLanguages)
-                                              DropdownMenuItem(
-                                                value: language.code,
-                                                child: Text(
-                                                  language.name,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                          ],
-                                          onChanged: (value) {
-                                            if (value == null) return;
-                                            setState(
-                                              () => inputTargetLanguage = value,
-                                            );
-                                            _saveInputLanguages();
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                CheckboxListTile.adaptive(
-                                  title: Text(
-                                    l10n.preferRoomLanguageForInputTarget,
-                                  ),
-                                  value:
-                                      runtime.preferRoomLanguageForInputTarget,
-                                  onChanged: (value) => value == null
-                                      ? null
-                                      : runtime
-                                            .setPreferRoomLanguageForInputTarget(
-                                              value,
-                                            ),
-                                ),
-                                ListTile(
-                                  leading: const Icon(Icons.info_outline),
-                                  title: Text(
-                                    l10n.inputTranslationPrivacyNotice,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.info_outline),
+                                title: Text(l10n.inputTranslationPrivacyNotice),
+                              ),
+                            ],
                           ),
                         ),
-                        _SectionTitle(l10n.batchTranslation),
-                        _NumberSetting(
-                          controller: mergeWindow,
-                          label: l10n.translationMergeWait,
-                          min: 0,
-                          max: 2000,
-                          suffix: 'ms',
-                          onChanged: _batchSettingsChanged,
-                        ),
-                        _NumberSetting(
-                          controller: maxMessages,
-                          label: l10n.translationMaxMessages,
-                          min: 1,
-                          max: 50,
-                          onChanged: _batchSettingsChanged,
-                        ),
-                        _NumberSetting(
-                          controller: maxCharacters,
-                          label: l10n.translationMaxCharacters,
-                          min: 100,
-                          max: 20000,
-                          step: 100,
-                          onChanged: _batchSettingsChanged,
-                        ),
-                        _NumberSetting(
-                          controller: retries,
-                          label: l10n.translationStructureRetries,
-                          min: 0,
-                          max: 3,
-                          onChanged: _batchSettingsChanged,
-                        ),
-                      ],
+                      ),
+                      _SectionTitle(l10n.batchTranslation),
+                      _NumberSetting(
+                        controller: mergeWindow,
+                        label: l10n.translationMergeWait,
+                        min: 0,
+                        max: 2000,
+                        suffix: 'ms',
+                        onChanged: _batchSettingsChanged,
+                      ),
+                      _NumberSetting(
+                        controller: maxMessages,
+                        label: l10n.translationMaxMessages,
+                        min: 1,
+                        max: 50,
+                        onChanged: _batchSettingsChanged,
+                      ),
+                      _NumberSetting(
+                        controller: maxCharacters,
+                        label: l10n.translationMaxCharacters,
+                        min: 100,
+                        max: 20000,
+                        step: 100,
+                        onChanged: _batchSettingsChanged,
+                      ),
+                      _NumberSetting(
+                        controller: retries,
+                        label: l10n.translationStructureRetries,
+                        min: 0,
+                        max: 3,
+                        onChanged: _batchSettingsChanged,
+                      ),
+                    ],
                   ),
                 ],
                 Divider(color: theme.dividerColor),
