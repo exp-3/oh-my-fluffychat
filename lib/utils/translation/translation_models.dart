@@ -9,7 +9,7 @@ enum TranslationProtocol { chatCompletions, responses }
 
 enum TranslationScope { none, allRooms, unencryptedRooms }
 
-enum InputTranslationMode { disabled, manual, automatic }
+enum InputTranslationMode { disabled, manual, automatic, manualAndAutomatic }
 
 enum InputTranslationScope { automaticRooms, allRooms }
 

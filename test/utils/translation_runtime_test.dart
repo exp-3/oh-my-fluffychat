@@ -434,6 +434,57 @@ void main() {
     },
   );
 
+  test('manual and automatic input translation can be enabled together', () async {
+    final fixture = await _RuntimeFixture.create();
+    final room = Room(id: '!input-both:example.invalid', client: fixture.client);
+    await fixture.runtime.setInputScope(InputTranslationScope.allRooms);
+    await fixture.runtime.setManualInputTranslationEnabled(true);
+    await fixture.runtime.setAutomaticInputTranslationEnabled(true);
+    await fixture.runtime.setInputSendMode(
+      InputTranslationSendMode.shortTranslatedLongOriginal,
+    );
+
+    expect(fixture.runtime.canManuallyTranslateInput(room), isTrue);
+    expect(fixture.runtime.shouldTranslateInputOnSend(room), isTrue);
+    expect(
+      fixture.runtime.shouldTranslateInputOnSend(room, requested: false),
+      isFalse,
+    );
+    expect(
+      fixture.runtime.preferences.inputMode,
+      InputTranslationMode.manualAndAutomatic,
+    );
+
+    await fixture.runtime.setManualInputTranslationEnabled(false);
+    expect(fixture.runtime.canManuallyTranslateInput(room), isFalse);
+    expect(fixture.runtime.shouldTranslateInputOnSend(room), isTrue);
+
+    await fixture.runtime.setManualInputTranslationEnabled(true);
+    await fixture.runtime.setAutomaticInputTranslationEnabled(false);
+    expect(fixture.runtime.canManuallyTranslateInput(room), isTrue);
+    expect(fixture.runtime.shouldTranslateInputOnSend(room), isFalse);
+
+    await fixture.runtime.setManualInputTranslationEnabled(false);
+    expect(fixture.runtime.canTranslateInput(room), isFalse);
+    expect(fixture.runtime.preferences.inputMode, InputTranslationMode.disabled);
+  });
+
+  for (final mode in InputTranslationMode.values) {
+    test('restores saved input translation mode ${mode.name}', () async {
+      final fixture = await _RuntimeFixture.create(inputMode: mode);
+      expect(
+        fixture.runtime.manualInputTranslationEnabled,
+        mode == InputTranslationMode.manual ||
+            mode == InputTranslationMode.manualAndAutomatic,
+      );
+      expect(
+        fixture.runtime.automaticInputTranslationEnabled,
+        mode == InputTranslationMode.automatic ||
+            mode == InputTranslationMode.manualAndAutomatic,
+      );
+    });
+  }
+
   test('disabled global translation bypasses every input send mode', () async {
     final fixture = await _RuntimeFixture.create();
     final room = Room(
@@ -678,6 +729,7 @@ class _RuntimeFixture {
     _MemorySecrets? secrets,
     TranslationApiClient? apiClient,
     int mergeWindowMs = 100,
+    InputTranslationMode inputMode = InputTranslationMode.disabled,
   }) async {
     SharedPreferences.setMockInitialValues({
       _enabledPreference: true,
@@ -685,6 +737,7 @@ class _RuntimeFixture {
       _providersPreference: TranslationProviderConfig.encodeList([_provider]),
       _selectedProviderPreference: _provider.id,
       _scopePreference: TranslationScope.none.name,
+      _inputModePreference: inputMode.name,
       'chat.fluffy.translation.batch.merge_ms': mergeWindowMs,
     });
     final store = await SharedPreferences.getInstance();

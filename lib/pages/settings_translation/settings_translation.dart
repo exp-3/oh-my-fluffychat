@@ -224,12 +224,9 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                   onTap: () =>
                       context.go('/rooms/settings/translation/provider'),
                 ),
-                Divider(color: theme.dividerColor),
-                IgnorePointer(
-                  ignoring: !enabled,
-                  child: Opacity(
-                    opacity: enabled ? 1 : 0.5,
-                    child: Column(
+                if (enabled) ...[
+                  Divider(color: theme.dividerColor),
+                  Column(
                       children: [
                         _SectionTitle(l10n.automaticTranslation),
                         Padding(
@@ -359,7 +356,9 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                 : TranslationDisplayMode.translatedOnly,
                           ),
                         ),
-                        Padding(
+                        if (runtime.displayMode ==
+                            TranslationDisplayMode.bilingual)
+                          Padding(
                           padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                           child: Column(
                             children: [
@@ -411,13 +410,9 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                     ),
                                   ),
                                 ],
-                                onChanged:
-                                    runtime.displayMode ==
-                                        TranslationDisplayMode.bilingual
-                                    ? (color) => color == null
-                                          ? null
-                                          : runtime.setBilingualColor(color)
-                                    : null,
+                                onChanged: (color) => color == null
+                                    ? null
+                                    : runtime.setBilingualColor(color),
                               ),
                               const SizedBox(height: 12),
                               DropdownButtonFormField<
@@ -442,47 +437,101 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                     ),
                                   ),
                                 ],
-                                onChanged:
-                                    runtime.displayMode ==
-                                        TranslationDisplayMode.bilingual
-                                    ? (style) => style == null
-                                          ? null
-                                          : runtime.setBilingualStyle(style)
-                                    : null,
+                                onChanged: (style) => style == null
+                                    ? null
+                                    : runtime.setBilingualStyle(style),
                               ),
                             ],
                           ),
                         ),
                         Divider(color: theme.dividerColor),
                         _SectionTitle(l10n.inputTranslation),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: DropdownButtonFormField<InputTranslationMode>(
-                            key: ValueKey(runtime.inputMode),
-                            initialValue: runtime.inputMode,
-                            decoration: InputDecoration(
-                              labelText: l10n.inputTranslationMode,
-                              prefixIcon: const Icon(Icons.translate_outlined),
-                            ),
-                            items: [
-                              DropdownMenuItem(
-                                value: InputTranslationMode.disabled,
-                                child: Text(l10n.inputTranslationModeDisabled),
-                              ),
-                              DropdownMenuItem(
-                                value: InputTranslationMode.manual,
-                                child: Text(l10n.inputTranslationModeManual),
-                              ),
-                              DropdownMenuItem(
-                                value: InputTranslationMode.automatic,
-                                child: Text(l10n.inputTranslationModeAutomatic),
-                              ),
-                            ],
-                            onChanged: (mode) => mode == null
-                                ? null
-                                : runtime.setInputMode(mode),
-                          ),
+                        SwitchListTile.adaptive(
+                          title: Text(l10n.inputTranslationModeManual),
+                          value: runtime.manualInputTranslationEnabled,
+                          onChanged: runtime.setManualInputTranslationEnabled,
                         ),
+                        if (runtime.manualInputTranslationEnabled)
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 32,
+                              top: 12,
+                              right: 16,
+                              bottom: 12,
+                            ),
+                            child: DropdownButtonFormField<InputTranslationTrigger>(
+                              key: ValueKey(runtime.inputTrigger),
+                              initialValue: runtime.inputTrigger,
+                              decoration: InputDecoration(
+                                labelText: l10n.inputTranslationTrigger,
+                                prefixIcon: const Icon(Icons.touch_app_outlined),
+                              ),
+                              items: [
+                                DropdownMenuItem(
+                                  value: InputTranslationTrigger.button,
+                                  child: Text(l10n.inputTranslationTriggerButton),
+                                ),
+                                DropdownMenuItem(
+                                  value: InputTranslationTrigger.longPress,
+                                  child: Text(
+                                    l10n.inputTranslationTriggerLongPress,
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: InputTranslationTrigger.doubleTap,
+                                  child: Text(
+                                    l10n.inputTranslationTriggerDoubleTap,
+                                  ),
+                                ),
+                              ],
+                              onChanged: (trigger) => trigger == null
+                                  ? null
+                                  : runtime.setInputTrigger(trigger),
+                            ),
+                          ),
+                        SwitchListTile.adaptive(
+                          title: Text(l10n.inputTranslationModeAutomatic),
+                          value: runtime.automaticInputTranslationEnabled,
+                          onChanged: runtime.setAutomaticInputTranslationEnabled,
+                        ),
+                        if (runtime.automaticInputTranslationEnabled)
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 32,
+                              top: 12,
+                              right: 16,
+                              bottom: 12,
+                            ),
+                            child: DropdownButtonFormField<InputTranslationSendMode>(
+                              key: ValueKey(runtime.inputSendMode),
+                              initialValue: runtime.inputSendMode,
+                              decoration: InputDecoration(
+                                labelText: l10n.inputTranslationSendModeTitle,
+                                prefixIcon: const Icon(Icons.touch_app_outlined),
+                              ),
+                              items: [
+                                DropdownMenuItem(
+                                  value: InputTranslationSendMode
+                                      .shortOriginalLongTranslated,
+                                  child: Text(
+                                    l10n.inputTranslationSendModeLongTrans,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: InputTranslationSendMode
+                                      .shortTranslatedLongOriginal,
+                                  child: Text(
+                                    l10n.inputTranslationSendModeShortTrans,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                              onChanged: (mode) => mode == null
+                                  ? null
+                                  : runtime.setInputSendMode(mode),
+                            ),
+                          ),
                         IgnorePointer(
                           ignoring:
                               runtime.inputMode ==
@@ -621,95 +670,6 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                               value,
                                             ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 16,
-                                    top: 12,
-                                    right: 16,
-                                  ),
-                                  child:
-                                      runtime.inputMode ==
-                                          InputTranslationMode.automatic
-                                      ? DropdownButtonFormField<
-                                          InputTranslationSendMode
-                                        >(
-                                          key: ValueKey(runtime.inputSendMode),
-                                          initialValue: runtime.inputSendMode,
-                                          decoration: InputDecoration(
-                                            labelText: l10n
-                                                .inputTranslationSendModeTitle,
-                                            prefixIcon: const Icon(
-                                              Icons.touch_app_outlined,
-                                            ),
-                                          ),
-                                          items: [
-                                            DropdownMenuItem(
-                                              value: InputTranslationSendMode
-                                                  .shortOriginalLongTranslated,
-                                              child: Text(
-                                                l10n.inputTranslationSendModeLongTrans,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            DropdownMenuItem(
-                                              value: InputTranslationSendMode
-                                                  .shortTranslatedLongOriginal,
-                                              child: Text(
-                                                l10n.inputTranslationSendModeShortTrans,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ],
-                                          onChanged: (mode) => mode == null
-                                              ? null
-                                              : runtime.setInputSendMode(mode),
-                                        )
-                                      : DropdownButtonFormField<
-                                          InputTranslationTrigger
-                                        >(
-                                          key: ValueKey(runtime.inputTrigger),
-                                          initialValue: runtime.inputTrigger,
-                                          decoration: InputDecoration(
-                                            labelText:
-                                                l10n.inputTranslationTrigger,
-                                            prefixIcon: const Icon(
-                                              Icons.touch_app_outlined,
-                                            ),
-                                          ),
-                                          items: [
-                                            DropdownMenuItem(
-                                              value: InputTranslationTrigger
-                                                  .button,
-                                              child: Text(
-                                                l10n.inputTranslationTriggerButton,
-                                              ),
-                                            ),
-                                            DropdownMenuItem(
-                                              value: InputTranslationTrigger
-                                                  .longPress,
-                                              child: Text(
-                                                l10n.inputTranslationTriggerLongPress,
-                                              ),
-                                            ),
-                                            DropdownMenuItem(
-                                              value: InputTranslationTrigger
-                                                  .doubleTap,
-                                              child: Text(
-                                                l10n.inputTranslationTriggerDoubleTap,
-                                              ),
-                                            ),
-                                          ],
-                                          onChanged:
-                                              runtime.inputMode ==
-                                                  InputTranslationMode.manual
-                                              ? (trigger) => trigger == null
-                                                    ? null
-                                                    : runtime.setInputTrigger(
-                                                        trigger,
-                                                      )
-                                              : null,
-                                        ),
-                                ),
                                 ListTile(
                                   leading: const Icon(Icons.info_outline),
                                   title: Text(
@@ -752,9 +712,8 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                           onChanged: _batchSettingsChanged,
                         ),
                       ],
-                    ),
                   ),
-                ),
+                ],
                 Divider(color: theme.dividerColor),
                 _SectionTitle(l10n.translationCache),
                 ListTile(

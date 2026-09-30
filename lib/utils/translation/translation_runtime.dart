@@ -100,6 +100,12 @@ class TranslationRuntime extends ChangeNotifier {
   String get targetLanguage => _targetLanguage;
   InputTranslationMode get inputMode => _inputMode;
   TranslationInputMode get inputTranslationMode => _inputMode;
+  bool get manualInputTranslationEnabled =>
+      _inputMode == InputTranslationMode.manual ||
+      _inputMode == InputTranslationMode.manualAndAutomatic;
+  bool get automaticInputTranslationEnabled =>
+      _inputMode == InputTranslationMode.automatic ||
+      _inputMode == InputTranslationMode.manualAndAutomatic;
   InputTranslationScope get inputScope => _inputScope;
   TranslationInputScope get inputTranslationScope => _inputScope;
   String get inputSourceLanguage => _inputSourceLanguage;
@@ -390,6 +396,20 @@ class TranslationRuntime extends ChangeNotifier {
   Future<void> setInputTranslationMode(TranslationInputMode value) =>
       setInputMode(value);
 
+  Future<void> setManualInputTranslationEnabled(bool value) =>
+      _setInputTranslationEnabled(value, automaticInputTranslationEnabled);
+
+  Future<void> setAutomaticInputTranslationEnabled(bool value) =>
+      _setInputTranslationEnabled(manualInputTranslationEnabled, value);
+
+  Future<void> _setInputTranslationEnabled(bool manual, bool automatic) =>
+      setInputMode(switch ((manual, automatic)) {
+        (true, true) => InputTranslationMode.manualAndAutomatic,
+        (true, false) => InputTranslationMode.manual,
+        (false, true) => InputTranslationMode.automatic,
+        (false, false) => InputTranslationMode.disabled,
+      });
+
   Future<void> setInputScope(InputTranslationScope value) async {
     if (value == _inputScope) return;
     _inputScope = value;
@@ -669,10 +689,10 @@ class TranslationRuntime extends ChangeNotifier {
   bool canTranslateInputInRoom(Room room) => canTranslateInput(room);
 
   bool canManuallyTranslateInput(Room room) =>
-      _inputMode == InputTranslationMode.manual && canTranslateInput(room);
+      manualInputTranslationEnabled && canTranslateInput(room);
 
   bool shouldAutoTranslateInput(Room room) =>
-      _inputMode == InputTranslationMode.automatic && canTranslateInput(room);
+      automaticInputTranslationEnabled && canTranslateInput(room);
 
   bool shouldTranslateInputOnSend(Room room, {bool? requested}) {
     if (!shouldAutoTranslateInput(room)) return false;
