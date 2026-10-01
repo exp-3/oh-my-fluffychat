@@ -653,9 +653,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                     items: [
                                       DropdownMenuItem(
                                         value: 'auto',
-                                        child: Text(
-                                          l10n.translationAutoDetect,
-                                        ),
+                                        child: Text(l10n.translationAutoDetect),
                                       ),
                                       for (final language
                                           in translationLanguages)
@@ -710,10 +708,9 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                               value: runtime.preferRoomLanguageForInputTarget,
                               onChanged: (value) => value == null
                                   ? null
-                                  : runtime
-                                        .setPreferRoomLanguageForInputTarget(
-                                          value,
-                                        ),
+                                  : runtime.setPreferRoomLanguageForInputTarget(
+                                      value,
+                                    ),
                             ),
                           ],
                         ),
