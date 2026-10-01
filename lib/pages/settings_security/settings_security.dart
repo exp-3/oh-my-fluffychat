@@ -83,9 +83,8 @@ class SettingsSecurityController extends State<SettingsSecurity> {
       title: l10n.pleaseChooseAPasscode,
       message: l10n.pleaseEnter6Digits,
       cancelLabel: l10n.cancel,
-      validator: (text) => RegExp(r'^[0-9]{6}$').hasMatch(text)
-          ? null
-          : l10n.pleaseEnter6Digits,
+      validator: (text) =>
+          RegExp(r'^[0-9]{6}$').hasMatch(text) ? null : l10n.pleaseEnter6Digits,
       keyboardType: TextInputType.number,
       obscureText: true,
       maxLines: 1,
