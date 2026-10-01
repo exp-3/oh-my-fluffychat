@@ -193,6 +193,31 @@ void main() {
     expect(store.getString(_bilingualLayoutPreference), 'background');
   });
 
+  for (final style in const [
+    TranslationBilingualStyle.glow,
+    TranslationBilingualStyle.plain,
+  ]) {
+    test('${style.name} style persists without changing the text color', () async {
+      SharedPreferences.setMockInitialValues({});
+      final store = await SharedPreferences.getInstance();
+      final secrets = _MemorySecrets();
+      final runtime = TranslationRuntime.forTesting();
+
+      await runtime.initialize(
+        store,
+        secrets: secrets,
+        cache: TranslationCache(secrets, _MemoryBackend()),
+      );
+      await runtime.setBilingualColor(TranslationBilingualColor.accent);
+      await runtime.setBilingualStyle(style);
+
+      expect(store.getString(_bilingualLayoutPreference), style.name);
+      final restored = TranslationPreferences(store, secrets);
+      expect(restored.bilingualStyle, style);
+      expect(restored.bilingualColor, TranslationBilingualColor.accent);
+    });
+  }
+
   test(
     'legacy background selection migrates without losing its layout',
     () async {

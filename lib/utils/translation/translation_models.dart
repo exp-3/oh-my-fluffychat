@@ -32,7 +32,7 @@ enum TranslationDisplayMode { translatedOnly, bilingual }
 
 enum TranslationBilingualColor { body, accent, secondary, tertiary, muted }
 
-enum TranslationBilingualStyle { divider, background }
+enum TranslationBilingualStyle { divider, background, glow, plain }
 
 class TranslationRequestMessage {
   final String text;

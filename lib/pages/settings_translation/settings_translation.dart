@@ -121,17 +121,18 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
   }
 
   Future<void> _toggleEnabled(bool value) async {
-    if (value && !runtime.privacyAccepted) {
+    if (value) {
       final result = await showOkCancelAlertDialog(
         context: context,
         title: L10n.of(context).translation,
-        message: L10n.of(context).translationPrivacyNotice,
+        message: L10n.of(context).translationPrivacyDetails,
         okLabel: L10n.of(context).ok,
         cancelLabel: L10n.of(context).cancel,
       );
-      if (result != OkCancelResult.ok) return;
+      if (result != OkCancelResult.ok || !mounted) return;
       await runtime.acceptPrivacyNotice();
     }
+    if (!mounted) return;
     final changed = await runtime.setEnabled(value);
     if (changed || !mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -197,9 +198,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                           : Icons.radio_button_unchecked,
                     ),
                     title: Text(provider.name),
-                    subtitle: Text(
-                      '${provider.model} - ${provider.protocol.name}',
-                    ),
+                    subtitle: Text(provider.model),
                     trailing: IconButton(
                       icon: const Icon(Icons.edit_outlined),
                       tooltip: l10n.edit,
@@ -356,16 +355,19 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                         Padding(
                           padding: const EdgeInsets.only(
                             left: 32,
-                            top: 12,
                             right: 16,
                             bottom: 12,
                           ),
-                          child: Column(
+                          child: _ResponsiveSettingsLayout(
+                            padding: EdgeInsets.zero,
+                            runSpacing: 12,
+                            minimumColumnWidth: 180,
                             children: [
                               DropdownButtonFormField<
                                 TranslationBilingualColor
                               >(
                                 initialValue: runtime.bilingualColor,
+                                isExpanded: true,
                                 decoration: InputDecoration(
                                   labelText: l10n.translationBilingualColor,
                                   prefixIcon: const Icon(
@@ -414,11 +416,11 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                     ? null
                                     : runtime.setBilingualColor(color),
                               ),
-                              const SizedBox(height: 12),
                               DropdownButtonFormField<
                                 TranslationBilingualStyle
                               >(
                                 initialValue: runtime.bilingualStyle,
+                                isExpanded: true,
                                 decoration: InputDecoration(
                                   labelText: l10n.translationBilingualStyle,
                                   prefixIcon: const Icon(
@@ -426,6 +428,10 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                   ),
                                 ),
                                 items: [
+                                  DropdownMenuItem(
+                                    value: TranslationBilingualStyle.plain,
+                                    child: Text(l10n.translationStylePlain),
+                                  ),
                                   DropdownMenuItem(
                                     value: TranslationBilingualStyle.divider,
                                     child: Text(l10n.translationStyleDivider),
@@ -435,6 +441,10 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                     child: Text(
                                       l10n.translationStyleBackground,
                                     ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: TranslationBilingualStyle.glow,
+                                    child: Text(l10n.translationStyleGlow),
                                   ),
                                 ],
                                 onChanged: (style) => style == null
@@ -455,7 +465,6 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                         Padding(
                           padding: const EdgeInsets.only(
                             left: 32,
-                            top: 12,
                             right: 16,
                             bottom: 12,
                           ),
@@ -503,7 +512,6 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                         Padding(
                           padding: const EdgeInsets.only(
                             left: 32,
-                            top: 12,
                             right: 16,
                             bottom: 12,
                           ),
@@ -669,13 +677,13 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                             value,
                                           ),
                               ),
-                              ListTile(
-                                leading: const Icon(Icons.info_outline),
-                                title: Text(l10n.inputTranslationPrivacyNotice),
-                              ),
                             ],
                           ),
                         ),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.info_outline),
+                        title: Text(l10n.translationPrivacyDetails),
                       ),
                       _SectionTitle(l10n.batchTranslation),
                       _ResponsiveSettingsLayout(
@@ -772,11 +780,13 @@ class _ResponsiveSettingsLayout extends StatelessWidget {
   final List<Widget> children;
   final EdgeInsetsGeometry padding;
   final double runSpacing;
+  final double minimumColumnWidth;
 
   const _ResponsiveSettingsLayout({
     required this.children,
     this.padding = const EdgeInsets.symmetric(horizontal: 16),
     this.runSpacing = 0,
+    this.minimumColumnWidth = 188,
   });
 
   @override
@@ -785,9 +795,11 @@ class _ResponsiveSettingsLayout extends StatelessWidget {
     child: LayoutBuilder(
       builder: (context, constraints) {
         const spacing = 12.0;
-        final minimumColumnWidth = MediaQuery.textScalerOf(context).scale(188);
+        final scaledColumnWidth = MediaQuery.textScalerOf(
+          context,
+        ).scale(minimumColumnWidth);
         final useTwoColumns =
-            constraints.maxWidth >= minimumColumnWidth * 2 + spacing;
+            constraints.maxWidth >= scaledColumnWidth * 2 + spacing;
         final itemWidth = useTwoColumns
             ? (constraints.maxWidth - spacing) / 2
             : constraints.maxWidth;
@@ -927,10 +939,10 @@ class _SettingsTranslationProviderState
     super.dispose();
   }
 
-  TranslationProviderConfig? get config {
+  TranslationProviderConfig? get _draftConfig {
     final uri = Uri.tryParse(endpoint.text.trim());
     if (uri == null) return null;
-    final value = TranslationProviderConfig(
+    return TranslationProviderConfig(
       id: providerId,
       name: name.text.trim(),
       endpoint: uri,
@@ -938,7 +950,11 @@ class _SettingsTranslationProviderState
       protocol: protocol,
       model: model.text.trim(),
     );
-    return value.isValid ? value : null;
+  }
+
+  TranslationProviderConfig? get config {
+    final value = _draftConfig;
+    return value?.isValid == true ? value : null;
   }
 
   void formChanged() {
@@ -1040,6 +1056,13 @@ class _SettingsTranslationProviderState
     final l10n = L10n.of(context);
     final theme = Theme.of(context);
     final value = config;
+    final draft = _draftConfig;
+    final previewEndpoint =
+        draft != null &&
+            draft.endpoint.hasScheme &&
+            draft.endpoint.host.isNotEmpty
+        ? draft.requestEndpoint
+        : null;
     final testMessage = this.testMessage;
     final busy = testing || saving || deleting;
     if (widget.providerId != null && existing == null) {
@@ -1102,30 +1125,38 @@ class _SettingsTranslationProviderState
                     decoration: InputDecoration(
                       labelText: 'URL',
                       hintText: useFullEndpoint
-                          ? 'https://api.example/v1/chat/completions'
+                          ? switch (protocol) {
+                              TranslationProtocol.chatCompletions =>
+                                'https://api.example/v1/chat/completions',
+                              TranslationProtocol.responses =>
+                                'https://api.example/v1/responses',
+                            }
                           : 'https://api.example/v1',
+                      helperText: previewEndpoint == null
+                          ? null
+                          : '${l10n.translationEndpoint}: $previewEndpoint',
+                      helperMaxLines: 3,
                     ),
                     keyboardType: TextInputType.url,
                     onChanged: (_) => formChanged(),
                   ),
-                  CheckboxListTile.adaptive(
-                    contentPadding: EdgeInsets.zero,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    value: useFullEndpoint,
-                    title: Text(l10n.translationEndpointIsComplete),
-                    subtitle: value == null || useFullEndpoint
-                        ? null
-                        : Text(
-                            '${l10n.translationEndpoint}: '
-                            '${value.requestEndpoint}',
-                          ),
-                    onChanged: busy
-                        ? null
-                        : (checked) {
-                            if (checked == null) return;
-                            useFullEndpoint = checked;
-                            formChanged();
-                          },
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: CheckboxListTile.adaptive(
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                      visualDensity: const VisualDensity(vertical: -2),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      value: useFullEndpoint,
+                      title: Text(l10n.translationEndpointIsComplete),
+                      onChanged: busy
+                          ? null
+                          : (checked) {
+                              if (checked == null) return;
+                              useFullEndpoint = checked;
+                              formChanged();
+                            },
+                    ),
                   ),
                   DropdownButtonFormField<TranslationProtocol>(
                     initialValue: protocol,

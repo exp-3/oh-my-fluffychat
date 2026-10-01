@@ -1,4 +1,7 @@
 {
+    "enableTranslation": "Translationem AI activare",
+    "translationPrivacyDetails": "Cum translatione nuntiorum vel textus inscripti uteris, nuntii colloquii et textus in campo inscriptionis qui vertendi sunt sine cryptographia ad externum provisorem LLM quem eligis mittuntur, etiam in colloquiis ab extremo ad extremum encryptis. Translatio textus inscripti etiam textum nondum missum ad provisorem mittere potest antequam nuntium mittas. Cryptographia colloquii hanc textus copiam ad servitium translationis missam non protegit; provisor eius res legere potest, et ratio qua data servantur et adhibentur a consilio eius de rebus privatis pendet.\n\nSi colloquium res secretas continet, aut provisori non confidis ut tuam ceterorumque participum vitam privatam observet, translatione nuntiorum vel textus inscripti in illis conclavibus noli uti. Pro ea adhibere potes exemplar linguae quod ipse hospitaris, cuius datorum tractationem et conservationem regis.",
+    "translationPrivacyNotice": "Res colloquii aperto textu ad provisorem LLM quem eligis mittentur.",
     "importFromZipFile": "A tabulario zip importare",
     "editImage": "Pictura exercere",
     "@editImage": {

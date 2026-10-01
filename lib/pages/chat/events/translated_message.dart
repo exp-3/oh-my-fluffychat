@@ -276,6 +276,25 @@ class _TranslatedContent extends StatelessWidget {
       TranslationBilingualColor.muted => textColor.withAlpha(170),
     };
     final background = bilingualStyle == TranslationBilingualStyle.background;
+    final glow = bilingualStyle == TranslationBilingualStyle.glow;
+    const backgroundInset = 8.0;
+    // Short shadows outline the glyphs; the centered blur adds a soft halo.
+    final glowShadows = glow
+        ? [
+            for (final offset in const [
+              Offset(-1, 0),
+              Offset(1, 0),
+              Offset(0, -1),
+              Offset(0, 1),
+              Offset(-0.7, -0.7),
+              Offset(0.7, -0.7),
+              Offset(-0.7, 0.7),
+              Offset(0.7, 0.7),
+            ])
+              Shadow(color: backgroundColor, offset: offset, blurRadius: 0.75),
+            Shadow(color: backgroundColor, blurRadius: 4),
+          ]
+        : null;
     final translatedContent = _TranslationHtml(
       event: event,
       html: translatedHtml,
@@ -283,8 +302,11 @@ class _TranslatedContent extends StatelessWidget {
       linkColor: linkColor,
       fontSize: AppConfig.messageFontSize,
       timeline: timeline,
+      textShadows: glowShadows,
       padding: background
           ? const EdgeInsets.symmetric(horizontal: 8, vertical: 6)
+          : glow
+          ? const EdgeInsets.fromLTRB(16, 3, 16, 8)
           : const EdgeInsets.fromLTRB(16, 4, 16, 8),
     );
     return Column(
@@ -298,17 +320,24 @@ class _TranslatedContent extends StatelessWidget {
           linkColor: linkColor,
           originalFontSize: originalFontSize,
           timeline: timeline,
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          padding: EdgeInsets.fromLTRB(16, 8, 16, glow ? 3 : 4),
         ),
-        if (!background)
+        if (bilingualStyle == TranslationBilingualStyle.divider)
           Divider(height: 1, color: translationColor.withAlpha(64)),
         if (background)
           Padding(
-            padding: const EdgeInsets.fromLTRB(8, 2, 8, 8),
+            padding: const EdgeInsets.fromLTRB(
+              backgroundInset,
+              2,
+              backgroundInset,
+              backgroundInset,
+            ),
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: backgroundColor,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(
+                  AppConfig.borderRadius - backgroundInset,
+                ),
               ),
               child: translatedContent,
             ),
@@ -359,6 +388,7 @@ class _TranslationHtml extends StatelessWidget {
   final double fontSize;
   final Timeline timeline;
   final EdgeInsetsGeometry padding;
+  final List<Shadow>? textShadows;
 
   const _TranslationHtml({
     required this.event,
@@ -368,6 +398,7 @@ class _TranslationHtml extends StatelessWidget {
     required this.fontSize,
     required this.timeline,
     this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    this.textShadows,
   });
 
   @override
@@ -376,6 +407,7 @@ class _TranslationHtml extends StatelessWidget {
     child: HtmlMessage(
       html: html,
       textColor: textColor,
+      textShadows: textShadows,
       room: event.room,
       fontSize: fontSize,
       linkStyle: TextStyle(
@@ -383,6 +415,7 @@ class _TranslationHtml extends StatelessWidget {
         fontSize: AppConfig.messageFontSize,
         decoration: TextDecoration.underline,
         decorationColor: linkColor,
+        shadows: textShadows,
       ),
       onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
       eventId: event.eventId,
