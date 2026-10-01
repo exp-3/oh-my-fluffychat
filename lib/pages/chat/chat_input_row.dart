@@ -98,7 +98,9 @@ class ChatInputRow extends StatelessWidget {
         maxLines: inputMaxLines,
       )..layout(maxWidth: stackedInputWidth);
       final estimatedInputHeight =
-          textPainter.height + inputPadding.vertical + inputOuterPadding.vertical;
+          textPainter.height +
+          inputPadding.vertical +
+          inputOuterPadding.vertical;
       stackInputTranslationButton =
           estimatedInputHeight >= stackedButtonsHeight;
       textPainter.dispose();
