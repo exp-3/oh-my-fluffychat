@@ -29,6 +29,7 @@ import 'message_content.dart';
 import 'message_reactions.dart';
 import 'reply_content.dart';
 import 'state_message.dart';
+import 'translated_message.dart';
 
 class Message extends StatelessWidget {
   final Event event;
@@ -552,6 +553,19 @@ class Message extends StatelessWidget {
                               ),
                             ),
 
+                            GestureDetector(
+                              onLongPress: longPressSelect
+                                  ? null
+                                  : () {
+                                      HapticFeedback.heavyImpact();
+                                      onSelect(event);
+                                    },
+                              child: OutsideBubbleTranslation(
+                                event: displayEvent,
+                                timeline: timeline,
+                                textShadows: wallpaperTextShadow,
+                              ),
+                            ),
                             AnimatedSize(
                               duration: FluffyThemes.animationDuration,
                               curve: FluffyThemes.animationCurve,

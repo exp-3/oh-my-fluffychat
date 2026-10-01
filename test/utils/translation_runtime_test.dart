@@ -196,6 +196,8 @@ void main() {
   for (final style in const [
     TranslationBilingualStyle.glow,
     TranslationBilingualStyle.plain,
+    TranslationBilingualStyle.duotone,
+    TranslationBilingualStyle.outsideBubble,
   ]) {
     test('${style.name} style persists without changing the text color', () async {
       SharedPreferences.setMockInitialValues({});

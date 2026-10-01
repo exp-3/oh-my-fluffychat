@@ -6,6 +6,7 @@
 import 'dart:async';
 
 import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/event_checkbox_extension.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
@@ -21,6 +22,93 @@ final _whitespacePattern = RegExp(r'\s+', unicode: true);
 bool _sameTextIgnoringWhitespace(String first, String second) =>
     first.replaceAll(_whitespacePattern, '') ==
     second.replaceAll(_whitespacePattern, '');
+
+Color _translationTextColor(
+  TranslationBilingualColor color,
+  Color textColor,
+  ColorScheme colorScheme, {
+  bool ownMessage = false,
+}) => switch (color) {
+  TranslationBilingualColor.body => textColor,
+  TranslationBilingualColor.accent =>
+    ownMessage ? colorScheme.primaryFixed : colorScheme.primary,
+  TranslationBilingualColor.secondary =>
+    ownMessage ? colorScheme.secondaryFixed : colorScheme.secondary,
+  TranslationBilingualColor.tertiary =>
+    ownMessage ? colorScheme.tertiaryFixed : colorScheme.tertiary,
+  TranslationBilingualColor.muted => textColor.withAlpha(170),
+};
+
+class OutsideBubbleTranslation extends StatelessWidget {
+  final Event event;
+  final Timeline timeline;
+  final List<Shadow>? textShadows;
+
+  const OutsideBubbleTranslation({
+    super.key,
+    required this.event,
+    required this.timeline,
+    this.textShadows,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final runtime = TranslationRuntime.instance;
+    return AnimatedBuilder(
+      animation: runtime,
+      builder: (context, _) {
+        if (!runtime.canTranslateEvent(event) ||
+            runtime.displayMode != TranslationDisplayMode.bilingual ||
+            runtime.bilingualStyle != TranslationBilingualStyle.outsideBubble) {
+          return const SizedBox.shrink();
+        }
+        return ValueListenableBuilder<TranslationResultState>(
+          valueListenable: runtime.stateForEvent(event),
+          builder: (context, state, _) {
+            final translation = state.translation;
+            if (state.status != TranslationStatus.translated ||
+                translation == null ||
+                _sameTextIgnoringWhitespace(
+                  translation,
+                  runtime.sourceForEvent(event),
+                )) {
+              return const SizedBox.shrink();
+            }
+            final colorScheme = Theme.of(context).colorScheme;
+            final ownMessage = event.senderId == event.room.client.userID;
+            return Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Align(
+                alignment: ownMessage ? Alignment.topRight : Alignment.topLeft,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: FluffyThemes.columnWidth * 1.5,
+                  ),
+                  child: _TranslationHtml(
+                    event: event,
+                    html: event.messageType == MessageTypes.Emote
+                        ? '* $translation'
+                        : translation,
+                    textColor: _translationTextColor(
+                      runtime.bilingualColor,
+                      colorScheme.onSurface,
+                      colorScheme,
+                    ),
+                    linkColor: colorScheme.primary,
+                    fontSize: AppConfig.messageFontSize,
+                    timeline: timeline,
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                    textShadows: textShadows,
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
 
 class TranslatedMessage extends StatefulWidget {
   final Event event;
@@ -263,19 +351,25 @@ class _TranslatedContent extends StatelessWidget {
         timeline: timeline,
       );
     }
-    final ownMessage = event.senderId == event.room.client.userID;
+    if (bilingualStyle == TranslationBilingualStyle.outsideBubble) {
+      return _OriginalTranslation(
+        event: event,
+        originalHtml: originalHtml,
+        textColor: textColor,
+        linkColor: linkColor,
+        originalFontSize: originalFontSize,
+        timeline: timeline,
+      );
+    }
     final backgroundColor = textColor.withAlpha(38);
-    final translationColor = switch (bilingualColor) {
-      TranslationBilingualColor.body => textColor,
-      TranslationBilingualColor.accent =>
-        ownMessage ? colorScheme.primaryFixed : colorScheme.primary,
-      TranslationBilingualColor.secondary =>
-        ownMessage ? colorScheme.secondaryFixed : colorScheme.secondary,
-      TranslationBilingualColor.tertiary =>
-        ownMessage ? colorScheme.tertiaryFixed : colorScheme.tertiary,
-      TranslationBilingualColor.muted => textColor.withAlpha(170),
-    };
+    final translationColor = _translationTextColor(
+      bilingualColor,
+      textColor,
+      colorScheme,
+      ownMessage: event.senderId == event.room.client.userID,
+    );
     final background = bilingualStyle == TranslationBilingualStyle.background;
+    final duotone = bilingualStyle == TranslationBilingualStyle.duotone;
     final glow = bilingualStyle == TranslationBilingualStyle.glow;
     const backgroundInset = 8.0;
     // Short shadows outline the glyphs; the centered blur adds a soft halo.
@@ -341,6 +435,11 @@ class _TranslatedContent extends StatelessWidget {
               ),
               child: translatedContent,
             ),
+          )
+        else if (duotone)
+          DecoratedBox(
+            decoration: BoxDecoration(color: backgroundColor),
+            child: translatedContent,
           )
         else
           translatedContent,
