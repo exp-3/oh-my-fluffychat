@@ -41,6 +41,15 @@ class ChatInputRow extends StatelessWidget {
   Widget _build(BuildContext context, BoxConstraints constraints) {
     final theme = Theme.of(context);
     const leadingButtonWidth = 40.0;
+    const stackedButtonsHeight = height + leadingButtonWidth;
+    const inputPadding = EdgeInsets.only(
+      left: 6.0,
+      right: 6.0,
+      bottom: 6.0,
+      top: 3.0,
+    );
+    const inputOuterPadding = EdgeInsets.symmetric(vertical: 2.0);
+    const inputMaxLines = 8;
     final leadingButtonStyle = IconButton.styleFrom(
       fixedSize: const Size.square(leadingButtonWidth),
       shape: const CircleBorder(),
@@ -64,22 +73,20 @@ class ChatInputRow extends StatelessWidget {
         Matrix.of(context).isMultiAccount &&
         Matrix.of(context).hasComplexBundles &&
         Matrix.of(context).currentBundle!.length > 1;
-    // Use the horizontal layout's width so gaining space by stacking
-    // cannot immediately switch the buttons back to a row.
-    final horizontalInputWidth =
+    // Measure at the stacked layout's width. Only stack when the wider input
+    // is tall enough for both buttons, without increasing the input row height.
+    // Using the same width in both layouts also prevents switching back and forth.
+    final stackedInputWidth =
         constraints.maxWidth -
         8 -
-        (showInputTranslationButton || !textMessageOnly
-            ? leadingButtonWidth
-            : 0) -
         leadingButtonWidth -
         (showAccountPicker ? 48 : 0) -
         height -
-        12;
+        inputPadding.horizontal;
     var stackInputTranslationButton = false;
     if (showInputTranslationButton &&
-        horizontalInputWidth.isFinite &&
-        horizontalInputWidth > 0) {
+        stackedInputWidth.isFinite &&
+        stackedInputWidth > 0) {
       final textPainter = TextPainter(
         text: TextSpan(
           text: controller.sendController.text,
@@ -88,10 +95,12 @@ class ChatInputRow extends StatelessWidget {
         textDirection: Directionality.of(context),
         textScaler: TextScaler.linear(AppSettings.fontSizeFactor.value),
         locale: Localizations.localeOf(context),
-        maxLines: 3,
-      )..layout(maxWidth: horizontalInputWidth);
+        maxLines: inputMaxLines,
+      )..layout(maxWidth: stackedInputWidth);
+      final estimatedInputHeight =
+          textPainter.height + inputPadding.vertical + inputOuterPadding.vertical;
       stackInputTranslationButton =
-          textPainter.computeLineMetrics().length >= 3;
+          estimatedInputHeight >= stackedButtonsHeight;
       textPainter.dispose();
     }
     final inputTranslationButton = IconButton(
@@ -348,7 +357,7 @@ class ChatInputRow extends StatelessWidget {
                   ),
                   SizedBox(
                     height: stackInputTranslationButton
-                        ? height + leadingButtonWidth
+                        ? stackedButtonsHeight
                         : height,
                     width: leadingButtonWidth,
                     child: Column(
@@ -379,11 +388,11 @@ class ChatInputRow extends StatelessWidget {
                     ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 2.0),
+                      padding: inputOuterPadding,
                       child: InputBar(
                         room: controller.room,
                         minLines: 1,
-                        maxLines: 8,
+                        maxLines: inputMaxLines,
                         autofocus: !PlatformInfos.isMobile,
                         keyboardType: TextInputType.multiline,
                         textInputAction:
@@ -416,12 +425,7 @@ class ChatInputRow extends StatelessWidget {
                         focusNode: controller.inputFocus,
                         controller: controller.sendController,
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.only(
-                            left: 6.0,
-                            right: 6.0,
-                            bottom: 6.0,
-                            top: 3.0,
-                          ),
+                          contentPadding: inputPadding,
                           counter: const SizedBox.shrink(),
                           hintText: controller.room.encrypted
                               ? L10n.of(context).encryptedMessage

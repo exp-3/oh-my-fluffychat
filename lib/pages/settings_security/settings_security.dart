@@ -73,8 +73,6 @@ class SettingsSecurityController extends State<SettingsSecurity> {
   }
 
   Future<void> setAppLockAction() async {
-    await AppLock.of(context).changeUseBiometrics(false);
-    if (!mounted) return;
     final l10n = L10n.of(context);
     if (AppLock.of(context).isActive) {
       AppLock.of(context).showLockScreen();
@@ -85,23 +83,35 @@ class SettingsSecurityController extends State<SettingsSecurity> {
       title: l10n.pleaseChooseAPasscode,
       message: l10n.pleaseEnter6Digits,
       cancelLabel: l10n.cancel,
-      validator: (text) {
-        if (text.length == 6 && int.tryParse(text)! >= 0) {
-          return null;
-        }
-        return l10n.pleaseEnter6Digits;
-      },
+      validator: (text) => RegExp(r'^[0-9]{6}$').hasMatch(text)
+          ? null
+          : l10n.pleaseEnter6Digits,
       keyboardType: TextInputType.number,
       obscureText: true,
       maxLines: 1,
       minLines: 1,
       maxLength: 6,
     );
-    if (newLock != null) {
-      if (!mounted) return;
-      await AppLock.of(context).changePincode(newLock);
-      setState(() {});
-    }
+    if (newLock == null || !mounted) return;
+    final confirmedLock = await showTextInputDialog(
+      useRootNavigator: false,
+      context: context,
+      title: l10n.repeatPassword,
+      message: l10n.pleaseEnter6Digits,
+      cancelLabel: l10n.cancel,
+      validator: (text) => text == newLock ? null : l10n.passwordsDoNotMatch,
+      keyboardType: TextInputType.number,
+      obscureText: true,
+      maxLines: 1,
+      minLines: 1,
+      maxLength: 6,
+    );
+    if (confirmedLock == null || !mounted) return;
+    final appLock = AppLock.of(context);
+    await appLock.changeUseBiometrics(false);
+    await appLock.changePincode(confirmedLock);
+    if (!mounted) return;
+    setState(() {});
   }
 
   Future<void> deleteAccountAction() async {
