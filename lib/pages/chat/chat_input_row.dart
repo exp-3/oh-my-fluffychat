@@ -354,8 +354,7 @@ class ChatInputRow extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        if (stackInputTranslationButton)
-                          inputTranslationButton,
+                        if (stackInputTranslationButton) inputTranslationButton,
                         IconButton(
                           style: leadingButtonStyle,
                           tooltip: L10n.of(context).emojis,
