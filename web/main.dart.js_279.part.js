@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHr(){return new B.MP(A.dA("ca"))},
-MP:function MP(d){this.a=d}}
+dHt(){return new B.MQ(A.dA("ca"))},
+MQ:function MQ(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[10],B)
-B.MP.prototype={
+B.MQ.prototype={
 ghb(){return"Ha fallat la inicialitzaci\xf3 de l\u2019arxiu local"},
 hc(d){return"No s\u2019ha pogut obrir l\u2019arxiu local de \xab"+d+"\xbb. Pot estar malm\xe8s o pot faltar un component d\u2019execuci\xf3 necessari.\n\nEn restablir-lo, l\u2019arxiu local d\u2019aquest dispositiu se suprimir\xe0 permanentment. Les dades del servidor es poden tornar a sincronitzar, per\xf2 es poden perdre les dades no enviades o desades nom\xe9s localment. El voleu restablir?"},
 gey(){return"Traducci\xf3"},
@@ -340,7 +340,7 @@ gfW(){return"Nom del paquet"},
 glt(){return"Obre als mapes"},
 gec(){return"Enlla\xe7"},
 glv(){return"O"},
-gej(){return"Participant"},
+gek(){return"Participant"},
 ghH(){return"contrasenya o clau de recuperaci\xf3"},
 glw(d){return"Contrasenya"},
 geF(){return"Contrasenya oblidada"},
@@ -371,7 +371,7 @@ glX(){return"Denuncia el missatge"},
 gm0(){return"La sala s'ha actualitzat"},
 gm5(){return"Versi\xf3 de la sala"},
 gi3(){return"Desa el fitxer"},
-geg(d){return"Cerca"},
+geh(d){return"Cerca"},
 gfw(){return"Seguretat"},
 gf3(d){return"Envia"},
 gi5(){return"Envia un missatge"},
@@ -470,7 +470,7 @@ glj(){return"Ning\xfa s'hi pot ficar"},
 gkT(){return"Pica"},
 gmP(){return"Usu\xe0r\xefis"},
 jM(d){return""+d+" arxius"},
-gef(){return"Usu\xe0r\xefi"},
+geg(){return"Usu\xe0r\xefi"},
 gh9(){return"Personalitzat"},
 gmU(){return"Per qu\xe8 no es pot llegir aquest missatge?"},
 glg(){return"Aix\xf2 pot passar si el missatge es va enviar abans que haguessis iniciat sessi\xf3 al teu compte des d'aquest dispositiu.\n\nTamb\xe9 pot ser que l'emissor hagi bloquejat el teu dispositiu o que la connexi\xf3 a internet an\xe9s malament.\n\nQue pots llegir el missatge des d'una altra sessi\xf3? Si \xe9s aix\xed, llavors pots transferir-lo! Ves a Par\xe0metres \u2192 Dispositius i assegura't que els teus dispositius s'ha verificat m\xfatuament. Quan obris la sala la propera vegada i totes dues sessions estiguin executant-se, en primer pla, llavors les claus es trasnsmetran autom\xe0ticament.\n\nVols evitar perdre les claus en tancar la sessi\xf3 o en canviar de dispositiu? Llavors assegura't que has activat la c\xf2pia de seguretat del xat als par\xe0metres."},
@@ -735,7 +735,7 @@ gtB(){return"Treu els drets de moderadori"},
 gtA(){return"Treu els drets d'admin"},
 gty(){return"Nivell de permisos"},
 gro(){return"Els nivells de permisos defineixen qu\xe8 pot fer uni membre d'aquesta sala, i es defineix per un n\xfamero entre 0 i 100."},
-gei(){return"Propiet\xe0ri\xef"},
+gej(){return"Propiet\xe0ri\xef"},
 gth(){return"Silencia"},
 grQ(){return"Crea un nou xat"},
 glY(d){return"Reseteja"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.MP,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"MP":{"aW":[]}}'))};
-(a=>{a["fST78QH3tkixBToLNoNvYoNTYlE="]=a.current})($__dart_deferred_initializers__);
+y(B.MQ,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"MQ":{"aW":[]}}'))};
+(a=>{a["LwjzQxL3mb0MkutbPeBYDzL5Os0="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_279.part.js.map

@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dI7(){return new B.Nu(A.dA("sv"))},
-Nu:function Nu(d){this.a=d}}
+dI9(){return new B.Nv(A.dA("sv"))},
+Nv:function Nv(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[50],B)
-B.Nu.prototype={
+B.Nv.prototype={
 ghb(){return"Det lokala arkivet kunde inte initieras"},
 hc(d){return"Det lokala arkivet f\xf6r \u201d"+d+"\u201d kunde inte \xf6ppnas. Det kan vara skadat eller s\xe5 kan en n\xf6dv\xe4ndig k\xf6rningskomponent saknas.\n\nEn \xe5terst\xe4llning tar permanent bort enhetens lokala arkiv. Serverdata kan synkroniseras igen, men data som inte har skickats eller bara sparats lokalt kan g\xe5 f\xf6rlorade. Vill du \xe5terst\xe4lla det?"},
 gey(){return"\xd6vers\xe4ttning"},
@@ -340,7 +340,7 @@ gfW(){return"Paketnamn"},
 glt(){return"\xd6ppna i karta"},
 gec(){return"L\xe4nk"},
 glv(){return"Eller"},
-gej(){return"Deltagare"},
+gek(){return"Deltagare"},
 ghH(){return"l\xf6senord eller \xe5terst\xe4llningsnyckel"},
 glw(d){return"L\xf6senord"},
 geF(){return"Gl\xf6mt l\xf6senord"},
@@ -371,7 +371,7 @@ glX(){return"Rapportera meddelande"},
 gm0(){return"Rummet har blivit uppgraderat"},
 gm5(){return"Rum version"},
 gi3(){return"Spara fil"},
-geg(d){return"S\xf6k"},
+geh(d){return"S\xf6k"},
 gfw(){return"S\xe4kerhet"},
 gf3(d){return"Skicka"},
 gi5(){return"Skicka ett meddelande"},
@@ -470,7 +470,7 @@ glj(){return"Ingen kan g\xe5 med"},
 gkT(){return"Knacka"},
 gmP(){return"Anv\xe4ndare"},
 jM(d){return""+d+" filer"},
-gef(){return"Anv\xe4ndare"},
+geg(){return"Anv\xe4ndare"},
 gh9(){return"Anpassad"},
 gmU(){return"Varf\xf6r kan inte detta meddelande l\xe4sas?"},
 glg(){return"Detta kan h\xe4nda om meddelandet skickades innan du loggade in p\xe5 ditt konto i den h\xe4r enheten.\n\nDet kan ocks\xe5 vara s\xe5 att avs\xe4ndaren har blockerat din enhet eller att n\xe5got gick fel med internetanslutningen.\n\nKan du l\xe4sa meddelandet i en annan session? I s\xe5dana fall kan du \xf6verf\xf6ra meddelandet fr\xe5n den sessionen! G\xe5 till Inst\xe4llningar > Enhet och s\xe4kerst\xe4ll att dina enheter har verifierat varandra. N\xe4r du \xf6ppnar rummet n\xe4sta g\xe5ng och b\xe5da sessionerna \xe4r i f\xf6rgrunden, s\xe5 kommer nycklarna att \xf6verf\xf6ras automatiskt.\n\nVill du inte f\xf6rlora nycklarna vid utloggning eller n\xe4r du byter enhet? S\xe4kerst\xe4ll att du har aktiverat s\xe4kerhetskopiering f\xf6r chatten i inst\xe4llningarna."},
@@ -735,7 +735,7 @@ gtB(){return"Ta bort moderator-r\xe4ttigheter"},
 gtA(){return"Ta bort admin-r\xe4ttigheter"},
 gty(){return"Styrkeniv\xe5"},
 gro(){return"Styrkeniv\xe5er avg\xf6r vad en medlem \xe4r till\xe5ten att g\xf6ra i rummet och \xe4r oftast mellan 0 till 100."},
-gei(){return"\xc4gare"},
+gej(){return"\xc4gare"},
 gth(){return"Tysta"},
 grQ(){return"Skapa ny chatt"},
 glY(d){return"\xc5terst\xe4ll"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.Nu,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"Nu":{"aW":[]}}'))};
-(a=>{a["pIj3lzHMi53M6ytiVu4OcPyvxa8="]=a.current})($__dart_deferred_initializers__);
+y(B.Nv,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Nv":{"aW":[]}}'))};
+(a=>{a["thh/QZhuMQPdTSrk4Viv/hSz6QI="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_398.part.js.map

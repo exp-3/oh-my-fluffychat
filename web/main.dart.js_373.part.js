@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHP(){return new B.Nc(A.dA("ja"))},
-Nc:function Nc(d){this.a=d}}
+dHR(){return new B.Nd(A.dA("ja"))},
+Nd:function Nd(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[34],B)
-B.Nc.prototype={
+B.Nd.prototype={
 ghb(){return"\u30ed\u30fc\u30ab\u30eb\u30a2\u30fc\u30ab\u30a4\u30d6\u306e\u521d\u671f\u5316\u306b\u5931\u6557\u3057\u307e\u3057\u305f"},
 hc(d){return"\u300c"+d+"\u300d\u306e\u30ed\u30fc\u30ab\u30eb\u30a2\u30fc\u30ab\u30a4\u30d6\u3092\u958b\u3051\u307e\u305b\u3093\u3067\u3057\u305f\u3002\u30a2\u30fc\u30ab\u30a4\u30d6\u304c\u7834\u640d\u3057\u3066\u3044\u308b\u304b\u3001\u5fc5\u8981\u306a\u30e9\u30f3\u30bf\u30a4\u30e0\u30b3\u30f3\u30dd\u30fc\u30cd\u30f3\u30c8\u304c\u4e0d\u8db3\u3057\u3066\u3044\u308b\u53ef\u80fd\u6027\u304c\u3042\u308a\u307e\u3059\u3002\n\n\u30ea\u30bb\u30c3\u30c8\u3059\u308b\u3068\u3001\u3053\u306e\u30c7\u30d0\u30a4\u30b9\u306e\u30ed\u30fc\u30ab\u30eb\u30a2\u30fc\u30ab\u30a4\u30d6\u306f\u5b8c\u5168\u306b\u524a\u9664\u3055\u308c\u307e\u3059\u3002\u30b5\u30fc\u30d0\u30fc\u4e0a\u306e\u30c7\u30fc\u30bf\u306f\u518d\u540c\u671f\u3067\u304d\u307e\u3059\u304c\u3001\u672a\u9001\u4fe1\u306e\u30c7\u30fc\u30bf\u3084\u30ed\u30fc\u30ab\u30eb\u306b\u306e\u307f\u4fdd\u5b58\u3055\u308c\u305f\u30c7\u30fc\u30bf\u306f\u5931\u308f\u308c\u308b\u53ef\u80fd\u6027\u304c\u3042\u308a\u307e\u3059\u3002\u30ea\u30bb\u30c3\u30c8\u3057\u307e\u3059\u304b\uff1f"},
 gey(){return"\u7ffb\u8a33"},
@@ -340,7 +340,7 @@ gfW(){return"\u30d0\u30f3\u30c9\u30eb\u540d"},
 glt(){return"\u30de\u30c3\u30d7\u3067\u958b\u304f"},
 gec(){return"\u30ea\u30f3\u30af"},
 glv(){return"\u307e\u305f\u306f"},
-gej(){return"\u53c2\u52a0\u8005"},
+gek(){return"\u53c2\u52a0\u8005"},
 ghH(){return"\u30d1\u30b9\u30d5\u30ec\u30fc\u30ba\u304b\u30ea\u30ab\u30d0\u30ea\u30fc\u30ad\u30fc"},
 glw(d){return"\u30d1\u30b9\u30ef\u30fc\u30c9"},
 geF(){return"\u30d1\u30b9\u30ef\u30fc\u30c9\u3092\u5fd8\u308c\u305f"},
@@ -371,7 +371,7 @@ glX(){return"\u30e1\u30c3\u30bb\u30fc\u30b8\u3092\u901a\u5831"},
 gm0(){return"\u90e8\u5c4b\u306f\u30a2\u30c3\u30d7\u30b0\u30ec\u30fc\u30c9\u3055\u308c\u307e\u3057\u305f"},
 gm5(){return"\u30eb\u30fc\u30e0\u30d0\u30fc\u30b8\u30e7\u30f3"},
 gi3(){return"\u30d5\u30a1\u30a4\u30eb\u3092\u4fdd\u5b58"},
-geg(d){return"\u691c\u7d22"},
+geh(d){return"\u691c\u7d22"},
 gfw(){return"\u30bb\u30ad\u30e5\u30ea\u30c6\u30a3"},
 gf3(d){return"\u9001\u4fe1"},
 gi5(){return"\u30e1\u30c3\u30bb\u30fc\u30b8\u3092\u9001\u4fe1"},
@@ -470,7 +470,7 @@ glj(){return"\u8ab0\u3082\u53c2\u52a0\u3067\u304d\u307e\u305b\u3093"},
 gkT(){return"\u30ce\u30c3\u30af"},
 gmP(){return"\u30e6\u30fc\u30b6\u30fc"},
 jM(d){return""+d+"\u500b\u306e\u30d5\u30a1\u30a4\u30eb"},
-gef(){return"\u30e6\u30fc\u30b6\u30fc"},
+geg(){return"\u30e6\u30fc\u30b6\u30fc"},
 gh9(){return"\u30ab\u30b9\u30bf\u30e0"},
 gmU(){return"\u306a\u305c\u3053\u306e\u30e1\u30c3\u30bb\u30fc\u30b8\u306f\u8aad\u3081\u306a\u3044\u306e\u3067\u3059\u304b\uff1f"},
 glg(){return"This can happen if the message was sent before you have signed in to your account at this device.\n\nIt is also possible that the sender has blocked your device or something went wrong with the internet connection.\n\nAre you able to read the message on another session? Then you can transfer the message from it! Go to Settings > Devices and make sure that your devices have verified each other. When you open the room the next time and both sessions are in the foreground, the keys will be transmitted automatically.\n\nDo you not want to lose the keys when logging out or switching devices? Make sure that you have enabled the chat backup in the settings."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.Nc,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"Nc":{"aW":[]}}'))};
-(a=>{a["x2MgBOR4mZ7J7QOW23XBHNziV14="]=a.current})($__dart_deferred_initializers__);
+y(B.Nd,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Nd":{"aW":[]}}'))};
+(a=>{a["ZzMLho6EoUIn1UGnYg3yd9xhunQ="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_373.part.js.map

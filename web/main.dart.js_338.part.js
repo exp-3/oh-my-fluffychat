@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHE(){return new B.N1(A.dA("fr"))},
-N1:function N1(d){this.a=d}}
+dHG(){return new B.N2(A.dA("fr"))},
+N2:function N2(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[23],B)
-B.N1.prototype={
+B.N2.prototype={
 ghb(){return"\xc9chec de l\u2019initialisation de l\u2019archive locale"},
 hc(d){return"Impossible d\u2019ouvrir l\u2019archive locale de \xab "+d+" \xbb. Elle est peut-\xeatre endommag\xe9e ou un composant d\u2019ex\xe9cution requis est manquant.\n\nLa r\xe9initialisation supprime d\xe9finitivement l\u2019archive locale de cet appareil. Les donn\xe9es du serveur peuvent \xeatre resynchronis\xe9es, mais les donn\xe9es non envoy\xe9es ou uniquement locales risquent d\u2019\xeatre perdues. Voulez-vous la r\xe9initialiser ?"},
 gey(){return"Traduction"},
@@ -341,7 +341,7 @@ gfW(){return"Nom du groupe"},
 glt(){return"Ouvrir dans maps"},
 gec(){return"Lien"},
 glv(){return"Ou"},
-gej(){return"Participant(e)"},
+gek(){return"Participant(e)"},
 ghH(){return"Phrase de passe ou cl\xe9 de r\xe9cup\xe9ration"},
 glw(d){return"Mot de passe"},
 geF(){return"Mot de passe oubli\xe9"},
@@ -372,7 +372,7 @@ glX(){return"Signaler un message"},
 gm0(){return"Le salon a \xe9t\xe9 mis \xe0 niveau"},
 gm5(){return"Version du salon"},
 gi3(){return"Enregistrer le fichier"},
-geg(d){return"Rechercher"},
+geh(d){return"Rechercher"},
 gfw(){return"S\xe9curit\xe9"},
 gf3(d){return"Envoyer"},
 gi5(){return"Envoyer un message"},
@@ -471,7 +471,7 @@ glj(){return"Personne ne peut rejoindre"},
 gkT(){return"Frapper \xe0 la porte"},
 gmP(){return"Utilisateurs/trices"},
 jM(d){return""+d+" fichiers"},
-gef(){return"Utilisateur/trice"},
+geg(){return"Utilisateur/trice"},
 gh9(){return"Personnalis\xe9"},
 gmU(){return"Pourquoi ce message est-il illisible ?"},
 glg(){return"Cela peut se produire si le message a \xe9t\xe9 envoy\xe9 avant que vous ne vous soyez connect\xe9 \xe0 votre compte sur cet appareil.\n\nIl est \xe9galement possible que l'exp\xe9diteur ait bloqu\xe9 votre appareil ou qu'un probl\xe8me de connexion Internet se soit produit.\n\n\xcates-vous capable de lire le message sur une autre session ? Vous pouvez alors transf\xe9rer le message \xe0 partir de celle-ci ! Allez dans Param\xe8tres > Appareils et assurez-vous que vos appareils se sont v\xe9rifi\xe9s mutuellement. Lorsque vous ouvrirez le salon la fois suivante et que les deux sessions seront au premier plan, les cl\xe9s seront transmises automatiquement.\n\nVous ne voulez pas perdre les cl\xe9s en vous d\xe9connectant ou en changeant d'appareil ? Assurez-vous que vous avez activ\xe9 la sauvegarde de la discussion dans les param\xe8tres."},
@@ -736,7 +736,7 @@ gtB(){return"R\xe9voquer les droits mod\xe9rateurs/trices"},
 gtA(){return"R\xe9voquer les droits administrateurs/trices"},
 gty(){return"Niveau de droits"},
 gro(){return"Le niveau de droit d\xe9fini ce qu'un utilisateur est capable de faire dans ce salon et se place g\xe9n\xe9ralement entre 0 et 100."},
-gei(){return"Propri\xe9taire"},
+gej(){return"Propri\xe9taire"},
 gth(){return"Muet"},
 grQ(){return"Cr\xe9er une nouvelle discussion"},
 glY(d){return"R\xe9initialiser"},
@@ -831,7 +831,7 @@ rm(d){return"Le serveur a r\xe9pondu avec un message d'erreur\xa0: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.N1,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"N1":{"aW":[]}}'))};
-(a=>{a["cEGsCtujEDz+oItQP66psZe+VPs="]=a.current})($__dart_deferred_initializers__);
+y(B.N2,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"N2":{"aW":[]}}'))};
+(a=>{a["SCyGDMfZg2iEOVx57zQzlDDkZzk="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_338.part.js.map

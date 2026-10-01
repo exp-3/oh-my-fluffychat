@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHY(){return new B.Nl(A.dA("pl"))},
-Nl:function Nl(d){this.a=d}}
+dI_(){return new B.Nm(A.dA("pl"))},
+Nm:function Nm(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[43],B)
-B.Nl.prototype={
+B.Nm.prototype={
 ghb(){return"Nie uda\u0142o si\u0119 zainicjowa\u0107 lokalnego archiwum"},
 hc(d){return"Nie uda\u0142o si\u0119 otworzy\u0107 lokalnego archiwum dla \u201e"+d+"\u201d. Mo\u017ce ono by\u0107 uszkodzone lub mo\u017ce brakowa\u0107 wymaganego sk\u0142adnika \u015brodowiska uruchomieniowego.\n\nResetowanie trwale usuwa lokalne archiwum z tego urz\u0105dzenia. Dane z serwera mo\u017cna zsynchronizowa\u0107 ponownie, ale niewys\u0142ane lub zapisane wy\u0142\u0105cznie lokalnie dane mog\u0105 zosta\u0107 utracone. Czy chcesz je zresetowa\u0107?"},
 gey(){return"T\u0142umaczenie"},
@@ -340,7 +340,7 @@ gfW(){return"Nazwa pakietu"},
 glt(){return"Otw\xf3rz w mapach"},
 gec(){return"Link"},
 glv(){return"Lub"},
-gej(){return"Uczestnik"},
+gek(){return"Uczestnik"},
 ghH(){return"fraza dost\u0119pu lub klucz odzyskiwania"},
 glw(d){return"Has\u0142o"},
 geF(){return"Nie pami\u0119tam has\u0142a"},
@@ -371,7 +371,7 @@ glX(){return"Zg\u0142o\u015b wiadomo\u015b\u0107"},
 gm0(){return"Pok\xf3j zosta\u0142 zaktualizowany"},
 gm5(){return"Wersja pokoju"},
 gi3(){return"Zapisz plik"},
-geg(d){return"Szukaj"},
+geh(d){return"Szukaj"},
 gfw(){return"Bezpiecze\u0144stwo"},
 gf3(d){return"Wy\u015blij"},
 gi5(){return"Wy\u015blij wiadomo\u015b\u0107"},
@@ -470,7 +470,7 @@ glj(){return"Nikt nie mo\u017ce do\u0142\u0105czy\u0107"},
 gkT(){return"Zapukaj"},
 gmP(){return"U\u017cytkownicy"},
 jM(d){return""+d+" plik\xf3w"},
-gef(){return"U\u017cytkownik"},
+geg(){return"U\u017cytkownik"},
 gh9(){return"W\u0142asne"},
 gmU(){return"Dlaczego nie mo\u017cna odczyta\u0107 tej wiadomo\u015bci?"},
 glg(){return"Mo\u017ce si\u0119 to zdarzy\u0107, je\u015bli wiadomo\u015b\u0107 zosta\u0142a wys\u0142ana przed zalogowaniem si\u0119 na to konto na tym urz\u0105dzeniu.\n\nMo\u017cliwe jest r\xf3wnie\u017c, \u017ce nadawca zablokowa\u0142 Twoje urz\u0105dzenie lub co\u015b posz\u0142o nie tak z po\u0142\u0105czeniem internetowym.\n\nJeste\u015b w stanie odczyta\u0107 wiadomo\u015b\u0107 na innej sesji? W takim razie mo\u017cesz przenie\u015b\u0107 z niej wiadomo\u015b\u0107! Wejd\u017a w Ustawienia > Urz\u0105dzenia i upewnij si\u0119, \u017ce Twoje urz\u0105dzenia zweryfikowa\u0142y si\u0119 wzajemnie. Gdy nast\u0119pnym razem otworzysz pok\xf3j i obie sesje b\u0119d\u0105 w\u0142\u0105czone, klucze zostan\u0105 przekazane automatycznie.\n\nNie chcesz straci\u0107 kluczy podczas wylogowania lub prze\u0142\u0105czania urz\u0105dze\u0144? Upewnij si\u0119, \u017ce w ustawieniach masz w\u0142\u0105czon\u0105 kopi\u0119 zapasow\u0105 czatu."},
@@ -735,7 +735,7 @@ gtB(){return"Odbierz uprawnienia moderatora"},
 gtA(){return"Odbierz uprawnienia administratora"},
 gty(){return"Poziom uprawnie\u0144"},
 gro(){return"Poziomy uprawnie\u0144 okre\u015blaj\u0105, co cz\u0142onek mo\u017ce robi\u0107 w tym pokoju i zazwyczaj mieszcz\u0105 si\u0119 w zakresie od 0 do 100."},
-gei(){return"W\u0142a\u015bciciel"},
+gej(){return"W\u0142a\u015bciciel"},
 gth(){return"Wycisz"},
 grQ(){return"Utw\xf3rz nowy czat"},
 glY(d){return"Resetuj"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.Nl,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"Nl":{"aW":[]}}'))};
-(a=>{a["b1Bk/+UJs1rr/xmtMrf1TDrr1nE="]=a.current})($__dart_deferred_initializers__);
+y(B.Nm,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Nm":{"aW":[]}}'))};
+(a=>{a["lyCmnDvfLveZxEB0lsmogBeDIPk="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_386.part.js.map

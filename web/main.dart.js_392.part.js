@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dI3(){return new B.Nq(A.dA("sk"))},
-Nq:function Nq(d){this.a=d}}
+dI5(){return new B.Nr(A.dA("sk"))},
+Nr:function Nr(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[46],B)
-B.Nq.prototype={
+B.Nr.prototype={
 ghb(){return"Inicializ\xe1cia miestneho arch\xedvu zlyhala"},
 hc(d){return"Miestny arch\xedv pre \u201e"+d+"\u201c sa nepodarilo otvori\u0165. M\xf4\u017ee by\u0165 po\u0161koden\xfd alebo m\xf4\u017ee ch\xfdba\u0165 po\u017eadovan\xe1 s\xfa\u010das\u0165 behov\xe9ho prostredia.\n\nObnoven\xedm sa miestny arch\xedv v tomto zariaden\xed natrvalo odstr\xe1ni. \xdadaje zo servera mo\u017eno znova synchronizova\u0165, no neodoslan\xe9 \xfadaje alebo \xfadaje ulo\u017een\xe9 iba lok\xe1lne sa m\xf4\u017eu strati\u0165. Chcete ho obnovi\u0165?"},
 gey(){return"Preklad"},
@@ -340,7 +340,7 @@ gfW(){return"Bundle name"},
 glt(){return"Open in maps"},
 gec(){return"Link"},
 glv(){return"Or"},
-gej(){return"Participant"},
+gek(){return"Participant"},
 ghH(){return"pr\xedstupov\xe1 fr\xe1za alebo k\u013e\xfa\u010d na obnovenie"},
 glw(d){return"Heslo"},
 geF(){return"Password forgotten"},
@@ -371,7 +371,7 @@ glX(){return"Nahl\xe1si\u0165 spr\xe1vu"},
 gm0(){return"Miestnos\u0165 bola upgradeovan\xe1"},
 gm5(){return"Verzia miestnosti"},
 gi3(){return"Save file"},
-geg(d){return"H\u013eada\u0165"},
+geh(d){return"H\u013eada\u0165"},
 gfw(){return"Bezpe\u010dnos\u0165"},
 gf3(d){return"Odosla\u0165"},
 gi5(){return"Odosla\u0165 spr\xe1vu"},
@@ -470,7 +470,7 @@ glj(){return"No one can join"},
 gkT(){return"Knock"},
 gmP(){return"Users"},
 jM(d){return""+d+" files"},
-gef(){return"User"},
+geg(){return"User"},
 gh9(){return"Custom"},
 gmU(){return"Why is this message unreadable?"},
 glg(){return"This can happen if the message was sent before you have signed in to your account at this device.\n\nIt is also possible that the sender has blocked your device or something went wrong with the internet connection.\n\nAre you able to read the message on another session? Then you can transfer the message from it! Go to Settings > Devices and make sure that your devices have verified each other. When you open the room the next time and both sessions are in the foreground, the keys will be transmitted automatically.\n\nDo you not want to lose the keys when logging out or switching devices? Make sure that you have enabled the chat backup in the settings."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.Nq,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"Nq":{"aW":[]}}'))};
-(a=>{a["hMvseFD0Xlyk/ve2Kfof0pFM4kU="]=a.current})($__dart_deferred_initializers__);
+y(B.Nr,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Nr":{"aW":[]}}'))};
+(a=>{a["d4aGX25Nu9kwi1NMGwSw14+bg9A="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_392.part.js.map

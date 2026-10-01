@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHu(){return new B.MS(A.dA("de"))},
-MS:function MS(d){this.a=d}}
+dHw(){return new B.MT(A.dA("de"))},
+MT:function MT(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[13],B)
-B.MS.prototype={
+B.MT.prototype={
 ghb(){return"Initialisierung des lokalen Archivs fehlgeschlagen"},
 hc(d){return"Das lokale Archiv f\xfcr \u201e"+d+"\u201c konnte nicht ge\xf6ffnet werden. Es ist m\xf6glicherweise besch\xe4digt oder eine erforderliche Laufzeitkomponente fehlt.\n\nBeim Zur\xfccksetzen wird das lokale Archiv auf diesem Ger\xe4t dauerhaft gel\xf6scht. Serverdaten k\xf6nnen erneut synchronisiert werden, aber nicht gesendete oder nur lokal gespeicherte Daten k\xf6nnen verloren gehen. M\xf6chtest du es zur\xfccksetzen?"},
 gey(){return"\xdcbersetzung"},
@@ -341,7 +341,7 @@ gfW(){return"Name des Bundles"},
 glt(){return"In Maps \xf6ffnen"},
 gec(){return"Link"},
 glv(){return"Oder"},
-gej(){return"Mitglied"},
+gek(){return"Mitglied"},
 ghH(){return"Passwort oder Wiederherstellungsschl\xfcssel"},
 glw(d){return"Passwort"},
 geF(){return"Passwort vergessen"},
@@ -372,7 +372,7 @@ glX(){return"Nachricht melden"},
 gm0(){return"Der Raum wurde ge-upgraded"},
 gm5(){return"Raumversion"},
 gi3(){return"Datei speichern"},
-geg(d){return"Suchen"},
+geh(d){return"Suchen"},
 gfw(){return"Sicherheit"},
 gf3(d){return"Senden"},
 gi5(){return"Nachricht schreiben"},
@@ -471,7 +471,7 @@ glj(){return"Niemand kann beitreten"},
 gkT(){return"Anklopfen"},
 gmP(){return"Benutzer"},
 jM(d){return""+d+" Dateien"},
-gef(){return"Benutzer"},
+geg(){return"Benutzer"},
 gh9(){return"Benutzerdefiniert"},
 gmU(){return"Warum ist diese Nachricht nicht lesbar?"},
 glg(){return"Dies kann passieren, wenn die Nachricht gesendet wurde, bevor du dich auf diesem Ger\xe4t bei deinem Konto angemeldet hast.\n\nEs ist auch m\xf6glich, dass der Absender dein Ger\xe4t blockiert hat oder etwas mit der Internetverbindung schief gelaufen ist.\n\nKannst du die Nachricht in einer anderen Sitzung lesen? Dann kannst du die Nachricht davon \xfcbertragen! Gehe zu den Einstellungen > Ger\xe4te und vergewissere dich, dass sich deine Ger\xe4te gegenseitig verifiziert haben. Wenn du den Raum das n\xe4chste Mal \xf6ffnest und beide Sitzungen im Vordergrund sind, werden die Schl\xfcssel automatisch \xfcbertragen.\n\nDu m\xf6chtest die Schl\xfcssel beim Abmelden oder Ger\xe4tewechsel nicht verlieren? Stelle sicher, dass du das Chat-Backup in den Einstellungen aktiviert hast."},
@@ -736,7 +736,7 @@ gtB(){return"Moderatorenrechte entziehen"},
 gtA(){return"Adminrechte entziehen"},
 gty(){return"Power-Level"},
 gro(){return"Die Power-Level legen fest, was ein Mitglied in diesem Raum tun darf und liegen \xfcblicherweise zwischen 0 und 100."},
-gei(){return"Besitzer"},
+gej(){return"Besitzer"},
 gth(){return"Stumm"},
 grQ(){return"Neuen Chat erstellen"},
 glY(d){return"Zur\xfccksetzen"},
@@ -831,8 +831,8 @@ rm(d){return"Der Server hat mit einer Fehlermeldung geantwortet: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var x=a.inherit
-x(B.MS,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"MS":{"aW":[]}}'))
+x(B.MT,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"MT":{"aW":[]}}'))
 var y={b:"Die App versucht nun, deine Sitzung aus der Sicherung wiederherzustellen. Bitte melde diesen Fehler an die Entwickler unter "}};
-(a=>{a["EBDd1rNFug32ZJ61oHh/nHDwL3Q="]=a.current})($__dart_deferred_initializers__);
+(a=>{a["zv8rOEyRpjrSWa7J8OewPN2PaB8="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_308.part.js.map

@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHX(){return new B.Nk(A.dA("nl"))},
-Nk:function Nk(d){this.a=d}}
+dHZ(){return new B.Nl(A.dA("nl"))},
+Nl:function Nl(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[42],B)
-B.Nk.prototype={
+B.Nl.prototype={
 ghb(){return"Initialisatie van lokaal archief mislukt"},
 hc(d){return"Het lokale archief voor \u2018"+d+"\u2019 kon niet worden geopend. Het is mogelijk beschadigd of er ontbreekt een vereist runtimeonderdeel.\n\nBij opnieuw instellen wordt het lokale archief op dit apparaat permanent verwijderd. Servergegevens kunnen opnieuw worden gesynchroniseerd, maar niet-verzonden of uitsluitend lokaal opgeslagen gegevens kunnen verloren gaan. Wil je het opnieuw instellen?"},
 gey(){return"Vertaling"},
@@ -341,7 +341,7 @@ gfW(){return"Bundelnaam"},
 glt(){return"In kaarten openen"},
 gec(){return"Link"},
 glv(){return"Of"},
-gej(){return"Deelnemer"},
+gek(){return"Deelnemer"},
 ghH(){return"wachtwoordzin of herstelsleutel"},
 glw(d){return"Wachtwoord"},
 geF(){return"Wachtwoord vergeten"},
@@ -372,7 +372,7 @@ glX(){return"Bericht rapporteren"},
 gm0(){return"Chat is ge\xfcpgrade"},
 gm5(){return"Kamerversie"},
 gi3(){return"Bestand opslaan"},
-geg(d){return"Zoeken"},
+geh(d){return"Zoeken"},
 gfw(){return"Beveiliging"},
 gf3(d){return"Verstuur"},
 gi5(){return"Stuur een bericht"},
@@ -471,7 +471,7 @@ glj(){return"Niemand kan deelnemen"},
 gkT(){return"Klop"},
 gmP(){return"Personen"},
 jM(d){return""+d+" bestanden"},
-gef(){return"Persoon"},
+geg(){return"Persoon"},
 gh9(){return"Aangepast"},
 gmU(){return"Waarom is dit bericht onleesbaar?"},
 glg(){return"Dit kan gebeuren als het bericht is verzonden voordat je bij je account op dit apparaat hebt aangemeld.\n\nHet is ook mogelijk dat de afzender je apparaat heeft geblokkeerd of dat er iets mis is gegaan met de internetverbinding.\n\nKan je het bericht wel lezen in een andere sessie? Dan kan je het bericht daarvandaan overzetten! Ga naar Instellingen > Apparaten en zorg ervoor dat je apparaten elkaar hebben geverifieerd. Wanneer je de chat de volgende keer opent en beide sessies op de voorgrond staan, zullen de sleutels automatisch worden verzonden.\n\nWil je de sleutels niet verliezen als je uitlogt of van apparaat wisselt? Zorg er dan voor dat je de chatback-up hebt aangezet in de instellingen."},
@@ -736,7 +736,7 @@ gtB(){return"Verwijder moderator-rechten"},
 gtA(){return"Verwijder beheerder-rechten"},
 gty(){return"Rechtenniveau"},
 gro(){return"Rechtenniveau's defini\xebren wat een persoon mag doen in deze chat en vari\xebren meestal tussen 0 en 100."},
-gei(){return"Eigenaar"},
+gej(){return"Eigenaar"},
 gth(){return"Demp"},
 grQ(){return"Cre\xeber nieuw chat"},
 glY(d){return"Resetten"},
@@ -831,7 +831,7 @@ rm(d){return"De server heeft met een foute boodschap geantwoord: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.Nk,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"Nk":{"aW":[]}}'))};
-(a=>{a["fBx1Xr7pAFJ8OfxLALSICQOtF8c="]=a.current})($__dart_deferred_initializers__);
+y(B.Nl,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Nl":{"aW":[]}}'))};
+(a=>{a["+2Hj+0ggg7K9mDDzfjYafCGX+l4="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_384.part.js.map

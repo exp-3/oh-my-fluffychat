@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHs(){return new B.MQ(A.dA("cs"))},
-MQ:function MQ(d){this.a=d}}
+dHu(){return new B.MR(A.dA("cs"))},
+MR:function MR(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[11],B)
-B.MQ.prototype={
+B.MR.prototype={
 ghb(){return"Inicializace m\xedstn\xedho archivu se nezda\u0159ila"},
 hc(d){return"M\xedstn\xed archiv pro \u201e"+d+"\u201c se nepoda\u0159ilo otev\u0159\xedt. M\u016f\u017ee b\xfdt po\u0161kozen\xfd nebo m\u016f\u017ee chyb\u011bt n\u011bkter\xe1 po\u017eadovan\xe1 sou\u010d\xe1st b\u011bhov\xe9ho prost\u0159ed\xed.\n\nResetov\xe1n\xedm se m\xedstn\xed archiv v tomto za\u0159\xedzen\xed trvale odstran\xed. Data ze serveru lze znovu synchronizovat, ale neodeslan\xe1 data nebo data ulo\u017een\xe1 pouze m\xedstn\u011b mohou b\xfdt ztracena. Chcete jej resetovat?"},
 gey(){return"P\u0159eklad"},
@@ -340,7 +340,7 @@ gfW(){return"N\xe1zev bal\xed\u010dku"},
 glt(){return"Otev\u0159\xedt v map\xe1ch"},
 gec(){return"Odkaz"},
 glv(){return"Nebo"},
-gej(){return"\xda\u010dastn\xedk"},
+gek(){return"\xda\u010dastn\xedk"},
 ghH(){return"heslo nebo kl\xed\u010d pro obnoven\xed"},
 glw(d){return"Heslo"},
 geF(){return"Zapomenut\xe9 heslo"},
@@ -371,7 +371,7 @@ glX(){return"Nahl\xe1sit zpr\xe1vu"},
 gm0(){return"M\xedstnost byla upgradov\xe1na"},
 gm5(){return"Verze m\xedstnosti"},
 gi3(){return"Ulo\u017eit soubor"},
-geg(d){return"Hledat"},
+geh(d){return"Hledat"},
 gfw(){return"Bezpe\u010dnostn\xed"},
 gf3(d){return"Odeslat"},
 gi5(){return"Odeslat zpr\xe1vu"},
@@ -470,7 +470,7 @@ glj(){return"Nikdo se nem\u016f\u017ee p\u0159ipojit"},
 gkT(){return"Zaklepat"},
 gmP(){return"U\u017eivatel\xe9"},
 jM(d){return""+d+" soubor\u016f"},
-gef(){return"U\u017eivatel"},
+geg(){return"U\u017eivatel"},
 gh9(){return"Vlastn\xed"},
 gmU(){return"Pro\u010d nelze p\u0159e\u010d\xedst tuto zpr\xe1vu?"},
 glg(){return"K tomuto m\u016f\u017ee doj\xedt, pokud byla zpr\xe1va odesl\xe1na p\u0159ed p\u0159ihl\xe1\u0161en\xedm k \xfa\u010dtu v tomto za\u0159\xedzen\xed.\n\nJe tak\xe9 mo\u017en\xe9, \u017ee odes\xedlatel zablokoval va\u0161e za\u0159\xedzen\xed nebo se n\u011bco pokazilo s internetov\xfdm p\u0159ipojen\xedm.\n\nJste schopni si zpr\xe1vu p\u0159e\u010d\xedst v jin\xe9 relaci? Pak m\u016f\u017eete zpr\xe1vu p\u0159en\xe9st z n\u011bj! P\u0159ejd\u011bte do Nastaven\xed > Za\u0159\xedzen\xed a zkontrolujte, zda se Va\u0161e za\u0159\xedzen\xed vz\xe1jemn\u011b ov\u011b\u0159ila. P\u0159i p\u0159\xed\u0161t\xedm otev\u0159en\xed m\xedstnosti, kdy budou ob\u011b relace v pop\u0159ed\xed, se kl\xed\u010de p\u0159enesou automaticky.\n\nNechcete kl\xed\u010de ztratit p\u0159i odhla\u0161ov\xe1n\xed nebo p\u0159ep\xedn\xe1n\xed za\u0159\xedzen\xed? Ujist\u011bte se, \u017ee jste v nastaven\xedch povolili z\xe1lohov\xe1n\xed konverzac\xed."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.MQ,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"MQ":{"aW":[]}}'))};
-(a=>{a["Si/RrNC+POsWXlp6A4jSBI+0lpA="]=a.current})($__dart_deferred_initializers__);
+y(B.MR,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"MR":{"aW":[]}}'))};
+(a=>{a["zIZoYqC6aI9wa43lOnILsO/Uz0k="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_293.part.js.map

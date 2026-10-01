@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dI6(){return new B.Nt(A.dA("sr"))},
-Nt:function Nt(d){this.a=d}}
+dI8(){return new B.Nu(A.dA("sr"))},
+Nu:function Nu(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[49],B)
-B.Nt.prototype={
+B.Nu.prototype={
 ghb(){return"\u041f\u043e\u043a\u0440\u0435\u0442\u0430\u045a\u0435 \u043b\u043e\u043a\u0430\u043b\u043d\u0435 \u0430\u0440\u0445\u0438\u0432\u0435 \u043d\u0438\u0458\u0435 \u0443\u0441\u043f\u0435\u043b\u043e"},
 hc(d){return"\u041b\u043e\u043a\u0430\u043b\u043d\u0430 \u0430\u0440\u0445\u0438\u0432\u0430 \u0437\u0430 \u201e"+d+"\u201c \u043d\u0438\u0458\u0435 \u043c\u043e\u0433\u043b\u0430 \u0434\u0430 \u0441\u0435 \u043e\u0442\u0432\u043e\u0440\u0438. \u041c\u043e\u0436\u0434\u0430 \u0458\u0435 \u043e\u0448\u0442\u0435\u045b\u0435\u043d\u0430 \u0438\u043b\u0438 \u043d\u0435\u0434\u043e\u0441\u0442\u0430\u0458\u0435 \u043f\u043e\u0442\u0440\u0435\u0431\u043d\u0430 \u043a\u043e\u043c\u043f\u043e\u043d\u0435\u043d\u0442\u0430 \u043e\u043a\u0440\u0443\u0436\u0435\u045a\u0430 \u0437\u0430 \u0438\u0437\u0432\u0440\u0448\u0430\u0432\u0430\u045a\u0435.\n\n\u0420\u0435\u0441\u0435\u0442\u043e\u0432\u0430\u045a\u0435\u043c \u0441\u0435 \u0442\u0440\u0430\u0458\u043d\u043e \u0431\u0440\u0438\u0448\u0435 \u043b\u043e\u043a\u0430\u043b\u043d\u0430 \u0430\u0440\u0445\u0438\u0432\u0430 \u043d\u0430 \u043e\u0432\u043e\u043c \u0443\u0440\u0435\u0452\u0430\u0458\u0443. \u041f\u043e\u0434\u0430\u0446\u0438 \u0441\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0430 \u043c\u043e\u0433\u0443 \u043f\u043e\u043d\u043e\u0432\u043e \u0434\u0430 \u0441\u0435 \u0441\u0438\u043d\u0445\u0440\u043e\u043d\u0438\u0437\u0443\u0458\u0443, \u0430\u043b\u0438 \u043d\u0435\u043f\u043e\u0441\u043b\u0430\u0442\u0438 \u0438\u043b\u0438 \u0441\u0430\u043c\u043e \u043b\u043e\u043a\u0430\u043b\u043d\u043e \u0441\u0430\u0447\u0443\u0432\u0430\u043d\u0438 \u043f\u043e\u0434\u0430\u0446\u0438 \u043c\u043e\u0433\u0443 \u0431\u0438\u0442\u0438 \u0438\u0437\u0433\u0443\u0431\u0459\u0435\u043d\u0438. \u0416\u0435\u043b\u0438\u0442\u0435 \u043b\u0438 \u0434\u0430 \u0458\u0435 \u0440\u0435\u0441\u0435\u0442\u0443\u0458\u0435\u0442\u0435?"},
 gey(){return"\u041f\u0440\u0435\u0432\u043e\u0434"},
@@ -340,7 +340,7 @@ gfW(){return"Bundle name"},
 glt(){return"Open in maps"},
 gec(){return"Link"},
 glv(){return"\u0438\u043b\u0438"},
-gej(){return"\u0423\u0447\u0435\u0441\u043d\u0438\u043a"},
+gek(){return"\u0423\u0447\u0435\u0441\u043d\u0438\u043a"},
 ghH(){return"\u0444\u0440\u0430\u0437\u0430 \u0438\u043b\u0438 \u043a\u0459\u0443\u0447 \u043e\u043f\u043e\u0440\u0430\u0432\u043a\u0430"},
 glw(d){return"\u041b\u043e\u0437\u0438\u043d\u043a\u0430"},
 geF(){return"\u0417\u0430\u0431\u043e\u0440\u0430\u0432\u0459\u0435\u043d\u0430 \u043b\u043e\u0437\u0438\u043d\u043a\u0430"},
@@ -371,7 +371,7 @@ glX(){return"\u041f\u0440\u0438\u0458\u0430\u0432\u0438 \u043f\u043e\u0440\u0443
 gm0(){return"\u0421\u043e\u0431\u0430 \u0458\u0435 \u043d\u0430\u0434\u043e\u0433\u0440\u0430\u0452\u0435\u043d\u0430"},
 gm5(){return"\u0412\u0435\u0440\u0437\u0438\u0458\u0430 \u0441\u043e\u0431\u0435"},
 gi3(){return"Save file"},
-geg(d){return"\u041f\u0440\u0435\u0442\u0440\u0430\u0436\u0438"},
+geh(d){return"\u041f\u0440\u0435\u0442\u0440\u0430\u0436\u0438"},
 gfw(){return"\u0411\u0435\u0437\u0431\u0435\u0434\u043d\u043e\u0441\u0442"},
 gf3(d){return"\u041f\u043e\u0448\u0430\u0459\u0438"},
 gi5(){return"\u041f\u043e\u0448\u0430\u0459\u0438 \u043f\u043e\u0440\u0443\u043a\u0443"},
@@ -470,7 +470,7 @@ glj(){return"No one can join"},
 gkT(){return"Knock"},
 gmP(){return"Users"},
 jM(d){return""+d+" files"},
-gef(){return"User"},
+geg(){return"User"},
 gh9(){return"Custom"},
 gmU(){return"Why is this message unreadable?"},
 glg(){return"This can happen if the message was sent before you have signed in to your account at this device.\n\nIt is also possible that the sender has blocked your device or something went wrong with the internet connection.\n\nAre you able to read the message on another session? Then you can transfer the message from it! Go to Settings > Devices and make sure that your devices have verified each other. When you open the room the next time and both sessions are in the foreground, the keys will be transmitted automatically.\n\nDo you not want to lose the keys when logging out or switching devices? Make sure that you have enabled the chat backup in the settings."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.Nt,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"Nt":{"aW":[]}}'))};
-(a=>{a["uBXjqQOtey+Jayalamx9dYN9qME="]=a.current})($__dart_deferred_initializers__);
+y(B.Nu,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Nu":{"aW":[]}}'))};
+(a=>{a["9NdAWDZ6+o+BL/R6JFCqaqCNwUg="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_396.part.js.map

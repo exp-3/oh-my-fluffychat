@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dIb(){return new B.Ny(A.dA("tr"))},
-Ny:function Ny(d){this.a=d}}
+dId(){return new B.Nz(A.dA("tr"))},
+Nz:function Nz(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[54],B)
-B.Ny.prototype={
+B.Nz.prototype={
 ghb(){return"Yerel ar\u015fiv ba\u015flat\u0131lamad\u0131"},
 hc(d){return'"'+d+'" yerel ar\u015fivi a\xe7\u0131lamad\u0131. Ar\u015fiv bozulmu\u015f veya gerekli bir \xe7al\u0131\u015fma zaman\u0131 bile\u015feni eksik olabilir.\n\nS\u0131f\u0131rlama, bu cihazdaki yerel ar\u015fivi kal\u0131c\u0131 olarak siler. Sunucu verileri yeniden e\u015fitlenebilir ancak g\xf6nderilmemi\u015f veya yaln\u0131zca yerel olarak kaydedilmi\u015f veriler kaybolabilir. S\u0131f\u0131rlamak istiyor musunuz?'},
 gey(){return"\xc7eviri"},
@@ -340,7 +340,7 @@ gfW(){return"Paket ad\u0131"},
 glt(){return"Haritalarda a\xe7"},
 gec(){return"Ba\u011flant\u0131"},
 glv(){return"Veya"},
-gej(){return"Kat\u0131l\u0131mc\u0131"},
+gek(){return"Kat\u0131l\u0131mc\u0131"},
 ghH(){return"parola veya kurtarma anahtar\u0131"},
 glw(d){return"Parola"},
 geF(){return"Parola unutuldu"},
@@ -371,7 +371,7 @@ glX(){return"Mesaj\u0131 bildir"},
 gm0(){return"Oda y\xfckseltildi"},
 gm5(){return"Oda s\xfcr\xfcm\xfc"},
 gi3(){return"Dosyay\u0131 kaydet"},
-geg(d){return"Ara"},
+geh(d){return"Ara"},
 gfw(){return"G\xfcvenlik"},
 gf3(d){return"G\xf6nder"},
 gi5(){return"Bir mesaj g\xf6nder"},
@@ -470,7 +470,7 @@ glj(){return"Kimse kat\u0131lamaz"},
 gkT(){return"T\u0131klat"},
 gmP(){return"Kullan\u0131c\u0131lar"},
 jM(d){return""+d+" dosya"},
-gef(){return"Kullan\u0131c\u0131"},
+geg(){return"Kullan\u0131c\u0131"},
 gh9(){return"\xd6zel"},
 gmU(){return"Bu mesaj neden okunam\u0131yor?"},
 glg(){return"Bu durum, mesaj siz bu ayg\u0131tta hesab\u0131n\u0131zda oturum a\xe7madan \xf6nce g\xf6nderildiyse meydana gelebilir.\n\nG\xf6nderenin ayg\u0131t\u0131n\u0131z\u0131 engellemi\u015f olmas\u0131 veya internet ba\u011flant\u0131s\u0131nda bir sorun olmas\u0131 da m\xfcmk\xfcnd\xfcr.\n\nMesaj\u0131 ba\u015fka bir oturumda okuyabiliyor musunuz? O zaman mesaj\u0131 oradan aktarabilirsiniz! Ayarlar > Ayg\u0131tlar b\xf6l\xfcm\xfcne gidin ve ayg\u0131tlar\u0131n\u0131z\u0131n birbirini do\u011frulad\u0131\u011f\u0131ndan emin olun. Oday\u0131 bir sonraki sefer a\xe7t\u0131\u011f\u0131n\u0131zda ve her iki oturum da \xf6n planda oldu\u011funda, anahtarlar otomatik olarak iletilecektir.\n\nOturumu kapat\u0131rken veya ayg\u0131t de\u011fi\u015ftirirken anahtarlar\u0131 kaybetmek istemiyor musunuz? Ayarlarda sohbet yedeklemesini etkinle\u015ftirdi\u011finizden emin olun."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,8 +830,8 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var x=a.inherit
-x(B.Ny,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"Ny":{"aW":[]}}'))
+x(B.Nz,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Nz":{"aW":[]}}'))
 var y={c:" adresinde geli\u015ftiricilere bildirin. Hata mesaj\u0131: "}};
-(a=>{a["bq2qKLyoBbbC6UYprg6IAb/ixI0="]=a.current})($__dart_deferred_initializers__);
+(a=>{a["T14daZsxCAhdcyFoLn2kkT4aQKk="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_402.part.js.map

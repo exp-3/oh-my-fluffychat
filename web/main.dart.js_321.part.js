@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHy(){return new B.MW(A.dA("es"))},
-MW:function MW(d){this.a=d}}
+dHA(){return new B.MX(A.dA("es"))},
+MX:function MX(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[17],B)
-B.MW.prototype={
+B.MX.prototype={
 ghb(){return"Error al inicializar el archivo local"},
 hc(d){return"No se pudo abrir el archivo local de \xab"+d+"\xbb. Puede estar da\xf1ado o puede faltar un componente de tiempo de ejecuci\xf3n necesario.\n\nAl restablecerlo, se elimina de forma permanente el archivo local de este dispositivo. Los datos del servidor se pueden volver a sincronizar, pero podr\xedan perderse los datos sin enviar o guardados \xfanicamente de forma local. \xbfQuieres restablecerlo?"},
 gey(){return"Traducci\xf3n"},
@@ -340,7 +340,7 @@ gfW(){return"Nombre del paquete"},
 glt(){return"Abrir en maps"},
 gec(){return"Link"},
 glv(){return"O"},
-gej(){return"Participante"},
+gek(){return"Participante"},
 ghH(){return"contrase\xf1a o clave de recuperaci\xf3n"},
 glw(d){return"Contrase\xf1a"},
 geF(){return"Contrase\xf1a olvidada"},
@@ -371,7 +371,7 @@ glX(){return"Mensaje de informe"},
 gm0(){return"La sala ha subido de categor\xeda"},
 gm5(){return"Versi\xf3n de sala"},
 gi3(){return"Guardar el archivo"},
-geg(d){return"Buscar"},
+geh(d){return"Buscar"},
 gfw(){return"Seguridad"},
 gf3(d){return"Enviar"},
 gi5(){return"Enviar un mensaje"},
@@ -470,7 +470,7 @@ glj(){return"Nadie puede unirse"},
 gkT(){return"Aviso"},
 gmP(){return"Usuarios"},
 jM(d){return""+d+" archivos"},
-gef(){return"Usuario"},
+geg(){return"Usuario"},
 gh9(){return"Personalizado"},
 gmU(){return"\xbfPor qu\xe9 no se puede leer este mensaje?"},
 glg(){return"Esto puede ocurrir si el mensaje se envi\xf3 antes de que entraras en tu cuenta en este dispositivo.\n\nTambi\xe9n puede que el remitente haya bloqueado tu dispositivo o haya fallado algo en la conexi\xf3n a Internet.\n\n\xbfPuedes leer el mensaje en otra sesi\xf3n? Entonces, \xa1puedes transferir el mensaje desde all\xed! Ve a Ajustes > Dispositivos y aseg\xfarate de que tus dispositivos se han verificado mutuamente. Cuando abras la sala la pr\xf3xima vez y ambas sesiones est\xe9n en primer plano, las claves se transmitir\xe1n autom\xe1ticamente.\n\n\xbfNo quieres perder las claves al salir o al cambiar de dispositivo? Aseg\xfarate de que has habilitado la copia de seguridad del chat en los ajustes."},
@@ -735,7 +735,7 @@ gtB(){return"Remover derechos de moderador"},
 gtA(){return"Remover derechos de administrador"},
 gty(){return"Nivel de Poder"},
 gro(){return"El nivel de poder define el nivel de acciones de un miembro, usualmente esta en el rango entre 0 a 100."},
-gei(){return"Due\xf1o"},
+gej(){return"Due\xf1o"},
 gth(){return"Silenciar"},
 grQ(){return"Crear nuevo chat"},
 glY(d){return"Resetear"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.MW,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"MW":{"aW":[]}}'))};
-(a=>{a["+7Ao9/203uYvE0VkvUpdU9AJO0s="]=a.current})($__dart_deferred_initializers__);
+y(B.MX,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"MX":{"aW":[]}}'))};
+(a=>{a["4qOmj2G+yrx8HwVmu5AABUMgLxk="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_321.part.js.map

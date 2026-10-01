@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHx(){return new B.MV(A.dA("eo"))},
-MV:function MV(d){this.a=d}}
+dHz(){return new B.MW(A.dA("eo"))},
+MW:function MW(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[16],B)
-B.MV.prototype={
+B.MW.prototype={
 ghb(){return"Inicialigo de loka arkivo malsukcesis"},
 hc(d){return"La loka arkivo por \u201c"+d+"\u201d ne povis esti malfermita. \u011ci eble estas difektita, a\u016d bezonata rultempa komponanto eble mankas.\n\nRestarigo por \u0109iam forigas la lokan arkivon de \u0109i tiu aparato. Servilaj datumoj povas esti denove sinkronigitaj, sed nesenditaj a\u016d nur loke konservitaj datumoj povas perdi\u011di. \u0108u vi volas restarigi \u011din?"},
 gey(){return"Traduko"},
@@ -340,7 +340,7 @@ gfW(){return"Bundle name"},
 glt(){return"Open in maps"},
 gec(){return"Link"},
 glv(){return"A\u016d"},
-gej(){return"Partoprenanto"},
+gek(){return"Partoprenanto"},
 ghH(){return"pasfrazo a\u016d rehava \u015dlosilo"},
 glw(d){return"Pasvorto"},
 geF(){return"Forgesita pasvorto"},
@@ -371,7 +371,7 @@ glX(){return"Raporti mesa\u011don"},
 gm0(){return"\u0108ambro gradalti\u011dis"},
 gm5(){return"Versio de \u0109ambro"},
 gi3(){return"Konservi dosieron"},
-geg(d){return"Ser\u0109i"},
+geh(d){return"Ser\u0109i"},
 gfw(){return"Sekureco"},
 gf3(d){return"Sendi"},
 gi5(){return"Sendi mesa\u011don"},
@@ -470,7 +470,7 @@ glj(){return"No one can join"},
 gkT(){return"Knock"},
 gmP(){return"Users"},
 jM(d){return""+d+" files"},
-gef(){return"User"},
+geg(){return"User"},
 gh9(){return"Custom"},
 gmU(){return"Why is this message unreadable?"},
 glg(){return"This can happen if the message was sent before you have signed in to your account at this device.\n\nIt is also possible that the sender has blocked your device or something went wrong with the internet connection.\n\nAre you able to read the message on another session? Then you can transfer the message from it! Go to Settings > Devices and make sure that your devices have verified each other. When you open the room the next time and both sessions are in the foreground, the keys will be transmitted automatically.\n\nDo you not want to lose the keys when logging out or switching devices? Make sure that you have enabled the chat backup in the settings."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.MV,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"MV":{"aW":[]}}'))};
-(a=>{a["RdDE+mNnlvDQNv4dc6nwbuDDeZg="]=a.current})($__dart_deferred_initializers__);
+y(B.MW,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"MW":{"aW":[]}}'))};
+(a=>{a["C1ZjH1ELf/voFUHA2Z3nZcJkmiI="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_319.part.js.map

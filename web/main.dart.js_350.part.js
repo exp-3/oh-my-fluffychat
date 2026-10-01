@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHJ(){return new B.N6(A.dA("hr"))},
-N6:function N6(d){this.a=d}}
+dHL(){return new B.N7(A.dA("hr"))},
+N7:function N7(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[28],B)
-B.N6.prototype={
+B.N7.prototype={
 ghb(){return"Pokretanje lokalne arhive nije uspjelo"},
 hc(d){return"Lokalna arhiva za \u201e"+d+"\u201d nije se mogla otvoriti. Mo\u017eda je o\u0161te\u0107ena ili nedostaje potrebna komponenta za izvo\u0111enje.\n\nVra\u0107anjem na po\u010detno stanje trajno se bri\u0161e lokalna arhiva na ovom ure\u0111aju. Podaci s poslu\u017eitelja mogu se ponovno sinkronizirati, ali neposlani ili samo lokalno spremljeni podaci mogu se izgubiti. \u017delite li je vratiti na po\u010detno stanje?"},
 gey(){return"Prijevod"},
@@ -341,7 +341,7 @@ gfW(){return"Ime paketa"},
 glt(){return"Otvori u kartama"},
 gec(){return"Poveznica"},
 glv(){return"Ili"},
-gej(){return"Sudionik"},
+gek(){return"Sudionik"},
 ghH(){return"tajni izraz ili klju\u010d za obnavljanje"},
 glw(d){return"Lozinka"},
 geF(){return"Zaboravljena lozinka"},
@@ -372,7 +372,7 @@ glX(){return"Prijavi poruku"},
 gm0(){return"Soba je nadogra\u0111ena"},
 gm5(){return"Verzija sobe"},
 gi3(){return"Spremi datoteku"},
-geg(d){return"Tra\u017ei"},
+geh(d){return"Tra\u017ei"},
 gfw(){return"Sigurnost"},
 gf3(d){return"Po\u0161alji"},
 gi5(){return"Po\u0161alji poruku"},
@@ -471,7 +471,7 @@ glj(){return"Nitko se ne mo\u017ee pridru\u017eiti"},
 gkT(){return"Pokucaj"},
 gmP(){return"Korisnici"},
 jM(d){return"Broj datoteka: "+d},
-gef(){return"Korisnik"},
+geg(){return"Korisnik"},
 gh9(){return"Prilago\u0111eno"},
 gmU(){return"Za\u0161to nije mogu\u0107e \u010ditati ovu poruku?"},
 glg(){return"To se mo\u017ee dogoditi ako je poruka poslana prije prijave na tvoj ra\u010dun na ovom ure\u0111aju.\n\nTako\u0111er je mogu\u0107e da je po\u0161iljatelj blokirao tvoj ure\u0111aj ili je do\u0161lo do gre\u0161ke s internetskom vezom.\n\nMo\u017ee\u0161 li pro\u010ditati poruku na jednoj drugoj sesiji? U tom slu\u010daju mo\u017ee\u0161 prenijeti poruku iz nje! Idi na Postavke > Ure\u0111aji i uvjeri se da su se tvoji ure\u0111aji me\u0111usobno potvrdili. Kada sljede\u0107i put otvori\u0161 sobu i obje sesije su u prednjem planu, klju\u010devi \u0107e se automatski prenijeti.\n\nNe \u017eeli\u0161 izgubiti klju\u010deve kada se odjavi\u0161 ili zamijeni\u0161 ure\u0111aje? Aktiviraj spremanje sigurnosne kopije chata u postavkama."},
@@ -736,7 +736,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -831,7 +831,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.N6,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"N6":{"aW":[]}}'))};
-(a=>{a["fqjfsDvnfZwuScyMVZKa0BKbvT0="]=a.current})($__dart_deferred_initializers__);
+y(B.N7,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"N7":{"aW":[]}}'))};
+(a=>{a["xmya8rTIQ10A6gD3sDTPI+HhfNE="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_350.part.js.map

@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dId(){return new B.NA(A.dA("uz"))},
-NA:function NA(d){this.a=d}}
+dIf(){return new B.NB(A.dA("uz"))},
+NB:function NB(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[56],B)
-B.NA.prototype={
+B.NB.prototype={
 ghb(){return"Mahalliy arxivni ishga tushirib bo\u2018lmadi"},
 hc(d){return"\u201c"+d+"\u201d uchun mahalliy arxivni ochib bo\u2018lmadi. U buzilgan bo\u2018lishi yoki zarur ish muhiti komponenti yetishmasligi mumkin.\n\nTiklash ushbu qurilmadagi mahalliy arxivni butunlay o\u2018chiradi. Server ma\u2019lumotlarini qayta sinxronlash mumkin, ammo yuborilmagan yoki faqat mahalliy saqlangan ma\u2019lumotlar yo\u2018qolishi mumkin. Uni tiklamoqchimisiz?"},
 gey(){return"Tarjima"},
@@ -340,7 +340,7 @@ gfW(){return"To\u02bbplam nomi"},
 glt(){return"Xaritalarda ochish"},
 gec(){return"Havola"},
 glv(){return"Yoki"},
-gej(){return"Qatnashuvchi"},
+gek(){return"Qatnashuvchi"},
 ghH(){return"parol yoki tiklash kaliti"},
 glw(d){return"Parol"},
 geF(){return"Parol unitilgan"},
@@ -371,7 +371,7 @@ glX(){return"Xabar berish"},
 gm0(){return"Xona takomillashtirildi"},
 gm5(){return"Guruh versiyasi"},
 gi3(){return"Fayl saqlash"},
-geg(d){return"Qidiruv"},
+geh(d){return"Qidiruv"},
 gfw(){return"Xavfsizlik"},
 gf3(d){return"Yuborish"},
 gi5(){return"Xabar yuborish"},
@@ -470,7 +470,7 @@ glj(){return"Hech kim qo\u02bbshila olmaydi"},
 gkT(){return"Taqillating"},
 gmP(){return"Foydalanuvchilar"},
 jM(d){return""+d+" fayllar"},
-gef(){return"Foydalanuvchi"},
+geg(){return"Foydalanuvchi"},
 gh9(){return"Maxsus"},
 gmU(){return"Nima uchun bu xabarni o\u02bbqib bo\u02bblmaydi?"},
 glg(){return"Bu xabar siz ushbu qurilmada hisobingizga kirishdan oldin yuborilgan bo\u02bblsa sodir bo\u02bblishi mumkin.\n\nShuningdek, jo\u02bbnatuvchi qurilmangizni bloklagan yoki internet ulanishida biron bir muammo yuzaga kelgan bo\u02bblishi mumkin.\n\nXabarni boshqa sessiyada o\u02bbqiy olasizmi? Keyin xabarni undan uzatishingiz mumkin! Sozlamalar > Qurilmalar bo\u02bblimiga o\u02bbting va qurilmalaringiz bir-birini tasdiqlaganligiga ishonch hosil qiling. Keyingi safar xonani ochganingizda va ikkala sessiya ham oldinda bo\u02bblganda, kalitlar avtomatik ravishda uzatiladi.\n\nTizimdan chiqishda yoki qurilmalarni almashtirishda kalitlarni yo\u02bbqotishni xohlamaysizmi? Sozlamalarda suhbatning zaxira nusxasini yoqganingizga ishonch hosil qiling."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,8 +830,8 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var x=a.inherit
-x(B.NA,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"NA":{"aW":[]}}'))
+x(B.NB,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"NB":{"aW":[]}}'))
 var y={b:" manzilidagi dasturchilarga xabar bering. Xato xabari: "}};
-(a=>{a["PdeW8pez+wtfBYjElEqWm+/PoOQ="]=a.current})($__dart_deferred_initializers__);
+(a=>{a["f3RXlvhQp3uHjQpB+f/l6UaNZUw="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_405.part.js.map

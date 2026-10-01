@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHv(){return new B.MT(A.dA("el"))},
-MT:function MT(d){this.a=d}}
+dHx(){return new B.MU(A.dA("el"))},
+MU:function MU(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[14],B)
-B.MT.prototype={
+B.MU.prototype={
 ghb(){return"\u0391\u03c0\u03bf\u03c4\u03c5\u03c7\u03af\u03b1 \u03b1\u03c1\u03c7\u03b9\u03ba\u03bf\u03c0\u03bf\u03af\u03b7\u03c3\u03b7\u03c2 \u03c4\u03bf\u03c0\u03b9\u03ba\u03bf\u03cd \u03b1\u03c1\u03c7\u03b5\u03af\u03bf\u03c5"},
 hc(d){return"\u0394\u03b5\u03bd \u03ae\u03c4\u03b1\u03bd \u03b4\u03c5\u03bd\u03b1\u03c4\u03cc \u03c4\u03bf \u03ac\u03bd\u03bf\u03b9\u03b3\u03bc\u03b1 \u03c4\u03bf\u03c5 \u03c4\u03bf\u03c0\u03b9\u03ba\u03bf\u03cd \u03b1\u03c1\u03c7\u03b5\u03af\u03bf\u03c5 \u03b3\u03b9\u03b1 \u03c4\u03bf \xab"+d+"\xbb. \u0395\u03bd\u03b4\u03ad\u03c7\u03b5\u03c4\u03b1\u03b9 \u03bd\u03b1 \u03ad\u03c7\u03b5\u03b9 \u03ba\u03b1\u03c4\u03b1\u03c3\u03c4\u03c1\u03b1\u03c6\u03b5\u03af \u03ae \u03bd\u03b1 \u03bb\u03b5\u03af\u03c0\u03b5\u03b9 \u03ad\u03bd\u03b1 \u03b1\u03c0\u03b1\u03b9\u03c4\u03bf\u03cd\u03bc\u03b5\u03bd\u03bf \u03c3\u03c4\u03bf\u03b9\u03c7\u03b5\u03af\u03bf \u03c7\u03c1\u03cc\u03bd\u03bf\u03c5 \u03b5\u03ba\u03c4\u03ad\u03bb\u03b5\u03c3\u03b7\u03c2.\n\n\u0397 \u03b5\u03c0\u03b1\u03bd\u03b1\u03c6\u03bf\u03c1\u03ac \u03b4\u03b9\u03b1\u03b3\u03c1\u03ac\u03c6\u03b5\u03b9 \u03bf\u03c1\u03b9\u03c3\u03c4\u03b9\u03ba\u03ac \u03c4\u03bf \u03c4\u03bf\u03c0\u03b9\u03ba\u03cc \u03b1\u03c1\u03c7\u03b5\u03af\u03bf \u03b1\u03c5\u03c4\u03ae\u03c2 \u03c4\u03b7\u03c2 \u03c3\u03c5\u03c3\u03ba\u03b5\u03c5\u03ae\u03c2. \u03a4\u03b1 \u03b4\u03b5\u03b4\u03bf\u03bc\u03ad\u03bd\u03b1 \u03c4\u03bf\u03c5 \u03b4\u03b9\u03b1\u03ba\u03bf\u03bc\u03b9\u03c3\u03c4\u03ae \u03bc\u03c0\u03bf\u03c1\u03bf\u03cd\u03bd \u03bd\u03b1 \u03c3\u03c5\u03b3\u03c7\u03c1\u03bf\u03bd\u03b9\u03c3\u03c4\u03bf\u03cd\u03bd \u03be\u03b1\u03bd\u03ac, \u03b1\u03bb\u03bb\u03ac \u03b5\u03bd\u03b4\u03ad\u03c7\u03b5\u03c4\u03b1\u03b9 \u03bd\u03b1 \u03c7\u03b1\u03b8\u03bf\u03cd\u03bd \u03bc\u03b7 \u03b1\u03c0\u03b5\u03c3\u03c4\u03b1\u03bb\u03bc\u03ad\u03bd\u03b1 \u03b4\u03b5\u03b4\u03bf\u03bc\u03ad\u03bd\u03b1 \u03ae \u03b4\u03b5\u03b4\u03bf\u03bc\u03ad\u03bd\u03b1 \u03c0\u03bf\u03c5 \u03c5\u03c0\u03ac\u03c1\u03c7\u03bf\u03c5\u03bd \u03bc\u03cc\u03bd\u03bf \u03c4\u03bf\u03c0\u03b9\u03ba\u03ac. \u0398\u03ad\u03bb\u03b5\u03c4\u03b5 \u03bd\u03b1 \u03b3\u03af\u03bd\u03b5\u03b9 \u03b5\u03c0\u03b1\u03bd\u03b1\u03c6\u03bf\u03c1\u03ac;"},
 gey(){return"\u039c\u03b5\u03c4\u03ac\u03c6\u03c1\u03b1\u03c3\u03b7"},
@@ -341,7 +341,7 @@ gfW(){return"Bundle name"},
 glt(){return"Open in maps"},
 gec(){return"Link"},
 glv(){return"Or"},
-gej(){return"Participant"},
+gek(){return"Participant"},
 ghH(){return"passphrase or recovery key"},
 glw(d){return"Password"},
 geF(){return"Password forgotten"},
@@ -372,7 +372,7 @@ glX(){return"Report message"},
 gm0(){return"Room has been upgraded"},
 gm5(){return"Room version"},
 gi3(){return"Save file"},
-geg(d){return"Search"},
+geh(d){return"Search"},
 gfw(){return"Security"},
 gf3(d){return"Send"},
 gi5(){return"Send a message"},
@@ -471,7 +471,7 @@ glj(){return"No one can join"},
 gkT(){return"Knock"},
 gmP(){return"Users"},
 jM(d){return""+d+" files"},
-gef(){return"User"},
+geg(){return"User"},
 gh9(){return"Custom"},
 gmU(){return"Why is this message unreadable?"},
 glg(){return"This can happen if the message was sent before you have signed in to your account at this device.\n\nIt is also possible that the sender has blocked your device or something went wrong with the internet connection.\n\nAre you able to read the message on another session? Then you can transfer the message from it! Go to Settings > Devices and make sure that your devices have verified each other. When you open the room the next time and both sessions are in the foreground, the keys will be transmitted automatically.\n\nDo you not want to lose the keys when logging out or switching devices? Make sure that you have enabled the chat backup in the settings."},
@@ -736,7 +736,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -831,7 +831,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.MT,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"MT":{"aW":[]}}'))};
-(a=>{a["UWrzgX/TBgisbhvRT2vMWaRgdb0="]=a.current})($__dart_deferred_initializers__);
+y(B.MU,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"MU":{"aW":[]}}'))};
+(a=>{a["wERLH3z89VFqhwxnAaJ3lCFf9gs="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_315.part.js.map

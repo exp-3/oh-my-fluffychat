@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHA(){return new B.MY(A.dA("eu"))},
-MY:function MY(d){this.a=d}}
+dHC(){return new B.MZ(A.dA("eu"))},
+MZ:function MZ(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[19],B)
-B.MY.prototype={
+B.MZ.prototype={
 ghb(){return"Ezin izan da artxibo lokala hasieratu"},
 hc(d){return"Ezin izan da ireki \xab"+d+"\xbb(r)en artxibo lokala. Baliteke hondatuta egotea edo exekuzio-osagai bat falta izatea.\n\nBerrezartzeak betiko ezabatuko du gailu honetako artxibo lokala. Zerbitzariko datuak berriro sinkroniza daitezke, baina bidali gabeko edo lokalean soilik gordetako datuak gal daitezke. Berrezarri nahi duzu?"},
 gey(){return"Itzulpena"},
@@ -340,7 +340,7 @@ gfW(){return"Sortaren izena"},
 glt(){return"Ireki mapen aplikazioan"},
 gec(){return"Esteka"},
 glv(){return"Edo"},
-gej(){return"Partaide"},
+gek(){return"Partaide"},
 ghH(){return"pasaesaldia edo berreskuratze-gakoa"},
 glw(d){return"Pasahitza"},
 geF(){return"Pasahitza ahaztu dut"},
@@ -371,7 +371,7 @@ glX(){return"Salatu mezua"},
 gm0(){return"Gela bertsio-berritu da"},
 gm5(){return"Gelaren bertsioa"},
 gi3(){return"Gorde fitxategia"},
-geg(d){return"Bilatu"},
+geh(d){return"Bilatu"},
 gfw(){return"Segurtasuna"},
 gf3(d){return"Bidali"},
 gi5(){return"Bidali mezua"},
@@ -470,7 +470,7 @@ glj(){return"Ezin da inor batu"},
 gkT(){return"Eskatu baimena"},
 gmP(){return"Erabiltzaileak"},
 jM(d){return""+d+" fitxategi"},
-gef(){return"Erabiltzailea"},
+geg(){return"Erabiltzailea"},
 gh9(){return"Neurrira egindakoa"},
 gmU(){return"Zergatik ezin da mezu hau irakurri?"},
 glg(){return"Mezua gailu honetan saioa hasi baino lehen bidali bazen gertatu daiteke.\n\nBeste aukera bat igorleak zure gailua blokeatu izana da, edo zerbaitek huts egin izana interneteko konexioan.\n\nMezua beste saio batean irakur dezakezu? Hala bada, mezua transferitu dezakezu! Zoaz Ezrpenetara > Gailuak eta baieztatu zure gailuek bata bestea egiaztatu dutela. Gela irekiko duzun hurrengo aldian eta bi saioak aurreko planoan irekita daudenean, gakoak automatikoki partekatuko dira.\n\nEz duzu gakorik galdu nahi saioa amaitu edo gailuak aldatzen dituzunean? Baieztatu ezarpenetan txaten babeskopiak gaituta dituzula."},
@@ -735,7 +735,7 @@ gtB(){return"Kendu moderatzaile eskubideak"},
 gtA(){return"Kendu administratzaile eskubideak"},
 gty(){return"Botere-maila"},
 gro(){return"Botere-mailek zehazten dute kide batek zer egin dezakeen gela honetan, eta tartea 0tik 100era artekoa izan ohi da."},
-gei(){return"Jabea"},
+gej(){return"Jabea"},
 gth(){return"Mututu"},
 grQ(){return"Sortu txat berria"},
 glY(d){return"Berrezarri"},
@@ -830,8 +830,8 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var x=a.inherit
-x(B.MY,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"MY":{"aW":[]}}'))
+x(B.MZ,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"MZ":{"aW":[]}}'))
 var y={d:" helbidean. Errorearen mezua ondorengoa da: "}};
-(a=>{a["yPSrAYLQMLUT9QCfDekzsL0BrIA="]=a.current})($__dart_deferred_initializers__);
+(a=>{a["dUesHLUhSFPoOpCJVlqw3qBsZZU="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_330.part.js.map

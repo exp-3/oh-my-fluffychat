@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHO(){return new B.Nb(A.dA("it"))},
-Nb:function Nb(d){this.a=d}}
+dHQ(){return new B.Nc(A.dA("it"))},
+Nc:function Nc(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[33],B)
-B.Nb.prototype={
+B.Nc.prototype={
 ghb(){return"Inizializzazione dell\u2019archivio locale non riuscita"},
 hc(d){return"Non \xe8 stato possibile aprire l\u2019archivio locale di \u201c"+d+"\u201d. Potrebbe essere danneggiato oppure potrebbe mancare un componente di runtime necessario.\n\nLa reimpostazione elimina definitivamente l\u2019archivio locale di questo dispositivo. I dati del server possono essere sincronizzati di nuovo, ma i dati non inviati o salvati solo localmente potrebbero andare persi. Vuoi reimpostarlo?"},
 gey(){return"Traduzione"},
@@ -341,7 +341,7 @@ gfW(){return"Nome del bundle"},
 glt(){return"Apri in maps"},
 gec(){return"Link"},
 glv(){return"O"},
-gej(){return"Partecipante"},
+gek(){return"Partecipante"},
 ghH(){return"frase segreta o chiave di recupero"},
 glw(d){return"Password"},
 geF(){return"Password dimenticata"},
@@ -372,7 +372,7 @@ glX(){return"Segnala il messaggio"},
 gm0(){return"La stanza \xe8 stata aggiornata"},
 gm5(){return"Versione della stanza"},
 gi3(){return"Salva file"},
-geg(d){return"Cerca"},
+geh(d){return"Cerca"},
 gfw(){return"Sicurezza"},
 gf3(d){return"Invia"},
 gi5(){return"Invia un messaggio"},
@@ -471,7 +471,7 @@ glj(){return"Nessuno pu\xf2 unirsi"},
 gkT(){return"Bussa"},
 gmP(){return"Utenti"},
 jM(d){return""+d+" file"},
-gef(){return"Utente"},
+geg(){return"Utente"},
 gh9(){return"Personalizzato"},
 gmU(){return"Perch\xe9 questo messaggio \xe8 illeggibile?"},
 glg(){return"Questo pu\xf2 accadere se il messaggio \xe8 stato inviato prima che hai fatto l'accesso in questo dispositivo.\n\n\xc8 anche possibile che il mittente abbia bloccato il tuo dispositivo o che qualcosa sia andato storto con la tua connessione ad internet.\n\nSei in grado di leggere il messaggio su altre sessioni? Allora puoi trasferire il messaggio da l\xec! Vai su Impostazioni > Dispositivi e verifica che i tuoi dispositivi siano verificati l'un l'altro. Quando aprirai la stanza la prossima volta ed entrambe le sessioni sono in primo piano, le chiavi saranno trasmesse automaticamente.\n\nNon vuoi perdere le chiavi quando ti disconnetti o cambi dispositivo? Assicurati di aver attivato il backup delle chat nelle impostazioni."},
@@ -737,7 +737,7 @@ gtB(){return"Rimuovi i diritti di moderatore"},
 gtA(){return"Rimuovi i diritti di amministratore"},
 gty(){return"Livello di permesso"},
 gro(){return"I livelli di permesso definiscono cosa un membro pu\xf2 fare in questa stanza e di solito variano tra 0 e 100."},
-gei(){return"Proprietario"},
+gej(){return"Proprietario"},
 gth(){return"Silenzia"},
 grQ(){return"Crea una nuova chat"},
 glY(d){return"Reset"},
@@ -832,7 +832,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.Nb,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"Nb":{"aW":[]}}'))};
-(a=>{a["F6G3apEc2LbyGlhCu7fgRD1mPog="]=a.current})($__dart_deferred_initializers__);
+y(B.Nc,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Nc":{"aW":[]}}'))};
+(a=>{a["d1eu0D96twyGa9RiUVHionYSO1M="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_370.part.js.map

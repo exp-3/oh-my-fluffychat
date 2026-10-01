@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHK(){return new B.N7(A.dA("hu"))},
-N7:function N7(d){this.a=d}}
+dHM(){return new B.N8(A.dA("hu"))},
+N8:function N8(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[29],B)
-B.N7.prototype={
+B.N8.prototype={
 ghb(){return"A helyi arch\xedvum inicializ\xe1l\xe1sa sikertelen"},
 hc(d){return"A(z) \u201e"+d+"\u201d helyi arch\xedvum\xe1t nem siker\xfclt megnyitni. Lehet, hogy s\xe9r\xfclt, vagy hi\xe1nyzik egy sz\xfcks\xe9ges futtat\xf3k\xf6rnyezeti \xf6sszetev\u0151.\n\nAz alaphelyzetbe \xe1ll\xedt\xe1s v\xe9glegesen t\xf6rli az eszk\xf6z helyi arch\xedvum\xe1t. A szerver adatai \xfajra szinkroniz\xe1lhat\xf3k, de az el nem k\xfcld\xf6tt vagy csak helyben t\xe1rolt adatok elveszhetnek. Szeretn\xe9d alaphelyzetbe \xe1ll\xedtani?"},
 gey(){return"Ford\xedt\xe1s"},
@@ -340,7 +340,7 @@ gfW(){return"Fi\xf3kcsoport neve"},
 glt(){return"Megnyit\xe1s t\xe9rk\xe9pen"},
 gec(){return"Hivatkoz\xe1s"},
 glv(){return"Vagy"},
-gej(){return"R\xe9sztvev\u0151"},
+gek(){return"R\xe9sztvev\u0151"},
 ghH(){return"jelmondat vagy vissza\xe1ll\xedt\xe1si kulcs"},
 glw(d){return"Jelsz\xf3"},
 geF(){return"Elfelejtett jelsz\xf3"},
@@ -371,7 +371,7 @@ glX(){return"\xdczenet jelent\xe9se"},
 gm0(){return"A szoba friss\xedt\xe9sre ker\xfclt"},
 gm5(){return"Szoba verzi\xf3"},
 gi3(){return"F\xe1jl ment\xe9se"},
-geg(d){return"Keres\xe9s"},
+geh(d){return"Keres\xe9s"},
 gfw(){return"Biztons\xe1g"},
 gf3(d){return"K\xfcld\xe9s"},
 gi5(){return"\xdczenet k\xfcld\xe9se"},
@@ -470,7 +470,7 @@ glj(){return"Senki sem csatlakozhat"},
 gkT(){return"Kopog\xe1s"},
 gmP(){return"Felhaszn\xe1l\xf3k"},
 jM(d){return""+d+" f\xe1jl"},
-gef(){return"Felhaszn\xe1l\xf3"},
+geg(){return"Felhaszn\xe1l\xf3"},
 gh9(){return"Egyedi"},
 gmU(){return"Mi\xe9rt olvashatatlan ez az \xfczenet?"},
 glg(){return"Akkor fordulhat el\u0151, ha az \xfczenet az eszk\xf6zre val\xf3 bejelentkez\xe9s el\u0151tt ker\xfclt k\xfcld\xe9sre.\n\nAz is elk\xe9pzelhet\u0151, hogy a k\xfcld\u0151 blokkolta az eszk\xf6z\xe9t, vagy valami probl\xe9ma l\xe9pett fel az internet kapcsolatban.\n\nM\xe1s helyen l\xe1tja az \xfczenetet? Akkor \xe1t tudja m\xe1solni ide is! Menjen a Be\xe1ll\xedt\xe1sok > Eszk\xf6z\xf6k r\xe9szbe, \xe9s gy\u0151z\u0151dj\xf6n meg r\xf3la, hogy az eszk\xf6zei meger\u0151s\xedtett\xe9k egym\xe1st. Legk\xf6zelebb amikor ezt a szob\xe1t megnyitja, \xe9s mind a k\xe9t kliens az el\u0151t\xe9rben van, akkor szikroniz\xe1l\xf3dni fognak.\n\nNem akarja elvesz\xedteni a kulcsokat amikor kijelentkezik, vagy eszk\xf6zt cser\xe9l? Gy\u0151z\u0151dj\xf6n meg r\xf3la, hogy bekapcsolta a chat ment\xe9st a be\xe1ll\xedt\xe1sokban."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.N7,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"N7":{"aW":[]}}'))};
-(a=>{a["jeA5GV3Q3PKDWqsEHNxwsowbWhw="]=a.current})($__dart_deferred_initializers__);
+y(B.N8,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"N8":{"aW":[]}}'))};
+(a=>{a["u+oquXjW+wvoIgbun0GSrAlAV2w="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_357.part.js.map

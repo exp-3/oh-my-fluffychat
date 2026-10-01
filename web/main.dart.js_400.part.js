@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dI9(){return new B.Nw(A.dA("te"))},
-Nw:function Nw(d){this.a=d}}
+dIb(){return new B.Nx(A.dA("te"))},
+Nx:function Nx(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[52],B)
-B.Nw.prototype={
+B.Nx.prototype={
 ghb(){return"\u0c38\u0c4d\u0c25\u0c3e\u0c28\u0c3f\u0c15 \u0c06\u0c30\u0c4d\u0c15\u0c48\u0c35\u0c4d\u200c\u0c28\u0c41 \u0c2a\u0c4d\u0c30\u0c3e\u0c30\u0c02\u0c2d\u0c3f\u0c02\u0c1a\u0c21\u0c02 \u0c35\u0c3f\u0c2b\u0c32\u0c2e\u0c48\u0c02\u0c26\u0c3f"},
 hc(d){return'"'+d+'" \u0c15\u0c4b\u0c38\u0c02 \u0c38\u0c4d\u0c25\u0c3e\u0c28\u0c3f\u0c15 \u0c06\u0c30\u0c4d\u0c15\u0c48\u0c35\u0c4d\u200c\u0c28\u0c41 \u0c24\u0c46\u0c30\u0c35\u0c21\u0c02 \u0c38\u0c3e\u0c27\u0c4d\u0c2f\u0c02 \u0c15\u0c3e\u0c32\u0c47\u0c26\u0c41. \u0c05\u0c26\u0c3f \u0c2a\u0c3e\u0c21\u0c48 \u0c09\u0c02\u0c21\u0c35\u0c1a\u0c4d\u0c1a\u0c41 \u0c32\u0c47\u0c26\u0c3e \u0c05\u0c35\u0c38\u0c30\u0c2e\u0c48\u0c28 \u0c30\u0c28\u0c4d\u200c\u0c1f\u0c48\u0c2e\u0c4d \u0c2d\u0c3e\u0c17\u0c02 \u0c32\u0c47\u0c15\u0c2a\u0c4b\u0c35\u0c1a\u0c4d\u0c1a\u0c41.\n\n\u0c30\u0c40\u0c38\u0c46\u0c1f\u0c4d \u0c1a\u0c47\u0c38\u0c4d\u0c24\u0c47 \u0c08 \u0c2a\u0c30\u0c3f\u0c15\u0c30\u0c02\u0c32\u0c4b\u0c28\u0c3f \u0c38\u0c4d\u0c25\u0c3e\u0c28\u0c3f\u0c15 \u0c06\u0c30\u0c4d\u0c15\u0c48\u0c35\u0c4d \u0c36\u0c3e\u0c36\u0c4d\u0c35\u0c24\u0c02\u0c17\u0c3e \u0c24\u0c4a\u0c32\u0c17\u0c3f\u0c02\u0c1a\u0c2c\u0c21\u0c41\u0c24\u0c41\u0c02\u0c26\u0c3f. \u0c38\u0c30\u0c4d\u0c35\u0c30\u0c4d \u0c21\u0c47\u0c1f\u0c3e\u0c28\u0c41 \u0c2e\u0c33\u0c4d\u0c32\u0c40 \u0c38\u0c2e\u0c15\u0c3e\u0c32\u0c40\u0c15\u0c30\u0c3f\u0c02\u0c1a\u0c35\u0c1a\u0c4d\u0c1a\u0c41, \u0c15\u0c3e\u0c28\u0c40 \u0c2a\u0c02\u0c2a\u0c28\u0c3f \u0c32\u0c47\u0c26\u0c3e \u0c38\u0c4d\u0c25\u0c3e\u0c28\u0c3f\u0c15\u0c02\u0c17\u0c3e \u0c2e\u0c3e\u0c24\u0c4d\u0c30\u0c2e\u0c47 \u0c2d\u0c26\u0c4d\u0c30\u0c2a\u0c30\u0c3f\u0c1a\u0c3f\u0c28 \u0c21\u0c47\u0c1f\u0c3e \u0c15\u0c4b\u0c32\u0c4d\u0c2a\u0c4b\u0c35\u0c1a\u0c4d\u0c1a\u0c41. \u0c26\u0c3e\u0c28\u0c4d\u0c28\u0c3f \u0c30\u0c40\u0c38\u0c46\u0c1f\u0c4d \u0c1a\u0c47\u0c2f\u0c3e\u0c32\u0c3e?'},
 gey(){return"\u0c05\u0c28\u0c41\u0c35\u0c3e\u0c26\u0c02"},
@@ -341,7 +341,7 @@ gfW(){return"Bundle name"},
 glt(){return"Open in maps"},
 gec(){return"Link"},
 glv(){return"Or"},
-gej(){return"Participant"},
+gek(){return"Participant"},
 ghH(){return"passphrase or recovery key"},
 glw(d){return"Password"},
 geF(){return"Password forgotten"},
@@ -372,7 +372,7 @@ glX(){return"Report message"},
 gm0(){return"Room has been upgraded"},
 gm5(){return"Room version"},
 gi3(){return"Save file"},
-geg(d){return"Search"},
+geh(d){return"Search"},
 gfw(){return"Security"},
 gf3(d){return"Send"},
 gi5(){return"Send a message"},
@@ -471,7 +471,7 @@ glj(){return"No one can join"},
 gkT(){return"Knock"},
 gmP(){return"Users"},
 jM(d){return""+d+" files"},
-gef(){return"User"},
+geg(){return"User"},
 gh9(){return"Custom"},
 gmU(){return"Why is this message unreadable?"},
 glg(){return"This can happen if the message was sent before you have signed in to your account at this device.\n\nIt is also possible that the sender has blocked your device or something went wrong with the internet connection.\n\nAre you able to read the message on another session? Then you can transfer the message from it! Go to Settings > Devices and make sure that your devices have verified each other. When you open the room the next time and both sessions are in the foreground, the keys will be transmitted automatically.\n\nDo you not want to lose the keys when logging out or switching devices? Make sure that you have enabled the chat backup in the settings."},
@@ -736,7 +736,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -831,7 +831,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.Nw,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"Nw":{"aW":[]}}'))};
-(a=>{a["o7lwtdhR4mcREHnGZSICVAhc/Pw="]=a.current})($__dart_deferred_initializers__);
+y(B.Nx,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Nx":{"aW":[]}}'))};
+(a=>{a["F3tpAdflyDUuC5UypucfxlEfRag="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_400.part.js.map

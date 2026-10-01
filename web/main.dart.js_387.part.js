@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dI1(){return new B.No(A.dA("ro"))},
-No:function No(d){this.a=d}}
+dI3(){return new B.Np(A.dA("ro"))},
+Np:function Np(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[44],B)
-B.No.prototype={
+B.Np.prototype={
 ghb(){return"Ini\u021bializarea arhivei locale a e\u0219uat"},
 hc(d){return"Arhiva local\u0103 pentru \u201e"+d+"\u201d nu a putut fi deschis\u0103. Este posibil s\u0103 fie deteriorat\u0103 sau s\u0103 lipseasc\u0103 o component\u0103 de execu\u021bie necesar\u0103.\n\nResetarea \u0219terge definitiv arhiva local\u0103 de pe acest dispozitiv. Datele de pe server pot fi sincronizate din nou, dar datele netrimise sau salvate numai local se pot pierde. Dori\u021bi s\u0103 o reseta\u021bi?"},
 gey(){return"Traducere"},
@@ -340,7 +340,7 @@ gfW(){return"Numele pachetului"},
 glt(){return"Deschide\u021bi pe hart\u0103"},
 gec(){return"Link"},
 glv(){return"Sau"},
-gej(){return"Participant"},
+gek(){return"Participant"},
 ghH(){return"fraz\u0103 de acces sau cheie de recuperare"},
 glw(d){return"Parol\u0103"},
 geF(){return"Parola uitat\u0103"},
@@ -371,7 +371,7 @@ glX(){return"Raporta\u021bi mesajul"},
 gm0(){return"Camera a fost actualizat\u0103"},
 gm5(){return"Versiunea camerei"},
 gi3(){return"Salva\u021bi fi\u0219ierul"},
-geg(d){return"C\u0103uta\u021bi"},
+geh(d){return"C\u0103uta\u021bi"},
 gfw(){return"Securitate"},
 gf3(d){return"Trimite\u021bi"},
 gi5(){return"Trimite\u021bi un mesaj"},
@@ -470,7 +470,7 @@ glj(){return"No one can join"},
 gkT(){return"Knock"},
 gmP(){return"Utilizatori"},
 jM(d){return""+d+" fi\u0219iere"},
-gef(){return"Utilizator"},
+geg(){return"Utilizator"},
 gh9(){return"Personalizat"},
 gmU(){return"De ce este acest mesaj ilizibil?"},
 glg(){return"Aceast\u0103 chestie poate s\u0103 se \xeent\xe2mple c\xe2nd mesajul a fost trimis \xeenainte s\u0103 v\u0103 conecta\u021bi contul cu acest dispozitiv.\n\nO alt\u0103 explica\u021bie ar fi dac\u0103 trimi\u021b\u0103torul a blocat dispozitivul vostru sau ceva s-a \xeent\xe2mplat cu conexiunea la internet\n\nPute\u021bi s\u0103 citi\u021bi mesajul \xeen o alt\u0103 se\u0219iune? Atunci pute\u021bi s\u0103 transfera\u021bi mesajul de acolo! Merge\u021bi la Configur\u0103ri > Dispozitive \u0219i verifica\u021bi c\u0103 dispozitivele s-au verificat. C\xe2nd deschide\u021bi camera \xeen viitor \u0219i ambele se\u0219iune sunt \xeen foreground, cheile va fi transmise automat. \n\nDori\u021bi s\u0103 \xee\u021bi p\u0103stra\u021bi cheile c\xe2nd deconecta\u021bi sau schimba\u021bi dispozitive? Fi\u021bi aten\u021bi s\u0103 activa\u021bi backup de chat \xeen configur\u0103ri."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.No,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"No":{"aW":[]}}'))};
-(a=>{a["jtFceksiHd8Y2+8KH1Lm4IszBOo="]=a.current})($__dart_deferred_initializers__);
+y(B.Np,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Np":{"aW":[]}}'))};
+(a=>{a["cNuUlbB1vjQt0VElY8T6L6n1i7U="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_387.part.js.map

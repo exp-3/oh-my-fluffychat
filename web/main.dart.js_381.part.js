@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHW(){return new B.Nj(A.dA("nb"))},
-Nj:function Nj(d){this.a=d}}
+dHY(){return new B.Nk(A.dA("nb"))},
+Nk:function Nk(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[41],B)
-B.Nj.prototype={
+B.Nk.prototype={
 ghb(){return"Kunne ikke initialisere lokalt arkiv"},
 hc(d){return"Det lokale arkivet for \xab"+d+"\xbb kunne ikke \xe5pnes. Det kan v\xe6re skadet, eller en n\xf8dvendig kj\xf8retidskomponent kan mangle.\n\nTilbakestilling sletter det lokale arkivet p\xe5 denne enheten permanent. Serverdata kan synkroniseres p\xe5 nytt, men data som ikke er sendt eller bare er lagret lokalt, kan g\xe5 tapt. Vil du tilbakestille det?"},
 gey(){return"Oversettelse"},
@@ -341,7 +341,7 @@ gfW(){return"Navn p\xe5 pakke"},
 glt(){return"\xc5pne i kart"},
 gec(){return"Lenke"},
 glv(){return"Eller"},
-gej(){return"Deltager"},
+gek(){return"Deltager"},
 ghH(){return"Passord eller gjenopprettingsn\xf8kkel"},
 glw(d){return"Passord"},
 geF(){return"Passord glemt"},
@@ -372,7 +372,7 @@ glX(){return"Rapporter melding"},
 gm0(){return"Rommet har blitt oppgradert"},
 gm5(){return"Rom versjon"},
 gi3(){return"Lagre fil"},
-geg(d){return"S\xf8k"},
+geh(d){return"S\xf8k"},
 gfw(){return"Sikkerhet"},
 gf3(d){return"Send"},
 gi5(){return"Send en melding"},
@@ -471,7 +471,7 @@ glj(){return"Ingen kan bli med"},
 gkT(){return"Bank p\xe5"},
 gmP(){return"Brukere"},
 jM(d){return""+d+" filer"},
-gef(){return"Bruker"},
+geg(){return"Bruker"},
 gh9(){return"Egendefinert"},
 gmU(){return"Hvorfor er denne meldingen uleselig?"},
 glg(){return"Dette kan skje hvis meldingen ble sendt f\xf8r du logget inn p\xe5 kontoen din p\xe5 denne enheten.\n\nDet er ogs\xe5 mulig at senderen har blokkert enheten din, eller at noe gikk galt med internettforbindelsen.\n\nEr du i stand til \xe5 lese meldingen i en annen sesjon? Da kan du overf\xf8re meldingen fra den! G\xe5 til Innstillinger > Enheter og s\xf8rg for at enhetene dine har verifisert hverandre. Neste gang du \xe5pner rommet og begge sesjonene er i forgrunnen, vil n\xf8klene bli overf\xf8rt automatisk.\n\nVil du unng\xe5 \xe5 miste n\xf8klene n\xe5r du logger ut eller bytter enhet? S\xf8rg for at du har aktivert sikkerhetskopiering av chat i innstillingene."},
@@ -736,7 +736,7 @@ gtB(){return"Fjern moderator-rettigheter"},
 gtA(){return"Fjern admin-rettigheter"},
 gty(){return"Styrkeniv\xe5"},
 gro(){return"Styrkeniv\xe5er definerer hva et medlem har lov til \xe5 gj\xf8re i dette rommet, og varierer vanligvis mellom 0 og 100."},
-gei(){return"Eier"},
+gej(){return"Eier"},
 gth(){return"Demp"},
 grQ(){return"Opprett ny chat"},
 glY(d){return"Nullstill"},
@@ -831,7 +831,7 @@ rm(d){return"Serveren svarte med en feilmelding: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.Nj,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"Nj":{"aW":[]}}'))};
-(a=>{a["NIq7tStIxfWlQcJ3PgBDwlAzWx4="]=a.current})($__dart_deferred_initializers__);
+y(B.Nk,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Nk":{"aW":[]}}'))};
+(a=>{a["yQrGqKb6PJHAX4BtaXpcv237LpA="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_381.part.js.map

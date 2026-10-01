@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHC(){return new B.N_(A.dA("fi"))},
-N_:function N_(d){this.a=d}}
+dHE(){return new B.N0(A.dA("fi"))},
+N0:function N0(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[21],B)
-B.N_.prototype={
+B.N0.prototype={
 ghb(){return"Paikallisen arkiston alustaminen ep\xe4onnistui"},
 hc(d){return"Kohteen \u201d"+d+"\u201d paikallista arkistoa ei voitu avata. Se voi olla vioittunut tai vaadittu suorituksenaikainen komponentti saattaa puuttua.\n\nNollaaminen poistaa t\xe4m\xe4n laitteen paikallisen arkiston pysyv\xe4sti. Palvelimen tiedot voidaan synkronoida uudelleen, mutta l\xe4hett\xe4m\xe4tt\xf6m\xe4t tai vain paikallisesti tallennetut tiedot voivat kadota. Haluatko nollata sen?"},
 gey(){return"K\xe4\xe4nn\xf6s"},
@@ -340,7 +340,7 @@ gfW(){return"K\xe4\xe4reen nimi"},
 glt(){return"Avaa kartoissa"},
 gec(){return"Linkki"},
 glv(){return"Tai"},
-gej(){return"Osallistuja"},
+gek(){return"Osallistuja"},
 ghH(){return"salalause tai palautusavain"},
 glw(d){return"Salasana"},
 geF(){return"Salasana unohtunut"},
@@ -371,7 +371,7 @@ glX(){return"Ilmoita viesti"},
 gm0(){return"Huone on p\xe4ivitetty"},
 gm5(){return"Huoneen versio"},
 gi3(){return"Tallenna tiedosto"},
-geg(d){return"Hae"},
+geh(d){return"Hae"},
 gfw(){return"Turvallisuus"},
 gf3(d){return"L\xe4het\xe4"},
 gi5(){return"L\xe4het\xe4 viesti"},
@@ -470,7 +470,7 @@ glj(){return"Kukaan ei voi liitty\xe4"},
 gkT(){return"Koputa"},
 gmP(){return"K\xe4ytt\xe4j\xe4t"},
 jM(d){return""+d+" tiedostoa"},
-gef(){return"K\xe4ytt\xe4j\xe4"},
+geg(){return"K\xe4ytt\xe4j\xe4"},
 gh9(){return"Mukautettu"},
 gmU(){return"Miksei t\xe4t\xe4 viesti\xe4 voida lukea?"},
 glg(){return"T\xe4m\xe4 voi tapahtua mik\xe4li viesti l\xe4hetettiin ennen sis\xe4\xe4nkirjautumistasi t\xe4lle laitteelle.\n\nOn my\xf6s mahdollista, ett\xe4 l\xe4hett\xe4j\xe4 on est\xe4nyt t\xe4m\xe4n laitteen tai jokin meni pieleen verkkoyhteyden kanssa.\n\nPystytk\xf6 lukemaan viestin toisella istunnolla? Siin\xe4 tapauksessa voit siirt\xe4\xe4 viestin silt\xe4! Mene Asetukset > Laitteet ja varmista, ett\xe4 laitteesi ovat varmistaneet toisensa. Seuraavankerran avatessasi huoneen ja molempien istuntojen ollessa etualalla, avaimet siirret\xe4\xe4n automaattisesti.\n\nHaluatko varmistaa ettet menet\xe4 avaimia uloskirjautuessa tai laitteita vaihtaessa? Varmista avainvarmuuskopion k\xe4yt\xf6ss\xe4olo asetuksista."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.N_,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"N_":{"aW":[]}}'))};
-(a=>{a["hpt+5G620N+SHZLHVQhuS9W0ZFE="]=a.current})($__dart_deferred_initializers__);
+y(B.N0,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"N0":{"aW":[]}}'))};
+(a=>{a["JhoTSH4ExUtj8LpYZ39ZeUly4N8="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_335.part.js.map

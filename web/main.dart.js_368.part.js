@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHN(){return new B.Na(A.dA("ie"))},
-Na:function Na(d){this.a=d}}
+dHP(){return new B.Nb(A.dA("ie"))},
+Nb:function Nb(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[32],B)
-B.Na.prototype={
+B.Nb.prototype={
 ghb(){return"Initialisation del local archive ne successat"},
 hc(d){return"Li local archive por \u201c"+d+"\u201d ne posset esser apert. It f\xf3rsan es coruptet, o un necessi component de execution manca.\n\nReinitialisation va permanentmen deleter li local archive de ti-ci aparate. Li data del servitor posse esser sincronisat denov, ma data ne misset o conservat solmen localmen posse esser perdit. Esque vu vole reinitialisar it?"},
 gey(){return"Traduction"},
@@ -340,7 +340,7 @@ gfW(){return"Bundle name"},
 glt(){return"Aperter in mappas"},
 gec(){return"Ligament"},
 glv(){return"O"},
-gej(){return"Participante"},
+gek(){return"Participante"},
 ghH(){return"passphrase or recovery key"},
 glw(d){return"Contrasigne"},
 geF(){return"Li contrasigne esset obliviat"},
@@ -371,7 +371,7 @@ glX(){return"Raportar li missage"},
 gm0(){return"Room has been upgraded"},
 gm5(){return"Version del chambre"},
 gi3(){return"Gardar li file"},
-geg(d){return"Sercha"},
+geh(d){return"Sercha"},
 gfw(){return"Securit\xe1"},
 gf3(d){return"Inviar"},
 gi5(){return"Send a message"},
@@ -470,7 +470,7 @@ glj(){return"No one can join"},
 gkT(){return"Knock"},
 gmP(){return"Usatores"},
 jM(d){return""+d+" files"},
-gef(){return"Usator"},
+geg(){return"Usator"},
 gh9(){return"Personalisat"},
 gmU(){return"Why is this message unreadable?"},
 glg(){return"This can happen if the message was sent before you have signed in to your account at this device.\n\nIt is also possible that the sender has blocked your device or something went wrong with the internet connection.\n\nAre you able to read the message on another session? Then you can transfer the message from it! Go to Settings > Devices and make sure that your devices have verified each other. When you open the room the next time and both sessions are in the foreground, the keys will be transmitted automatically.\n\nDo you not want to lose the keys when logging out or switching devices? Make sure that you have enabled the chat backup in the settings."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.Na,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"Na":{"aW":[]}}'))};
-(a=>{a["As1APsJbCmgXe+Iyo3C2E6kXKco="]=a.current})($__dart_deferred_initializers__);
+y(B.Nb,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Nb":{"aW":[]}}'))};
+(a=>{a["aFKxQ93nSP6Vq48BmvfMLV/HaDo="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_368.part.js.map

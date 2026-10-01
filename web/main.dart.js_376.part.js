@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHS(){return new B.Nf(A.dA("ko"))},
-Nf:function Nf(d){this.a=d}}
+dHU(){return new B.Ng(A.dA("ko"))},
+Ng:function Ng(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[37],B)
-B.Nf.prototype={
+B.Ng.prototype={
 ghb(){return"\ub85c\uceec \ubcf4\uad00\ud568\uc744 \ucd08\uae30\ud654\ud558\uc9c0 \ubabb\ud588\uc2b5\ub2c8\ub2e4"},
 hc(d){return'"'+d+'"\uc758 \ub85c\uceec \ubcf4\uad00\ud568\uc744 \uc5f4 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4. \ubcf4\uad00\ud568\uc774 \uc190\uc0c1\ub418\uc5c8\uac70\ub098 \ud544\uc694\ud55c \ub7f0\ud0c0\uc784 \uad6c\uc131 \uc694\uc18c\uac00 \uc5c6\uc744 \uc218 \uc788\uc2b5\ub2c8\ub2e4.\n\n\ucd08\uae30\ud654\ud558\uba74 \uc774 \uae30\uae30\uc758 \ub85c\uceec \ubcf4\uad00\ud568\uc774 \uc601\uad6c\uc801\uc73c\ub85c \uc0ad\uc81c\ub429\ub2c8\ub2e4. \uc11c\ubc84 \ub370\uc774\ud130\ub294 \ub2e4\uc2dc \ub3d9\uae30\ud654\ud560 \uc218 \uc788\uc9c0\ub9cc, \ubcf4\ub0b4\uc9c0 \uc54a\uc558\uac70\ub098 \ub85c\uceec\uc5d0\ub9cc \uc800\uc7a5\ub41c \ub370\uc774\ud130\ub294 \uc190\uc2e4\ub420 \uc218 \uc788\uc2b5\ub2c8\ub2e4. \ucd08\uae30\ud654\ud558\uc2dc\uaca0\uc2b5\ub2c8\uae4c?'},
 gey(){return"\ubc88\uc5ed"},
@@ -340,7 +340,7 @@ gfW(){return"\ubc88\ub4e4 \uc774\ub984"},
 glt(){return"\uc9c0\ub3c4\uc5d0\uc11c \uc5f4\uae30"},
 gec(){return"\ub9c1\ud06c"},
 glv(){return"\uc774\ub098"},
-gej(){return"\ucc38\uc5ec\uc790"},
+gek(){return"\ucc38\uc5ec\uc790"},
 ghH(){return"\ube44\ubc00\ubc88\ud638\ub098 \ubcf5\uad6c \ud0a4"},
 glw(d){return"\ube44\ubc00\ubc88\ud638"},
 geF(){return"\ube44\ubc00\ubc88\ud638 \uae4c\uba39\uc74c"},
@@ -371,7 +371,7 @@ glX(){return"\uba54\uc2dc\uc9c0 \uc2e0\uace0"},
 gm0(){return"\ubc29\uc774 \uc5c5\uadf8\ub808\uc774\ub4dc\ub418\uc5c8\uc2b5\ub2c8\ub2e4"},
 gm5(){return"\ubc29 \ubc84\uc804"},
 gi3(){return"\ud30c\uc77c \uc800\uc7a5"},
-geg(d){return"\uac80\uc0c9"},
+geh(d){return"\uac80\uc0c9"},
 gfw(){return"\ubcf4\uc548"},
 gf3(d){return"\ubcf4\ub0b4\uae30"},
 gi5(){return"\uba54\uc2dc\uc9c0 \ubcf4\ub0b4\uae30"},
@@ -470,7 +470,7 @@ glj(){return"\uc544\ubb34\ub3c4 \ucc38\uac00\ud560 \uc218 \uc5c6\uc74c"},
 gkT(){return"\ucc38\uac00 \uc694\uccad"},
 gmP(){return"\uc720\uc800"},
 jM(d){return""+d+"\uac1c\uc758 \ud30c\uc77c"},
-gef(){return"\uc720\uc800"},
+geg(){return"\uc720\uc800"},
 gh9(){return"\ucee4\uc2a4\ud140"},
 gmU(){return"\uc65c \uc774 \uba54\uc2dc\uc9c0\ub97c \uc77d\uc744 \uc218 \uc5c6\ub098\uc694?"},
 glg(){return"\uc774\uac83\uc740 \uc774 \uba54\uc2dc\uc9c0\uac00 \ub2f9\uc2e0\uc774 \uc774 \uae30\uae30\ub97c \uc11c\uba85\ud558\uae30 \uc804\uc5d0 \ubc1c\uc1a1\ub418\uc5c8\uae30 \ub54c\ubb38\uc5d0 \uc77c\uc5b4\ub0ac\uc744 \uc218 \uc788\uc2b5\ub2c8\ub2e4.\n\n\uc774\uac83\uc740 \ub610\ud55c \ubc1c\uc1a1\uc790\uac00 \ub2f9\uc2e0\uc758 \uae30\uae30\ub97c \ucc28\ub2e8\ud558\uc600\uac70\ub098 \ud639\uc740 \uc778\ud130\ub137 \uc5f0\uacb0\uc774 \uc798\ubabb\ub418\uc5c8\uc744 \uc218 \uc788\uc2b5\ub2c8\ub2e4.\n\n\ub2e4\ub978 \uc138\uc158\uc5d0\uc11c \uc774 \uba54\uc2dc\uc9c0\ub97c \uc77d\uc744 \uc218 \uc788\ub098\uc694? \uadf8\ub807\ub2e4\uba74 \uadf8 \uba54\uc2dc\uc9c0\ub97c \uc62e\uae38 \uc218 \uc788\uc2b5\ub2c8\ub2e4! \uc124\uc815 > \uae30\uae30\ub85c \uac00\uc11c \uae30\uae30\ub97c \uc11c\ub85c \uc99d\uba85\ud558\uc138\uc694. \ub2e4\uc74c\ubc88\uc5d0 \ubc29\uc744 \uc5f4\uc5c8\uc744 \ub54c \ub450 \uc138\uc158\uc774 \ubaa8\ub450 \uc791\ub3d9\uc911\uc774\ub77c\uba74, \ud0a4\uac00 \uc790\ub3d9\uc73c\ub85c \uc62e\uaca8\uc9c8\uac83\uc785\ub2c8\ub2e4.\n\n\ub85c\uadf8\uc544\uc6c3\ud558\uac70\ub098 \uae30\uae30\ub97c \ubc14\uafc0 \ub54c \ud0a4\ub97c \uc783\uace0\uc2f6\uc9c0 \uc54a\uc73c\uc2e0\uac00\uc694? \uc124\uc815\uc5d0\uc11c \ucc44\ud305 \ubc31\uc5c5\uc744 \uc0ac\uc6a9\uc911\uc778\uc9c0 \ud655\uc778\ud558\uc138\uc694."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.Nf,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"Nf":{"aW":[]}}'))};
-(a=>{a["rN4Rgrcl6VXbH0k7z3Rs0/G783o="]=a.current})($__dart_deferred_initializers__);
+y(B.Ng,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Ng":{"aW":[]}}'))};
+(a=>{a["pj8CEwtal5sHE3V4NJxQjOxlDus="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_376.part.js.map

@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dIe(){return new B.NB(A.dA("vi"))},
-NB:function NB(d){this.a=d}}
+dIg(){return new B.NC(A.dA("vi"))},
+NC:function NC(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[57],B)
-B.NB.prototype={
+B.NC.prototype={
 ghb(){return"Kh\xf4ng th\u1ec3 kh\u1edfi t\u1ea1o kho l\u01b0u tr\u1eef c\u1ee5c b\u1ed9"},
 hc(d){return'Kh\xf4ng th\u1ec3 m\u1edf kho l\u01b0u tr\u1eef c\u1ee5c b\u1ed9 c\u1ee7a "'+d+'". Kho l\u01b0u tr\u1eef c\xf3 th\u1ec3 b\u1ecb h\u1ecfng ho\u1eb7c thi\u1ebfu m\u1ed9t th\xe0nh ph\u1ea7n th\u1eddi gian ch\u1ea1y b\u1eaft bu\u1ed9c.\n\nVi\u1ec7c \u0111\u1eb7t l\u1ea1i s\u1ebd x\xf3a v\u0129nh vi\u1ec5n kho l\u01b0u tr\u1eef c\u1ee5c b\u1ed9 tr\xean thi\u1ebft b\u1ecb n\xe0y. D\u1eef li\u1ec7u tr\xean m\xe1y ch\u1ee7 c\xf3 th\u1ec3 \u0111\u01b0\u1ee3c \u0111\u1ed3ng b\u1ed9 l\u1ea1i, nh\u01b0ng d\u1eef li\u1ec7u ch\u01b0a g\u1eedi ho\u1eb7c ch\u1ec9 \u0111\u01b0\u1ee3c l\u01b0u c\u1ee5c b\u1ed9 c\xf3 th\u1ec3 b\u1ecb m\u1ea5t. B\u1ea1n c\xf3 mu\u1ed1n \u0111\u1eb7t l\u1ea1i kh\xf4ng?'},
 gey(){return"D\u1ecbch thu\u1eadt"},
@@ -340,7 +340,7 @@ gfW(){return"Bundle name"},
 glt(){return"Open in maps"},
 gec(){return"Link"},
 glv(){return"Or"},
-gej(){return"Participant"},
+gek(){return"Participant"},
 ghH(){return"passphrase or recovery key"},
 glw(d){return"Password"},
 geF(){return"Password forgotten"},
@@ -371,7 +371,7 @@ glX(){return"Report message"},
 gm0(){return"Room has been upgraded"},
 gm5(){return"Room version"},
 gi3(){return"Save file"},
-geg(d){return"Search"},
+geh(d){return"Search"},
 gfw(){return"Security"},
 gf3(d){return"Send"},
 gi5(){return"Send a message"},
@@ -470,7 +470,7 @@ glj(){return"No one can join"},
 gkT(){return"Knock"},
 gmP(){return"Users"},
 jM(d){return""+d+" files"},
-gef(){return"User"},
+geg(){return"User"},
 gh9(){return"Custom"},
 gmU(){return"Why is this message unreadable?"},
 glg(){return"This can happen if the message was sent before you have signed in to your account at this device.\n\nIt is also possible that the sender has blocked your device or something went wrong with the internet connection.\n\nAre you able to read the message on another session? Then you can transfer the message from it! Go to Settings > Devices and make sure that your devices have verified each other. When you open the room the next time and both sessions are in the foreground, the keys will be transmitted automatically.\n\nDo you not want to lose the keys when logging out or switching devices? Make sure that you have enabled the chat backup in the settings."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.NB,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"NB":{"aW":[]}}'))};
-(a=>{a["bI5+p242qagySnPHx5RhP99Ah08="]=a.current})($__dart_deferred_initializers__);
+y(B.NC,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"NC":{"aW":[]}}'))};
+(a=>{a["QlxgztBUH7kvTStTCfmpvsYwL0w="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_406.part.js.map

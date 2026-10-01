@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHz(){return new B.MX(A.dA("et"))},
-MX:function MX(d){this.a=d}}
+dHB(){return new B.MY(A.dA("et"))},
+MY:function MY(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[18],B)
-B.MX.prototype={
+B.MY.prototype={
 ghb(){return"Kohaliku arhiivi k\xe4ivitamine nurjus"},
 hc(d){return"\u201e"+d+"\u201d kohalikku arhiivi ei saanud avada. See v\xf5ib olla kahjustatud v\xf5i puudub vajalik k\xe4ituskeskkonna komponent.\n\nL\xe4htestamine kustutab selle seadme kohaliku arhiivi j\xe4\xe4davalt. Serveri andmeid saab uuesti s\xfcnkroonida, kuid saatmata v\xf5i ainult kohalikult salvestatud andmed v\xf5ivad kaotsi minna. Kas soovite selle l\xe4htestada?"},
 gey(){return"T\xf5lge"},
@@ -341,7 +341,7 @@ gfW(){return"K\xf6ite nimi"},
 glt(){return"Ava kaardirakendusega"},
 gec(){return"Link"},
 glv(){return"v\xf5i"},
-gej(){return"Osaleja"},
+gek(){return"Osaleja"},
 ghH(){return"salafraas v\xf5i taastev\xf5ti"},
 glw(d){return"Salas\xf5na"},
 geF(){return"Salas\xf5na on ununenud"},
@@ -372,7 +372,7 @@ glX(){return"Teata s\xf5numist"},
 gm0(){return"Jututoa versioon on uuendatud"},
 gm5(){return"Jututoa versioon"},
 gi3(){return"Salvesta fail"},
-geg(d){return"Otsi"},
+geh(d){return"Otsi"},
 gfw(){return"Turvalisus"},
 gf3(d){return"Saada"},
 gi5(){return"Saada s\xf5num"},
@@ -471,7 +471,7 @@ glj(){return"Mitte keegi ei saa liituda"},
 gkT(){return"Koputa uksele"},
 gmP(){return"Kasutajad"},
 jM(d){return""+d+" faili"},
-gef(){return"Kasutaja"},
+geg(){return"Kasutaja"},
 gh9(){return"Kohandatud"},
 gmU(){return"Miks see s\xf5num pole loetav?"},
 glg(){return"See v\xf5ib juhtuda, kui s\xf5num oli saadetud enne, kui siin seadmes oma kontoga sisse logisid.\n\nSamuti v\xf5ib juhtuda siis, kui saatja on lugemises selles seadmes blokeerinud v\xf5i on tekkinud t\xf5rkeid veebi\xfchenduses.\n\nAga m\xf5nes teises seadmes saad seda s\xf5numit lugeda? Siis sa v\xf5id s\xf5numi sealt \xfcle t\xf5sta. Ava Seadistused -> Seadmed ning kontrolli, et k\xf5ik sinu seadmed on omavahel verifitseeritud. Kui avad selle vestluse v\xf5i jututoa ning m\xf5lemad sessioonid on avatud, siis vajalikud kr\xfcptov\xf5tmed saadetakse automaatset.\n\nKas sa soovid v\xe4ltida kr\xfcptov\xf5tmete kadumist v\xe4ljalogimisel ja seadmete vahetusel? Siis palun kontrolli, et seadistuses on kr\xfcptov\xf5tmete varundus sisse l\xfclitatud."},
@@ -736,7 +736,7 @@ gtB(){return"Eemalda moderaatori \xf5igused"},
 gtA(){return"Eemalda peakasutaja \xf5igused"},
 gty(){return"\xd5iguste tase"},
 gro(){return"\xd5iguste tase on \xfcks v\xf5imalusi kirjeldamaks seda, mida kasutaja saab jututoas teha ning see tavaliselt v\xe4ljendub numbriga vahemikust 0 kuni 100."},
-gei(){return"Omanik"},
+gej(){return"Omanik"},
 gth(){return"Summuta"},
 grQ(){return"Loo uus vestlus"},
 glY(d){return"L\xe4htesta"},
@@ -831,7 +831,7 @@ rm(d){return"Serveri vastuseks oli veateade: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.MX,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"MX":{"aW":[]}}'))};
-(a=>{a["f3mqhdQLxCY4fI4D4W/ZPw+pzSw="]=a.current})($__dart_deferred_initializers__);
+y(B.MY,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"MY":{"aW":[]}}'))};
+(a=>{a["aAE3M1icy+yJYY2WJAJi0MH8UU0="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_327.part.js.map

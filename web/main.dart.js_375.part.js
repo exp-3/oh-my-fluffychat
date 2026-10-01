@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHR(){return new B.Ne(A.dA("kab"))},
-Ne:function Ne(d){this.a=d}}
+dHT(){return new B.Nf(A.dA("kab"))},
+Nf:function Nf(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[36],B)
-B.Ne.prototype={
+B.Nf.prototype={
 ghb(){return"Asekker n u\u0263bar adigan ur yeddi ara"},
 hc(d){return"Ur izmir ara ad yeldi u\u0263bar adigan n \u201c"+d+"\u201d. Ahat yerre\u1e93 ne\u0263 ixu\u1e63\u1e63 uferdis n uselkem ilaqen.\n\nAles n uwennez ad yekkes i lebda a\u0263bar adigan seg yibenk-a. Isefka n uqeddac zemren ad ttwasemtawin tikelt-nni\u1e0den, maca isefka ur nettwazen ara ne\u0263 i yettwaskelsen kan s wudem adigan zemren ad ru\u1e25en. Teb\u0263i\u1e0d ad talse\u1e0d awennez?"},
 gey(){return"Tasuqilt"},
@@ -340,7 +340,7 @@ gfW(){return"Bundle name"},
 glt(){return"Ldi-t deg maps"},
 gec(){return"Ase\u0263wen"},
 glv(){return"Ne\u0263"},
-gej(){return"Imttekki"},
+gek(){return"Imttekki"},
 ghH(){return"tafyirt n u\u025beddi ne\u0263 tasarut n tririt"},
 glw(d){return"Awal n u\u025beddi"},
 geF(){return"Awal n u\u025beddi yettwattun"},
@@ -371,7 +371,7 @@ glX(){return"Mmel-d izen"},
 gm0(){return"Taxxamt tettwaleqqem"},
 gm5(){return"Lqem n texxamt"},
 gi3(){return"Sekles afaylu"},
-geg(d){return"Nadi"},
+geh(d){return"Nadi"},
 gfw(){return"Ta\u0263ellist"},
 gf3(d){return"Azen"},
 gi5(){return"Azen izen"},
@@ -470,7 +470,7 @@ glj(){return"Yiwen ur yezmir ad d-yernu"},
 gkT(){return"Sqe\u1e5bbeb"},
 gmP(){return"Iseqdacen"},
 jM(d){return""+d+" n yifuyla"},
-gef(){return"Aseqdac"},
+geg(){return"Aseqdac"},
 gh9(){return"Yugnen"},
 gmU(){return"Acu\u0263er izen-agi ur yettwa\u0263ri ara?"},
 glg(){return"This can happen if the message was sent before you have signed in to your account at this device.\n\nIt is also possible that the sender has blocked your device or something went wrong with the internet connection.\n\nAre you able to read the message on another session? Then you can transfer the message from it! Go to Settings > Devices and make sure that your devices have verified each other. When you open the room the next time and both sessions are in the foreground, the keys will be transmitted automatically.\n\nDo you not want to lose the keys when logging out or switching devices? Make sure that you have enabled the chat backup in the settings."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Kkes izerfan n unedbal"},
 gty(){return"Aswir n tezmert"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Amli"},
+gej(){return"Amli"},
 gth(){return"Mute"},
 grQ(){return"Snulfu-d adiwenni amaynut"},
 glY(d){return"Reset"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.Ne,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"Ne":{"aW":[]}}'))};
-(a=>{a["VfQd46YeqBEJeKh+adoeL3/UFMQ="]=a.current})($__dart_deferred_initializers__);
+y(B.Nf,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Nf":{"aW":[]}}'))};
+(a=>{a["XdTWRyBajxWx5tf2Q2XMSjl5rAk="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_375.part.js.map

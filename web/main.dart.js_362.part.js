@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHM(){return new B.N9(A.dA("id"))},
-N9:function N9(d){this.a=d}}
+dHO(){return new B.Na(A.dA("id"))},
+Na:function Na(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[31],B)
-B.N9.prototype={
+B.Na.prototype={
 ghb(){return"Inisialisasi arsip lokal gagal"},
 hc(d){return'Arsip lokal untuk "'+d+'" tidak dapat dibuka. Arsip mungkin rusak, atau komponen runtime yang diperlukan mungkin tidak tersedia.\n\nReset akan menghapus arsip lokal perangkat ini secara permanen. Data server dapat disinkronkan kembali, tetapi data yang belum dikirim atau hanya disimpan secara lokal mungkin hilang. Apakah Anda ingin meresetnya?'},
 gey(){return"Terjemahan"},
@@ -341,7 +341,7 @@ gfW(){return"Nama bundel"},
 glt(){return"Buka di peta"},
 gec(){return"Tautan"},
 glv(){return"Atau"},
-gej(){return"Peserta"},
+gek(){return"Peserta"},
 ghH(){return"frasa sandi atau kunci pemulihan"},
 glw(d){return"Kata sandi"},
 geF(){return"Lupa kata sandi"},
@@ -372,7 +372,7 @@ glX(){return"Laporkan pesan"},
 gm0(){return"Ruangan telah ditingkatkan"},
 gm5(){return"Versi ruangan"},
 gi3(){return"Simpan file"},
-geg(d){return"Cari"},
+geh(d){return"Cari"},
 gfw(){return"Keamanan"},
 gf3(d){return"Kirim"},
 gi5(){return"Kirim pesan"},
@@ -471,7 +471,7 @@ glj(){return"Tidak ada siapa pun yang dapat bergabung"},
 gkT(){return"Ketuk"},
 gmP(){return"Pengguna"},
 jM(d){return""+d+" file"},
-gef(){return"Pengguna"},
+geg(){return"Pengguna"},
 gh9(){return"Kustom"},
 gmU(){return"Mengapa pesan ini tidak bisa dibaca?"},
 glg(){return"Hal ini bisa terjadi jika pesan dikirim sebelum kamu masuk ke akunmu di perangkat ini.\n\nMungkin juga pengirim telah memblokir perangkatmu atau ada yang tidak beres dengan koneksi internet.\n\nApakah kamu bisa membaca pesan pada sesi lain? Maka kamu bisa mentransfer pesan dari sesi tersebut! Buka Pengaturan > Perangkat dan pastikan bahwa perangkat Anda telah ditandatangani secara silang. Ketika kamu membuka ruangan di lain waktu dan kedua sesi berada di latar depan, kunci akan ditransmisikan secara otomatis.\n\nApakah kamu tidak mau kehilangan kunci saat keluar atau berpindah perangkat? Pastikan bahwa kamu telah mengaktifkan cadangan obrolan dalam pengaturan."},
@@ -736,7 +736,7 @@ gtB(){return"Hapus hak moderator"},
 gtA(){return"Hapus hak admin"},
 gty(){return"Level kekuasaan"},
 gro(){return"Level kekuasaan menentukan apa yang boleh dilakukan seorang anggota di ruangan ini dan biasanya berkisar antara 0 hingga 100."},
-gei(){return"Pemilik"},
+gej(){return"Pemilik"},
 gth(){return"Bisukan"},
 grQ(){return"Buat obrolan baru"},
 glY(d){return"Atur ulang"},
@@ -831,8 +831,8 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var x=a.inherit
-x(B.N9,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"N9":{"aW":[]}}'))
+x(B.Na,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Na":{"aW":[]}}'))
 var y={a:"Memberi tahu pengguna tentang pesan dalam ruangan satu ke satu."}};
-(a=>{a["vRbbp3m7y/Fq8eRqo9uEiA+CJxE="]=a.current})($__dart_deferred_initializers__);
+(a=>{a["oO6ahBXNhVovpL4OVDcwTFnEayY="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_362.part.js.map

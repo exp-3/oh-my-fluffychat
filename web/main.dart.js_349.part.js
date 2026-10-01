@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHI(){return new B.N5(A.dA("hi"))},
-N5:function N5(d){this.a=d}}
+dHK(){return new B.N6(A.dA("hi"))},
+N6:function N6(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[27],B)
-B.N5.prototype={
+B.N6.prototype={
 ghb(){return"\u0938\u094d\u0925\u093e\u0928\u0940\u092f \u0938\u0902\u0917\u094d\u0930\u0939 \u0915\u094b \u0936\u0941\u0930\u0942 \u0928\u0939\u0940\u0902 \u0915\u093f\u092f\u093e \u091c\u093e \u0938\u0915\u093e"},
 hc(d){return'"'+d+'" \u0915\u093e \u0938\u094d\u0925\u093e\u0928\u0940\u092f \u0938\u0902\u0917\u094d\u0930\u0939 \u0916\u094b\u0932\u093e \u0928\u0939\u0940\u0902 \u091c\u093e \u0938\u0915\u093e\u0964 \u092f\u0939 \u0926\u0942\u0937\u093f\u0924 \u0939\u094b \u0938\u0915\u0924\u093e \u0939\u0948 \u092f\u093e \u0915\u094b\u0908 \u0906\u0935\u0936\u094d\u092f\u0915 \u0930\u0928\u091f\u093e\u0907\u092e \u0918\u091f\u0915 \u0909\u092a\u0932\u092c\u094d\u0927 \u0928\u0939\u0940\u0902 \u0939\u0948\u0964\n\n\u0930\u0940\u0938\u0947\u091f \u0915\u0930\u0928\u0947 \u0938\u0947 \u0907\u0938 \u0921\u093f\u0935\u093e\u0907\u0938 \u0915\u093e \u0938\u094d\u0925\u093e\u0928\u0940\u092f \u0938\u0902\u0917\u094d\u0930\u0939 \u0938\u094d\u0925\u093e\u092f\u0940 \u0930\u0942\u092a \u0938\u0947 \u092e\u093f\u091f \u091c\u093e\u090f\u0917\u093e\u0964 \u0938\u0930\u094d\u0935\u0930 \u0915\u093e \u0921\u0947\u091f\u093e \u092b\u093f\u0930 \u0938\u0947 \u0938\u093f\u0902\u0915 \u0915\u093f\u092f\u093e \u091c\u093e \u0938\u0915\u0924\u093e \u0939\u0948, \u0932\u0947\u0915\u093f\u0928 \u0928 \u092d\u0947\u091c\u093e \u0917\u092f\u093e \u092f\u093e \u0915\u0947\u0935\u0932 \u0938\u094d\u0925\u093e\u0928\u0940\u092f \u0930\u0942\u092a \u0938\u0947 \u0938\u0939\u0947\u091c\u093e \u0917\u092f\u093e \u0921\u0947\u091f\u093e \u0916\u094b \u0938\u0915\u0924\u093e \u0939\u0948\u0964 \u0915\u094d\u092f\u093e \u0906\u092a \u0907\u0938\u0947 \u0930\u0940\u0938\u0947\u091f \u0915\u0930\u0928\u093e \u091a\u093e\u0939\u0924\u0947 \u0939\u0948\u0902?'},
 gey(){return"\u0905\u0928\u0941\u0935\u093e\u0926"},
@@ -341,7 +341,7 @@ gfW(){return"Bundle name"},
 glt(){return"Open in maps"},
 gec(){return"Link"},
 glv(){return"Or"},
-gej(){return"Participant"},
+gek(){return"Participant"},
 ghH(){return"passphrase or recovery key"},
 glw(d){return"Password"},
 geF(){return"Password forgotten"},
@@ -372,7 +372,7 @@ glX(){return"Report message"},
 gm0(){return"Room has been upgraded"},
 gm5(){return"Room version"},
 gi3(){return"Save file"},
-geg(d){return"Search"},
+geh(d){return"Search"},
 gfw(){return"Security"},
 gf3(d){return"Send"},
 gi5(){return"Send a message"},
@@ -471,7 +471,7 @@ glj(){return"No one can join"},
 gkT(){return"Knock"},
 gmP(){return"Users"},
 jM(d){return""+d+" files"},
-gef(){return"User"},
+geg(){return"User"},
 gh9(){return"Custom"},
 gmU(){return"Why is this message unreadable?"},
 glg(){return"This can happen if the message was sent before you have signed in to your account at this device.\n\nIt is also possible that the sender has blocked your device or something went wrong with the internet connection.\n\nAre you able to read the message on another session? Then you can transfer the message from it! Go to Settings > Devices and make sure that your devices have verified each other. When you open the room the next time and both sessions are in the foreground, the keys will be transmitted automatically.\n\nDo you not want to lose the keys when logging out or switching devices? Make sure that you have enabled the chat backup in the settings."},
@@ -736,7 +736,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -831,7 +831,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.N5,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"N5":{"aW":[]}}'))};
-(a=>{a["9aUIn0PmCyerqsCWK7xVw9yiMuE="]=a.current})($__dart_deferred_initializers__);
+y(B.N6,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"N6":{"aW":[]}}'))};
+(a=>{a["OqTvLaxFrla8FH4CvmGglEk2+jo="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_349.part.js.map

@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHU(){return new B.Nh(A.dA("lt"))},
-Nh:function Nh(d){this.a=d}}
+dHW(){return new B.Ni(A.dA("lt"))},
+Ni:function Ni(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[39],B)
-B.Nh.prototype={
+B.Ni.prototype={
 ghb(){return"Nepavyko inicijuoti vietinio archyvo"},
 hc(d){return"Nepavyko atverti \u201e"+d+"\u201c vietinio archyvo. Jis gali b\u016bti sugadintas arba gali tr\u016bkti b\u016btino vykdymo aplinkos komponento.\n\nNusta\u010dius i\u0161 naujo, \u0161io \u012frenginio vietinis archyvas bus visam laikui i\u0161trintas. Serverio duomenis galima sinchronizuoti i\u0161 naujo, ta\u010diau nei\u0161si\u0173sti arba tik vietoje saugomi duomenys gali b\u016bti prarasti. Ar norite nustatyti j\u012f i\u0161 naujo?"},
 gey(){return"Vertimas"},
@@ -340,7 +340,7 @@ gfW(){return"Paketo vardas"},
 glt(){return"Atidaryti \u017eem\u0117lapiuose"},
 gec(){return"Nuoroda"},
 glv(){return"Arba"},
-gej(){return"Dalyvis"},
+gek(){return"Dalyvis"},
 ghH(){return"Slapta fraz\u0117 arba atk\u016brimo raktas"},
 glw(d){return"Slapta\u017eodis"},
 geF(){return"Slapta\u017eodis u\u017emir\u0161tas"},
@@ -371,7 +371,7 @@ glX(){return"Prane\u0161ti apie \u017einut\u0119"},
 gm0(){return"Kambarys buvo atnaujintas"},
 gm5(){return"Kambario versija"},
 gi3(){return"I\u0161saugoti fail\u0105"},
-geg(d){return"Ie\u0161koti"},
+geh(d){return"Ie\u0161koti"},
 gfw(){return"Apsauga"},
 gf3(d){return"Si\u0173sti"},
 gi5(){return"Si\u0173sti \u017einut\u0119"},
@@ -470,7 +470,7 @@ glj(){return"No one can join"},
 gkT(){return"Knock"},
 gmP(){return"Vartotojai"},
 jM(d){return""+d+" failai"},
-gef(){return"Vartotojas"},
+geg(){return"Vartotojas"},
 gh9(){return"Pasirinktinis"},
 gmU(){return"Kod\u0117l \u0161i \u017einut\u0117 neperskaitoma?"},
 glg(){return"Taip gali atsitikti, jei \u017einut\u0117 buvo i\u0161si\u0173sta prie\u0161 prisijungiant prie paskyros \u0161iame prietaise.\n\nTaip pat gali b\u016bti, kad siunt\u0117jas u\u017eblokavo j\u016bs\u0173 prietais\u0105 arba ka\u017ekas sutriko su interneto ry\u0161iu.\n\nAr galite perskaityti \u017einut\u0119 kitoje sesijoje? Tada galite perkelti \u017einut\u0119 i\u0161 jos! Eikite \u012f Nustatymai > Prietaisai ir \u012fsitikinkite, kad j\u016bs\u0173 prietaisai patvirtino vienas kit\u0105. Kai kit\u0105 kart\u0105 atidarysite kambar\u012f ir abi sesijos bus pirmame plane, raktai bus perduoti automati\u0161kai.\n\nNenorite prarasti rakt\u0173 atsijungdami arba keisdami \u012frenginius? \u012esitikinkite, kad nustatymuose \u012fjung\u0117te pokalbi\u0173 atsargin\u0119 kopij\u0105."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.Nh,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"Nh":{"aW":[]}}'))};
-(a=>{a["2OPEotRTMzj/VoG4BS5n3kIWQgQ="]=a.current})($__dart_deferred_initializers__);
+y(B.Ni,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"Ni":{"aW":[]}}'))};
+(a=>{a["T5kSa0M6YOL/+4iFrkTEsgjUSjE="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_378.part.js.map

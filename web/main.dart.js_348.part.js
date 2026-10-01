@@ -1,11 +1,11 @@
 ((a,b)=>{a[b]=a[b]||{}})(self,"$__dart_deferred_initializers__")
 $__dart_deferred_initializers__.current=function(a,b,c,$){var A,C,B={
-dHH(){return new B.N4(A.dA("he"))},
-N4:function N4(d){this.a=d}}
+dHJ(){return new B.N5(A.dA("he"))},
+N5:function N5(d){this.a=d}}
 A=c[0]
 C=c[59]
 B=a.updateHolder(c[26],B)
-B.N4.prototype={
+B.N5.prototype={
 ghb(){return"\u05d0\u05ea\u05d7\u05d5\u05dc \u05d4\u05d0\u05e8\u05db\u05d9\u05d5\u05df \u05d4\u05de\u05e7\u05d5\u05de\u05d9 \u05e0\u05db\u05e9\u05dc"},
 hc(d){return"\u05dc\u05d0 \u05e0\u05d9\u05ea\u05df \u05dc\u05e4\u05ea\u05d5\u05d7 \u05d0\u05ea \u05d4\u05d0\u05e8\u05db\u05d9\u05d5\u05df \u05d4\u05de\u05e7\u05d5\u05de\u05d9 \u05e9\u05dc \u201e"+d+"\u201d. \u05d9\u05d9\u05ea\u05db\u05df \u05e9\u05d4\u05d5\u05d0 \u05e4\u05d2\u05d5\u05dd \u05d0\u05d5 \u05e9\u05d7\u05e1\u05e8 \u05e8\u05db\u05d9\u05d1 \u05d6\u05de\u05df \u05e8\u05d9\u05e6\u05d4 \u05e0\u05d3\u05e8\u05e9.\n\n\u05d0\u05d9\u05e4\u05d5\u05e1 \u05de\u05d5\u05d7\u05e7 \u05dc\u05e6\u05de\u05d9\u05ea\u05d5\u05ea \u05d0\u05ea \u05d4\u05d0\u05e8\u05db\u05d9\u05d5\u05df \u05d4\u05de\u05e7\u05d5\u05de\u05d9 \u05d1\u05de\u05db\u05e9\u05d9\u05e8 \u05d4\u05d6\u05d4. \u05d0\u05e4\u05e9\u05e8 \u05dc\u05e1\u05e0\u05db\u05e8\u05df \u05de\u05d7\u05d3\u05e9 \u05e0\u05ea\u05d5\u05e0\u05d9\u05dd \u05de\u05d4\u05e9\u05e8\u05ea, \u05d0\u05da \u05e0\u05ea\u05d5\u05e0\u05d9\u05dd \u05e9\u05dc\u05d0 \u05e0\u05e9\u05dc\u05d7\u05d5 \u05d0\u05d5 \u05e9\u05e0\u05e9\u05de\u05e8\u05d5 \u05d1\u05d0\u05d5\u05e4\u05df \u05de\u05e7\u05d5\u05de\u05d9 \u05d1\u05dc\u05d1\u05d3 \u05e2\u05dc\u05d5\u05dc\u05d9\u05dd \u05dc\u05dc\u05db\u05ea \u05dc\u05d0\u05d9\u05d1\u05d5\u05d3. \u05dc\u05d0\u05e4\u05e1 \u05d0\u05d5\u05ea\u05d5?"},
 gey(){return"\u05ea\u05e8\u05d2\u05d5\u05dd"},
@@ -340,7 +340,7 @@ gfW(){return"\u05e9\u05dd \u05d4\u05d7\u05d1\u05d9\u05dc\u05d4"},
 glt(){return"\u05e4\u05ea\u05d9\u05d7\u05d4 \u05d1\u05de\u05e4\u05d5\u05ea"},
 gec(){return"\u05e7\u05d9\u05e9\u05d5\u05e8"},
 glv(){return"\u05d0\u05d5"},
-gej(){return"\u05de\u05e9\u05ea\u05ea\u05e3"},
+gek(){return"\u05de\u05e9\u05ea\u05ea\u05e3"},
 ghH(){return"\u05d1\u05d9\u05d8\u05d5\u05d9 \u05e1\u05d9\u05e1\u05de\u05d4 \u05d0\u05d5 \u05de\u05e4\u05ea\u05d7 \u05e9\u05d7\u05d6\u05d5\u05e8"},
 glw(d){return"\u05e1\u05d9\u05e1\u05de\u05d4"},
 geF(){return"\u05e9\u05db\u05d7\u05ea\u05d9 \u05e1\u05d9\u05e1\u05de\u05d4"},
@@ -371,7 +371,7 @@ glX(){return"Report message"},
 gm0(){return"Room has been upgraded"},
 gm5(){return"Room version"},
 gi3(){return"Save file"},
-geg(d){return"Search"},
+geh(d){return"Search"},
 gfw(){return"Security"},
 gf3(d){return"Send"},
 gi5(){return"Send a message"},
@@ -470,7 +470,7 @@ glj(){return"No one can join"},
 gkT(){return"Knock"},
 gmP(){return"Users"},
 jM(d){return""+d+" files"},
-gef(){return"User"},
+geg(){return"User"},
 gh9(){return"Custom"},
 gmU(){return"Why is this message unreadable?"},
 glg(){return"This can happen if the message was sent before you have signed in to your account at this device.\n\nIt is also possible that the sender has blocked your device or something went wrong with the internet connection.\n\nAre you able to read the message on another session? Then you can transfer the message from it! Go to Settings > Devices and make sure that your devices have verified each other. When you open the room the next time and both sessions are in the foreground, the keys will be transmitted automatically.\n\nDo you not want to lose the keys when logging out or switching devices? Make sure that you have enabled the chat backup in the settings."},
@@ -735,7 +735,7 @@ gtB(){return"Remove moderator rights"},
 gtA(){return"Remove admin rights"},
 gty(){return"Power level"},
 gro(){return"Power levels define what a member is allowed to do in this room and usually range between 0 and 100."},
-gei(){return"Owner"},
+gej(){return"Owner"},
 gth(){return"Mute"},
 grQ(){return"Create new chat"},
 glY(d){return"Reset"},
@@ -830,7 +830,7 @@ rm(d){return"The server has replied with an error message: "+d},
 C(d,e){return this.gbz(this).$1(e)},
 a_(d){return this.gaY(this).$0()}}
 var z=a.updateTypes([]);(function inheritance(){var y=a.inherit
-y(B.N4,C.aW)})()
-A.ef(b.typeUniverse,JSON.parse('{"N4":{"aW":[]}}'))};
-(a=>{a["W2+5ZJXV3mzqn4peA5p2lamBy/8="]=a.current})($__dart_deferred_initializers__);
+y(B.N5,C.aW)})()
+A.ef(b.typeUniverse,JSON.parse('{"N5":{"aW":[]}}'))};
+(a=>{a["Qq9NH174u8F8mu1G3kXTRyAE9Yw="]=a.current})($__dart_deferred_initializers__);
 //# sourceMappingURL=main.dart.js_348.part.js.map
