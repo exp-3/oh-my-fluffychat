@@ -31,12 +31,21 @@ class ChatInputRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-    animation: TranslationRuntime.instance,
-    builder: (context, _) => _build(context),
+    animation: Listenable.merge([
+      TranslationRuntime.instance,
+      controller.sendController,
+    ]),
+    builder: (context, _) => LayoutBuilder(builder: _build),
   );
 
-  Widget _build(BuildContext context) {
+  Widget _build(BuildContext context, BoxConstraints constraints) {
     final theme = Theme.of(context);
+    const leadingButtonWidth = 40.0;
+    final leadingButtonStyle = IconButton.styleFrom(
+      fixedSize: const Size.square(leadingButtonWidth),
+      shape: const CircleBorder(),
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    );
     final translationRuntime = TranslationRuntime.instance;
     final textMessageOnly =
         controller.sendController.text.isNotEmpty ||
@@ -50,6 +59,54 @@ class ChatInputRow extends StatelessWidget {
         .shouldAutoTranslateInput(controller.room);
     final shortPressTranslates = translationRuntime.shouldTranslateInputOnSend(
       controller.room,
+    );
+    final showAccountPicker =
+        Matrix.of(context).isMultiAccount &&
+        Matrix.of(context).hasComplexBundles &&
+        Matrix.of(context).currentBundle!.length > 1;
+    // Use the horizontal layout's width so gaining space by stacking
+    // cannot immediately switch the buttons back to a row.
+    final horizontalInputWidth =
+        constraints.maxWidth -
+        8 -
+        (showInputTranslationButton || !textMessageOnly
+            ? leadingButtonWidth
+            : 0) -
+        leadingButtonWidth -
+        (showAccountPicker ? 48 : 0) -
+        height -
+        12;
+    var stackInputTranslationButton = false;
+    if (showInputTranslationButton &&
+        horizontalInputWidth.isFinite &&
+        horizontalInputWidth > 0) {
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: controller.sendController.text,
+          style: theme.textTheme.bodyLarge,
+        ),
+        textDirection: Directionality.of(context),
+        textScaler: TextScaler.linear(AppSettings.fontSizeFactor.value),
+        locale: Localizations.localeOf(context),
+        maxLines: 3,
+      )..layout(maxWidth: horizontalInputWidth);
+      stackInputTranslationButton =
+          textPainter.computeLineMetrics().length >= 3;
+      textPainter.dispose();
+    }
+    final inputTranslationButton = IconButton(
+      style: leadingButtonStyle,
+      tooltip: L10n.of(context).translateInput,
+      color: theme.colorScheme.onPrimaryContainer,
+      onPressed: controller.inputTranslationInProgress
+          ? null
+          : controller.translateInputManually,
+      icon: controller.inputTranslationInProgress
+          ? const SizedBox.square(
+              dimension: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : const Icon(Icons.translate_outlined),
     );
 
     if (!controller.room.otherPartyCanReceiveMessages) {
@@ -153,33 +210,24 @@ class ChatInputRow extends StatelessWidget {
                   AnimatedContainer(
                     duration: FluffyThemes.animationDuration,
                     curve: FluffyThemes.animationCurve,
-                    width: showInputTranslationButton
-                        ? 48
+                    width: stackInputTranslationButton
+                        ? 0
+                        : showInputTranslationButton
+                        ? leadingButtonWidth
                         : textMessageOnly
                         ? 0
-                        : 48,
+                        : leadingButtonWidth,
                     height: height,
                     alignment: Alignment.center,
                     decoration: const BoxDecoration(),
                     clipBehavior: Clip.hardEdge,
-                    child: showInputTranslationButton
-                        ? IconButton(
-                            tooltip: L10n.of(context).translateInput,
-                            color: theme.colorScheme.onPrimaryContainer,
-                            onPressed: controller.inputTranslationInProgress
-                                ? null
-                                : controller.translateInputManually,
-                            icon: controller.inputTranslationInProgress
-                                ? const SizedBox.square(
-                                    dimension: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Icon(Icons.translate_outlined),
-                          )
+                    child: stackInputTranslationButton
+                        ? const SizedBox.shrink()
+                        : showInputTranslationButton
+                        ? inputTranslationButton
                         : PopupMenuButton<AddPopupMenuActions>(
                             useRootNavigator: true,
+                            style: leadingButtonStyle,
                             icon: const Icon(Icons.add_circle_outline),
                             iconColor: theme.colorScheme.onPrimaryContainer,
                             onSelected: controller.onAddPopupMenuButtonSelected,
@@ -298,25 +346,32 @@ class ChatInputRow extends StatelessWidget {
                             ],
                           ),
                   ),
-                  Container(
-                    height: height,
-                    width: 48,
-                    alignment: Alignment.center,
-                    child: IconButton(
-                      tooltip: L10n.of(context).emojis,
-                      color: theme.colorScheme.onPrimaryContainer,
-                      icon: Icon(
-                        controller.showEmojiPicker
-                            ? Icons.keyboard
-                            : Icons.add_reaction_outlined,
-                        key: ValueKey(controller.showEmojiPicker),
-                      ),
-                      onPressed: controller.emojiPickerAction,
+                  SizedBox(
+                    height: stackInputTranslationButton
+                        ? height + leadingButtonWidth
+                        : height,
+                    width: leadingButtonWidth,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (stackInputTranslationButton)
+                          inputTranslationButton,
+                        IconButton(
+                          style: leadingButtonStyle,
+                          tooltip: L10n.of(context).emojis,
+                          color: theme.colorScheme.onPrimaryContainer,
+                          icon: Icon(
+                            controller.showEmojiPicker
+                                ? Icons.keyboard
+                                : Icons.add_reaction_outlined,
+                            key: ValueKey(controller.showEmojiPicker),
+                          ),
+                          onPressed: controller.emojiPickerAction,
+                        ),
+                      ],
                     ),
                   ),
-                  if (Matrix.of(context).isMultiAccount &&
-                      Matrix.of(context).hasComplexBundles &&
-                      Matrix.of(context).currentBundle!.length > 1)
+                  if (showAccountPicker)
                     Container(
                       height: height,
                       width: 48,

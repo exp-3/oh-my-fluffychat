@@ -273,64 +273,61 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(16),
-                        child: Row(
+                        child: _ResponsiveSettingsLayout(
+                          padding: EdgeInsets.zero,
+                          runSpacing: 12,
                           children: [
-                            Expanded(
-                              child: DropdownButtonFormField<String>(
-                                initialValue: sourceLanguage,
-                                isExpanded: true,
-                                decoration: InputDecoration(
-                                  labelText: l10n.sourceLanguage,
-                                ),
-                                items: [
-                                  DropdownMenuItem(
-                                    value: 'auto',
-                                    child: Text(l10n.translationAutoDetect),
-                                  ),
-                                  for (final language in translationLanguages)
-                                    DropdownMenuItem(
-                                      value: language.code,
-                                      child: Text(
-                                        language.name,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                ],
-                                onChanged: (value) {
-                                  if (value == null) return;
-                                  setState(() => sourceLanguage = value);
-                                  _saveLanguages();
-                                },
+                            DropdownButtonFormField<String>(
+                              initialValue: sourceLanguage,
+                              isExpanded: true,
+                              decoration: InputDecoration(
+                                labelText: l10n.sourceLanguage,
                               ),
+                              items: [
+                                DropdownMenuItem(
+                                  value: 'auto',
+                                  child: Text(l10n.translationAutoDetect),
+                                ),
+                                for (final language in translationLanguages)
+                                  DropdownMenuItem(
+                                    value: language.code,
+                                    child: Text(
+                                      language.name,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                              ],
+                              onChanged: (value) {
+                                if (value == null) return;
+                                setState(() => sourceLanguage = value);
+                                _saveLanguages();
+                              },
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: DropdownButtonFormField<String>(
-                                initialValue: targetLanguage,
-                                isExpanded: true,
-                                decoration: InputDecoration(
-                                  labelText: l10n.targetLanguage,
-                                ),
-                                items: [
-                                  DropdownMenuItem(
-                                    value: systemTranslationLanguageCode,
-                                    child: Text(l10n.systemTheme),
-                                  ),
-                                  for (final language in translationLanguages)
-                                    DropdownMenuItem(
-                                      value: language.code,
-                                      child: Text(
-                                        language.name,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                ],
-                                onChanged: (value) {
-                                  if (value == null) return;
-                                  setState(() => targetLanguage = value);
-                                  _saveLanguages();
-                                },
+                            DropdownButtonFormField<String>(
+                              initialValue: targetLanguage,
+                              isExpanded: true,
+                              decoration: InputDecoration(
+                                labelText: l10n.targetLanguage,
                               ),
+                              items: [
+                                DropdownMenuItem(
+                                  value: systemTranslationLanguageCode,
+                                  child: Text(l10n.systemTheme),
+                                ),
+                                for (final language in translationLanguages)
+                                  DropdownMenuItem(
+                                    value: language.code,
+                                    child: Text(
+                                      language.name,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                              ],
+                              onChanged: (value) {
+                                if (value == null) return;
+                                setState(() => targetLanguage = value);
+                                _saveLanguages();
+                              },
                             ),
                           ],
                         ),
@@ -357,7 +354,12 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                       if (runtime.displayMode ==
                           TranslationDisplayMode.bilingual)
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                          padding: const EdgeInsets.only(
+                            left: 32,
+                            top: 12,
+                            right: 16,
+                            bottom: 12,
+                          ),
                           child: Column(
                             children: [
                               DropdownButtonFormField<
@@ -592,68 +594,65 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                                   top: 12,
                                   right: 16,
                                 ),
-                                child: Row(
+                                child: _ResponsiveSettingsLayout(
+                                  padding: EdgeInsets.zero,
+                                  runSpacing: 12,
                                   children: [
-                                    Expanded(
-                                      child: DropdownButtonFormField<String>(
-                                        initialValue: inputSourceLanguage,
-                                        isExpanded: true,
-                                        decoration: InputDecoration(
-                                          labelText: l10n.inputSourceLanguage,
+                                    DropdownButtonFormField<String>(
+                                      initialValue: inputSourceLanguage,
+                                      isExpanded: true,
+                                      decoration: InputDecoration(
+                                        labelText: l10n.inputSourceLanguage,
+                                      ),
+                                      items: [
+                                        DropdownMenuItem(
+                                          value: 'auto',
+                                          child: Text(
+                                            l10n.translationAutoDetect,
+                                          ),
                                         ),
-                                        items: [
+                                        for (final language
+                                            in translationLanguages)
                                           DropdownMenuItem(
-                                            value: 'auto',
+                                            value: language.code,
                                             child: Text(
-                                              l10n.translationAutoDetect,
+                                              language.name,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
-                                          for (final language
-                                              in translationLanguages)
-                                            DropdownMenuItem(
-                                              value: language.code,
-                                              child: Text(
-                                                language.name,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                        ],
-                                        onChanged: (value) {
-                                          if (value == null) return;
-                                          setState(
-                                            () => inputSourceLanguage = value,
-                                          );
-                                          _saveInputLanguages();
-                                        },
-                                      ),
+                                      ],
+                                      onChanged: (value) {
+                                        if (value == null) return;
+                                        setState(
+                                          () => inputSourceLanguage = value,
+                                        );
+                                        _saveInputLanguages();
+                                      },
                                     ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: DropdownButtonFormField<String>(
-                                        initialValue: inputTargetLanguage,
-                                        isExpanded: true,
-                                        decoration: InputDecoration(
-                                          labelText: l10n.inputTargetLanguage,
-                                        ),
-                                        items: [
-                                          for (final language
-                                              in translationLanguages)
-                                            DropdownMenuItem(
-                                              value: language.code,
-                                              child: Text(
-                                                language.name,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                        ],
-                                        onChanged: (value) {
-                                          if (value == null) return;
-                                          setState(
-                                            () => inputTargetLanguage = value,
-                                          );
-                                          _saveInputLanguages();
-                                        },
+                                    DropdownButtonFormField<String>(
+                                      initialValue: inputTargetLanguage,
+                                      isExpanded: true,
+                                      decoration: InputDecoration(
+                                        labelText: l10n.inputTargetLanguage,
                                       ),
+                                      items: [
+                                        for (final language
+                                            in translationLanguages)
+                                          DropdownMenuItem(
+                                            value: language.code,
+                                            child: Text(
+                                              language.name,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                      ],
+                                      onChanged: (value) {
+                                        if (value == null) return;
+                                        setState(
+                                          () => inputTargetLanguage = value,
+                                        );
+                                        _saveInputLanguages();
+                                      },
                                     ),
                                   ],
                                 ),
@@ -679,35 +678,39 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                         ),
                       ),
                       _SectionTitle(l10n.batchTranslation),
-                      _NumberSetting(
-                        controller: mergeWindow,
-                        label: l10n.translationMergeWait,
-                        min: 0,
-                        max: 2000,
-                        suffix: 'ms',
-                        onChanged: _batchSettingsChanged,
-                      ),
-                      _NumberSetting(
-                        controller: maxMessages,
-                        label: l10n.translationMaxMessages,
-                        min: 1,
-                        max: 50,
-                        onChanged: _batchSettingsChanged,
-                      ),
-                      _NumberSetting(
-                        controller: maxCharacters,
-                        label: l10n.translationMaxCharacters,
-                        min: 100,
-                        max: 20000,
-                        step: 100,
-                        onChanged: _batchSettingsChanged,
-                      ),
-                      _NumberSetting(
-                        controller: retries,
-                        label: l10n.translationStructureRetries,
-                        min: 0,
-                        max: 3,
-                        onChanged: _batchSettingsChanged,
+                      _ResponsiveSettingsLayout(
+                        children: [
+                          _NumberSetting(
+                            controller: mergeWindow,
+                            label: l10n.translationMergeWait,
+                            min: 0,
+                            max: 2000,
+                            suffix: 'ms',
+                            onChanged: _batchSettingsChanged,
+                          ),
+                          _NumberSetting(
+                            controller: maxMessages,
+                            label: l10n.translationMaxMessages,
+                            min: 1,
+                            max: 50,
+                            onChanged: _batchSettingsChanged,
+                          ),
+                          _NumberSetting(
+                            controller: maxCharacters,
+                            label: l10n.translationMaxCharacters,
+                            min: 100,
+                            max: 20000,
+                            step: 100,
+                            onChanged: _batchSettingsChanged,
+                          ),
+                          _NumberSetting(
+                            controller: retries,
+                            label: l10n.translationStructureRetries,
+                            min: 0,
+                            max: 3,
+                            onChanged: _batchSettingsChanged,
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -765,6 +768,42 @@ class _ColorOption extends StatelessWidget {
   );
 }
 
+class _ResponsiveSettingsLayout extends StatelessWidget {
+  final List<Widget> children;
+  final EdgeInsetsGeometry padding;
+  final double runSpacing;
+
+  const _ResponsiveSettingsLayout({
+    required this.children,
+    this.padding = const EdgeInsets.symmetric(horizontal: 16),
+    this.runSpacing = 0,
+  });
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: padding,
+    child: LayoutBuilder(
+      builder: (context, constraints) {
+        const spacing = 12.0;
+        final minimumColumnWidth = MediaQuery.textScalerOf(context).scale(188);
+        final useTwoColumns =
+            constraints.maxWidth >= minimumColumnWidth * 2 + spacing;
+        final itemWidth = useTwoColumns
+            ? (constraints.maxWidth - spacing) / 2
+            : constraints.maxWidth;
+        return Wrap(
+          spacing: spacing,
+          runSpacing: runSpacing,
+          children: [
+            for (final child in children)
+              SizedBox(width: itemWidth, child: child),
+          ],
+        );
+      },
+    ),
+  );
+}
+
 class _NumberSetting extends StatelessWidget {
   final TextEditingController controller;
   final String label;
@@ -797,7 +836,7 @@ class _NumberSetting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+    padding: const EdgeInsets.symmetric(vertical: 6),
     child: TextField(
       controller: controller,
       keyboardType: TextInputType.number,
