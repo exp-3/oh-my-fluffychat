@@ -72,7 +72,63 @@ class TranslationPreferences {
   final SharedPreferences store;
   final TranslationSecretStore secrets;
 
-  const TranslationPreferences(this.store, this.secrets);
+  TranslationPreferences(this.store, this.secrets);
+
+  static const _pendingCleanupKey =
+      'chat.fluffy.translation.pending_cache_cleanup';
+  static const _pendingCleanupPrefix =
+      'chat.fluffy.translation.pending_cleanup.';
+  final Set<String> _knownPendingCleanupKeys = {};
+
+  /// Separate setting keys prevent concurrent Web tabs from overwriting each
+  /// other's queue entries. Values contain only IDs/digests, never content.
+  List<Map<String, Object?>> get pendingCacheCleanup {
+    try {
+      final keys = store
+          .getKeys()
+          .where((key) => key.startsWith(_pendingCleanupPrefix))
+          .toSet();
+      _knownPendingCleanupKeys.addAll(keys);
+      return [
+        ...((jsonDecode(store.getString(_pendingCleanupKey) ?? '[]') as List)
+            .map((row) => (row as Map).cast<String, Object?>())),
+        for (final key in keys)
+          (jsonDecode(store.getString(key)!) as Map).cast<String, Object?>(),
+      ];
+    } catch (_) {
+      return [
+        {'suspended': true},
+      ];
+    }
+  }
+
+  Future<void> setPendingCacheCleanup(
+    List<Map<String, Object?>> identifiers,
+  ) async {
+    final entries = {
+      for (final row in identifiers)
+        '$_pendingCleanupPrefix${base64UrlEncode(utf8.encode(jsonEncode(row)))}':
+            jsonEncode(row),
+    };
+    for (final entry in entries.entries) {
+      if (!await store.setString(entry.key, entry.value)) {
+        throw StateError('Unable to persist translation cleanup');
+      }
+    }
+    for (final key in _knownPendingCleanupKeys.difference(
+      entries.keys.toSet(),
+    )) {
+      if (!await store.remove(key)) {
+        throw StateError('Unable to acknowledge translation cleanup');
+      }
+    }
+    _knownPendingCleanupKeys
+      ..clear()
+      ..addAll(entries.keys);
+    if (!await store.remove(_pendingCleanupKey)) {
+      throw StateError('Unable to acknowledge legacy translation cleanup');
+    }
+  }
 
   bool get enabled => store.getBool(_enabledKey) ?? false;
   TranslationScope get scope {

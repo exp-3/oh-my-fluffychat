@@ -24,6 +24,7 @@ import 'package:matrix/matrix.dart';
 import 'package:swipe_to_action/swipe_to_action.dart';
 
 import '../../../config/app_config.dart';
+import '../../../utils/translation/translation_runtime.dart';
 import '../sticker_picker_dialog.dart';
 import 'message_content.dart';
 import 'message_reactions.dart';
@@ -144,6 +145,7 @@ class Message extends StatelessWidget {
         : MainAxisAlignment.start;
 
     final displayEvent = event.getDisplayEvent(timeline);
+    TranslationRuntime.instance.observeDisplayEvent(event, displayEvent);
     const hardCorner = Radius.circular(3);
     const roundedCorner = Radius.circular(AppConfig.borderRadius);
     final borderRadius = BorderRadius.only(
@@ -560,10 +562,23 @@ class Message extends StatelessWidget {
                                       HapticFeedback.heavyImpact();
                                       onSelect(event);
                                     },
-                              child: OutsideBubbleTranslation(
-                                event: displayEvent,
-                                timeline: timeline,
-                                textShadows: wallpaperTextShadow,
+                              child: AnimatedBuilder(
+                                animation: TranslationRuntime.instance,
+                                builder: (context, _) {
+                                  final runtime = TranslationRuntime.instance;
+                                  if (!runtime.enabled) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  runtime.observeDisplayEvent(
+                                    event,
+                                    displayEvent,
+                                  );
+                                  return OutsideBubbleTranslation(
+                                    event: displayEvent,
+                                    timeline: timeline,
+                                    textShadows: wallpaperTextShadow,
+                                  );
+                                },
                               ),
                             ),
                             AnimatedSize(

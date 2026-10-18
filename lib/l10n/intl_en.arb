@@ -33,7 +33,7 @@
     "translationScopeNone": "No rooms (manual setup)",
     "translationScopeAllRooms": "Messages in all rooms",
     "translationScopeUnencryptedRooms": "Messages in unencrypted rooms",
-    "translationScopeOverrideHint": "You can override this rule in each room's settings",
+    "translationScopeOverrideHint": "You can override this rule in each room's settings. Cached translations are displayed even when automatic translation is off.",
     "sourceLanguage": "Original message language",
     "targetLanguage": "Your preferred language",
     "preferRoomLanguageForSource": "Prefer the room language as the input language",

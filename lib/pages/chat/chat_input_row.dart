@@ -109,10 +109,14 @@ class ChatInputRow extends StatelessWidget {
       style: leadingButtonStyle,
       tooltip: L10n.of(context).translateInput,
       color: theme.colorScheme.onPrimaryContainer,
-      onPressed: controller.inputTranslationInProgress
+      onPressed:
+          (TranslationRuntime.instance.enabled &&
+              controller.inputTranslationInProgress)
           ? null
           : controller.translateInputManually,
-      icon: controller.inputTranslationInProgress
+      icon:
+          (TranslationRuntime.instance.enabled &&
+              controller.inputTranslationInProgress)
           ? const SizedBox.square(
               dimension: 20,
               child: CircularProgressIndicator(strokeWidth: 2),
@@ -458,7 +462,8 @@ class ChatInputRow extends StatelessWidget {
                     width: height,
                     alignment: Alignment.center,
                     child:
-                        !controller.inputTranslationInProgress &&
+                        !(TranslationRuntime.instance.enabled &&
+                                controller.inputTranslationInProgress) &&
                             PlatformInfos.platformCanRecord &&
                             !controller.sendController.text.isNotEmpty &&
                             controller.editEvent == null
@@ -500,13 +505,17 @@ class ChatInputRow extends StatelessWidget {
                         : IconButton(
                             key: Key('send_button'),
                             tooltip: L10n.of(context).send,
-                            onPressed: controller.inputTranslationInProgress
+                            onPressed:
+                                (TranslationRuntime.instance.enabled &&
+                                    controller.inputTranslationInProgress)
                                 ? null
                                 : () => controller.send(
                                     translate: shortPressTranslates,
                                   ),
                             onLongPress:
-                                controller.inputTranslationInProgress ||
+                                (TranslationRuntime.instance.enabled &&
+                                        controller
+                                            .inputTranslationInProgress) ||
                                     !automaticInputTranslation
                                 ? null
                                 : () => controller.send(
@@ -516,7 +525,9 @@ class ChatInputRow extends StatelessWidget {
                               backgroundColor: theme.bubbleColor,
                               foregroundColor: theme.onBubbleColor,
                             ),
-                            icon: controller.inputTranslationInProgress
+                            icon:
+                                (TranslationRuntime.instance.enabled &&
+                                    controller.inputTranslationInProgress)
                                 ? const SizedBox.square(
                                     dimension: 20,
                                     child: CircularProgressIndicator(

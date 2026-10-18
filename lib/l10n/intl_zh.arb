@@ -26,7 +26,7 @@
     "translationScopeNone": "无（手动设置）",
     "translationScopeAllRooms": "所有聊天室的消息",
     "translationScopeUnencryptedRooms": "未加密聊天室的消息",
-    "translationScopeOverrideHint": "可以在每个房间的设置中覆盖此处规则",
+    "translationScopeOverrideHint": "可以在每个房间的设置中覆盖此处规则。关闭自动翻译后仍会显示已有缓存译文。",
     "sourceLanguage": "原始消息语言",
     "targetLanguage": "您的惯用语言",
     "preferRoomLanguageForSource": "优先使用房间语言作为输入语言",

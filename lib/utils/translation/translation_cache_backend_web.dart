@@ -1,6 +1,4 @@
 // SPDX-FileCopyrightText: 2026 The Oh-My-FluffyChat Project
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
-//
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import 'dart:async';
@@ -13,8 +11,9 @@ import 'translation_cache_backend_interface.dart';
 @JS('window.indexedDB')
 external web.IDBFactory? get _indexedDb;
 
-// Selected through the conditional export; dart_code_linter cannot resolve
-// this Web branch when checking the native configuration.
+@JS('navigator.locks')
+external web.LockManager? get _locks;
+
 // ignore: unused-code
 TranslationCacheBackend createTranslationCacheBackend() =>
     WebTranslationCacheBackend();
@@ -22,204 +21,198 @@ TranslationCacheBackend createTranslationCacheBackend() =>
 class WebTranslationCacheBackend implements TranslationCacheBackend {
   static const _name = 'fluffychat_translation_cache';
   static const _marker = 'chat.fluffy.translation.cache_exists';
-  static const _storeName = 'translations';
   web.IDBDatabase? _database;
+  final _changes = StreamController<void>.broadcast();
+  web.BroadcastChannel? _channel;
+  JSFunction? _reactivation;
+
+  WebTranslationCacheBackend() {
+    try {
+      _channel = web.BroadcastChannel('fluffychat.translation.cache');
+      _channel!.onmessage = ((web.MessageEvent _) {
+        _changes.add(null);
+      }).toJS;
+    } catch (_) {
+      // Focus/resume still rechecks persisted generations when broadcasting
+      // is unavailable in this browser.
+    }
+    _reactivation = ((web.Event _) {
+      _changes.add(null);
+    }).toJS;
+    web.window.addEventListener('focus', _reactivation);
+    web.document.addEventListener('visibilitychange', _reactivation);
+  }
+  @override
+  Stream<void> get externalChanges => _changes.stream;
+  @override
+  void signalInvalidation() => _channel?.postMessage('invalidated'.toJS);
 
   @override
-  Future<bool> exists() async {
-    if (_database != null) return true;
-    final database = await _openExistingDatabase();
-    if (database == null) {
-      web.window.localStorage.removeItem(_marker);
-      return false;
+  Future<T> coordinated<T>(Future<T> Function() action) async {
+    final locks = _locks;
+    if (locks == null) return action();
+    late T result;
+    Future<JSAny?> run() async {
+      result = await action();
+      return null;
     }
-    database.close();
-    web.window.localStorage.setItem(_marker, 'true');
-    return true;
+
+    await locks
+        .request(
+          'fluffychat.translation.cache',
+          ((web.Lock _) => run().toJS).toJS,
+        )
+        .toDart;
+    return result;
+  }
+
+  Future<web.IDBDatabase?> _open({bool create = false, bool migrate = false}) {
+    final factory = _indexedDb;
+    if (factory == null) throw StateError('IndexedDB is unavailable');
+    final completer = Completer<web.IDBDatabase?>();
+    var absent = false;
+    // No version on safety probes: even an upgrade would create tables.
+    final request = migrate ? factory.open(_name, 3) : factory.open(_name);
+    request.onupgradeneeded = ((web.IDBVersionChangeEvent event) {
+      try {
+        if (completer.isCompleted) {
+          request.transaction?.abort();
+          return;
+        }
+        if (!create && event.oldVersion == 0) {
+          absent = true;
+          request.transaction!.abort();
+          return;
+        }
+        final db = request.result as web.IDBDatabase;
+        for (final store in CacheStore.values) {
+          final objectStore = db.objectStoreNames.contains(store.name)
+              ? request.transaction!.objectStore(store.name)
+              : db.createObjectStore(
+                  store.name,
+                  web.IDBObjectStoreParameters(keyPath: 'cache_key'.toJS),
+                );
+          for (final index
+              in (cacheIndexes[store] ?? const <String, List<String>>{})
+                  .entries) {
+            if (objectStore.indexNames.contains(index.key)) continue;
+            objectStore.createIndex(
+              index.key,
+              index.value.length == 1
+                  ? index.value.single.toJS
+                  : index.value.map((field) => field.toJS).toList().toJS,
+            );
+          }
+        }
+      } catch (error, stack) {
+        request.transaction?.abort();
+        if (!completer.isCompleted) completer.completeError(error, stack);
+      }
+    }).toJS;
+    request.onerror = ((web.Event _) {
+      if (completer.isCompleted) return;
+      if (absent) {
+        completer.complete(null);
+        return;
+      }
+      completer.completeError(
+        StateError('Unable to open translation IndexedDB'),
+      );
+    }).toJS;
+    request.onblocked = ((web.Event _) {
+      if (!completer.isCompleted) {
+        completer.completeError(StateError('Translation IndexedDB is blocked'));
+      }
+    }).toJS;
+    request.onsuccess = ((web.Event _) {
+      final db = request.result as web.IDBDatabase;
+      db.onversionchange = ((web.IDBVersionChangeEvent _) {
+        db.close();
+        if (identical(_database, db)) _database = null;
+        _changes.add(null);
+      }).toJS;
+      if (completer.isCompleted) {
+        db.close();
+      } else {
+        completer.complete(db);
+      }
+    }).toJS;
+    return completer.future;
   }
 
   @override
-  Future<bool> openExisting(String databaseKey) async {
+  Future<bool> exists() async {
+    if (_locks == null) throw StateError('Translation cache lock unavailable');
     if (_database != null) return true;
-    final database = await _openExistingDatabase();
-    if (database == null) {
-      web.window.localStorage.removeItem(_marker);
-      return false;
+    final db = await _open();
+    db?.close();
+    return db != null;
+  }
+
+  @override
+  Future<bool> openExisting(String databaseKey, {bool migrate = false}) async {
+    if (_database != null) {
+      if (!migrate || _database!.version >= 3) return true;
+      await close();
     }
-    _database = database;
-    web.window.localStorage.setItem(_marker, 'true');
-    return true;
+    _database = await _open(migrate: migrate);
+    return _database != null;
   }
 
   @override
   Future<void> openOrCreate(String databaseKey) async {
-    if (_database != null) return;
-    _database = await _open(create: true);
+    if (_database != null && _database!.version >= 3) return;
+    await close();
+    _database = await _open(create: true, migrate: true);
     web.window.localStorage.setItem(_marker, 'true');
   }
 
-  Future<web.IDBDatabase> _open({required bool create}) {
-    final indexedDb = _indexedDb;
-    if (indexedDb == null) throw StateError('IndexedDB is unavailable');
-    final completer = Completer<web.IDBDatabase>();
-    var absent = false;
-    final request = indexedDb.open(_name, 2);
-
-    request.onupgradeneeded = (web.IDBVersionChangeEvent event) {
-      try {
-        if (!create && event.oldVersion == 0) {
-          final transaction = request.transaction;
-          if (transaction == null) {
-            throw StateError('IndexedDB upgrade transaction is unavailable');
-          }
-          absent = true;
-          transaction.abort();
-          return;
-        }
-        final database = request.result as web.IDBDatabase;
-        if (event.oldVersion < 1) {
-          final store = database.createObjectStore(
-            _storeName,
-            web.IDBObjectStoreParameters(keyPath: 'cache_key'.toJS),
-          );
-          store.createIndex('room_id', 'room_id'.toJS);
-          store.createIndex('event_id', ['room_id'.toJS, 'event_id'.toJS].toJS);
-        }
-      } catch (error, stackTrace) {
-        request.transaction?.abort();
-        if (!completer.isCompleted) {
-          completer.completeError(error, stackTrace);
-        }
-      }
-    }.toJS;
-    request.onerror = (web.Event event) {
-      if (completer.isCompleted) return;
-      if (absent) {
-        // Aborting the initial version-change transaction prevents creation by
-        // specification. Do not issue a follow-up delete here: another tab may
-        // legitimately create the shared cache immediately after this probe.
-        completer.completeError(const _TranslationCacheDatabaseAbsent());
-        return;
-      }
-      completer.completeError(
-        request.error ?? StateError('Unable to open IndexedDB'),
-      );
-    }.toJS;
-    request.onblocked = (web.Event event) {
-      if (!completer.isCompleted) {
-        completer.completeError(
-          StateError('IndexedDB open request is blocked'),
-        );
-      }
-    }.toJS;
-    request.onsuccess = (web.Event event) {
-      final database = request.result as web.IDBDatabase;
-      if (completer.isCompleted) {
-        database.close();
-      } else {
-        completer.complete(database);
-      }
-    }.toJS;
-    return completer.future;
-  }
-
-  Future<web.IDBDatabase?> _openExistingDatabase() async {
-    if (_indexedDb == null) return null;
-    try {
-      return await _open(create: false);
-    } on _TranslationCacheDatabaseAbsent {
-      return null;
-    }
-  }
-
-  web.IDBDatabase get _db =>
-      _database ?? (throw StateError('Translation cache is not open'));
-
   @override
-  Future<TranslationCacheRecord?> get(String cacheKey) async {
-    final transaction = _db.transaction(_storeName.toJS, 'readonly');
-    final completed = _waitForTransaction(transaction);
-    final request = transaction.objectStore(_storeName).get(cacheKey.toJS);
-    await completed;
-    final value = request.result?.dartify();
-    return value is Map<Object?, Object?>
-        ? TranslationCacheRecord.fromMap(value)
-        : null;
-  }
-
-  @override
-  Future<void> putAll(List<TranslationCacheRecord> records) async {
-    final transaction = _db.transaction(_storeName.toJS, 'readwrite');
-    final completed = _waitForTransaction(transaction);
-    final store = transaction.objectStore(_storeName);
-    for (final record in records) {
-      store.put(record.toMap().jsify());
-    }
-    await completed;
-  }
-
-  @override
-  Future<int> deleteByEvent(String roomId, String eventId) => _deleteMatching(
-    (record) => record.roomId == roomId && record.eventId == eventId,
-  );
-
-  @override
-  Future<int> deleteByRoom(String roomId) =>
-      _deleteMatching((record) => record.roomId == roomId);
-
-  Future<int> _deleteMatching(
-    bool Function(TranslationCacheRecord record) test,
-  ) async {
-    final records = await page(0, 0x7fffffff);
-    return deleteKeys(
-      records.where(test).map((record) => record.cacheKey).toList(),
-    );
-  }
-
-  @override
-  Future<int> deleteKeys(List<String> cacheKeys) async {
-    if (cacheKeys.isEmpty) return 0;
-    final transaction = _db.transaction(_storeName.toJS, 'readwrite');
-    final completed = _waitForTransaction(transaction);
-    final store = transaction.objectStore(_storeName);
-    for (final key in cacheKeys) {
-      store.delete(key.toJS);
-    }
-    await completed;
-    return cacheKeys.length;
-  }
-
-  @override
-  Future<List<TranslationCacheRecord>> page(int offset, int limit) async {
-    final transaction = _db.transaction(_storeName.toJS, 'readonly');
-    final completed = _waitForTransaction(transaction);
-    final request = transaction.objectStore(_storeName).getAll();
-    await completed;
-    final values = request.result?.dartify();
-    if (values is! List<Object?>) return const [];
-    final records = values
-        .whereType<Map<Object?, Object?>>()
-        .map(TranslationCacheRecord.fromMap)
+  Future<T> transaction<T>(
+    Future<T> Function(TranslationCacheTransaction tx) action, {
+    bool write = false,
+    bool notify = false,
+  }) async {
+    final db = _database!;
+    final names = CacheStore.values
+        .where((store) => db.objectStoreNames.contains(store.name))
+        .map((store) => store.name.toJS)
         .toList();
-    final start = offset.clamp(0, records.length);
-    final end = (start + limit).clamp(start, records.length);
-    return records.sublist(start, end);
+    final transaction = db.transaction(
+      names.toJS,
+      write ? 'readwrite' : 'readonly',
+    );
+    final completion = _completed(transaction);
+    // Observe aborts immediately, even while an individual request is pending.
+    unawaited(completion.catchError((Object _) {}));
+    try {
+      final result = await action(_WebTransaction(transaction, db));
+      await completion;
+      if (write && notify) _channel?.postMessage('changed'.toJS);
+      return result;
+    } catch (_) {
+      try {
+        transaction.abort();
+      } catch (_) {}
+      rethrow;
+    }
   }
-
-  @override
-  Future<int> count() async => (await page(0, 0x7fffffff)).length;
 
   @override
   Future<void> deleteIfExists() async {
     await close();
-    // Deleting a missing IndexedDB database is a successful no-op, while
-    // always issuing the delete also removes an orphan whose localStorage
-    // marker was evicted independently.
-    final indexedDb = _indexedDb;
-    if (indexedDb != null) {
-      await _waitForDatabaseRequest(indexedDb.deleteDatabase(_name));
-    }
+    final factory = _indexedDb;
+    if (factory == null) throw StateError('IndexedDB is unavailable');
+    final request = factory.deleteDatabase(_name);
+    final completed = _request(request);
+    request.onblocked = ((web.Event _) {
+      // Other tabs close their connection in onversionchange. Keep waiting
+      // for the actual deletion before the service removes its master key.
+      signalInvalidation();
+    }).toJS;
+    await completed.timeout(const Duration(seconds: 10));
     web.window.localStorage.removeItem(_marker);
+    _channel?.postMessage('changed'.toJS);
   }
 
   @override
@@ -228,50 +221,173 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
     _database = null;
     return Future<void>.value();
   }
+
+  @override
+  Future<void> dispose() async {
+    await close();
+    web.window.removeEventListener('focus', _reactivation);
+    web.document.removeEventListener('visibilitychange', _reactivation);
+    _channel?.close();
+    _channel = null;
+    await _changes.close();
+  }
 }
 
-Future<void> _waitForTransaction(web.IDBTransaction transaction) {
-  final completer = Completer<void>();
-  transaction.oncomplete = (web.Event event) {
-    if (!completer.isCompleted) completer.complete();
-  }.toJS;
-  transaction.onerror = (web.Event event) {
-    if (!completer.isCompleted) {
-      completer.completeError(
-        transaction.error ?? StateError('IndexedDB transaction failed'),
+class _WebTransaction implements TranslationCacheTransaction {
+  final web.IDBTransaction tx;
+  final web.IDBDatabase db;
+  _WebTransaction(this.tx, this.db);
+  @override
+  bool hasStore(CacheStore store) => db.objectStoreNames.contains(store.name);
+  @override
+  Future<CacheRow?> get(CacheStore store, String key) async {
+    if (!hasStore(store)) return null;
+    final value = (await _request(
+      tx.objectStore(store.name).get(key.toJS),
+    ))?.dartify();
+    return value is Map ? value.cast<String, Object?>() : null;
+  }
+
+  @override
+  Future<void> put(CacheStore store, CacheRow row) async {
+    await _request(
+      tx.objectStore(store.name).put((Map.of(row)..remove('_cursor')).jsify()),
+    );
+  }
+
+  @override
+  Future<void> delete(CacheStore store, String key) async {
+    if (hasStore(store)) {
+      await _request(tx.objectStore(store.name).delete(key.toJS));
+    }
+  }
+
+  @override
+  Future<List<CacheRow>> query(
+    CacheStore store, {
+    String? index,
+    List<String>? equals,
+    Object? after,
+    int limit = 200,
+  }) async {
+    if (!hasStore(store)) return [];
+    final objectStore = tx.objectStore(store.name);
+    web.IDBRequest request;
+    List<String>? fallbackFields;
+    JSAny? indexKey;
+    if (index != null) {
+      // Existing v2 indexes had different names. Use them without upgrading.
+      final oldName = index == 'event'
+          ? 'event_id'
+          : index == 'room'
+          ? 'room_id'
+          : index;
+      final name = objectStore.indexNames.contains(index) ? index : oldName;
+      if (!objectStore.indexNames.contains(name)) {
+        // Pre-v3 safety cleanup may lack a source-binding index. Leave the
+        // schema untouched and filter its cursor; v3 always uses an index.
+        fallbackFields = cacheIndexes[store]![index]!;
+        request = objectStore.openCursor(
+          after == null
+              ? null
+              : web.IDBKeyRange.lowerBound((after as String).toJS, true),
+        );
+      } else {
+        final key = equals!.length == 1
+            ? equals.single.toJS
+            : equals.map((item) => item.toJS).toList().toJS;
+        indexKey = key;
+        request = objectStore.index(name).openCursor(web.IDBKeyRange.only(key));
+      }
+    } else {
+      request = objectStore.openCursor(
+        after == null
+            ? null
+            : web.IDBKeyRange.lowerBound((after as String).toJS, true),
       );
     }
-  }.toJS;
-  transaction.onabort = (web.Event event) {
-    if (!completer.isCompleted) {
-      completer.completeError(
-        transaction.error ?? StateError('IndexedDB transaction was aborted'),
-      );
-    }
-  }.toJS;
+    final completer = Completer<List<CacheRow>>();
+    final rows = <CacheRow>[];
+    request.onerror = ((web.Event _) {
+      if (!completer.isCompleted) {
+        completer.completeError(StateError('Translation cache cursor failed'));
+      }
+    }).toJS;
+    request.onsuccess = ((web.Event _) {
+      try {
+        final result = request.result;
+        if (result == null || result.isUndefinedOrNull) {
+          completer.complete(rows);
+          return;
+        }
+        final cursor = result as web.IDBCursorWithValue;
+        final key = cursor.primaryKey.dartify();
+        if (indexKey != null &&
+            after != null &&
+            (key as String).compareTo(after as String) < 0) {
+          // Jump directly within duplicate index keys instead of scanning all
+          // previous pages again for a widely shared source.
+          cursor.continuePrimaryKey(indexKey, after.toJS);
+          return;
+        }
+        final value = cursor.value.dartify();
+        final fields = fallbackFields;
+        final matches =
+            fields == null ||
+            (value is Map &&
+                List.generate(
+                  fields.length,
+                  (i) => value[fields[i]] == equals![i],
+                ).every((match) => match));
+        if (matches &&
+            (after == null || (key as String).compareTo(after as String) > 0) &&
+            value is Map) {
+          rows.add({...value.cast<String, Object?>(), '_cursor': key});
+        }
+        if (rows.length >= limit) {
+          completer.complete(rows);
+        } else {
+          cursor.continue_();
+        }
+      } catch (error, stack) {
+        if (!completer.isCompleted) completer.completeError(error, stack);
+      }
+    }).toJS;
+    return completer.future;
+  }
+
+  @override
+  Future<int> count(CacheStore store) async => !hasStore(store)
+      ? 0
+      : ((await _request(tx.objectStore(store.name).count()))!.dartify()!
+                as num)
+            .toInt();
+}
+
+Future<JSAny?> _request(web.IDBRequest request) {
+  final completer = Completer<JSAny?>();
+  request.onsuccess = ((web.Event _) {
+    completer.complete(request.result);
+  }).toJS;
+  request.onerror = ((web.Event _) {
+    completer.completeError(StateError('Translation cache request failed'));
+  }).toJS;
   return completer.future;
 }
 
-Future<void> _waitForDatabaseRequest(web.IDBOpenDBRequest request) {
+Future<void> _completed(web.IDBTransaction transaction) {
   final completer = Completer<void>();
-  request.onsuccess = (web.Event event) {
+  transaction.oncomplete = ((web.Event _) {
     if (!completer.isCompleted) completer.complete();
-  }.toJS;
-  request.onerror = (web.Event event) {
+  }).toJS;
+  final failed = ((web.Event _) {
     if (!completer.isCompleted) {
       completer.completeError(
-        request.error ?? StateError('IndexedDB request failed'),
+        StateError('Translation cache transaction failed'),
       );
     }
-  }.toJS;
-  request.onblocked = (web.Event event) {
-    if (!completer.isCompleted) {
-      completer.completeError(StateError('IndexedDB request is blocked'));
-    }
-  }.toJS;
+  }).toJS;
+  transaction.onerror = failed;
+  transaction.onabort = failed;
   return completer.future;
-}
-
-class _TranslationCacheDatabaseAbsent implements Exception {
-  const _TranslationCacheDatabaseAbsent();
 }

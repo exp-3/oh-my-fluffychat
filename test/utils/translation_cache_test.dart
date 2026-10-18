@@ -1,404 +1,444 @@
 // SPDX-FileCopyrightText: 2026 The Oh-My-FluffyChat Project
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
-//
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart';
 import 'package:fluffychat/utils/translation/translation_cache.dart';
 import 'package:fluffychat/utils/translation/translation_cache_backend_interface.dart';
 import 'package:fluffychat/utils/translation/translation_preferences.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pointycastle/export.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-const cacheKey = TranslationCacheKey(
-  roomId: '!room:example.test',
-  eventId: r'$event',
-  source: 'private source text',
-  sourceLanguage: 'auto',
-  targetLanguage: 'en',
-  semanticRevision: 'provider:responses:model:1',
-  messageType: 'm.text',
-);
+import 'translation_test_backend.dart';
 
-const secondCacheKey = TranslationCacheKey(
-  roomId: '!room:example.test',
-  eventId: r'$second-event',
-  source: 'another private source',
+const masterKeyName = 'chat.fluffy.translation.cache_master_key';
+TranslationCacheKey key({
+  String user = '@alice:test',
+  String room = '!room:test',
+  String event = r'$event',
+  String source = 'private source',
+  String target = 'en',
+  String type = 'm.text',
+  String model = 'first-model',
+  String? originalId,
+}) => TranslationCacheKey(
+  userId: user,
+  roomId: room,
+  eventId: event,
+  source: source,
   sourceLanguage: 'auto',
-  targetLanguage: 'en',
-  semanticRevision: 'provider:responses:model:1',
-  messageType: 'm.notice',
+  targetLanguage: target,
+  messageType: type,
+  model: model,
+  originalEventId: originalId,
 );
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  late MemorySecrets secrets;
+  late MemoryTranslationBackend backend;
+  late TranslationCache cache;
+  setUp(() {
+    secrets = MemorySecrets();
+    backend = MemoryTranslationBackend();
+    cache = TranslationCache(secrets, backend);
+  });
+
   test(
-    'absent cache reads and invalidations create no storage or key',
+    'never-used cache creates no database, key, or secure-storage reads',
     () async {
-      final secrets = _MemorySecrets();
-      final backend = _MemoryBackend();
-      final cache = TranslationCache(secrets, backend);
-      expect(await cache.read(cacheKey), isNull);
-      await cache.invalidateEventIfExists(cacheKey.roomId, cacheKey.eventId);
-      await cache.invalidateRoomIfExists(cacheKey.roomId);
-      await cache.deleteIfExists();
+      expect(
+        (await cache.lookup(key())).status,
+        TranslationCacheLookupStatus.miss,
+      );
+      await cache.invalidateEventIfExists('!room:test', r'$event');
+      await cache.invalidateRoomIfExists('!room:test');
+      final result = await cache.cleanInvalid(
+        (_, _, _) async => throw StateError('must not resolve source'),
+      );
+      expect(result.cacheExisted, isFalse);
+      expect(backend.createCalls, 0);
       expect(backend.openExistingCalls, 0);
+      expect(secrets.readCalls, 0);
+      expect(secrets.values, isEmpty);
+    },
+  );
+
+  test(
+    'content shares across rooms and models; accounts, languages and types isolate',
+    () async {
+      await cache.write(key(), 'translated');
+      expect(
+        await cache.read(
+          key(room: '!other:test', event: r'$alias', model: 'new-model'),
+        ),
+        'translated',
+      );
+      expect(backend.records, hasLength(1));
+      expect(backend.rows[CacheStore.refs], hasLength(2));
+      expect(await cache.read(key(user: '@bob:test')), isNull);
+      expect(await cache.read(key(target: 'de')), isNull);
+      expect(await cache.read(key(type: 'm.notice')), isNull);
+      final persisted = jsonEncode(backend.records);
+      expect(persisted, isNot(contains('private source')));
+      expect(persisted, isNot(contains('translated')));
+      expect(persisted, isNot(contains('first-model')));
+    },
+  );
+
+  test(
+    'edit deletes all shared variants and loser references, even after restart',
+    () async {
+      await cache.write(key(), 'translated');
+      await cache.read(key(room: '!other:test', event: r'$alias'));
+      await cache.write(key(target: 'de'), 'übersetzt');
+      await cache.write(key(type: 'm.notice'), 'notice');
+      final restarted = TranslationCache(secrets, backend);
+      await restarted.invalidateEventIfExists('!other:test', r'$alias');
+      expect(backend.records, isEmpty);
+      expect(backend.rows[CacheStore.refs], isEmpty);
+      expect(backend.rows[CacheStore.generations], hasLength(1));
+      expect(await restarted.read(key()), isNull);
+    },
+  );
+
+  test(
+    'disk generations prevent a late write from a different cache instance',
+    () async {
+      await cache.write(key(), 'old');
+      final other = TranslationCache(secrets, backend);
+      final ticket = (await other.lookup(key())).ticket!;
+      await cache.invalidateEventIfExists('!room:test', r'$event');
+      await expectLater(
+        other.write(key(), 'late', ticket: ticket),
+        throwsStateError,
+      );
+      expect(await cache.read(key()), isNull);
+      final fresh = (await cache.lookup(key())).ticket!;
+      await cache.write(key(), 'new', ticket: fresh);
+      expect(await cache.read(key()), 'new');
+    },
+  );
+
+  test(
+    'redacting an edit destroys original and every historical edit binding',
+    () async {
+      await cache.write(key(), 'original translation');
+      await cache.write(
+        key(event: r'$edit1', source: 'first edit', originalId: r'$event'),
+        'first edit translation',
+      );
+      await cache.write(
+        key(event: r'$edit2', source: 'latest edit', originalId: r'$event'),
+        'latest edit translation',
+      );
+      await TranslationCache(
+        secrets,
+        backend,
+      ).invalidateEventIfExists('!room:test', r'$edit1');
+      expect(backend.records, isEmpty);
+      expect(backend.rows[CacheStore.refs], isEmpty);
+      expect(backend.rows[CacheStore.generations], hasLength(3));
+    },
+  );
+
+  test(
+    'a missing database still invalidates a relevant in-flight memory ticket',
+    () async {
+      final ticket = (await cache.lookup(key())).ticket!;
+      await cache.invalidateEventIfExists(
+        '!room:test',
+        r'$event',
+        sources: [key().source],
+      );
+      await expectLater(
+        cache.write(key(), 'late', ticket: ticket),
+        throwsStateError,
+      );
       expect(backend.createCalls, 0);
       expect(secrets.values, isEmpty);
     },
   );
 
   test(
-    'first write creates key and encrypted record, then round trips',
+    'missing or locked master key preserves the existing encrypted database',
     () async {
-      final secrets = _MemorySecrets();
-      final backend = _MemoryBackend();
-      final cache = TranslationCache(secrets, backend);
-      await cache.write(cacheKey, 'translated text');
-      expect(backend.createCalls, 1);
-      expect(secrets.values, hasLength(1));
-      final record = backend.records.single;
-      expect(record.toMap().values, isNot(contains(cacheKey.source)));
-      expect(record.toMap().values, isNot(contains('translated text')));
-      expect(await cache.read(cacheKey), 'translated text');
-    },
-  );
-
-  test('tampered cache metadata is rejected and removed', () async {
-    final secrets = _MemorySecrets();
-    final backend = _MemoryBackend();
-    final cache = TranslationCache(secrets, backend);
-    await cache.write(cacheKey, 'translated text');
-    final record = backend.records.single;
-    backend.records.first = TranslationCacheRecord(
-      cacheKey: record.cacheKey,
-      roomId: record.roomId,
-      eventId: record.eventId,
-      nonce: record.nonce,
-      ciphertext: record.ciphertext,
-      sourceBinding: record.sourceBinding,
-      aad: '${record.aad}tampered',
-    );
-
-    expect(await cache.read(cacheKey), isNull);
-    expect(backend.records, isEmpty);
-  });
-
-  test(
-    'cleanup validates local source binding and removes changed source',
-    () async {
-      final secrets = _MemorySecrets();
-      final backend = _MemoryBackend();
-      final cache = TranslationCache(secrets, backend);
-      await cache.write(cacheKey, 'translated text');
-      final result = await cache.cleanInvalid((_, _) async => 'edited source');
-      expect(result.checked, 1);
-      expect(result.deleted, 1);
-      expect(backend.records, isEmpty);
-    },
-  );
-
-  test('cleanup retains a locally valid encrypted record', () async {
-    final secrets = _MemorySecrets();
-    final backend = _MemoryBackend();
-    final cache = TranslationCache(secrets, backend);
-    await cache.write(cacheKey, 'translated text');
-
-    final result = await cache.cleanInvalid((_, _) async => cacheKey.source);
-    expect(result.checked, 1);
-    expect(result.retained, 1);
-    expect(result.deleted, 0);
-    expect(backend.records, hasLength(1));
-  });
-
-  test('cleanup removes records with inconsistent indexed metadata', () async {
-    final secrets = _MemorySecrets();
-    final backend = _MemoryBackend();
-    final cache = TranslationCache(secrets, backend);
-    await cache.write(cacheKey, 'translated text');
-    final record = backend.records.single;
-    backend.records.first = TranslationCacheRecord(
-      cacheKey: record.cacheKey,
-      roomId: '!other-room:example.test',
-      eventId: record.eventId,
-      nonce: record.nonce,
-      ciphertext: record.ciphertext,
-      sourceBinding: record.sourceBinding,
-      aad: record.aad,
-    );
-
-    final result = await cache.cleanInvalid((_, _) async => cacheKey.source);
-    expect(result.checked, 1);
-    expect(result.retained, 0);
-    expect(result.deleted, 1);
-    expect(backend.records, isEmpty);
-  });
-
-  test('cleanup removes records with malformed encrypted fields', () async {
-    final secrets = _MemorySecrets();
-    final backend = _MemoryBackend();
-    final cache = TranslationCache(secrets, backend);
-    await cache.write(cacheKey, 'translated text');
-    final record = backend.records.single;
-    backend.records.first = TranslationCacheRecord.fromMap({
-      'cache_key': record.cacheKey,
-      'room_id': record.roomId,
-      'event_id': record.eventId,
-      'nonce': 1234,
-      'ciphertext': record.ciphertext,
-      'source_binding': record.sourceBinding,
-      'aad': record.aad,
-    });
-
-    final result = await cache.cleanInvalid((_, _) async => cacheKey.source);
-    expect(result.checked, 1);
-    expect(result.retained, 0);
-    expect(result.deleted, 1);
-    expect(backend.records, isEmpty);
-  });
-
-  test(
-    'concurrent first writes create one database and one master key',
-    () async {
-      final secrets = _MemorySecrets();
-      final backend = _MemoryBackend();
-      final cache = TranslationCache(secrets, backend);
-
-      await Future.wait([
-        cache.write(cacheKey, 'first translation'),
-        cache.write(secondCacheKey, 'second translation'),
-      ]);
-
-      expect(backend.createCalls, 1);
-      expect(secrets.writeCalls, 1);
-      expect(secrets.values, hasLength(1));
-      expect(backend.records, hasLength(2));
-      expect(await cache.read(cacheKey), 'first translation');
-      expect(await cache.read(secondCacheKey), 'second translation');
-    },
-  );
-
-  test('already invalid write creates neither database nor key', () async {
-    final secrets = _MemorySecrets();
-    final backend = _MemoryBackend();
-    final cache = TranslationCache(secrets, backend);
-
-    await expectLater(
-      cache.write(cacheKey, 'late translation', isValid: () => false),
-      throwsA(isA<StateError>()),
-    );
-
-    expect(backend.createCalls, 0);
-    expect(backend.present, isFalse);
-    expect(secrets.values, isEmpty);
-    expect(secrets.writeCalls, 0);
-  });
-
-  test('invalid first write rolls back its new database and key', () async {
-    final secrets = _MemorySecrets();
-    final backend = _MemoryBackend();
-    final cache = TranslationCache(secrets, backend);
-    var valid = true;
-    backend.afterOpenOrCreate = () => valid = false;
-
-    await expectLater(
-      cache.write(cacheKey, 'late translation', isValid: () => valid),
-      throwsA(isA<StateError>()),
-    );
-
-    expect(backend.present, isFalse);
-    expect(backend.records, isEmpty);
-    expect(secrets.values, isEmpty);
-    expect(secrets.deleteCalls, 1);
-  });
-
-  test('failed first database creation removes its new key and file', () async {
-    final secrets = _MemorySecrets();
-    final backend = _MemoryBackend()..failOpenAfterCreate = true;
-    final cache = TranslationCache(secrets, backend);
-
-    await expectLater(
-      cache.write(cacheKey, 'translated text'),
-      throwsA(isA<StateError>()),
-    );
-
-    expect(backend.present, isFalse);
-    expect(backend.records, isEmpty);
-    expect(secrets.values, isEmpty);
-    expect(secrets.deleteCalls, 1);
-  });
-
-  test(
-    'invalid committed write is removed from an existing database',
-    () async {
-      final secrets = _MemorySecrets();
-      final backend = _MemoryBackend();
-      final cache = TranslationCache(secrets, backend);
-      await cache.write(cacheKey, 'retained translation');
-
-      var valid = true;
-      backend.afterPutAll = () => valid = false;
-      await expectLater(
-        cache.write(secondCacheKey, 'late translation', isValid: () => valid),
-        throwsA(isA<StateError>()),
+      await cache.write(key(), 'old');
+      secrets.values.clear();
+      final restarted = TranslationCache(secrets, backend);
+      expect(
+        (await restarted.lookup(key())).status,
+        TranslationCacheLookupStatus.unavailable,
       );
-
-      expect(backend.present, isTrue);
+      await expectLater(
+        restarted.write(key(), 'replacement'),
+        throwsStateError,
+      );
+      await restarted.invalidateEventIfExists('!room:test', r'$event');
       expect(backend.records, hasLength(1));
-      expect(await cache.read(cacheKey), 'retained translation');
-      expect(await cache.read(secondCacheKey), isNull);
-      expect(secrets.values, hasLength(1));
-    },
-  );
-
-  test('invalid replacement restores the prior encrypted record', () async {
-    final secrets = _MemorySecrets();
-    final backend = _MemoryBackend();
-    final cache = TranslationCache(secrets, backend);
-    await cache.write(cacheKey, 'original translation');
-
-    var valid = true;
-    backend.afterPutAll = () => valid = false;
-    await expectLater(
-      cache.write(cacheKey, 'late replacement', isValid: () => valid),
-      throwsA(isA<StateError>()),
-    );
-
-    expect(await cache.read(cacheKey), 'original translation');
-  });
-
-  test(
-    'delete waits for an active write and removes its key and database',
-    () async {
-      final secrets = _MemorySecrets();
-      final backend = _MemoryBackend();
-      final cache = TranslationCache(secrets, backend);
-      final putStarted = Completer<void>();
-      final releasePut = Completer<void>();
-      backend.beforePutAll = () async {
-        putStarted.complete();
-        await releasePut.future;
-      };
-
-      final write = cache.write(cacheKey, 'translated text');
-      await putStarted.future;
-      final delete = cache.deleteIfExists();
-      await Future<void>.delayed(Duration.zero);
       expect(backend.deleteCalls, 0);
-
-      releasePut.complete();
-      await Future.wait([write, delete]);
-      expect(backend.present, isFalse);
-      expect(backend.records, isEmpty);
       expect(secrets.values, isEmpty);
     },
   );
+
+  test(
+    'locked storage queues minimal cleanup and replays before another hit',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final preferences = TranslationPreferences(
+        await SharedPreferences.getInstance(),
+        secrets,
+      );
+      cache.safetyPreferences = preferences;
+      await cache.write(key(), 'old');
+      backend.unavailable = true;
+      await cache.invalidateEventIfExists('!room:test', r'$event');
+      expect(
+        (await cache.lookup(key())).status,
+        TranslationCacheLookupStatus.unavailable,
+      );
+      expect(preferences.pendingCacheCleanup, hasLength(1));
+      final queue = jsonEncode(preferences.pendingCacheCleanup);
+      expect(queue, isNot(contains(key().source)));
+      expect(queue, isNot(contains('old')));
+      backend.unavailable = false;
+      final restarted = TranslationCache(secrets, backend)
+        ..safetyPreferences = preferences;
+      expect(await restarted.read(key()), isNull);
+      expect(preferences.pendingCacheCleanup, isEmpty);
+    },
+  );
+
+  test(
+    'temporarily unavailable local source is retained; confirmed obsolete is deleted',
+    () async {
+      await cache.write(key(), 'old');
+      final unavailable = await cache.cleanInvalid(
+        (_, _, _) async => TranslationLocalSource.unavailable,
+      );
+      expect(unavailable.deleted, 0);
+      expect(await cache.read(key()), 'old');
+      final obsolete = await cache.cleanInvalid(
+        (_, _, _) async => TranslationLocalSource.obsolete,
+      );
+      expect(obsolete.deleted, 1);
+      expect(await cache.read(key()), isNull);
+    },
+  );
+
+  test('corrupt row is isolated from other valid entries', () async {
+    await cache.write(key(), 'old');
+    await cache.write(key(source: 'another source', event: r'$other'), 'valid');
+    backend.rows[CacheStore.contents]!.values.first['nonce'] = 123;
+    expect(await cache.read(key()), isNull);
+    expect(
+      await cache.read(key(source: 'another source', event: r'$other')),
+      'valid',
+    );
+  });
+
+  test(
+    'transaction cancellation aborts every record without restoring obsolete snapshots',
+    () async {
+      await cache.write(key(), 'old');
+      var valid = true;
+      backend.afterPutAll = () => valid = false;
+      await expectLater(
+        cache.write(key(), 'replacement', isValid: () => valid),
+        throwsStateError,
+      );
+      backend.afterPutAll = null;
+      expect(await cache.read(key()), 'old');
+    },
+  );
+
+  test(
+    'canceled first write removes its empty new database and master key',
+    () async {
+      var valid = true;
+      backend.afterOpenOrCreate = () => valid = false;
+      await expectLater(
+        cache.write(key(), 'late', isValid: () => valid),
+        throwsStateError,
+      );
+      expect(backend.present, isFalse);
+      expect(secrets.values, isEmpty);
+    },
+  );
+
+  test(
+    'legacy reduction is deterministic, restartable, and retains every reference',
+    () async {
+      await cache.write(
+        key(source: 'bootstrap', event: r'$bootstrap'),
+        'bootstrap',
+      );
+      backend.rows[CacheStore.contents]!.clear();
+      backend.rows[CacheStore.refs]!.clear();
+      final master = Uint8List.fromList(
+        base64Url.decode(secrets.values[masterKeyName]!),
+      );
+      final old = legacyEnvelope(
+        master,
+        event: r'$loser',
+        text: 'first',
+        revision: 'a',
+      );
+      final latest = legacyEnvelope(
+        master,
+        event: r'$winner',
+        text: 'last',
+        revision: 'b',
+      );
+      // Memory/Web deterministic order is cache_key, independent of insertion.
+      final ordered = [old, latest]
+        ..sort(
+          (a, b) => cacheString(
+            a,
+            'cache_key',
+          ).compareTo(cacheString(b, 'cache_key')),
+        );
+      for (final row in [latest, old]) {
+        backend.rows[CacheStore.translations]![cacheString(row, 'cache_key')] =
+            row;
+      }
+      await cache.migrateLegacy(
+        owners: (_) => ['@alice:test'],
+        localSource: (_, _, _) async => TranslationLocalSource.unavailable,
+        isEnabled: () => true,
+        pageSize: 1,
+      );
+      expect(backend.rows[CacheStore.translations], isEmpty);
+      expect(backend.records, hasLength(1));
+      expect(backend.rows[CacheStore.refs], hasLength(2));
+      final expected = ordered.last['event_id'] == r'$winner'
+          ? 'last'
+          : 'first';
+      expect(await TranslationCache(secrets, backend).read(key()), expected);
+      await cache.invalidateEventIfExists(
+        '!room:test',
+        cacheString(ordered.first, 'event_id'),
+      );
+      expect(await cache.read(key()), isNull);
+    },
+  );
+
+  test(
+    'fresh content beats legacy backfill and unresolved ownership remains sealed',
+    () async {
+      await cache.write(key(), 'fresh');
+      final master = Uint8List.fromList(
+        base64Url.decode(secrets.values[masterKeyName]!),
+      );
+      final row = legacyEnvelope(master, event: r'$legacy', text: 'old');
+      backend.rows[CacheStore.translations]![cacheString(row, 'cache_key')] =
+          row;
+      await cache.migrateLegacy(
+        owners: (_) => [],
+        localSource: (_, _, _) async => TranslationLocalSource.unavailable,
+        isEnabled: () => true,
+      );
+      expect(backend.rows[CacheStore.translations], hasLength(1));
+      await cache.migrateLegacy(
+        owners: (_) => ['@alice:test'],
+        localSource: (_, _, _) async => TranslationLocalSource.unavailable,
+        isEnabled: () => true,
+      );
+      expect(await cache.read(key()), 'fresh');
+      expect(backend.rows[CacheStore.refs], hasLength(2));
+    },
+  );
+
+  test(
+    'disabled migration does not open storage or resolve local messages',
+    () async {
+      await cache.migrateLegacy(
+        owners: (_) => throw StateError('disabled'),
+        localSource: (_, _, _) async => throw StateError('disabled'),
+        isEnabled: () => false,
+      );
+      expect(backend.openExistingCalls, 0);
+      expect(secrets.readCalls, 0);
+    },
+  );
 }
 
-class _MemorySecrets implements TranslationSecretStore {
+class MemorySecrets implements TranslationSecretStore {
   final values = <String, String>{};
-  int writeCalls = 0;
-  int deleteCalls = 0;
+  int readCalls = 0;
+  @override
+  Future<String?> read(String key) async {
+    readCalls++;
+    return values[key];
+  }
+
+  @override
+  Future<void> write(String key, String value) async {
+    values[key] = value;
+  }
 
   @override
   Future<void> delete(String key) async {
-    deleteCalls++;
     values.remove(key);
-  }
-
-  @override
-  Future<String?> read(String key) async => values[key];
-  @override
-  Future<void> write(String key, String value) async {
-    writeCalls++;
-    values[key] = value;
   }
 }
 
-class _MemoryBackend implements TranslationCacheBackend {
-  final records = <TranslationCacheRecord>[];
-  bool present = false;
-  int openExistingCalls = 0;
-  int createCalls = 0;
-  int deleteCalls = 0;
-  bool failOpenAfterCreate = false;
-  void Function()? afterOpenOrCreate;
-  Future<void> Function()? beforePutAll;
-  void Function()? afterPutAll;
-
-  @override
-  Future<bool> exists() async => present;
-  @override
-  Future<bool> openExisting(String databaseKey) async {
-    openExistingCalls++;
-    return present;
-  }
-
-  @override
-  Future<void> openOrCreate(String databaseKey) async {
-    createCalls++;
-    present = true;
-    afterOpenOrCreate?.call();
-    if (failOpenAfterCreate) {
-      throw StateError('Database creation failed');
-    }
-  }
-
-  @override
-  Future<TranslationCacheRecord?> get(String key) async {
-    for (final record in records) {
-      if (record.cacheKey == key) return record;
-    }
-    return null;
-  }
-
-  @override
-  Future<void> putAll(List<TranslationCacheRecord> value) async {
-    await beforePutAll?.call();
-    for (final record in value) {
-      records.removeWhere((item) => item.cacheKey == record.cacheKey);
-      records.add(record);
-    }
-    afterPutAll?.call();
-  }
-
-  @override
-  Future<int> deleteByEvent(String roomId, String eventId) async {
-    final before = records.length;
-    records.removeWhere(
-      (record) => record.roomId == roomId && record.eventId == eventId,
+/// Exact v1 encryption, independent of the new cache implementation.
+CacheRow legacyEnvelope(
+  Uint8List master, {
+  String event = r'$event',
+  String text = 'legacy',
+  String revision = 'provider:protocol:model:endpoint:1',
+}) {
+  const source = 'private source';
+  final aad = jsonEncode([
+    1,
+    '!room:test',
+    event,
+    'auto',
+    'en',
+    revision,
+    'm.text',
+  ]);
+  final digest = sha256.convert(utf8.encode(source)).bytes;
+  final hkdf = HKDFKeyDerivator(SHA256Digest())
+    ..init(
+      HkdfParameters(
+        master,
+        32,
+        Uint8List.fromList(digest),
+        Uint8List.fromList(utf8.encode('fluffychat-translation-v1')),
+      ),
     );
-    return before - records.length;
-  }
-
-  @override
-  Future<int> deleteByRoom(String roomId) async {
-    final before = records.length;
-    records.removeWhere((record) => record.roomId == roomId);
-    return before - records.length;
-  }
-
-  @override
-  Future<int> deleteKeys(List<String> keys) async {
-    final before = records.length;
-    records.removeWhere((record) => keys.contains(record.cacheKey));
-    return before - records.length;
-  }
-
-  @override
-  Future<List<TranslationCacheRecord>> page(int offset, int limit) async {
-    final end = (offset + limit).clamp(offset, records.length);
-    return records.sublist(offset.clamp(0, records.length), end);
-  }
-
-  @override
-  Future<int> count() async => records.length;
-  @override
-  Future<void> deleteIfExists() async {
-    deleteCalls++;
-    present = false;
-    records.clear();
-  }
-
-  @override
-  Future<void> close() async {}
+  final derived = Uint8List(32);
+  hkdf.deriveKey(null, 0, derived, 0);
+  final nonce = Uint8List.fromList(List.generate(12, (i) => i));
+  final cipher = GCMBlockCipher(AESEngine())
+    ..init(
+      true,
+      AEADParameters(
+        KeyParameter(derived),
+        128,
+        nonce,
+        Uint8List.fromList(utf8.encode(aad)),
+      ),
+    );
+  return {
+    'cache_key': base64UrlEncode(
+      Hmac(sha256, master).convert(utf8.encode(aad) + digest).bytes,
+    ),
+    'room_id': '!room:test',
+    'event_id': event,
+    'source_binding': base64UrlEncode(
+      Hmac(sha256, master).convert(utf8.encode('source-binding:$source')).bytes,
+    ),
+    'aad': aad,
+    'nonce': base64UrlEncode(nonce),
+    'ciphertext': base64UrlEncode(
+      cipher.process(Uint8List.fromList(utf8.encode(text))),
+    ),
+  };
 }

@@ -7,6 +7,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,7 +41,7 @@ class RoomTranslationControl {
   });
 }
 
-class TranslationRuntime extends ChangeNotifier {
+class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   static final TranslationRuntime instance = TranslationRuntime._();
   static const promptRevision = 1;
 
@@ -55,8 +56,17 @@ class TranslationRuntime extends ChangeNotifier {
   TranslationBatcher? _batcher;
   TranslationBatcher? _inputBatcher;
   final Map<String, ValueNotifier<TranslationResultState>> _states = {};
-  final Map<String, ({int revision, Future<String> future})> _inFlight = {};
+  final Map<String, ({int revision, bool forced, Future<String> future})>
+  _inFlight = {};
+  final Map<String, TranslationCacheKey> _observed = {};
+  final Map<String, Future<TranslationCacheLookup>> _cacheReads = {};
+  final Map<String, int> _requestOrders = {};
+  final Map<Client, String> _clientUserIds = {};
+  StreamSubscription<void>? _cacheSubscription;
+  Future<void>? _migration;
+  final Map<String, Future<List<Event>>> _localHistories = {};
   final Map<String, Set<String>> _knownEditChains = {};
+  final Map<String, String> _originalEventIds = {};
   final Map<Client, List<StreamSubscription<Object?>>> _clientSubscriptions =
       {};
   final Map<Client, Set<String>> _knownClientRoomIds = {};
@@ -87,6 +97,7 @@ class TranslationRuntime extends ChangeNotifier {
   int _revision = 0;
   bool _providerMutationInProgress = false;
   int _enabledMutationToken = 0;
+  int _safetyOperations = 0;
 
   bool get initialized => _initialized;
   bool get enabled => _enabled;
@@ -188,28 +199,19 @@ class TranslationRuntime extends ChangeNotifier {
     _inputTrigger = preferences.inputTrigger;
     _inputSendMode = preferences.inputSendMode;
     _privacyAccepted = preferences.privacyAccepted;
-    _enabled =
-        _privacyAccepted &&
-        preferences.enabled &&
-        await _activeProviderHasKey();
-    if (preferences.enabled && !_enabled) await preferences.setEnabled(false);
+    _enabled = _privacyAccepted && preferences.enabled;
+    if (preferences.enabled && !_privacyAccepted) {
+      await preferences.setEnabled(false);
+    }
+    _cache!.safetyPreferences = preferences;
+    _cache!.localSourceResolver = _localSource;
+    _cacheSubscription = _cache!.externalChanges.listen(
+      (_) => _recheckExternalCache(),
+    );
+    WidgetsBinding.instance.addObserver(this);
     _batcher = TranslationBatcher(
       sender: _sendBatch,
       settings: () => _batchSettings,
-      persister: (results) {
-        final validResults = Map<TranslationBatchTask, String>.fromEntries(
-          results.entries.where((entry) => entry.key.isValid()),
-        );
-        if (validResults.isEmpty) return Future.value();
-        return _cache!.writeAll(
-          {
-            for (final entry in validResults.entries)
-              entry.key.metadata! as TranslationCacheKey: entry.value,
-          },
-          isValid: () =>
-              _enabled && validResults.keys.every((task) => task.isValid()),
-        );
-      },
     );
     _inputBatcher = TranslationBatcher(
       sender: _sendBatch,
@@ -229,6 +231,8 @@ class TranslationRuntime extends ChangeNotifier {
     if (!_clients.contains(client)) {
       _clients = [..._clients, client];
     }
+    if (client.userID != null) _clientUserIds[client] = client.userID!;
+    _scheduleMigration();
     _knownClientRoomIds
         .putIfAbsent(client, () => client.rooms.map((room) => room.id).toSet())
         .addAll(client.rooms.map((room) => room.id));
@@ -240,10 +244,27 @@ class TranslationRuntime extends ChangeNotifier {
       unawaited(_handleTimelineEvent(event).catchError((_) {}));
     });
     // ignore: cancel_subscriptions
+    final history = client.onHistoryEvent.stream.listen((event) {
+      unawaited(_handleTimelineEvent(event).catchError((_) {}));
+    });
+    // The SDK currently exposes delayed decryption updates only on onEvent.
+    // ignore: deprecated_member_use, cancel_subscriptions
+    final decrypted = client.onEvent.stream.listen((update) {
+      if (update.type != EventUpdateType.decryptedTimelineQueue) return;
+      final room = client.getRoomById(update.roomID);
+      if (room == null) return;
+      unawaited(
+        _handleTimelineEvent(
+          Event.fromJson(update.content, room),
+        ).catchError((_) {}),
+      );
+    });
+    // ignore: cancel_subscriptions
     final sync = client.onSync.stream.listen((update) {
       final knownRoomIds = _knownClientRoomIds.putIfAbsent(client, () => {});
       knownRoomIds.addAll(update.rooms?.join?.keys ?? const <String>[]);
       knownRoomIds.addAll(update.rooms?.invite?.keys ?? const <String>[]);
+      if (update.rooms?.join?.isNotEmpty == true) _scheduleMigration();
       final leftRoomIds = update.rooms?.leave?.keys;
       if (leftRoomIds == null) return;
       for (final roomId in leftRoomIds) {
@@ -265,10 +286,17 @@ class TranslationRuntime extends ChangeNotifier {
       _clearRoomStates(update.roomId);
       _bumpRevision(clearPending: true, clearStates: false);
     });
-    _clientSubscriptions[client] = [timeline, sync, roomState];
+    _clientSubscriptions[client] = [
+      timeline,
+      history,
+      decrypted,
+      sync,
+      roomState,
+    ];
   }
 
   Future<void> detachLoggedOutClient(Client client) async {
+    final userId = _clientUserIds.remove(client) ?? client.userID;
     final roomIds = {
       ...?_knownClientRoomIds.remove(client),
       ...client.rooms.map((room) => room.id),
@@ -286,6 +314,10 @@ class TranslationRuntime extends ChangeNotifier {
       await subscription.cancel();
     }
     _clients = _clients.where((item) => item != client).toList(growable: false);
+    if (userId != null &&
+        !_clients.any((other) => other.isLogged() && other.userID == userId)) {
+      await cache.invalidateUserIfExists(userId);
+    }
     for (final roomId in roomIds) {
       await invalidateRoomUnlessLocallyReferenced(
         roomId,
@@ -298,18 +330,14 @@ class TranslationRuntime extends ChangeNotifier {
   Future<bool> setEnabled(bool value) async {
     final mutationToken = ++_enabledMutationToken;
     if (value == _enabled) return true;
-    final candidateProvider = _activeProvider;
+    if (value && !_privacyAccepted) return false;
     if (value) {
-      if (!_privacyAccepted || _providerMutationInProgress) return false;
-      if (!await _activeProviderHasKey() ||
-          mutationToken != _enabledMutationToken ||
-          _providerMutationInProgress ||
-          candidateProvider == null ||
-          !_sameProviderConfiguration(
-            candidateProvider,
-            _activeProvider ?? candidateProvider,
-          )) {
-        return false;
+      // A disabled context deliberately ignores cache activity. Refresh its
+      // connection/key before making restored translations visible again.
+      try {
+        await cache.refreshSafetyState();
+      } catch (_) {
+        // Storage availability does not change the user's global preference.
       }
     }
     if (mutationToken != _enabledMutationToken) return false;
@@ -324,21 +352,15 @@ class TranslationRuntime extends ChangeNotifier {
       }
       rethrow;
     }
+    if (value) _scheduleMigration();
     return true;
   }
 
   Future<void> setScope(TranslationScope value) async {
     if (value == _scope) return;
     _scope = value;
-    _bumpRevision(clearPending: true, clearStates: true);
-    try {
-      await preferences.setScope(value);
-    } catch (_) {
-      _enabled = false;
-      await preferences.setEnabled(false);
-      _bumpRevision(clearPending: true, clearStates: true);
-      rethrow;
-    }
+    _bumpRevision(clearPending: true, clearStates: false);
+    await preferences.setScope(value);
   }
 
   Future<void> setDisplayMode(TranslationDisplayMode value) async {
@@ -389,7 +411,7 @@ class TranslationRuntime extends ChangeNotifier {
   Future<void> setInputMode(InputTranslationMode value) async {
     if (value == _inputMode) return;
     _inputMode = value;
-    _bumpRevision(clearPending: true, clearStates: true);
+    _bumpRevision(clearPending: true, clearStates: false);
     await preferences.setInputMode(value);
   }
 
@@ -413,7 +435,7 @@ class TranslationRuntime extends ChangeNotifier {
   Future<void> setInputScope(InputTranslationScope value) async {
     if (value == _inputScope) return;
     _inputScope = value;
-    _bumpRevision(clearPending: true, clearStates: true);
+    _bumpRevision(clearPending: true, clearStates: false);
     await preferences.setInputScope(value);
   }
 
@@ -430,7 +452,7 @@ class TranslationRuntime extends ChangeNotifier {
   Future<void> setPreferRoomLanguageForInputTarget(bool value) async {
     if (value == _preferRoomLanguageForInputTarget) return;
     _preferRoomLanguageForInputTarget = value;
-    _bumpRevision(clearPending: true, clearStates: true);
+    _bumpRevision(clearPending: true, clearStates: false);
     await preferences.setPreferRoomLanguageForInputTarget(value);
   }
 
@@ -460,7 +482,7 @@ class TranslationRuntime extends ChangeNotifier {
   Future<void> setInputTrigger(InputTranslationTrigger value) async {
     if (value == _inputTrigger) return;
     _inputTrigger = value;
-    _bumpRevision(clearPending: true, clearStates: true);
+    _bumpRevision(clearPending: true, clearStates: false);
     await preferences.setInputTrigger(value);
   }
 
@@ -470,7 +492,7 @@ class TranslationRuntime extends ChangeNotifier {
   Future<void> setInputSendMode(InputTranslationSendMode value) async {
     if (value == _inputSendMode) return;
     _inputSendMode = value;
-    _bumpRevision(clearPending: true, clearStates: true);
+    _bumpRevision(clearPending: true, clearStates: false);
     await preferences.setInputSendMode(value);
   }
 
@@ -519,12 +541,6 @@ class TranslationRuntime extends ChangeNotifier {
       if (apiKey != null && apiKey.trim().isNotEmpty) {
         await preferences.writeApiKey(provider.id, apiKey.trim());
       }
-    } catch (_) {
-      if (_enabled) {
-        _enabled = false;
-        await preferences.setEnabled(false);
-      }
-      rethrow;
     } finally {
       _endProviderMutation();
     }
@@ -551,16 +567,6 @@ class TranslationRuntime extends ChangeNotifier {
         _activeProvider = replacement ?? providers.firstOrNull;
         await preferences.selectProvider(_activeProvider?.id);
       }
-      if (_enabled && !await _activeProviderHasKey()) {
-        _enabled = false;
-        await preferences.setEnabled(false);
-      }
-    } catch (_) {
-      if (_enabled) {
-        _enabled = false;
-        await preferences.setEnabled(false);
-      }
-      rethrow;
     } finally {
       _endProviderMutation();
     }
@@ -573,16 +579,6 @@ class TranslationRuntime extends ChangeNotifier {
     _activeProvider = provider;
     try {
       await preferences.selectProvider(providerId);
-      if (_enabled && !await _activeProviderHasKey()) {
-        _enabled = false;
-        await preferences.setEnabled(false);
-      }
-    } catch (_) {
-      if (_enabled) {
-        _enabled = false;
-        await preferences.setEnabled(false);
-      }
-      rethrow;
     } finally {
       _endProviderMutation();
     }
@@ -651,7 +647,6 @@ class TranslationRuntime extends ChangeNotifier {
       room.id,
       value,
     );
-    _clearRoomStates(room.id);
     _bumpRevision(clearPending: true, clearStates: false);
     await write;
   }
@@ -740,11 +735,14 @@ class TranslationRuntime extends ChangeNotifier {
     return result;
   }
 
+  /// Cache display is independent of provider configuration and room auto mode.
   bool canTranslateEvent(Event event) =>
       _enabled &&
-      !_providerMutationInProgress &&
+      _safetyOperations == 0 &&
+      event.type == EventTypes.Message &&
       !event.redacted &&
       event.eventId.isNotEmpty &&
+      event.room.client.userID != null &&
       {
         MessageTypes.Text,
         MessageTypes.Notice,
@@ -754,122 +752,216 @@ class TranslationRuntime extends ChangeNotifier {
 
   String sourceForEvent(Event event) =>
       event.isRichMessage ? event.formattedText : event.body;
-
   bool shouldAutoTranslate(Event event) =>
       canTranslateEvent(event) && roomControl(event.room).value;
 
+  /// Matrix display events omit the edit relationship. Keep the original ID
+  /// supplied by the timeline so cache references survive a later redaction.
+  void observeDisplayEvent(Event original, Event displayed) {
+    if (!_enabled || original.eventId == displayed.eventId) return;
+    _originalEventIds[jsonEncode([
+          displayed.room.client.userID,
+          displayed.room.id,
+          displayed.eventId,
+        ])] =
+        original.eventId;
+    _knownEditChains
+        .putIfAbsent('${original.room.id}\u0000${original.eventId}', () => {})
+        .add(displayed.eventId);
+  }
+
   ValueListenable<TranslationResultState> stateForEvent(Event event) {
-    if (!_enabled) return _disabledState;
+    if (!canTranslateEvent(event)) return _disabledState;
+    final key = _stateKey(event);
+    _observed[key] = _cacheKey(event, sourceForEvent(event));
     return _states.putIfAbsent(
-      _stateKey(event),
+      key,
       () => ValueNotifier(TranslationResultState.idle),
     );
   }
 
-  Future<String?> translateEvent(Event event, {required bool manual}) async {
-    if (!canTranslateEvent(event) || (!manual && !shouldAutoTranslate(event))) {
+  String _contentKey(TranslationCacheKey key) =>
+      jsonEncode(key.identity(key.source));
+
+  bool _displayTaskValid(Event event, TranslationCacheKey key) =>
+      canTranslateEvent(event) &&
+      event.room.client.isLogged() &&
+      event.room.membership == Membership.join &&
+      event.room.client.userID == key.userId &&
+      event.eventId == key.eventId &&
+      sourceForEvent(event) == key.source &&
+      event.messageType == key.messageType &&
+      _sourceLanguageForRoom(event.room) == key.sourceLanguage &&
+      _effectiveTargetLanguage == key.targetLanguage;
+
+  /// Called for loaded messages even in rooms with automatic translation off.
+  /// Unavailable storage is deliberately distinct from a genuine cache miss.
+  Future<String?> restoreEvent(Event event) =>
+      translateEvent(event, manual: false);
+
+  Future<String?> translateEvent(
+    Event event, {
+    required bool manual,
+    bool? forceRefresh,
+  }) async {
+    if (!canTranslateEvent(event)) return null;
+    final state = stateForEvent(event) as ValueNotifier<TranslationResultState>;
+    final key = _observed[_stateKey(event)]!;
+    final contentKey = _contentKey(key);
+    final taskRevision = _revision;
+    final previous = state.value.translation;
+    final force = manual && (forceRefresh ?? previous != null);
+    final joining = _inFlight[contentKey];
+    if (manual && joining == null) {
+      // Let a deliberate retry recover from temporarily unavailable storage.
+      _cacheReads.remove(_stateKey(event));
+    }
+    // Read once per loaded message/revision. Every alias records a reference,
+    // including misses that might be translated by an in-flight request.
+    final lookupFuture = _cacheReads.putIfAbsent(
+      _stateKey(event),
+      () => cache.lookup(key),
+    );
+    final cached = await lookupFuture;
+    if (!_displayTaskValid(event, key) || taskRevision != _revision) {
       return null;
     }
-    final stateKey = _stateKey(event);
-    final state = _states.putIfAbsent(
-      stateKey,
-      () => ValueNotifier(TranslationResultState.idle),
+    // Even aliases joining a running request must first register their own
+    // reference. Otherwise a deletion after restart could miss shared content.
+    // Preserve a join even if the request completed while this alias was
+    // recording its reference; one click must not become a second refresh.
+    final pending = _inFlight[contentKey] ?? joining;
+    if (pending != null &&
+        pending.revision == taskRevision &&
+        (!force || pending.forced)) {
+      if (state.value.translation == null && cached.translation != null) {
+        state.value = TranslationResultState.refreshing(cached.translation!);
+      }
+      return pending.future;
+    }
+    if (!force) {
+      final current = state.value.translation;
+      if (current != null) return current;
+      if (cached.status == TranslationCacheLookupStatus.hit) {
+        _publish(
+          contentKey,
+          TranslationResultState.translated(cached.translation!),
+        );
+        return cached.translation;
+      }
+      if (!manual &&
+          (!shouldAutoTranslate(event) ||
+              cached.status != TranslationCacheLookupStatus.miss)) {
+        return null;
+      }
+    }
+    if (cached.status == TranslationCacheLookupStatus.unavailable ||
+        cached.ticket == null) {
+      if (!manual) return null;
+      state.value = TranslationResultState.failed(
+        StateError('Translation cache unavailable'),
+        previous: previous,
+      );
+      return null;
+    }
+    final order = (_requestOrders[contentKey] ?? 0) + 1;
+    _requestOrders[contentKey] = order;
+    final operation = _translate(
+      event,
+      key,
+      cached.ticket!,
+      contentKey,
+      order,
+      manual,
     );
-    if (state.value.status == TranslationStatus.translated) {
-      return state.value.translation;
-    }
-    final existing = _inFlight[stateKey];
-    if (existing != null && existing.revision == _revision) {
-      return existing.future;
-    }
-    final operation = _translate(event, manual: manual, state: state);
-    _inFlight[stateKey] = (revision: _revision, future: operation);
+    _inFlight[contentKey] = (
+      revision: taskRevision,
+      forced: force,
+      future: operation,
+    );
     try {
       return await operation;
     } finally {
-      if (identical(_inFlight[stateKey]?.future, operation)) {
-        _inFlight.remove(stateKey);
+      if (identical(_inFlight[contentKey]?.future, operation)) {
+        _inFlight.remove(contentKey);
+      }
+    }
+  }
+
+  void _publish(String contentKey, TranslationResultState result) {
+    for (final entry in _observed.entries) {
+      if (_contentKey(entry.value) == contentKey) {
+        _states[entry.key]?.value = result;
       }
     }
   }
 
   Future<String> _translate(
-    Event event, {
-    required bool manual,
-    required ValueNotifier<TranslationResultState> state,
-  }) async {
-    final source = sourceForEvent(event);
-    final messageType = event.messageType;
-    final eventId = event.eventId;
+    Event event,
+    TranslationCacheKey key,
+    TranslationCacheTicket ticket,
+    String contentKey,
+    int order,
+    bool manual,
+  ) async {
     final taskRevision = _revision;
-    final provider = _activeProvider!;
-    final cacheKey = _cacheKey(event, source, provider);
-    state.value = TranslationResultState.loading;
+    final provider = _activeProvider;
+    final previous = _states[_stateKey(event)]?.value.translation;
+    bool valid() =>
+        taskRevision == _revision &&
+        _requestOrders[contentKey] == order &&
+        _displayTaskValid(event, key) &&
+        !_providerMutationInProgress &&
+        provider != null &&
+        _activeProvider != null &&
+        _sameProviderConfiguration(provider, _activeProvider!) &&
+        (manual || shouldAutoTranslate(event));
+    _publish(
+      contentKey,
+      previous == null
+          ? TranslationResultState.loading
+          : TranslationResultState.refreshing(previous),
+    );
     try {
-      final cached = await cache.read(cacheKey);
-      if (cached != null &&
-          _eventTaskValid(
-            event,
-            source,
-            messageType,
-            eventId,
-            taskRevision,
-            manual,
-          )) {
-        state.value = TranslationResultState.translated(cached);
-        return cached;
+      if (provider == null || !provider.isValid || !valid()) {
+        throw StateError('Translation provider unavailable');
       }
-      if (!_eventTaskValid(
-        event,
-        source,
-        messageType,
-        eventId,
-        taskRevision,
-        manual,
-      )) {
-        throw StateError('Translation task expired');
-      }
-      final batchKey = TranslationBatchKey(
-        roomId: event.room.id,
-        providerId: provider.id,
-        protocol: provider.protocol,
-        model: provider.model,
-        sourceLanguage: _sourceLanguageForRoom(event.room),
-        targetLanguage: _effectiveTargetLanguage,
-        promptRevision: promptRevision,
-        runtimeRevision: taskRevision,
-      );
       final result = await _batcher!.add(
-        batchKey,
+        TranslationBatchKey(
+          roomId: event.room.id,
+          providerId: provider.id,
+          protocol: provider.protocol,
+          model: provider.model,
+          sourceLanguage: key.sourceLanguage,
+          targetLanguage: key.targetLanguage,
+          promptRevision: promptRevision,
+          runtimeRevision: taskRevision,
+        ),
         TranslationBatchTask(
-          source: source,
-          messageType: event.messageType,
-          metadata: cacheKey,
-          isValid: () => _eventTaskValid(
-            event,
-            source,
-            messageType,
-            eventId,
-            taskRevision,
-            manual,
-          ),
+          source: key.source,
+          messageType: key.messageType,
+          isValid: valid,
         ),
       );
-      if (!_eventTaskValid(
-        event,
-        source,
-        messageType,
-        eventId,
-        taskRevision,
-        manual,
-      )) {
-        throw StateError('Translation task expired');
-      }
-      state.value = TranslationResultState.translated(result);
+      if (!valid()) throw StateError('Translation task expired');
+      final writeKey = _cacheKey(event, key.source, model: provider.model);
+      await cache.write(writeKey, result, ticket: ticket, isValid: valid);
+      if (!valid()) throw StateError('Translation task expired');
+      _cacheReads.removeWhere(
+        (stateKey, _) =>
+            _observed[stateKey] != null &&
+            _contentKey(_observed[stateKey]!) == contentKey,
+      );
+      _publish(contentKey, TranslationResultState.translated(result));
       return result;
     } catch (error) {
-      if (_enabled && taskRevision == _revision) {
-        state.value = TranslationResultState.failed(error);
+      if (taskRevision == _revision &&
+          _requestOrders[contentKey] == order &&
+          _displayTaskValid(event, key)) {
+        _publish(
+          contentKey,
+          TranslationResultState.failed(error, previous: previous),
+        );
       }
       rethrow;
     }
@@ -905,15 +997,30 @@ class TranslationRuntime extends ChangeNotifier {
     );
   }
 
-  Future<void> invalidateEventIfExists(String roomId, String eventId) async {
-    final prefix = '$roomId\u0000$eventId\u0000';
-    _states.removeWhere((key, notifier) {
-      final remove = key.startsWith(prefix);
-      if (remove) notifier.dispose();
-      return remove;
-    });
-    _bumpRevision(clearPending: true, clearStates: false);
-    await cache.invalidateEventIfExists(roomId, eventId);
+  Future<void> invalidateEventIfExists(
+    String roomId,
+    String eventId, {
+    Iterable<String> sources = const [],
+  }) async {
+    final affected = _observed.entries
+        .where(
+          (entry) =>
+              entry.value.roomId == roomId &&
+              (entry.value.eventId == eventId ||
+                  entry.value.originalEventId == eventId),
+        )
+        .toList();
+    final oldSources = {
+      ...sources,
+      ...affected.map((entry) => entry.value.source),
+    };
+    for (final entry in affected) {
+      _observed.remove(entry.key);
+    }
+    // Discard obsolete snapshots, every displayed result and queued request
+    // before awaiting any database operation.
+    _bumpRevision(clearPending: true, clearStates: true);
+    await cache.invalidateEventIfExists(roomId, eventId, sources: oldSources);
   }
 
   Future<void> invalidateRoomUnlessLocallyReferenced(
@@ -936,65 +1043,240 @@ class TranslationRuntime extends ChangeNotifier {
   }
 
   void _clearRoomStates(String roomId) {
-    final prefix = '$roomId\u0000';
-    _states.removeWhere((key, notifier) {
-      final remove = key.startsWith(prefix);
-      if (remove) notifier.dispose();
-      return remove;
-    });
-    _knownEditChains.removeWhere((key, _) => key.startsWith(prefix));
+    final keys = _observed.entries
+        .where((entry) => entry.value.roomId == roomId)
+        .map((entry) => entry.key)
+        .toSet();
+    for (final key in keys) {
+      _states.remove(key)?.value = TranslationResultState.idle;
+      _observed.remove(key);
+      _cacheReads.remove(key);
+    }
+    _knownEditChains.removeWhere((key, _) => key.startsWith('$roomId\u0000'));
+    _originalEventIds.removeWhere(
+      (key, _) => (jsonDecode(key) as List)[1] == roomId,
+    );
+    _localHistories.removeWhere(
+      (key, _) => (jsonDecode(key) as List)[1] == roomId,
+    );
   }
 
-  Future<TranslationCacheCleanupResult> cleanInvalidCache() =>
-      cache.cleanInvalid((roomId, eventId) async {
-        for (final client in _clients) {
-          if (!client.isLogged()) continue;
-          final room = client.getRoomById(roomId);
-          if (room == null || room.membership != Membership.join) continue;
-          final event = await client.database.getEventById(eventId, room);
-          if (event != null &&
-              !event.redacted &&
-              event.relationshipType != RelationshipTypes.edit) {
-            return _sourceForCachedEvent(event);
-          }
-        }
-        return null;
-      });
-
-  Future<void> clearCache() => cache.deleteIfExists();
-
-  Future<void> _handleTimelineEvent(Event event) async {
-    if (event.type == EventTypes.Redaction && event.redacts != null) {
-      final targetId = event.redacts!;
-      // The first invalidation bumps the runtime revision before any local
-      // database await, so translations of the redacted event or its edits
-      // cannot be written back by a late response.
-      await invalidateEventIfExists(event.room.id, targetId);
-      final chainKey = '${event.room.id}\u0000$targetId';
-      final relatedEditIds = {
-        ...?_knownEditChains.remove(chainKey),
-        ...await _locallyKnownEditIds(event.room, targetId),
-      };
-      for (final editId in relatedEditIds) {
-        await invalidateEventIfExists(event.room.id, editId);
+  Future<TranslationLocalSource> _localSource(
+    String userId,
+    String roomId,
+    String eventId,
+  ) async {
+    for (final client in _clients) {
+      if (!client.isLogged() ||
+          (userId.isNotEmpty && client.userID != userId)) {
+        continue;
       }
-      for (final edits in _knownEditChains.values) {
-        edits.remove(targetId);
+      final room = client.getRoomById(roomId);
+      if (room == null || room.membership != Membership.join) continue;
+      try {
+        final event = await client.database.getEventById(eventId, room);
+        if (event == null) return TranslationLocalSource.unavailable;
+        if (event.redacted) return TranslationLocalSource.obsolete;
+        if (event.type != EventTypes.Message || event.body.trim().isEmpty) {
+          return TranslationLocalSource.unavailable;
+        }
+        final rootId = event.relationshipType == RelationshipTypes.edit
+            ? event.relationshipEventId
+            : event.eventId;
+        if (rootId == null) return TranslationLocalSource.unavailable;
+        final history = await _localHistory(room);
+        final edits =
+            history
+                .where(
+                  (item) =>
+                      item.relationshipType == RelationshipTypes.edit &&
+                      item.relationshipEventId == rootId &&
+                      !item.redacted &&
+                      item.senderId == event.senderId,
+                )
+                .toList()
+              ..sort((a, b) => a.originServerTs.compareTo(b.originServerTs));
+        if (event.relationshipType == RelationshipTypes.edit) {
+          final original = await client.database.getEventById(rootId, room);
+          if (original == null) return TranslationLocalSource.unavailable;
+          if (original.type != EventTypes.Message && !original.redacted) {
+            return TranslationLocalSource.unavailable;
+          }
+          if (original.redacted ||
+              (edits.isNotEmpty && edits.last.eventId != event.eventId)) {
+            return TranslationLocalSource.obsolete;
+          }
+          return TranslationLocalSource.valid(
+            _sourceForCachedEvent(event),
+            originalEventId: rootId,
+          );
+        }
+        return TranslationLocalSource.valid(
+          _sourceForCachedEvent(edits.isEmpty ? event : edits.last),
+        );
+      } catch (_) {
+        return TranslationLocalSource.unavailable;
       }
     }
-    if (event.relationshipType == RelationshipTypes.edit) {
-      final originalId = event.relationshipEventId;
-      if (originalId != null) {
-        await invalidateEventIfExists(event.room.id, originalId);
-        final chainKey = '${event.room.id}\u0000$originalId';
-        final knownEdits = _knownEditChains.putIfAbsent(chainKey, () => {});
-        knownEdits.addAll(await _locallyKnownEditIds(event.room, originalId));
-        for (final editId in knownEdits) {
-          await invalidateEventIfExists(event.room.id, editId);
-        }
-        knownEdits.add(event.eventId);
+    return TranslationLocalSource.unavailable;
+  }
+
+  Future<TranslationCacheCleanupResult> cleanInvalidCache() async {
+    _localHistories.clear();
+    _bumpRevision(clearPending: true, clearStates: true);
+    final result = await cache.cleanInvalid(_localSource);
+    if (result.deleted > 0) {
+      _bumpRevision(clearPending: true, clearStates: true);
+    }
+    return result;
+  }
+
+  Future<void> clearCache() async {
+    _bumpRevision(clearPending: true, clearStates: true);
+    await cache.deleteIfExists();
+  }
+
+  void _scheduleMigration() {
+    if (!_enabled || _clients.isEmpty || _migration != null) return;
+    _localHistories.clear();
+    final revision = _revision;
+    final migration = cache.migrateLegacy(
+      owners: (roomId) => _clients
+          .where(
+            (client) => client.isLogged() && client.getRoomById(roomId) != null,
+          )
+          .map((client) => client.userID)
+          .whereType<String>()
+          .toList(),
+      localSource: _localSource,
+      isEnabled: () => _enabled && revision == _revision,
+    );
+    final completion = migration.then((changed) {
+      if (changed && _enabled) {
+        // Loaded messages may have memoized a miss before the backfill.
+        _bumpRevision(clearPending: true, clearStates: false);
       }
-      await invalidateEventIfExists(event.room.id, event.eventId);
+    });
+    _migration = completion;
+    unawaited(
+      completion.whenComplete(() {
+        _migration = null;
+        if (_enabled) notifyListeners();
+      }),
+    );
+  }
+
+  void _recheckExternalCache() {
+    if (!_enabled) return;
+    unawaited(cache.refreshSafetyState().catchError((_) {}));
+    _bumpRevision(clearPending: true, clearStates: true);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _recheckExternalCache();
+  }
+
+  Future<void> _handleTimelineEvent(Event event) async {
+    _localHistories.remove(
+      jsonEncode([event.room.client.userID, event.room.id]),
+    );
+    if (event.type != EventTypes.Redaction &&
+        event.relationshipType != RelationshipTypes.edit) {
+      return;
+    }
+    // Another tab can have a request in flight before the first database is
+    // created. Invalidate its runtime even when this context has no store.
+    cache.backend.signalInvalidation();
+    final hasMemory = _observed.values.any(
+      (key) => key.roomId == event.room.id,
+    );
+    if (!hasMemory) {
+      try {
+        if (!await cache.backend.exists()) return;
+      } catch (_) {
+        /* Queue safety cleanup below. */
+      }
+    }
+    // Keep the whole edit chain closed to lookups and generation until all
+    // of its historical bindings have been removed.
+    _safetyOperations++;
+    _bumpRevision(clearPending: true, clearStates: true);
+    try {
+      if (event.type == EventTypes.Redaction && event.redacts != null) {
+        final targetId = event.redacts!;
+        var originalId =
+            _originalEventIds[jsonEncode([
+              event.room.client.userID,
+              event.room.id,
+              targetId,
+            ])] ??
+            targetId;
+        await invalidateEventIfExists(
+          event.room.id,
+          targetId,
+          sources: await _locallyStoredSources(event.room, targetId),
+        );
+        try {
+          final target = await event.room.client.database.getEventById(
+            targetId,
+            event.room,
+          );
+          if (target?.relationshipType == RelationshipTypes.edit) {
+            originalId = target!.relationshipEventId ?? targetId;
+            await invalidateEventIfExists(
+              event.room.id,
+              originalId,
+              sources: [_sourceForCachedEvent(target)],
+            );
+          }
+        } catch (_) {
+          /* Persisted references still invalidate the direct target. */
+        }
+        final chainKey = '${event.room.id}\u0000$originalId';
+        final relatedEditIds = {
+          ...?_knownEditChains.remove(chainKey),
+          ...await _locallyKnownEditIds(event.room, originalId),
+        };
+        for (final editId in relatedEditIds) {
+          await invalidateEventIfExists(
+            event.room.id,
+            editId,
+            sources: await _locallyStoredSources(event.room, editId),
+          );
+        }
+        for (final edits in _knownEditChains.values) {
+          edits.remove(targetId);
+        }
+      }
+      if (event.relationshipType == RelationshipTypes.edit) {
+        final originalId = event.relationshipEventId;
+        if (originalId != null) {
+          await invalidateEventIfExists(
+            event.room.id,
+            originalId,
+            sources: await _locallyStoredSources(event.room, originalId),
+          );
+          final chainKey = '${event.room.id}\u0000$originalId';
+          final knownEdits = _knownEditChains.putIfAbsent(chainKey, () => {});
+          knownEdits.addAll(await _locallyKnownEditIds(event.room, originalId));
+          for (final editId in knownEdits) {
+            if (editId == event.eventId) continue;
+            await invalidateEventIfExists(
+              event.room.id,
+              editId,
+              sources: await _locallyStoredSources(event.room, editId),
+            );
+          }
+          knownEdits.add(event.eventId);
+        }
+        await invalidateEventIfExists(event.room.id, event.eventId);
+      }
+    } finally {
+      _safetyOperations--;
+      if (_safetyOperations == 0) {
+        _bumpRevision(clearPending: true, clearStates: true);
+      }
     }
   }
 
@@ -1014,25 +1296,22 @@ class TranslationRuntime extends ChangeNotifier {
     return newContent.tryGet<String>('body') ?? sourceForEvent(event);
   }
 
-  bool _eventTaskValid(
-    Event event,
-    String source,
-    String messageType,
-    String eventId,
-    int taskRevision,
-    bool manual,
-  ) =>
-      _enabled &&
-      !_providerMutationInProgress &&
-      taskRevision == _revision &&
-      _activeProvider?.isValid == true &&
-      event.room.client.isLogged() &&
-      event.room.membership == Membership.join &&
-      canTranslateEvent(event) &&
-      event.eventId == eventId &&
-      sourceForEvent(event) == source &&
-      event.messageType == messageType &&
-      (manual || shouldAutoTranslate(event));
+  Future<Set<String>> _locallyStoredSources(Room room, String eventId) async {
+    try {
+      final stored = await room.client.database.getEventById(eventId, room);
+      if (stored == null ||
+          stored.redacted ||
+          stored.type != EventTypes.Message) {
+        return {};
+      }
+      // Include both SDK display content and raw edit content, as old callers
+      // could have translated either representation of an edit event.
+      return {_sourceForCachedEvent(stored), sourceForEvent(stored)}
+        ..removeWhere((source) => source.trim().isEmpty);
+    } catch (_) {
+      return {};
+    }
+  }
 
   bool _inputTaskValid(
     Room room,
@@ -1048,49 +1327,34 @@ class TranslationRuntime extends ChangeNotifier {
       _sameProviderConfiguration(provider, _activeProvider!) &&
       canTranslateInput(room);
 
-  TranslationCacheKey _cacheKey(
-    Event event,
-    String source,
-    TranslationProviderConfig provider,
-  ) => TranslationCacheKey(
-    roomId: event.room.id,
-    eventId: event.eventId,
-    source: source,
-    sourceLanguage: _sourceLanguageForRoom(event.room),
-    targetLanguage: _effectiveTargetLanguage,
-    semanticRevision: semanticRevisionForProvider(provider),
-    messageType: event.messageType,
-  );
+  TranslationCacheKey _cacheKey(Event event, String source, {String? model}) =>
+      TranslationCacheKey(
+        userId: event.room.client.userID ?? '',
+        originalEventId: event.relationshipType == RelationshipTypes.edit
+            ? event.relationshipEventId
+            : _originalEventIds[jsonEncode([
+                event.room.client.userID,
+                event.room.id,
+                event.eventId,
+              ])],
+        roomId: event.room.id,
+        eventId: event.eventId,
+        source: source,
+        sourceLanguage: _sourceLanguageForRoom(event.room),
+        targetLanguage: _effectiveTargetLanguage,
+        messageType: event.messageType,
+        model: model,
+      );
 
-  /// Encodes every semantic provider field as a separate JSON value so user
-  /// supplied colons or other delimiters cannot make two configurations share
-  /// a cache namespace.
-  static String semanticRevisionForProvider(
-    TranslationProviderConfig provider,
-  ) => jsonEncode([
-    provider.id,
-    provider.protocol.name,
-    provider.model,
-    provider.requestEndpoint.toString(),
-    promptRevision,
+  String _stateKey(Event event) => jsonEncode([
+    event.room.client.userID,
+    event.room.id,
+    event.eventId,
+    sourceForEvent(event),
+    event.messageType,
+    _sourceLanguageForRoom(event.room),
+    _effectiveTargetLanguage,
   ]);
-
-  String _stateKey(Event event) {
-    final provider = _activeProvider;
-    return [
-      event.room.id,
-      event.eventId,
-      sourceForEvent(event),
-      event.messageType,
-      _sourceLanguageForRoom(event.room),
-      _effectiveTargetLanguage,
-      provider?.id ?? '',
-      provider?.protocol.name ?? '',
-      provider?.model ?? '',
-      provider?.requestEndpoint.toString() ?? '',
-      promptRevision.toString(),
-    ].join('\u0000');
-  }
 
   String get _effectiveTargetLanguage =>
       _targetLanguage == systemTranslationLanguageCode
@@ -1120,24 +1384,17 @@ class TranslationRuntime extends ChangeNotifier {
     return _providers.first;
   }
 
-  Future<bool> _activeProviderHasKey() async {
-    final provider = _activeProvider;
-    if (provider == null || !provider.isValid) return false;
-    final apiKey = await preferences.readApiKey(provider.id);
-    return apiKey != null && apiKey.trim().isNotEmpty;
-  }
-
   void _beginProviderMutation() {
     if (_providerMutationInProgress) {
       throw StateError('Another translation provider update is in progress');
     }
     _providerMutationInProgress = true;
-    _bumpRevision(clearPending: true, clearStates: true);
+    _bumpRevision(clearPending: true, clearStates: false);
   }
 
   void _endProviderMutation() {
     _providerMutationInProgress = false;
-    _bumpRevision(clearPending: true, clearStates: true);
+    _bumpRevision(clearPending: true, clearStates: false);
   }
 
   void _ensureBatchValid(
@@ -1170,43 +1427,91 @@ class TranslationRuntime extends ChangeNotifier {
       first.protocol == second.protocol &&
       first.model == second.model;
 
-  Future<Set<String>> _locallyKnownEditIds(Room room, String originalId) async {
-    final result = <String>{};
-    const pageSize = 200;
-    var start = 0;
-    while (true) {
-      final events = await room.client.database.getEventList(
-        room,
-        start: start,
-        limit: pageSize,
-      );
-      for (final event in events) {
-        if (event.relationshipType == RelationshipTypes.edit &&
-            event.relationshipEventId == originalId) {
-          result.add(event.eventId);
-        }
+  Future<List<Event>> _localHistory(Room room) => _localHistories.putIfAbsent(
+    jsonEncode([room.client.userID, room.id]),
+    () async {
+      final result = <Event>[];
+      final seen = <String>{};
+      const pageSize = 200;
+      var start = 0;
+      while (true) {
+        final events = await room.client.database.getEventList(
+          room,
+          start: start,
+          limit: pageSize,
+        );
+        result.addAll(events.where((event) => seen.add(event.eventId)));
+        if (events.length < pageSize) return result;
+        // SDK sending events are prepended only to page zero and must not
+        // advance the stored timeline offset.
+        start += pageSize;
       }
-      if (events.length < pageSize) break;
-      start += events.length;
+    },
+  );
+
+  Future<Set<String>> _locallyKnownEditIds(Room room, String originalId) async {
+    try {
+      return {
+        for (final event in await _localHistory(room))
+          if (event.relationshipType == RelationshipTypes.edit &&
+              event.relationshipEventId == originalId)
+            event.eventId,
+      };
+    } catch (_) {
+      // Translation safety must never break ordinary timeline processing.
+      return {};
     }
-    return result;
   }
 
   void _clearAllStates() {
     for (final notifier in _states.values) {
-      notifier.dispose();
+      notifier.value = TranslationResultState.idle;
     }
     _states.clear();
+    _cacheReads.clear();
   }
 
   void _bumpRevision({required bool clearPending, required bool clearStates}) {
     _revision++;
+    _cacheReads.clear();
     if (clearPending) {
       _batcher?.cancelPending();
       _inputBatcher?.cancelPending();
+      _inFlight.clear();
+      _requestOrders.clear();
+      for (final notifier in _states.values) {
+        if (notifier.value.status == TranslationStatus.loading) {
+          final previous = notifier.value.translation;
+          notifier.value = previous == null
+              ? TranslationResultState.idle
+              : TranslationResultState.translated(previous);
+        }
+      }
     }
     if (clearStates) _clearAllStates();
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    unawaited(_cacheSubscription?.cancel());
+    _batcher?.dispose();
+    _inputBatcher?.dispose();
+    for (final subscriptions in _clientSubscriptions.values) {
+      for (final subscription in subscriptions) {
+        unawaited(subscription.cancel());
+      }
+    }
+    for (final notifier in _states.values) {
+      notifier.dispose();
+    }
+    _observed.clear();
+    _originalEventIds.clear();
+    _localHistories.clear();
+    _knownEditChains.clear();
+    unawaited(_cache?.dispose());
+    super.dispose();
   }
 
   static final ValueNotifier<TranslationResultState> _disabledState =

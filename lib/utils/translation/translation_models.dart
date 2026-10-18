@@ -196,10 +196,12 @@ class TranslationResultState {
     null,
     null,
   );
+  const TranslationResultState.refreshing(String previous)
+    : this._(TranslationStatus.loading, previous, null);
   const TranslationResultState.translated(String value)
     : this._(TranslationStatus.translated, value, null);
-  const TranslationResultState.failed(Object error)
-    : this._(TranslationStatus.failed, null, error);
+  const TranslationResultState.failed(Object error, {String? previous})
+    : this._(TranslationStatus.failed, previous, error);
 }
 
 int unicodeCodePointLength(String value) => value.runes.length;

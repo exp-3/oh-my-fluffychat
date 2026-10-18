@@ -16,6 +16,7 @@ import 'package:matrix/matrix.dart';
 import '../../../config/app_config.dart';
 import '../../../utils/event_checkbox_extension.dart';
 import '../../../utils/platform_infos.dart';
+import '../../../utils/translation/translation_runtime.dart';
 import '../../../utils/url_launcher.dart';
 import 'audio_player.dart';
 import 'cute_events.dart';
@@ -48,7 +49,12 @@ class MessageContent extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: TranslationRuntime.instance,
+    builder: (context, _) => _buildContent(context),
+  );
+
+  Widget _buildContent(BuildContext context) {
     const fontSize = AppConfig.messageFontSize;
     final buttonTextColor = textColor;
     switch (event.type) {
@@ -179,11 +185,8 @@ class MessageContent extends StatelessWidget {
             final bigEmotes =
                 !event.isRichMessage && bigEmojis.contains(event.body);
 
-            // Keep the translation-aware widget mounted for supported message
-            // types even while translation is disabled. It listens only to
-            // the runtime's cheap state notifier, so an enable/disable change
-            // immediately updates already-rendered messages.
-            if (!(const {
+            if (!TranslationRuntime.instance.enabled ||
+                !(const {
                   MessageTypes.Text,
                   MessageTypes.Notice,
                   MessageTypes.Emote,

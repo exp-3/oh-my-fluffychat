@@ -7,7 +7,6 @@ import 'dart:async';
 
 import 'package:fluffychat/utils/translation/translation_api_client.dart';
 import 'package:fluffychat/utils/translation/translation_cache.dart';
-import 'package:fluffychat/utils/translation/translation_cache_backend_interface.dart';
 import 'package:fluffychat/utils/translation/translation_languages.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
 import 'package:fluffychat/utils/translation/translation_preferences.dart';
@@ -17,6 +16,7 @@ import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'test_client.dart';
+import 'translation_test_backend.dart';
 
 final _provider = TranslationProviderConfig(
   id: 'provider',
@@ -48,30 +48,6 @@ const _inputSendModePreference = 'chat.fluffy.translation.input.send_mode';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-
-  test('provider semantic revisions remain distinct with colon fields', () {
-    final first = TranslationProviderConfig(
-      id: 'a',
-      name: 'First',
-      endpoint: Uri.parse('https://llm.example.invalid/v1'),
-      protocol: TranslationProtocol.chatCompletions,
-      model: 'responses:foo',
-    );
-    final second = TranslationProviderConfig(
-      id: 'a:chatCompletions',
-      name: 'Second',
-      endpoint: Uri.parse('https://llm.example.invalid/v1'),
-      protocol: TranslationProtocol.responses,
-      model: 'foo',
-    );
-
-    expect(first.isValid, isTrue);
-    expect(second.isValid, isTrue);
-    expect(
-      TranslationRuntime.semanticRevisionForProvider(first),
-      isNot(TranslationRuntime.semanticRevisionForProvider(second)),
-    );
-  });
 
   test(
     'room preferences use nullable overrides and account-scoped languages',
@@ -625,13 +601,13 @@ void main() {
       final stateBeforeLogout = fixture.runtime.stateForEvent(event);
       expect(stateBeforeLogout.value.status, TranslationStatus.idle);
 
-      const key = TranslationCacheKey(
+      final key = TranslationCacheKey(
+        userId: fixture.client.userID!,
         roomId: roomId,
         eventId: r'$event',
         source: 'source',
         sourceLanguage: 'auto',
         targetLanguage: 'en',
-        semanticRevision: 'provider:responses:model:endpoint:1',
         messageType: MessageTypes.Text,
       );
       await fixture.runtime.cache.write(key, 'translation');
@@ -641,7 +617,7 @@ void main() {
       // that still has a readable local room.
       fixture.client.rooms = [];
       await fixture.runtime.detachLoggedOutClient(fixture.client);
-      expect(await fixture.runtime.cache.read(key), 'translation');
+      expect(await fixture.runtime.cache.read(key), isNull);
       final stateAfterLogout = fixture.runtime.stateForEvent(event);
       expect(identical(stateAfterLogout, stateBeforeLogout), isFalse);
       expect(stateAfterLogout.value.status, TranslationStatus.idle);
@@ -651,7 +627,7 @@ void main() {
       secondClient.rooms = [];
       await fixture.runtime.detachLoggedOutClient(secondClient);
       expect(await fixture.runtime.cache.read(key), isNull);
-      expect(fixture.backend.deletedRoomIds, [roomId]);
+      expect(fixture.backend.deletedRoomIds, contains(roomId));
     },
   );
 
@@ -660,7 +636,7 @@ void main() {
     final releaseKeyRead = Completer<void>();
     final secrets =
         _MemorySecrets(
-            delayedReadNumber: 2,
+            delayedReadNumber: 1,
             readStarted: keyReadStarted,
             releaseRead: releaseKeyRead,
           )
@@ -743,7 +719,238 @@ void main() {
       expect(fixture.backend.records, hasLength(1));
     },
   );
+
+  test(
+    'room auto off restores shared cache after restart without a provider',
+    () async {
+      final api = _RecordingApiClient();
+      final fixture = await _RuntimeFixture.create(
+        apiClient: api,
+        mergeWindowMs: 0,
+      );
+      final first = _event(fixture, id: r'$first', room: '!first:test');
+      expect(
+        await fixture.runtime.translateEvent(first, manual: true),
+        'translated',
+      );
+      await fixture.runtime.deleteProvider(_provider.id);
+      expect(fixture.runtime.enabled, isTrue);
+      final restarted = TranslationRuntime.forTesting();
+      await restarted.initialize(
+        fixture.runtime.preferences.store,
+        secrets: fixture.secrets,
+        apiClient: api,
+        cache: TranslationCache(fixture.secrets, fixture.backend),
+      );
+      final alias = _event(fixture, id: r'$alias', room: '!other:test');
+      expect(restarted.shouldAutoTranslate(alias), isFalse);
+      expect(await restarted.restoreEvent(alias), 'translated');
+      expect(restarted.stateForEvent(alias).value.translation, 'translated');
+      expect(
+        await restarted.restoreEvent(_event(fixture, source: 'uncached')),
+        isNull,
+      );
+      expect(api.calls, 1);
+      restarted.dispose();
+    },
+  );
+
+  test(
+    'first manual click loads shared cache; next click forces one fresh request',
+    () async {
+      final api = _ControlledApiClient();
+      final fixture = await _RuntimeFixture.create(
+        apiClient: api,
+        mergeWindowMs: 0,
+      );
+      final event = _event(fixture);
+      final initial = fixture.runtime.translateEvent(event, manual: true);
+      (await api.waitForCall(0)).complete('old');
+      expect(await initial, 'old');
+      final alias = _event(fixture, id: r'$alias', room: '!alias:test');
+      expect(await fixture.runtime.translateEvent(alias, manual: true), 'old');
+      expect(api.pending, hasLength(1));
+      final refresh = fixture.runtime.translateEvent(
+        alias,
+        manual: true,
+        forceRefresh: true,
+      );
+      final request = await api.waitForCall(1);
+      final duplicate = fixture.runtime.translateEvent(
+        event,
+        manual: true,
+        forceRefresh: true,
+      );
+      expect(fixture.runtime.stateForEvent(alias).value.translation, 'old');
+      expect(
+        fixture.runtime.stateForEvent(alias).value.status,
+        TranslationStatus.loading,
+      );
+      request.complete('new');
+      expect(await refresh, 'new');
+      expect(await duplicate, 'new');
+      expect(fixture.runtime.stateForEvent(event).value.translation, 'new');
+      expect(api.pending, hasLength(2));
+    },
+  );
+
+  test(
+    'failed refresh retains previous translation; deletion overrides fallback',
+    () async {
+      final api = _ControlledApiClient();
+      final fixture = await _RuntimeFixture.create(
+        apiClient: api,
+        mergeWindowMs: 0,
+      );
+      final event = _event(fixture);
+      final initial = fixture.runtime.translateEvent(event, manual: true);
+      (await api.waitForCall(0)).complete('old');
+      await initial;
+      final refresh = fixture.runtime.translateEvent(
+        event,
+        manual: true,
+        forceRefresh: true,
+      );
+      final failed = expectLater(refresh, throwsStateError);
+      (await api.waitForCall(
+        1,
+      )).result.completeError(StateError('network failed'));
+      await failed;
+      expect(fixture.runtime.stateForEvent(event).value.translation, 'old');
+      expect(
+        fixture.runtime.stateForEvent(event).value.status,
+        TranslationStatus.failed,
+      );
+      final retry = fixture.runtime.translateEvent(
+        event,
+        manual: true,
+        forceRefresh: true,
+      );
+      final expired = expectLater(retry, throwsStateError);
+      final call = await api.waitForCall(2);
+      await fixture.runtime.invalidateEventIfExists(
+        event.room.id,
+        event.eventId,
+      );
+      call.complete('obsolete');
+      await expired;
+      expect(fixture.runtime.stateForEvent(event).value.translation, isNull);
+      expect(fixture.backend.records, isEmpty);
+    },
+  );
+
+  test('forced refresh supersedes an older ordinary request', () async {
+    final api = _ControlledApiClient();
+    final fixture = await _RuntimeFixture.create(
+      apiClient: api,
+      mergeWindowMs: 0,
+    );
+    final event = _event(fixture);
+    final ordinary = fixture.runtime.translateEvent(event, manual: true);
+    final expired = expectLater(ordinary, throwsStateError);
+    final old = await api.waitForCall(0);
+    final fresh = fixture.runtime.translateEvent(
+      event,
+      manual: true,
+      forceRefresh: true,
+    );
+    (await api.waitForCall(1)).complete('fresh');
+    expect(await fresh, 'fresh');
+    old.complete('stale');
+    await expired;
+    expect(fixture.runtime.stateForEvent(event).value.translation, 'fresh');
+  });
+
+  test(
+    'provider/model changes retain completed states and new clicks use current model',
+    () async {
+      final api = _ControlledApiClient();
+      final fixture = await _RuntimeFixture.create(
+        apiClient: api,
+        mergeWindowMs: 0,
+      );
+      final event = _event(fixture);
+      final initial = fixture.runtime.translateEvent(event, manual: true);
+      (await api.waitForCall(0)).complete('old');
+      await initial;
+      final replacement = TranslationProviderConfig(
+        id: _provider.id,
+        name: 'Replacement',
+        endpoint: _provider.endpoint,
+        protocol: _provider.protocol,
+        model: 'new-model',
+      );
+      await fixture.runtime.saveProvider(replacement);
+      expect(fixture.runtime.stateForEvent(event).value.translation, 'old');
+      expect(await fixture.runtime.restoreEvent(event), 'old');
+      final refresh = fixture.runtime.translateEvent(
+        event,
+        manual: true,
+        forceRefresh: true,
+      );
+      (await api.waitForCall(1)).complete('improved');
+      await refresh;
+      expect(fixture.backend.records, hasLength(1));
+    },
+  );
+
+  test(
+    'unavailable storage never causes automatic regeneration and global off bypasses lookups',
+    () async {
+      final api = _RecordingApiClient();
+      final fixture = await _RuntimeFixture.create(
+        apiClient: api,
+        mergeWindowMs: 0,
+      );
+      final event = _event(fixture);
+      await fixture.runtime.setScope(TranslationScope.allRooms);
+      fixture.backend.unavailable = true;
+      expect(await fixture.runtime.restoreEvent(event), isNull);
+      expect(api.calls, 0);
+      fixture.backend.unavailable = false;
+      await fixture.runtime.setEnabled(false);
+      final opens = fixture.backend.openExistingCalls;
+      expect(await fixture.runtime.restoreEvent(event), isNull);
+      expect(await fixture.runtime.translateEvent(event, manual: true), isNull);
+      expect(fixture.backend.openExistingCalls, opens);
+      expect(fixture.backend.present, isFalse);
+    },
+  );
+
+  test(
+    'turning room auto off cancels generation and preserves displayed cache',
+    () async {
+      final api = _ControlledApiClient();
+      final fixture = await _RuntimeFixture.create(
+        apiClient: api,
+        mergeWindowMs: 0,
+      );
+      final event = _event(fixture);
+      await fixture.runtime.setRoomTranslationOverride(event.room, true);
+      final initial = fixture.runtime.restoreEvent(event);
+      (await api.waitForCall(0)).complete('cached');
+      await initial;
+      await fixture.runtime.setRoomTranslationOverride(event.room, false);
+      expect(fixture.runtime.stateForEvent(event).value.translation, 'cached');
+      expect(await fixture.runtime.restoreEvent(event), 'cached');
+      expect(api.pending, hasLength(1));
+    },
+  );
 }
+
+Event _event(
+  _RuntimeFixture fixture, {
+  String id = r'$event',
+  String room = '!room:test',
+  String source = 'hello',
+}) => Event(
+  content: {'msgtype': MessageTypes.Text, 'body': source},
+  type: EventTypes.Message,
+  eventId: id,
+  senderId: fixture.client.userID!,
+  originServerTs: DateTime.utc(2026),
+  room: Room(id: room, client: fixture.client),
+);
 
 void _expectControl(
   RoomTranslationControl control, {
@@ -877,76 +1084,4 @@ class _MemorySecrets implements TranslationSecretStore {
   Future<void> write(String key, String value) async => values[key] = value;
 }
 
-class _MemoryBackend implements TranslationCacheBackend {
-  final records = <TranslationCacheRecord>[];
-  final deletedRoomIds = <String>[];
-  bool present = false;
-
-  @override
-  Future<bool> exists() async => present;
-
-  @override
-  Future<bool> openExisting(String databaseKey) async => present;
-
-  @override
-  Future<void> openOrCreate(String databaseKey) async => present = true;
-
-  @override
-  Future<TranslationCacheRecord?> get(String cacheKey) async {
-    for (final record in records) {
-      if (record.cacheKey == cacheKey) return record;
-    }
-    return null;
-  }
-
-  @override
-  Future<void> putAll(List<TranslationCacheRecord> value) async {
-    for (final record in value) {
-      records.removeWhere((item) => item.cacheKey == record.cacheKey);
-      records.add(record);
-    }
-  }
-
-  @override
-  Future<int> deleteByEvent(String roomId, String eventId) async {
-    final before = records.length;
-    records.removeWhere(
-      (record) => record.roomId == roomId && record.eventId == eventId,
-    );
-    return before - records.length;
-  }
-
-  @override
-  Future<int> deleteByRoom(String roomId) async {
-    deletedRoomIds.add(roomId);
-    final before = records.length;
-    records.removeWhere((record) => record.roomId == roomId);
-    return before - records.length;
-  }
-
-  @override
-  Future<int> deleteKeys(List<String> cacheKeys) async {
-    final before = records.length;
-    records.removeWhere((record) => cacheKeys.contains(record.cacheKey));
-    return before - records.length;
-  }
-
-  @override
-  Future<List<TranslationCacheRecord>> page(int offset, int limit) async {
-    final start = offset.clamp(0, records.length);
-    final end = (offset + limit).clamp(start, records.length);
-    return records.sublist(start, end);
-  }
-
-  @override
-  Future<int> count() async => records.length;
-
-  @override
-  Future<void> deleteIfExists() async {
-    present = false;
-    records.clear();
-  }
-
-  @override
-  Future<void> close() async {}
-}
+class _MemoryBackend extends MemoryTranslationBackend {}

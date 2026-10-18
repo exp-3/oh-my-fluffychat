@@ -66,8 +66,7 @@ class OutsideBubbleTranslation extends StatelessWidget {
           valueListenable: runtime.stateForEvent(event),
           builder: (context, state, _) {
             final translation = state.translation;
-            if (state.status != TranslationStatus.translated ||
-                translation == null ||
+            if (translation == null ||
                 _sameTextIgnoringWhitespace(
                   translation,
                   runtime.sourceForEvent(event),
@@ -97,7 +96,10 @@ class OutsideBubbleTranslation extends StatelessWidget {
                     linkColor: colorScheme.primary,
                     fontSize: AppConfig.messageFontSize,
                     timeline: timeline,
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
                     textShadows: textShadows,
                   ),
                 ),
@@ -178,7 +180,7 @@ class _TranslatedMessageState extends State<TranslatedMessage> {
             autoRequestedEventId == eventId &&
             autoRequestedSource == source &&
             autoRequestedMessageType == messageType) ||
-        !runtime.shouldAutoTranslate(widget.event)) {
+        !runtime.canTranslateEvent(widget.event)) {
       return;
     }
     final event = widget.event;
@@ -193,11 +195,11 @@ class _TranslatedMessageState extends State<TranslatedMessage> {
           widget.event.eventId != eventId ||
           runtime.sourceForEvent(widget.event) != source ||
           widget.event.messageType != messageType ||
-          !runtime.shouldAutoTranslate(event)) {
+          !runtime.canTranslateEvent(event)) {
         return;
       }
       try {
-        await runtime.translateEvent(event, manual: false);
+        await runtime.restoreEvent(event);
       } catch (_) {
         // The per-message state presents the failure and permits manual retry.
       }
@@ -223,86 +225,60 @@ class _TranslatedMessageState extends State<TranslatedMessage> {
         return ValueListenableBuilder<TranslationResultState>(
           valueListenable: runtime.stateForEvent(widget.event),
           builder: (context, state, _) {
-            if (state.status == TranslationStatus.translated &&
-                _sameTextIgnoringWhitespace(
-                  state.translation!,
+            final translation = state.translation;
+            final showTranslation =
+                translation != null &&
+                !_sameTextIgnoringWhitespace(
+                  translation,
                   runtime.sourceForEvent(widget.event),
-                )) {
-              return _OriginalTranslation(
-                event: widget.event,
-                originalHtml: widget.originalHtml,
-                textColor: widget.textColor,
-                linkColor: widget.linkColor,
-                originalFontSize: widget.originalFontSize,
-                timeline: widget.timeline,
-              );
+                );
+            final content = showTranslation
+                ? _TranslatedContent(
+                    event: widget.event,
+                    originalHtml: widget.originalHtml,
+                    textColor: widget.textColor,
+                    linkColor: widget.linkColor,
+                    originalFontSize: widget.originalFontSize,
+                    timeline: widget.timeline,
+                    translation: translation,
+                    displayMode: runtime.displayMode,
+                    bilingualColor: runtime.bilingualColor,
+                    bilingualStyle: runtime.bilingualStyle,
+                  )
+                : _OriginalTranslation(
+                    event: widget.event,
+                    originalHtml: widget.originalHtml,
+                    textColor: widget.textColor,
+                    linkColor: widget.linkColor,
+                    originalFontSize: widget.originalFontSize,
+                    timeline: widget.timeline,
+                  );
+            if (state.status != TranslationStatus.loading &&
+                state.status != TranslationStatus.failed) {
+              return content;
             }
-            return switch (state.status) {
-              TranslationStatus.translated => _TranslatedContent(
-                event: widget.event,
-                originalHtml: widget.originalHtml,
-                textColor: widget.textColor,
-                linkColor: widget.linkColor,
-                originalFontSize: widget.originalFontSize,
-                timeline: widget.timeline,
-                translation: state.translation!,
-                displayMode: runtime.displayMode,
-                bilingualColor: runtime.bilingualColor,
-                bilingualStyle: runtime.bilingualStyle,
-              ),
-              TranslationStatus.loading => Stack(
-                children: [
-                  _OriginalTranslation(
-                    event: widget.event,
-                    originalHtml: widget.originalHtml,
-                    textColor: widget.textColor,
-                    linkColor: widget.linkColor,
-                    originalFontSize: widget.originalFontSize,
-                    timeline: widget.timeline,
-                  ),
-                  const Positioned(
-                    top: 4,
-                    right: 4,
-                    child: SizedBox.square(
-                      dimension: 12,
-                      child: CircularProgressIndicator(strokeWidth: 1.5),
-                    ),
-                  ),
-                ],
-              ),
-              TranslationStatus.failed => Stack(
-                children: [
-                  _OriginalTranslation(
-                    event: widget.event,
-                    originalHtml: widget.originalHtml,
-                    textColor: widget.textColor,
-                    linkColor: widget.linkColor,
-                    originalFontSize: widget.originalFontSize,
-                    timeline: widget.timeline,
-                  ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Tooltip(
-                      message: L10n.of(context).translationFailed,
-                      child: Icon(
-                        Icons.translate_outlined,
-                        size: 14,
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              TranslationStatus.idle => _OriginalTranslation(
-                event: widget.event,
-                originalHtml: widget.originalHtml,
-                textColor: widget.textColor,
-                linkColor: widget.linkColor,
-                originalFontSize: widget.originalFontSize,
-                timeline: widget.timeline,
-              ),
-            };
+            return Stack(
+              children: [
+                content,
+                Positioned(
+                  top: 4,
+                  right: 4,
+                  child: state.status == TranslationStatus.loading
+                      ? const SizedBox.square(
+                          dimension: 12,
+                          child: CircularProgressIndicator(strokeWidth: 1.5),
+                        )
+                      : Tooltip(
+                          message: L10n.of(context).translationFailed,
+                          child: Icon(
+                            Icons.translate_outlined,
+                            size: 14,
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                ),
+              ],
+            );
           },
         );
       },

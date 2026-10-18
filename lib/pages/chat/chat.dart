@@ -718,10 +718,10 @@ class ChatController extends State<ChatPageWithRoom>
   });
 
   Future<void> send({bool? translate}) async {
-    if (inputTranslationInProgress) return;
+    final runtime = TranslationRuntime.instance;
+    if (runtime.enabled && inputTranslationInProgress) return;
     final inputSnapshot = sendController.text;
     if (inputSnapshot.trim().isEmpty) return;
-    final runtime = TranslationRuntime.instance;
     final sendRevision = runtime.revision;
     final translateOnSend = runtime.shouldTranslateInputOnSend(
       room,
@@ -772,7 +772,7 @@ class ChatController extends State<ChatPageWithRoom>
           return;
         }
       } catch (_) {
-        if (mounted) _showInputTranslationFailure();
+        if (mounted && runtime.enabled) _showInputTranslationFailure();
         return;
       } finally {
         if (mounted) setState(() => inputTranslationInProgress = false);
@@ -830,14 +830,18 @@ class ChatController extends State<ChatPageWithRoom>
     setState(() => inputTranslationInProgress = true);
     try {
       final translation = await runtime.translateInputText(room, inputSnapshot);
-      if (!mounted || sendController.text != inputSnapshot) return;
+      if (!mounted ||
+          !runtime.enabled ||
+          sendController.text != inputSnapshot) {
+        return;
+      }
       sendController.value = TextEditingValue(
         text: translation,
         selection: TextSelection.collapsed(offset: translation.length),
       );
       onInputBarChanged(translation, handleClientPrefix: false);
     } catch (_) {
-      if (mounted) _showInputTranslationFailure();
+      if (mounted && runtime.enabled) _showInputTranslationFailure();
     } finally {
       if (mounted) setState(() => inputTranslationInProgress = false);
     }
@@ -1133,7 +1137,11 @@ class ChatController extends State<ChatPageWithRoom>
     final currentTimeline = timeline;
     if (currentTimeline == null) return;
     final events = selectedEvents
-        .map((event) => event.getDisplayEvent(currentTimeline))
+        .map((event) {
+          final displayed = event.getDisplayEvent(currentTimeline);
+          runtime.observeDisplayEvent(event, displayed);
+          return displayed;
+        })
         .where(runtime.canTranslateEvent)
         .toList(growable: false);
     if (!runtime.enabled || events.isEmpty) return;
@@ -1148,10 +1156,25 @@ class ChatController extends State<ChatPageWithRoom>
       if (result != OkCancelResult.ok) return;
       await runtime.acceptPrivacyNotice();
     }
+    // Snapshot every selection before starting any task: shared updates from
+    // an earlier selection must not turn the same click into a refresh.
+    final requests = [
+      for (final event in events)
+        (
+          event: event,
+          force: runtime.stateForEvent(event).value.translation != null,
+        ),
+    ];
     clearSelectedEvents();
-    for (final event in events) {
+    for (final request in requests) {
       unawaited(
-        runtime.translateEvent(event, manual: true).catchError((_) => null),
+        runtime
+            .translateEvent(
+              request.event,
+              manual: true,
+              forceRefresh: request.force,
+            )
+            .catchError((_) => null),
       );
     }
   }
