@@ -143,7 +143,6 @@ jobs:
       - name: Add Firebase Messaging
         run: ./scripts/add-firebase-messaging.sh
       - run: flutter analyze
-      - run: dart run golden_screenshot:download_apple_fonts
       - run: flutter test
 
   commit_automatic_repairs:
