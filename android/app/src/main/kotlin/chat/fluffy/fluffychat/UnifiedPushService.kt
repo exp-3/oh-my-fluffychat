@@ -1,4 +1,4 @@
-package chat.fluffy.fluffychat
+package chat.fluffy.myfluffychat
 
 import io.flutter.embedding.engine.FlutterEngine
 import android.content.Context

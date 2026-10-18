@@ -63,7 +63,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   final Map<String, int> _requestOrders = {};
   final Map<Client, String> _clientUserIds = {};
   StreamSubscription<void>? _cacheSubscription;
-  Future<void>? _migration;
   final Map<String, Future<List<Event>>> _localHistories = {};
   final Map<String, Set<String>> _knownEditChains = {};
   final Map<String, String> _originalEventIds = {};
@@ -232,7 +231,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       _clients = [..._clients, client];
     }
     if (client.userID != null) _clientUserIds[client] = client.userID!;
-    _scheduleMigration();
     _knownClientRoomIds
         .putIfAbsent(client, () => client.rooms.map((room) => room.id).toSet())
         .addAll(client.rooms.map((room) => room.id));
@@ -264,7 +262,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       final knownRoomIds = _knownClientRoomIds.putIfAbsent(client, () => {});
       knownRoomIds.addAll(update.rooms?.join?.keys ?? const <String>[]);
       knownRoomIds.addAll(update.rooms?.invite?.keys ?? const <String>[]);
-      if (update.rooms?.join?.isNotEmpty == true) _scheduleMigration();
       final leftRoomIds = update.rooms?.leave?.keys;
       if (leftRoomIds == null) return;
       for (final roomId in leftRoomIds) {
@@ -352,7 +349,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       }
       rethrow;
     }
-    if (value) _scheduleMigration();
     return true;
   }
 
@@ -1124,23 +1120,8 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   Future<TranslationCacheCleanupResult> cleanInvalidCache() async {
     _localHistories.clear();
     _bumpRevision(clearPending: true, clearStates: true);
-    final result = await cache.cleanInvalid(_localSource);
-    if (result.deleted > 0) {
-      _bumpRevision(clearPending: true, clearStates: true);
-    }
-    return result;
-  }
-
-  Future<void> clearCache() async {
-    _bumpRevision(clearPending: true, clearStates: true);
-    await cache.deleteIfExists();
-  }
-
-  void _scheduleMigration() {
-    if (!_enabled || _clients.isEmpty || _migration != null) return;
-    _localHistories.clear();
     final revision = _revision;
-    final migration = cache.migrateLegacy(
+    final migrated = await cache.migrateLegacy(
       owners: (roomId) => _clients
           .where(
             (client) => client.isLogged() && client.getRoomById(roomId) != null,
@@ -1149,21 +1130,19 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
           .whereType<String>()
           .toList(),
       localSource: _localSource,
-      isEnabled: () => _enabled && revision == _revision,
+      // Explicit cache maintenance also works while translation is disabled.
+      isEnabled: () => revision == _revision,
     );
-    final completion = migration.then((changed) {
-      if (changed && _enabled) {
-        // Loaded messages may have memoized a miss before the backfill.
-        _bumpRevision(clearPending: true, clearStates: false);
-      }
-    });
-    _migration = completion;
-    unawaited(
-      completion.whenComplete(() {
-        _migration = null;
-        if (_enabled) notifyListeners();
-      }),
-    );
+    final result = await cache.cleanInvalid(_localSource);
+    if (migrated || result.deleted > 0) {
+      _bumpRevision(clearPending: true, clearStates: true);
+    }
+    return result;
+  }
+
+  Future<void> clearCache() async {
+    _bumpRevision(clearPending: true, clearStates: true);
+    await cache.deleteIfExists();
   }
 
   void _recheckExternalCache() {

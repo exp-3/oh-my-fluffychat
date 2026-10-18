@@ -55,8 +55,9 @@ successful authorized network translation is persisted.
 
 ## Legacy migration
 
-Migration starts after local clients/rooms become available and only while
-translation is enabled. Each atomic batch processes at most 200 rows with
+Migration runs only as part of the manual "Clean obsolete cache" action,
+before invalid entries are checked. Manual maintenance also works while
+translation is disabled. Each atomic batch processes at most 200 rows with
 keyset pagination and a persisted checkpoint. Ownerless rows remain sealed.
 Available sources are checked against local edits/redactions and re-encrypted
 during migration; temporarily unavailable sources are retained. Sealed

@@ -9,7 +9,6 @@ import 'package:fluffychat/config/setting_keys.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'set_up_vodozemac.dart';
@@ -26,8 +25,8 @@ Future<Client> prepareTestClient({
   String id = 'FluffyChat Widget Test',
 }) async {
   await setUpVodozemac();
-  SharedPreferences.setMockInitialValues({});
   FlutterLocalNotificationsPlatform.instance = _FakeNotifications();
+  // Preserve the caller's settings when preparing another client.
   await AppSettings.init(loadWebConfigFile: false);
 
   homeserver ??= Uri.parse('https://fakeserver.notexisting');
