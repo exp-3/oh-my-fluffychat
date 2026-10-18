@@ -1184,11 +1184,6 @@
         "type": "String",
         "placeholders": {}
     },
-    "youHaveBeenBannedFromThisChat": "Ви були заблоковані у цій бесіді",
-    "@youHaveBeenBannedFromThisChat": {
-        "type": "String",
-        "placeholders": {}
-    },
     "notifications": "Сповіщення",
     "@notifications": {
         "type": "String",

@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version-file: .tool_versions.yaml
+          flutter-version-file: .fvmrc
           cache: true
       - uses: dtolnay/rust-toolchain@stable
       - run: rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
@@ -39,8 +39,7 @@ jobs:
         run: gh release upload "${{ github.event.release.tag_name }}" fluffychat-web.tar.gz --repo "${{ github.repository }}" --clobber
       - name: Clone fluffychat website
         if: contains(github.event.release.body, 'Release_Build')
-        run: |
-          git clone https://github.com/krille-chan/fluffychat-website.git
+        run: git clone https://github.com/krille-chan/fluffychat-website.git
       - name: Build website
         if: contains(github.event.release.body, 'Release_Build')
         working-directory: fluffychat-website
@@ -53,7 +52,6 @@ jobs:
         run: |
           mkdir public/web
           cp -r build/web/* public/web/
-          echo "fluffychat.im" >> public/CNAME
       - name: Deploy to GitHub Pages
         if: contains(github.event.release.body, 'Release_Build')
         uses: peaceiris/actions-gh-pages@v4
@@ -84,7 +82,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version-file: .tool_versions.yaml
+          flutter-version-file: .fvmrc
           cache: true
       - uses: dtolnay/rust-toolchain@stable
       - run: flutter pub get
@@ -165,7 +163,7 @@ jobs:
         run: '"PUB_CACHE=$env:RUNNER_TEMP\pub-cache" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version-file: .tool_versions.yaml
+          flutter-version-file: .fvmrc
           cache: true
       - uses: dtolnay/rust-toolchain@stable
       - run: flutter pub get
@@ -201,7 +199,7 @@ jobs:
       - uses: actions/checkout@v7
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install curl clang cmake ninja-build pkg-config libgtk-3-dev libblkid-dev liblzma-dev libjsoncpp-dev cmake-data libsecret-1-dev libsecret-1-0 librhash0 libssl-dev libwebkit2gtk-4.1-dev -y
-      - run: echo "FLUTTER_VERSION=$(yq '.environment.flutter' < .tool_versions.yaml)" >> $GITHUB_ENV
+      - run: echo "FLUTTER_VERSION=$(yq '.flutter' < .fvmrc)" >> $GITHUB_ENV
       - name: Install Flutter
         run: |
           git clone --branch ${{ env.FLUTTER_VERSION }} https://github.com/flutter/flutter.git

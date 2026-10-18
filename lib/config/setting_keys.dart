@@ -26,7 +26,7 @@ enum AppSettings<T> {
   audioRecordingEchoCancel<bool>('audioRecordingEchoCancel', false),
   audioRecordingNoiseSuppress<bool>('audioRecordingNoiseSuppress', true),
   audioRecordingBitRate<int>('audioRecordingBitRate', 64000),
-  audioRecordingSamplingRate<int>('audioRecordingSamplingRate', 44100),
+  audioRecordingSamplingRate<int>('audioRecordingSamplingRate', 48000),
   showNoGoogle<bool>('chat.fluffy.show_no_google', false),
   unifiedPushRegistered<bool>('chat.fluffy.unifiedpush.registered', false),
   unifiedPushEndpoint<String>('chat.fluffy.unifiedpush.endpoint', ''),
@@ -109,7 +109,9 @@ enum AppSettings<T> {
   }
 
   static Future<void> reset({bool loadWebConfigFile = true}) async {
-    await AppSettings._store!.clear();
+    for (final setting in AppSettings.values) {
+      await AppSettings.store.remove(setting.key);
+    }
     messageBubbleGradientNotifier.value =
         AppSettings.messageBubbleGradient.defaultValue;
     await init(loadWebConfigFile: loadWebConfigFile);

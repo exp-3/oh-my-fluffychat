@@ -1574,11 +1574,6 @@
         "type": "String",
         "placeholders": {}
     },
-    "youHaveBeenBannedFromThisChat": "チャットからBANされてしまいました",
-    "@youHaveBeenBannedFromThisChat": {
-        "type": "String",
-        "placeholders": {}
-    },
     "yourPublicKey": "あなたの公開鍵",
     "@yourPublicKey": {
         "type": "String",

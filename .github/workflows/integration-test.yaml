@@ -64,7 +64,7 @@ jobs:
             echo "Generated AVD snapshot for caching."
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version-file: .tool_versions.yaml
+          flutter-version-file: .fvmrc
           cache: true
       - uses: dtolnay/rust-toolchain@stable
       - name: Cache Gradle

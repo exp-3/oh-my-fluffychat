@@ -1430,11 +1430,6 @@
         "type": "String",
         "placeholders": {}
     },
-    "youHaveBeenBannedFromThisChat": "Вы былі заблакіраваны ў гэтым чаце",
-    "@youHaveBeenBannedFromThisChat": {
-        "type": "String",
-        "placeholders": {}
-    },
     "yourPublicKey": "Ваш публічны ключ",
     "@yourPublicKey": {
         "type": "String",
@@ -2922,5 +2917,6 @@
             }
         }
     },
-    "download": "Спампаваць"
+    "download": "Спампаваць",
+    "sharedLocation": "Агульныя геаметкі"
 }

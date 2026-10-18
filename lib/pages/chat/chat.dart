@@ -230,7 +230,46 @@ class ChatController extends State<ChatPageWithRoom>
     );
   }
 
+  Future<void> joinChat() async {
+    final success = await showFutureLoadingDialog(
+      context: context,
+      future: () async {
+        await room.join(waitForSync: true);
+      },
+    );
+    if (!mounted) return;
+    if (success.error != null) return;
+    if (room.isSpace) {
+      context.go('/rooms?spaceId=${room.id}');
+      return;
+    }
+    await _tryLoadTimeline();
+  }
+
   Future<void> leaveChat() async {
+    if (room.membership == .invite) {
+      final blockConsent = await showOkCancelAlertDialog(
+        context: context,
+        title: L10n.of(context).declineInvitation,
+        message: L10n.of(context).doYouAlsoWantToBlock,
+        cancelLabel: L10n.of(context).decline,
+        okLabel: L10n.of(context).declineAndBlock,
+        isDestructive: true,
+      );
+      if (blockConsent == null) return;
+      if (!mounted) return;
+      if (blockConsent == .ok) {
+        final inviteEvent = room.getState(
+          EventTypes.RoomMember,
+          room.client.userID!,
+        );
+        context.go(
+          '/rooms/settings/security/ignorelist',
+          extra: inviteEvent?.senderId,
+        );
+        return;
+      }
+    }
     final success = await showFutureLoadingDialog(
       context: context,
       future: room.leave,
@@ -472,6 +511,8 @@ class ChatController extends State<ChatPageWithRoom>
   }
 
   Future<void> _tryLoadTimeline() async {
+    if (room.membership == .invite) return;
+
     final initialEventId = widget.eventId;
     loadTimelineFuture = _getTimeline();
     try {
@@ -591,16 +632,13 @@ class ChatController extends State<ChatPageWithRoom>
     setReadMarker();
   }
 
-  Future<void>? _setReadMarkerFuture;
+  String? _setReadMarkerEventId;
 
   void setReadMarker({String? eventId}) {
     // Do not send read markers when app is not in foreground
     if (WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
       return;
     }
-
-    // We are already setting a read marker
-    if (_setReadMarkerFuture != null) return;
 
     final setOnLatestEvent = eventId == null;
 
@@ -622,6 +660,7 @@ class ChatController extends State<ChatPageWithRoom>
     }
 
     eventId ??= timeline.events.firstWhereOrNull((event) {
+      if (event.eventId == room.lastEvent?.eventId) return true;
       if (room.client.pushruleEvaluator.match(event).notify) {
         return true;
       }
@@ -646,6 +685,9 @@ class ChatController extends State<ChatPageWithRoom>
     // This is a sending event, we do not set a readmarker yet
     if (eventId.isValidMatrixIdStrict() == false) return;
 
+    // We are already setting a read marker on this event
+    if (_setReadMarkerEventId == eventId) return;
+
     // Already set a read marker on this event
     if (room.fullyRead == eventId && !setOnLatestEvent) return;
 
@@ -658,14 +700,15 @@ class ChatController extends State<ChatPageWithRoom>
     }
 
     Logs().d('Set read marker...', eventId);
+    _setReadMarkerEventId = eventId;
     // ignore: unawaited_futures
-    _setReadMarkerFuture = timeline
+    timeline
         .setReadMarker(
           eventId: eventId,
           public: AppSettings.sendPublicReadReceipts.value,
         )
         .whenComplete(() {
-          _setReadMarkerFuture = null;
+          if (_setReadMarkerEventId == eventId) _setReadMarkerEventId = null;
         });
   }
 
@@ -1037,11 +1080,10 @@ class ChatController extends State<ChatPageWithRoom>
     final proceed = await showTrustUserInRoomDialog(context, room);
     if (!mounted || !proceed) return;
     final scaffoldMessenger = ScaffoldMessenger.of(context);
-    final audioFile = XFile(path);
 
     final bytesResult = await showFutureLoadingDialog(
       context: context,
-      future: audioFile.readAsBytes,
+      future: () => XFile(path).readAsBytes(),
     );
     final bytes = bytesResult.result;
     if (bytes == null) return;
@@ -1370,10 +1412,19 @@ class ChatController extends State<ChatPageWithRoom>
   Future<void> scrollToEventId(
     String eventId, {
     bool highlightEvent = true,
+    bool timelineReloaded = false,
   }) async {
     final foundEvent = timeline!.events.firstWhereOrNull(
       (event) => event.eventId == eventId,
     );
+
+    final threadRootId =
+        foundEvent?.relationshipType == RelationshipTypes.thread
+        ? foundEvent?.relationshipEventId
+        : null;
+    if (activeThreadId == null && threadRootId != null) {
+      return scrollToEventId(threadRootId, highlightEvent: highlightEvent);
+    }
 
     final eventIndex = foundEvent == null
         ? -1
@@ -1385,6 +1436,7 @@ class ChatController extends State<ChatPageWithRoom>
               .indexOf(foundEvent);
 
     if (eventIndex == -1) {
+      if (foundEvent != null || timelineReloaded) return;
       setState(() {
         timeline = null;
         _scrolledUp = false;
@@ -1397,7 +1449,11 @@ class ChatController extends State<ChatPageWithRoom>
       });
       await loadTimelineFuture;
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        scrollToEventId(eventId);
+        scrollToEventId(
+          eventId,
+          highlightEvent: highlightEvent,
+          timelineReloaded: true,
+        );
       });
       return;
     }

@@ -1140,11 +1140,6 @@
         "type": "String",
         "placeholders": {}
     },
-    "youHaveBeenBannedFromThisChat": "Tettwagedleḍ seg udiwenni-agi",
-    "@youHaveBeenBannedFromThisChat": {
-        "type": "String",
-        "placeholders": {}
-    },
     "yourPublicKey": "Tasarut-ik·im tazayezt",
     "@yourPublicKey": {
         "type": "String",
