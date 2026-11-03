@@ -143,6 +143,8 @@ jobs:
       - name: Add Firebase Messaging
         run: ./scripts/add-firebase-messaging.sh
       - run: flutter analyze
+      - name: Prepare test encryption library
+        run: ./scripts/prepare_vodozemac.sh
       - run: flutter test
 
   commit_automatic_repairs:
