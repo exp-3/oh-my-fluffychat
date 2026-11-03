@@ -42,7 +42,7 @@ abstract class AppConfig {
       'https://github.com/krille-chan/fluffychat/issues';
   static const String changelogUrl = 'https://fluffychat.im/changelog/';
   static const String latestReleaseApiUrl =
-      'https://api.github.com/repos/krille-chan/fluffychat/releases/latest';
+      'https://api.github.com/repos/exp-3/oh-my-fluffychat/releases/latest';
   static const String helpUrl =
       'https://ko-fi.com/post/How-can-I-support-FluffyChat-J2G325WE6I';
 
@@ -57,7 +57,7 @@ abstract class AppConfig {
   static final Uri homeserverList = Uri(
     scheme: 'https',
     host: 'raw.githubusercontent.com',
-    path: 'krille-chan/fluffychat/refs/heads/main/recommended_homeservers.json',
+    path: 'exp-3/oh-my-fluffychat/refs/heads/main/recommended_homeservers.json',
   );
 
   static final Uri crashReportEndpoint = Uri(

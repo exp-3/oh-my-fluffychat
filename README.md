@@ -5,8 +5,6 @@ SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<img src="https://raw.githubusercontent.com/krille-chan/fluffychat/refs/heads/main/assets/logo/img/banner.png">
-
 [FluffyChat](https://fluffychat.im) is an open source, nonprofit and cute [[matrix](https://matrix.org)] client written in [Flutter](https://flutter.dev). The goal of the app is to create an easy to use instant messenger which is open source and accessible for everyone.
 
 ### Links:
@@ -40,8 +38,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 - 🔐 End to end encryption
 - 🔒 Encrypted chat backup
 - 😀 Emoji verification & cross signing
-... and much more.
-
+  ... and much more.
 
 # Installation
 
@@ -59,20 +56,23 @@ An example configuration can be found in the `config.sample.json` file.
 1. To build FluffyChat you need [Flutter](https://flutter.dev) and [Rust](https://www.rust-lang.org/tools/install)
 
 2. Clone the repo:
+
 ```
 git clone https://github.com/krille-chan/fluffychat.git
 cd fluffychat
 ```
+
 3. Debug on your platform with: `flutter run`
 
 ### Web
 
-* Execute once before run or build:
+- Execute once before run or build:
+
 ```bash
 ./scripts/prepare-web.sh # To install Vodozemac
 ```
 
-* Optionally configure by serving a `config.json` at the same path as fluffychat.
+- Optionally configure by serving a `config.json` at the same path as fluffychat.
   An example can be found at `config.sample.json`. All values there are optional.
   **Please only the values, you really need**. If you e.g. only want
   to change the default homeserver, then only modify the `defaultHomeserver` key.
@@ -91,13 +91,12 @@ Then run all tests with:
 flutter test integration_test/mobile_test.dart
 ```
 
-
 # Special thanks
 
-* <a href="https://github.com/fabiyamada">Fabiyamada</a> is a graphics designer and has made the fluffychat logo and the banner. Big thanks for her great designs.
+- <a href="https://github.com/fabiyamada">Fabiyamada</a> is a graphics designer and has made the fluffychat logo. Big thanks for her great designs.
 
-* Also thanks to all translators and testers! With your help, fluffychat is now available in more than 12 languages.
+- Also thanks to all translators and testers! With your help, fluffychat is now available in more than 12 languages.
 
-* The Matrix Foundation for making and maintaining the [emoji translations](https://github.com/matrix-org/matrix-spec/blob/main/data-definitions/sas-emoji.json) used for emoji verification, licensed Apache 2.0
+- The Matrix Foundation for making and maintaining the [emoji translations](https://github.com/matrix-org/matrix-spec/blob/main/data-definitions/sas-emoji.json) used for emoji verification, licensed Apache 2.0
 
-* Special thanks to MTRNord, Sorunome and Advocatux.
+- Special thanks to MTRNord, Sorunome and Advocatux.

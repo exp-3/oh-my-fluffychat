@@ -61,13 +61,3 @@ path = [
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2017-Present Fabiyamada"
 SPDX-License-Identifier = "CC-BY-4.0"
-
-# Artwork
-[[annotations]]
-path = [
-    "assets/logo/*/mascot.**",
-    "assets/logo/*/banner.**",
-]
-precedence = "aggregate"
-SPDX-FileCopyrightText = "2026-Present Christian Kußowski"
-SPDX-License-Identifier = "LicenseRef-All-Rights-Reserved"
