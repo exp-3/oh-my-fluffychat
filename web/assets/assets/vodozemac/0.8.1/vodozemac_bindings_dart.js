@@ -1530,6 +1530,34 @@ let wasm_bindgen;
         wasm.__externref_table_dealloc(idx);
         return value;
     }
+    /**
+     * @param {number} ptr
+     */
+    __exports.frb_dart_opaque_drop_thread_box_persistent_handle = function(ptr) {
+        wasm.frb_dart_opaque_drop_thread_box_persistent_handle(ptr);
+    };
+
+    /**
+     * @param {number} ptr
+     * @returns {any}
+     */
+    __exports.frb_dart_opaque_rust2dart_decode = function(ptr) {
+        const ret = wasm.frb_dart_opaque_rust2dart_decode(ptr);
+        return ret;
+    };
+
+    /**
+     * # Safety
+     *
+     * This should never be called manually.
+     * @param {any} handle
+     * @param {any} dart_handler_port
+     * @returns {number}
+     */
+    __exports.frb_dart_opaque_dart2rust_encode = function(handle, dart_handler_port) {
+        const ret = wasm.frb_dart_opaque_dart2rust_encode(handle, dart_handler_port);
+        return ret >>> 0;
+    };
 
     function passArrayJsValueToWasm0(array, malloc) {
         const ptr = malloc(array.length * 4, 4) >>> 0;
@@ -1558,45 +1586,16 @@ let wasm_bindgen;
         }
     };
 
-    /**
-     * @param {number} ptr
-     */
-    __exports.frb_dart_opaque_drop_thread_box_persistent_handle = function(ptr) {
-        wasm.frb_dart_opaque_drop_thread_box_persistent_handle(ptr);
-    };
-
     __exports.wasm_start_callback = function() {
         wasm.wasm_start_callback();
     };
 
-    /**
-     * @param {number} ptr
-     * @returns {any}
-     */
-    __exports.frb_dart_opaque_rust2dart_decode = function(ptr) {
-        const ret = wasm.frb_dart_opaque_rust2dart_decode(ptr);
-        return ret;
-    };
-
-    /**
-     * # Safety
-     *
-     * This should never be called manually.
-     * @param {any} handle
-     * @param {any} dart_handler_port
-     * @returns {number}
-     */
-    __exports.frb_dart_opaque_dart2rust_encode = function(handle, dart_handler_port) {
-        const ret = wasm.frb_dart_opaque_dart2rust_encode(handle, dart_handler_port);
-        return ret >>> 0;
-    };
-
     function __wbg_adapter_40(arg0, arg1, arg2) {
-        wasm.closure585_externref_shim(arg0, arg1, arg2);
+        wasm.closure624_externref_shim(arg0, arg1, arg2);
     }
 
     function __wbg_adapter_43(arg0, arg1) {
-        wasm._dyn_core_cc7f64a8e0d584a5___ops__function__FnMut_____Output______as_wasm_bindgen_87774718092d6200___closure__WasmClosure___describe__invoke______(arg0, arg1);
+        wasm._dyn_core_76fdb2b90393e64d___ops__function__FnMut_____Output______as_wasm_bindgen_ae10a8507960e12___closure__WasmClosure___describe__invoke______(arg0, arg1);
     }
 
     const WorkerPoolFinalization = (typeof FinalizationRegistry === 'undefined')
@@ -1975,12 +1974,12 @@ let wasm_bindgen;
             const ret = false;
             return ret;
         };
-        imports.wbg.__wbindgen_closure_wrapper1745 = function(arg0, arg1, arg2) {
-            const ret = makeMutClosure(arg0, arg1, 586, __wbg_adapter_40);
+        imports.wbg.__wbindgen_closure_wrapper1832 = function(arg0, arg1, arg2) {
+            const ret = makeMutClosure(arg0, arg1, 625, __wbg_adapter_40);
             return ret;
         };
-        imports.wbg.__wbindgen_closure_wrapper1752 = function(arg0, arg1, arg2) {
-            const ret = makeMutClosure(arg0, arg1, 586, __wbg_adapter_43);
+        imports.wbg.__wbindgen_closure_wrapper1836 = function(arg0, arg1, arg2) {
+            const ret = makeMutClosure(arg0, arg1, 625, __wbg_adapter_43);
             return ret;
         };
         imports.wbg.__wbindgen_debug_string = function(arg0, arg1) {
