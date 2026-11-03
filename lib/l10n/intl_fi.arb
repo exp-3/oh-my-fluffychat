@@ -96,6 +96,7 @@
     "inputTranslationTriggerDoubleTap": "Nopea kaksoisnapautussyöttökenttä",
     "translationPrivacyDetails": "Kun käytät viestien tai syötetyn tekstin käännöstä, käännettävät viestit ja tekstit lähetetään selväkielisinä valitsemallesi ulkoiselle LLM-palveluntarjoajalle myös päästä päähän salatuissa keskusteluissa. Syötetty teksti voidaan lähettää palveluntarjoajalle jo ennen viestin lähettämistä. Keskustelun salaus ei suojaa tätä käännöspalvelulle lähetettyä kopiota; palveluntarjoaja voi lukea sen sisällön. Tietojen tallennus ja käyttö riippuvat palveluntarjoajan tietosuojakäytännöstä.\n\nJos keskustelu sisältää luottamuksellisia tietoja tai et luota palveluntarjoajan kunnioittavan sinun ja muiden osallistujien yksityisyyttä, älä käytä viestien tai syötetyn tekstin käännöstä kyseisissä huoneissa. Voit myös käyttää itse ylläpitämääsi kielimallia, jonka tietojen käsittelyä ja tallennusta hallitset.",
     "translateInput": "Käännä syöttö",
+    "messageBubbleGradient": "Viestikuplan liukuväri",
     "repeatPassword": "Salasana uudelleen",
     "about": "Tietoa FluffyChatista",
     "@about": {

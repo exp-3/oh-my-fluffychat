@@ -97,6 +97,7 @@
     "inputTranslationTriggerDoubleTap": "Atingeți rapid de două ori câmpul de introducere",
     "translationPrivacyDetails": "Când folosiți traducerea mesajelor sau a textului introdus, mesajele și textele de tradus sunt trimise necriptat furnizorului extern LLM ales, inclusiv în conversații criptate de la un capăt la altul. Traducerea textului introdus poate trimite furnizorului și text încă netrimis, înainte de expedierea mesajului. Criptarea conversației nu protejează această copie a textului trimisă serviciului de traducere; furnizorul îi poate citi conținutul, iar stocarea și utilizarea datelor depind de politica sa de confidențialitate.\n\nDacă discuția conține informații confidențiale sau nu aveți încredere că furnizorul va respecta confidențialitatea dumneavoastră și a celorlalți participanți, nu folosiți traducerea mesajelor ori a textului introdus în acele camere. Puteți utiliza în schimb un model lingvistic găzduit de dumneavoastră, pentru care controlați prelucrarea și stocarea datelor.",
     "translateInput": "Traduceți intrarea",
+    "messageBubbleGradient": "Gradientul bulei mesajului",
     "about": "Despre",
     "@about": {
         "type": "String",

@@ -97,6 +97,7 @@
     "inputTranslationTriggerDoubleTap": "Snabbt dubbeltryck inmatningsfält",
     "translationPrivacyDetails": "När du översätter meddelanden eller inmatad text skickas de texter som ska översättas i klartext till din valda externa LLM-leverantör, även i ändpunktskrypterade chattar. Inmatad text kan även skickas till leverantören innan du skickar meddelandet. Chattkrypteringen skyddar inte denna kopia hos översättningstjänsten; leverantören kan läsa innehållet, och lagring och användning av data beror på leverantörens integritetspolicy.\n\nOm samtalet innehåller konfidentiella uppgifter eller du inte litar på att leverantören respekterar din och andra deltagares integritet, använd inte meddelande- eller inmatningsöversättning i dessa rum. Du kan i stället använda en språkmodell som du själv driftar och kontrollerar databehandling och lagring för.",
     "translateInput": "Översätt input",
+    "messageBubbleGradient": "Meddelandebubblans färgövergång",
     "about": "Om",
     "@about": {
         "type": "String",

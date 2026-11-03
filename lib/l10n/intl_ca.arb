@@ -97,6 +97,7 @@
     "inputTranslationTriggerDoubleTap": "Camp d'entrada ràpid de doble toc",
     "translationPrivacyDetails": "Quan feu servir la traducció de missatges o del text introduït, els missatges i textos que es tradueixen s’envien sense xifrar al proveïdor extern de LLM que trieu, fins i tot en xats amb xifratge d’extrem a extrem. La traducció del text introduït també pot enviar al proveïdor text encara no enviat, abans d’enviar el missatge. El xifratge del xat no protegeix aquesta còpia enviada al servei de traducció; el proveïdor en pot llegir el contingut, i l’emmagatzematge i l’ús de les dades depenen de la seva política de privadesa.\n\nSi la conversa conté informació confidencial o no confieu que el proveïdor respecti la vostra privadesa i la dels altres participants, no feu servir la traducció de missatges ni del text introduït en aquestes sales. També podeu fer servir un model de llenguatge autoallotjat del qual controleu el processament i l’emmagatzematge de dades.",
     "translateInput": "Tradueix l'entrada",
+    "messageBubbleGradient": "Degradat de la bombolla de missatge",
     "about": "Quant a",
     "@about": {
         "type": "String",

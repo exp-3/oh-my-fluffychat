@@ -96,6 +96,7 @@
     "inputTranslationTriggerDoubleTap": "Mabilis na i-double-tap ang input field",
     "translationPrivacyDetails": "Kapag ginagamit ang pagsasalin ng mensahe o tekstong inilalagay, ipinapadala nang hindi naka-encrypt sa napiling panlabas na LLM provider ang mga mensahe at tekstong isinasalin, kahit sa mga chat na may end-to-end encryption. Maaari ring ipadala ng pagsasalin ng input ang tekstong hindi pa naipapadala bago mo ipadala ang mensahe. Hindi pinoprotektahan ng encryption ng chat ang kopyang ito na ipinadala sa serbisyo ng pagsasalin; mababasa ng provider ang nilalaman, at nakadepende sa patakaran nito sa privacy ang pag-iimbak at paggamit ng data.\n\nKung may kumpidensiyal na impormasyon ang usapan, o hindi ka nagtitiwalang igagalang ng provider ang privacy mo at ng ibang kalahok, huwag gumamit ng pagsasalin ng mensahe o input sa mga silid na iyon. Maaari ka ring gumamit ng sarili mong naka-host na language model na kontrolado mo ang pagproseso at pag-iimbak ng data.",
     "translateInput": "Isalin ang input",
+    "messageBubbleGradient": "Gradient ng bubble ng mensahe",
     "remove": "Tanggalin",
     "@remove": {
         "type": "String",

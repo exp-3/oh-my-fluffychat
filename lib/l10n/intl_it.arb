@@ -97,6 +97,7 @@
     "inputTranslationTriggerDoubleTap": "Campo di immissione rapido con doppio tocco",
     "translationPrivacyDetails": "Quando usi la traduzione dei messaggi o del testo inserito, i messaggi e i testi da tradurre vengono inviati in chiaro al fornitore esterno di LLM scelto, anche nelle chat con crittografia end-to-end. La traduzione del testo inserito può anche trasmettere il testo al fornitore prima dell’invio del messaggio. La crittografia della chat non protegge questa copia inviata al servizio di traduzione; il fornitore può leggerne il contenuto e la conservazione e l’utilizzo dei dati dipendono dalla sua informativa sulla privacy.\n\nSe la conversazione contiene informazioni riservate o non ti fidi che il fornitore rispetti la tua privacy e quella degli altri partecipanti, non usare la traduzione dei messaggi o del testo inserito in quelle stanze. In alternativa, usa un modello linguistico ospitato da te, di cui controlli l’elaborazione e la conservazione dei dati.",
     "translateInput": "Traduci l'input",
+    "messageBubbleGradient": "Sfumatura del fumetto del messaggio",
     "about": "Informazioni",
     "@about": {
         "type": "String",

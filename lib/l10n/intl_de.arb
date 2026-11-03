@@ -98,6 +98,7 @@
     "inputTranslationTriggerDoubleTap": "Schnelles Doppeltippen auf das Eingabefeld",
     "translationPrivacyDetails": "Bei der Nachrichten- oder Eingabeübersetzung werden die zu übersetzenden Chatnachrichten und Eingabetexte im Klartext an den von Ihnen gewählten externen LLM-Anbieter gesendet, auch in Ende-zu-Ende-verschlüsselten Chats. Die Eingabeübersetzung kann Texte bereits an den Anbieter senden, bevor Sie die Nachricht abschicken. Die Chatverschlüsselung schützt diese an den Übersetzungsdienst gesendete Kopie nicht; der Anbieter kann ihren Inhalt lesen. Wie die Daten gespeichert und verwendet werden, hängt von seiner Datenschutzerklärung ab.\n\nWenn das Gespräch vertrauliche Informationen enthält oder Sie dem Anbieter nicht zutrauen, Ihre Privatsphäre und die anderer Beteiligter zu respektieren, verwenden Sie in diesen Räumen weder Nachrichten- noch Eingabeübersetzung. Alternativ können Sie ein selbst gehostetes Sprachmodell verwenden, dessen Datenverarbeitung und Speicherung Sie kontrollieren.",
     "translateInput": "Eingabe übersetzen",
+    "messageBubbleGradient": "Farbverlauf der Nachrichtenblase",
     "about": "Über",
     "@about": {
         "type": "String",

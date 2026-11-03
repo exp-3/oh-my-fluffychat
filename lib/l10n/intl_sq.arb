@@ -94,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Fusha e hyrjes me prekje të shpejtë dy herë",
     "translationPrivacyDetails": "Kur përdorni përkthimin e mesazheve ose të tekstit të shkruar, mesazhet dhe tekstet që përkthehen i dërgohen të pakriptuara ofruesit të jashtëm LLM që zgjidhni, edhe në biseda me kriptim skaj më skaj. Përkthimi i tekstit të shkruar mund t’i dërgojë ofruesit edhe tekst të padërguar, përpara se të dërgoni mesazhin. Kriptimi i bisedës nuk e mbron këtë kopje teksti të dërguar te shërbimi i përkthimit; ofruesi mund ta lexojë përmbajtjen, dhe ruajtja e përdorimi i të dhënave varen nga politika e tij e privatësisë.\n\nNëse biseda përmban informacion konfidencial, ose nuk i besoni ofruesit se do të respektojë privatësinë tuaj dhe të pjesëmarrësve të tjerë, mos përdorni përkthimin e mesazheve apo të tekstit të shkruar në ato dhoma. Përndryshe, përdorni një model gjuhësor të strehuar nga ju, për të cilin kontrolloni përpunimin dhe ruajtjen e të dhënave.",
     "translateInput": "Përkthe hyrjen",
+    "messageBubbleGradient": "Gradienti i flluskës së mesazhit",
     "@showPassword": {
         "type": "String",
         "placeholders": {}

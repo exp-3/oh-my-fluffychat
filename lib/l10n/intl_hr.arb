@@ -96,6 +96,7 @@
     "inputTranslationTriggerDoubleTap": "Brzi dvostruki dodir na polje za unos",
     "translationPrivacyDetails": "Pri prevođenju poruka ili unesenog teksta, poruke i tekst u polju za unos koji se prevode šalju se nešifrirano odabranom vanjskom pružatelju LLM-a, čak i u razgovorima s enkripcijom s kraja na kraj. Prijevod unosa može pružatelju poslati i još neposlani tekst prije nego što pošaljete poruku. Enkripcija razgovora ne štiti ovu kopiju teksta poslanu prevoditeljskoj usluzi; pružatelj može pročitati njezin sadržaj, a pohrana i uporaba podataka ovise o njegovim pravilima privatnosti.\n\nAko razgovor sadrži povjerljive podatke ili ne vjerujete da će pružatelj poštovati vašu privatnost i privatnost ostalih sudionika, u tim sobama nemojte koristiti prijevod poruka ni unosa. Umjesto toga možete koristiti jezični model koji sami hostate i čiju obradu i pohranu podataka nadzirete.",
     "translateInput": "Prevedi unos",
+    "messageBubbleGradient": "Gradijent oblačića poruke",
     "about": "Informacije",
     "@about": {
         "type": "String",

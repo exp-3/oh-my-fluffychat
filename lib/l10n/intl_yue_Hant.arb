@@ -97,6 +97,7 @@
     "inputTranslationTriggerDoubleTap": "快速撳兩下輸入框",
     "translationPrivacyDetails": "使用訊息翻譯或者輸入翻譯時，需要翻譯嘅聊天訊息同輸入框文字會以明文傳送畀您指定嘅外部大型語言模型供應商，即使係端對端加密聊天都一樣。輸入翻譯亦可能喺您傳送訊息之前，將未傳送嘅文字交畀供應商處理。聊天加密唔會保護傳送畀翻譯服務嘅呢份文字；供應商可以讀取內容，點樣儲存同使用呢啲資料就取決於佢哋嘅私隱政策。\n\n如果聊天內容涉及機密，或者您唔信任供應商會尊重您同其他聊天參與者嘅私隱，請唔好喺相關房間使用訊息翻譯或者輸入翻譯。您亦可以改用自行部署、由您控制資料處理同儲存嘅語言模型。",
     "translateInput": "翻譯輸入內容",
+    "messageBubbleGradient": "訊息氣泡漸變色",
     "areYouSureYouWantToLogout": "係咪確定要 log out？",
     "@areYouSureYouWantToLogout": {
         "type": "String",

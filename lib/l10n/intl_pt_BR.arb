@@ -97,6 +97,7 @@
     "inputTranslationTriggerDoubleTap": "Campo de entrada rápido de toque duplo",
     "translationPrivacyDetails": "Ao usar a tradução de mensagens ou do texto digitado, as mensagens e os textos a traduzir são enviados sem criptografia ao provedor externo de LLM que você escolher, mesmo em conversas com criptografia de ponta a ponta. A tradução do texto digitado também pode enviar texto ao provedor antes de você enviar a mensagem. A criptografia da conversa não protege essa cópia enviada ao serviço de tradução; o provedor pode ler seu conteúdo, e o armazenamento e o uso dos dados dependem da política de privacidade dele.\n\nSe a conversa contiver informações confidenciais, ou se você não confiar que o provedor respeite sua privacidade e a dos outros participantes, não use a tradução de mensagens nem do texto digitado nessas salas. Como alternativa, use um modelo de linguagem hospedado por você, cujo processamento e armazenamento de dados você controla.",
     "translateInput": "Traduzir entrada",
+    "messageBubbleGradient": "Gradiente do balão de mensagem",
     "about": "Sobre",
     "@about": {
         "type": "String",

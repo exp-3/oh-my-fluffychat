@@ -97,6 +97,7 @@
     "inputTranslationTriggerDoubleTap": "Nhấn đúp vào trường nhập nhanh",
     "translationPrivacyDetails": "Khi dùng tính năng dịch tin nhắn hoặc văn bản nhập, các tin nhắn và văn bản cần dịch được gửi dưới dạng không mã hóa đến nhà cung cấp LLM bên ngoài mà bạn chọn, ngay cả trong cuộc trò chuyện được mã hóa đầu cuối. Tính năng dịch văn bản nhập cũng có thể gửi văn bản chưa gửi đến nhà cung cấp trước khi bạn gửi tin nhắn. Mã hóa trò chuyện không bảo vệ bản sao văn bản được gửi đến dịch vụ dịch này; nhà cung cấp có thể đọc nội dung, còn việc lưu trữ và sử dụng dữ liệu phụ thuộc vào chính sách quyền riêng tư của họ.\n\nNếu cuộc trò chuyện chứa thông tin bí mật hoặc bạn không tin rằng nhà cung cấp sẽ tôn trọng quyền riêng tư của bạn và những người tham gia khác, đừng dùng tính năng dịch tin nhắn hoặc văn bản nhập trong các phòng đó. Bạn cũng có thể dùng mô hình ngôn ngữ tự triển khai mà bạn kiểm soát việc xử lý và lưu trữ dữ liệu.",
     "translateInput": "Dịch đầu vào",
+    "messageBubbleGradient": "Màu chuyển tiếp bong bóng tin nhắn",
     "about": "Giới thiệu",
     "@about": {
         "type": "String",

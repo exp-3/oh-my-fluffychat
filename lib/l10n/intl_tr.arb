@@ -98,6 +98,7 @@
     "inputTranslationTriggerDoubleTap": "Hızlı çift dokunuşla giriş alanı",
     "translationPrivacyDetails": "Mesaj veya giriş metni çevirisini kullandığınızda, çevrilecek sohbet mesajları ve giriş alanındaki metin, uçtan uca şifreli sohbetlerde bile seçtiğiniz harici LLM sağlayıcısına şifrelenmemiş olarak gönderilir. Giriş çevirisi, siz mesajı göndermeden önce henüz gönderilmemiş metni de sağlayıcıya iletebilir. Sohbet şifrelemesi, çeviri hizmetine gönderilen bu metin kopyasını korumaz; sağlayıcı içeriğini okuyabilir ve verilerin saklanması ile kullanımı gizlilik politikasına bağlıdır.\n\nSohbet gizli bilgiler içeriyorsa veya sağlayıcının sizin ve diğer katılımcıların gizliliğine saygı duyacağına güvenmiyorsanız, ilgili odalarda mesaj veya giriş çevirisini kullanmayın. Alternatif olarak, veri işleme ve depolamasını kontrol ettiğiniz, kendi sunucunuzda barındırılan bir dil modeli kullanabilirsiniz.",
     "translateInput": "Çeviri girişi",
+    "messageBubbleGradient": "Mesaj balonu gradyanı",
     "about": "Hakkında",
     "@about": {
         "type": "String",

@@ -8,6 +8,7 @@
     "translationStyleBackground": "Arca fundi",
     "translationStyleDuotone": "Duo toni",
     "translationStyleOutsideBubble": "Extra bullam",
+    "messageBubbleGradient": "Gradatio colorum bullae nuntii",
     "importFromZipFile": "A tabulario zip importare",
     "editImage": "Pictura exercere",
     "@editImage": {

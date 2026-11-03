@@ -94,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Polje za vnos s hitrim dvojnim dotikom",
     "translationPrivacyDetails": "Pri prevajanju sporočil ali vnesenega besedila se sporočila in besedilo v vnosnem polju, ki se prevajajo, pošljejo nešifrirano izbranemu zunanjemu ponudniku LLM, tudi v klepetih s šifriranjem od konca do konca. Prevajanje vnosa lahko ponudniku pošlje še neposlano besedilo, preden pošljete sporočilo. Šifriranje klepeta ne zaščiti te kopije besedila, poslane prevajalski storitvi; ponudnik lahko prebere njeno vsebino, shranjevanje in uporaba podatkov pa sta odvisna od njegovega pravilnika o zasebnosti.\n\nČe pogovor vsebuje zaupne podatke ali ne zaupate, da bo ponudnik spoštoval vašo zasebnost in zasebnost drugih udeležencev, v teh sobah ne uporabljajte prevajanja sporočil ali vnosa. Namesto tega lahko uporabite jezikovni model, ki ga gostite sami in nadzirate njegovo obdelavo in shranjevanje podatkov.",
     "translateInput": "Prevedi vnos",
+    "messageBubbleGradient": "Barvni preliv oblačka sporočila",
     "repeatPassword": "Ponovite geslo",
     "about": "O aplikaciji",
     "@about": {

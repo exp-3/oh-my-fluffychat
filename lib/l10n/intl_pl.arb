@@ -98,6 +98,7 @@
     "inputTranslationTriggerDoubleTap": "Szybkie dwukrotne dotknięcie pola wprowadzania",
     "translationPrivacyDetails": "Podczas tłumaczenia wiadomości lub wpisywanego tekstu tłumaczone wiadomości i tekst z pola wpisywania są wysyłane jawnym tekstem do wybranego zewnętrznego dostawcy LLM, nawet w czatach z szyfrowaniem end-to-end. Tłumaczenie wpisywanego tekstu może również przekazać dostawcy niewysłany tekst, zanim wyślesz wiadomość. Szyfrowanie czatu nie chroni tej kopii tekstu przesłanej usłudze tłumaczenia; dostawca może odczytać jej treść, a przechowywanie i wykorzystanie danych zależą od jego polityki prywatności.\n\nJeśli rozmowa zawiera poufne informacje lub nie ufasz, że dostawca uszanuje prywatność Twoją i innych uczestników, nie używaj tłumaczenia wiadomości ani wpisywanego tekstu w tych pokojach. Możesz zamiast tego używać samodzielnie hostowanego modelu językowego, którego przetwarzanie i przechowywanie danych kontrolujesz.",
     "translateInput": "Przetłumacz dane wejściowe",
+    "messageBubbleGradient": "Gradient dymku wiadomości",
     "about": "O",
     "@about": {
         "type": "String",

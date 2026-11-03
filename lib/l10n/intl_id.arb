@@ -97,6 +97,7 @@
     "inputTranslationTriggerDoubleTap": "Ketuk dua kali bidang masukan dengan cepat",
     "translationPrivacyDetails": "Saat menggunakan terjemahan pesan atau teks masukan, pesan percakapan dan teks yang diterjemahkan dikirim tanpa enkripsi ke penyedia LLM eksternal yang Anda pilih, bahkan dalam percakapan terenkripsi ujung ke ujung. Terjemahan masukan juga dapat mengirim teks ke penyedia sebelum Anda mengirim pesannya. Enkripsi percakapan tidak melindungi salinan teks yang dikirim ke layanan terjemahan ini; penyedia dapat membaca isinya, dan penyimpanan serta penggunaan data bergantung pada kebijakan privasinya.\n\nJika percakapan berisi informasi rahasia, atau Anda tidak percaya penyedia akan menghormati privasi Anda dan peserta lain, jangan gunakan terjemahan pesan atau masukan di ruang tersebut. Anda juga dapat menggunakan model bahasa yang dihosting sendiri, dengan pemrosesan dan penyimpanan data yang Anda kendalikan.",
     "translateInput": "Terjemahkan masukan",
+    "messageBubbleGradient": "Gradien gelembung pesan",
     "setAsCanonicalAlias": "Atur sebagai alias utama",
     "@setAsCanonicalAlias": {
         "type": "String",

@@ -98,6 +98,7 @@
     "inputTranslationTriggerDoubleTap": "Campo de entrada rápida de doble toque",
     "translationPrivacyDetails": "Al traducir mensajes o texto de entrada, los mensajes y textos que se traducen se envían sin cifrar al proveedor externo de LLM que elija, incluso en chats con cifrado de extremo a extremo. La traducción del texto de entrada también puede enviar texto al proveedor antes de que envíe el mensaje. El cifrado del chat no protege esta copia enviada al servicio de traducción; el proveedor puede leer su contenido, y el almacenamiento y uso de los datos dependen de su política de privacidad.\n\nSi la conversación contiene información confidencial o no confía en que el proveedor respete su privacidad y la de los demás participantes, no use la traducción de mensajes ni de texto de entrada en esas salas. Como alternativa, use un modelo de lenguaje autoalojado cuyo procesamiento y almacenamiento de datos controle.",
     "translateInput": "Traducir entrada",
+    "messageBubbleGradient": "Degradado de la burbuja de mensaje",
     "about": "Acerca de",
     "@about": {
         "type": "String",

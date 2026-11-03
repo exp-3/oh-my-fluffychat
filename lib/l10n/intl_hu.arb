@@ -98,6 +98,7 @@
     "inputTranslationTriggerDoubleTap": "Gyors dupla koppintás beviteli mező",
     "translationPrivacyDetails": "Üzenet- vagy bevitelfordítás használatakor a lefordítandó üzeneteket és a beviteli mező szövegét titkosítatlanul küldjük el a kiválasztott külső LLM-szolgáltatónak, végpontok között titkosított beszélgetésekben is. A bevitelfordítás az üzenet elküldése előtt a még el nem küldött szöveget is továbbíthatja a szolgáltatónak. A beszélgetés titkosítása nem védi a fordítási szolgáltatásnak elküldött szövegmásolatot; a szolgáltató elolvashatja a tartalmát, az adatok tárolása és használata pedig az adatvédelmi szabályzatától függ.\n\nHa a beszélgetés bizalmas információt tartalmaz, vagy nem bízik abban, hogy a szolgáltató tiszteletben tartja az Ön és a többi résztvevő magánszféráját, ne használjon üzenet- vagy bevitelfordítást ezekben a szobákban. Ehelyett saját üzemeltetésű nyelvi modellt is használhat, amelynek adatfeldolgozását és tárolását Ön ellenőrzi.",
     "translateInput": "Bemenet fordítása",
+    "messageBubbleGradient": "Üzenetbuborék színátmenete",
     "about": "Névjegy",
     "@about": {
         "type": "String",

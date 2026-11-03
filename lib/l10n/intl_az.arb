@@ -94,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Tez daxiletmə sahəsinə iki dəfə toxunun",
     "translationPrivacyDetails": "Mesaj və ya daxiletmə tərcüməsindən istifadə etdikdə, tərcümə ediləcək söhbət mesajları və daxiletmə sahəsindəki mətn, hətta başdan-başa şifrələnmiş söhbətlərdə də seçdiyiniz xarici LLM provayderinə şifrələnmədən göndərilir. Daxiletmə tərcüməsi mesajı göndərməzdən əvvəl hələ göndərilməmiş mətni də provayderə ötürə bilər. Söhbətin şifrələnməsi tərcümə xidmətinə göndərilən bu mətn nüsxəsini qorumur; provayder onun məzmununu oxuya bilər və məlumatların saxlanması və istifadəsi onun məxfilik siyasətindən asılıdır.\n\nSöhbətdə məxfi məlumat varsa və ya provayderin sizin və digər iştirakçıların məxfiliyinə hörmət edəcəyinə inanmırsınızsa, həmin otaqlarda mesaj və ya daxiletmə tərcüməsindən istifadə etməyin. Əvəzində, məlumatların emalını və saxlanmasını özünüz idarə etdiyiniz, öz serverinizdə yerləşdirilən dil modelindən istifadə edə bilərsiniz.",
     "translateInput": "Daxiletməni tərcümə edin",
+    "messageBubbleGradient": "Mesaj qabarcığı qradiyenti",
     "repeatPassword": "Şifrəni təkrarlayın",
     "notAnImage": "Şəkil faylı deyil.",
     "remove": "çıxarın",

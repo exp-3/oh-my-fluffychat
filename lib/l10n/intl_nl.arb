@@ -97,6 +97,7 @@
     "inputTranslationTriggerDoubleTap": "Snel dubbeltikinvoerveld",
     "translationPrivacyDetails": "Bij het vertalen van berichten of invoertekst worden de te vertalen chatberichten en teksten onversleuteld naar de gekozen externe LLM-aanbieder gestuurd, ook in end-to-end versleutelde chats. Invoertekst kan al naar de aanbieder worden gestuurd voordat u het bericht verstuurt. De chatversleuteling beschermt deze kopie voor de vertaaldienst niet; de aanbieder kan de inhoud lezen. Hoe de gegevens worden opgeslagen en gebruikt, hangt af van diens privacybeleid.\n\nAls het gesprek vertrouwelijke informatie bevat, of als u er niet op vertrouwt dat de aanbieder uw privacy en die van andere deelnemers respecteert, gebruik dan geen bericht- of invoervertaling in die kamers. U kunt ook een zelfgehost taalmodel gebruiken waarvan u de gegevensverwerking en opslag beheert.",
     "translateInput": "Vertaal invoer",
+    "messageBubbleGradient": "Kleurverloop van de tekstballon",
     "about": "Over ons",
     "@about": {
         "type": "String",

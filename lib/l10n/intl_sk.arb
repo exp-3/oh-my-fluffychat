@@ -98,6 +98,7 @@
     "inputTranslationTriggerDoubleTap": "Rýchle dvojité ťuknutie na vstupné pole",
     "translationPrivacyDetails": "Pri preklade správ alebo zadávaného textu sa prekladané správy a text vstupného poľa odosielajú nešifrovane zvolenému externému poskytovateľovi LLM, aj v chatoch s koncovým šifrovaním. Preklad vstupu môže poskytovateľovi odoslať aj dosiaľ neodoslaný text ešte pred odoslaním správy. Šifrovanie chatu nechráni túto kópiu textu odoslanú prekladovej službe; poskytovateľ si môže prečítať jej obsah a ukladanie a použitie údajov závisia od jeho zásad ochrany súkromia.\n\nAk konverzácia obsahuje dôverné informácie alebo neveríte, že poskytovateľ bude rešpektovať vaše súkromie aj súkromie ostatných účastníkov, nepoužívajte v týchto miestnostiach preklad správ ani vstupu. Namiesto toho môžete použiť jazykový model prevádzkovaný na vlastnej infraštruktúre, pri ktorom máte spracovanie a ukladanie údajov pod kontrolou.",
     "translateInput": "Preložiť vstup",
+    "messageBubbleGradient": "Farebný prechod bubliny správy",
     "about": "O aplikácii",
     "@about": {
         "type": "String",

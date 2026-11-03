@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -27,6 +27,10 @@ class SettingsStyleController extends State<SettingsStyle> {
       color?.toARGB32() ?? AppSettings.colorSchemeSeedInt.defaultValue,
     );
     ThemeController.of(context).setPrimaryColor(color);
+  }
+
+  Future<void> setMessageBubbleGradient(bool enabled) async {
+    await AppSettings.messageBubbleGradient.setItem(enabled);
   }
 
   Future<void> setWallpaper() async {

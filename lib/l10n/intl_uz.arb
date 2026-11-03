@@ -94,6 +94,7 @@
     "inputTranslationTriggerDoubleTap": "Tezkor kiritish maydoniga ikki marta teging",
     "translationPrivacyDetails": "Xabar yoki kiritilgan matn tarjimasidan foydalanganda, tarjima qilinadigan chat xabarlari va kiritish maydonidagi matn siz tanlagan tashqi LLM provayderiga shifrlanmagan holda yuboriladi, hatto uchdan uchgacha shifrlangan chatlarda ham. Kiritilgan matn tarjimasi xabarni yuborishingizdan oldin hali yuborilmagan matnni ham provayderga uzatishi mumkin. Chat shifrlashi tarjima xizmatiga yuborilgan ushbu matn nusxasini himoya qilmaydi; provayder mazmunini o‘qiy oladi, ma’lumotlarni saqlash va ishlatish esa uning maxfiylik siyosatiga bog‘liq.\n\nAgar suhbatda maxfiy ma’lumotlar bo‘lsa yoki provayder siz va boshqa ishtirokchilarning maxfiyligini hurmat qilishiga ishonmasangiz, shu xonalarda xabar yoki kiritilgan matn tarjimasidan foydalanmang. Buning o‘rniga ma’lumotlarni qayta ishlash va saqlashni o‘zingiz nazorat qiladigan, o‘z serveringizda joylashtirilgan til modelidan foydalanishingiz mumkin.",
     "translateInput": "Tarjima kiritish",
+    "messageBubbleGradient": "Xabar pufagining gradienti",
     "repeatPassword": "Parolni takrorlang",
     "notAnImage": "Rasm fayli emas.",
     "remove": "O‘chirish",

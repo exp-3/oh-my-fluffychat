@@ -96,6 +96,7 @@
     "inputTranslationTriggerDoubleTap": "Toca dúas veces o campo de entrada rápido",
     "translationPrivacyDetails": "Ao usar a tradución de mensaxes ou do texto introducido, as mensaxes e textos que se traducen envíanse sen cifrar ao provedor externo de LLM que escolla, mesmo nos chats con cifrado de extremo a extremo. A tradución do texto introducido tamén pode enviarlle ao provedor texto aínda non enviado, antes de enviar a mensaxe. O cifrado do chat non protexe esta copia enviada ao servizo de tradución; o provedor pode ler o seu contido e o almacenamento e uso dos datos dependen da súa política de privacidade.\n\nSe a conversa contén información confidencial ou non confía en que o provedor respecte a súa privacidade e a das outras persoas participantes, non use a tradución de mensaxes nin do texto introducido nesas salas. Tamén pode usar un modelo de linguaxe aloxado por vostede, do que controle o procesamento e o almacenamento de datos.",
     "translateInput": "Traducir entrada",
+    "messageBubbleGradient": "Degradado da burbulla da mensaxe",
     "about": "Acerca de",
     "@about": {
         "type": "String",
