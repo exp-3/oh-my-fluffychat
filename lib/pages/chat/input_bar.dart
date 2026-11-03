@@ -10,6 +10,7 @@ import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/chat/trust_user_key_dialog.dart';
+import 'package:fluffychat/utils/image_send_preparation.dart';
 import 'package:fluffychat/utils/markdown_context_builder.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/mxc_image.dart';
@@ -443,12 +444,19 @@ class InputBar extends StatelessWidget {
                 final data = content.data;
                 if (data == null) return;
 
-                final file = MatrixFile(
+                final file = MatrixFile.fromMimeType(
                   mimeType: content.mimeType,
                   bytes: data,
                   name: content.uri.split('/').last,
                 );
-                room.sendFileEvent(file, shrinkImageMaxDimension: 1600);
+                final prepared = await ImageSendPreparation.instance.prepare(
+                  file,
+                  compress: AppSettings.compressImagesByDefault.value,
+                );
+                await room.sendFileEvent(
+                  prepared.file,
+                  thumbnail: prepared.thumbnail,
+                );
               },
             ),
             minLines: minLines,

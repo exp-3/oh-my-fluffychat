@@ -15,6 +15,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'settings_chat.dart';
+import 'settings_image_sending.dart';
 
 class SettingsChatView extends StatelessWidget {
   final SettingsChatController controller;
@@ -134,6 +135,8 @@ class SettingsChatView extends StatelessWidget {
                     }
                   },
                 ),
+              Divider(color: theme.dividerColor),
+              const SettingsImageSending(),
               Divider(color: theme.dividerColor),
               ListTile(
                 title: Text(

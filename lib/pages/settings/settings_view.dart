@@ -228,14 +228,6 @@ class SettingsView extends StatelessWidget {
                   : null,
             ),
             ListTile(
-              leading: const Icon(Icons.translate_outlined),
-              title: Text(L10n.of(context).translation),
-              onTap: () => context.go('/rooms/settings/translation'),
-              tileColor: activeRoute.startsWith('/rooms/settings/translation')
-                  ? theme.colorScheme.surfaceContainerHigh
-                  : null,
-            ),
-            ListTile(
               leading: const Icon(Icons.shield_outlined),
               title: Text(L10n.of(context).security),
               onTap: () => context.go('/rooms/settings/security'),
@@ -243,7 +235,26 @@ class SettingsView extends StatelessWidget {
                   ? theme.colorScheme.surfaceContainerHigh
                   : null,
             ),
+            ListTile(
+              leading: const Icon(Icons.translate_outlined),
+              title: Text(L10n.of(context).translation),
+              onTap: () => context.go('/rooms/settings/translation'),
+              tileColor: activeRoute.startsWith('/rooms/settings/translation')
+                  ? theme.colorScheme.surfaceContainerHigh
+                  : null,
+            ),
             Divider(color: theme.dividerColor),
+            ListTile(
+              leading: const Icon(Icons.privacy_tip_outlined),
+              title: Text(L10n.of(context).privacy),
+              trailing: const Icon(Icons.open_in_new_outlined),
+              onTap: () => launchUrlString(AppSettings.privacyPolicy.value),
+            ),
+            ListTile(
+              leading: const Icon(Icons.info_outline_rounded),
+              title: Text(L10n.of(context).about),
+              onTap: () => PlatformInfos.showDialog(context),
+            ),
             ListTile(
               leading: const Icon(Icons.dns_outlined),
               title: Text(
@@ -255,17 +266,6 @@ class SettingsView extends StatelessWidget {
               tileColor: activeRoute.startsWith('/rooms/settings/homeserver')
                   ? theme.colorScheme.surfaceContainerHigh
                   : null,
-            ),
-            ListTile(
-              leading: const Icon(Icons.privacy_tip_outlined),
-              title: Text(L10n.of(context).privacy),
-              trailing: const Icon(Icons.open_in_new_outlined),
-              onTap: () => launchUrlString(AppSettings.privacyPolicy.value),
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outline_rounded),
-              title: Text(L10n.of(context).about),
-              onTap: () => PlatformInfos.showDialog(context),
             ),
             ListTile(
               leading: const Icon(Icons.favorite, color: Colors.red),

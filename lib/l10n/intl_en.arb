@@ -2968,5 +2968,16 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "compressImagesWhenSending": "Compress images when sending",
+    "compressVideosWhenSending": "Compress videos when sending",
+    "compressImagesByDefault": "Use compression by default",
+    "imageFormatPolicy": "When to allow image format changes",
+    "preserveImageFormat": "Always use the original format",
+    "convertLegacyImageFormats": "When the image format is outdated",
+    "alwaysUsePreferredImageFormat": "Always use the preferred format",
+    "preferredImageFormat": "Preferred image format",
+    "imageMaxDimension": "Maximum image dimension",
+    "imageMaxDimensionDescription": "Maximum length of the longest edge. Smaller images are not enlarged.",
+    "imageDimensionPixels": "px"
 }

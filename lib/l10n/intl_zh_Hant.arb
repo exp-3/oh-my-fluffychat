@@ -2529,5 +2529,16 @@
     "startScreensharing": "開始分享螢幕",
     "stopScreensharing": "停止分享螢幕",
     "raiseHand": "舉手",
-    "stopRaiseHand": "放下手"
+    "stopRaiseHand": "放下手",
+    "compressImagesWhenSending": "傳送圖片時壓縮",
+    "compressVideosWhenSending": "傳送影片時壓縮",
+    "compressImagesByDefault": "預設使用壓縮",
+    "imageFormatPolicy": "何時允許變更圖片格式",
+    "preserveImageFormat": "始終使用原格式",
+    "convertLegacyImageFormats": "圖片格式過舊時",
+    "alwaysUsePreferredImageFormat": "始終使用偏好的格式",
+    "preferredImageFormat": "偏好的格式",
+    "imageMaxDimension": "最大尺寸",
+    "imageMaxDimensionDescription": "圖片最長邊的像素上限，較小的圖片不會放大。",
+    "imageDimensionPixels": "像素"
 }

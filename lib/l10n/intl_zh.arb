@@ -2959,5 +2959,16 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "compressImagesWhenSending": "发送图片时压缩",
+    "compressVideosWhenSending": "发送视频时压缩",
+    "compressImagesByDefault": "默认使用压缩",
+    "imageFormatPolicy": "何时允许改变图片格式",
+    "preserveImageFormat": "始终使用原格式",
+    "convertLegacyImageFormats": "图片格式过旧时",
+    "alwaysUsePreferredImageFormat": "始终使用偏好的格式",
+    "preferredImageFormat": "偏好的格式",
+    "imageMaxDimension": "最大尺寸",
+    "imageMaxDimensionDescription": "图片最长边的像素上限，较小的图片不会放大。",
+    "imageDimensionPixels": "像素"
 }
