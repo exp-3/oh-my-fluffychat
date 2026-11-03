@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import 'package:async/async.dart';
+import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/fluffy_share.dart';
@@ -244,6 +245,17 @@ class SettingsView extends StatelessWidget {
             ),
             Divider(color: theme.dividerColor),
             ListTile(
+              leading: const Icon(Icons.privacy_tip_outlined),
+              title: Text(L10n.of(context).privacy),
+              trailing: const Icon(Icons.open_in_new_outlined),
+              onTap: () => launchUrlString(AppSettings.privacyPolicy.value),
+            ),
+            ListTile(
+              leading: const Icon(Icons.info_outline_rounded),
+              title: Text(L10n.of(context).about),
+              onTap: () => PlatformInfos.showDialog(context),
+            ),
+            ListTile(
               leading: const Icon(Icons.dns_outlined),
               title: Text(
                 L10n.of(context).aboutHomeserver(
@@ -256,14 +268,10 @@ class SettingsView extends StatelessWidget {
                   : null,
             ),
             ListTile(
-              leading: const Icon(Icons.privacy_tip_outlined),
-              title: Text(L10n.of(context).privacy),
-              onTap: () => launchUrlString(AppSettings.privacyPolicy.value),
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outline_rounded),
-              title: Text(L10n.of(context).about),
-              onTap: () => PlatformInfos.showDialog(context),
+              leading: const Icon(Icons.favorite, color: Colors.red),
+              title: Text(L10n.of(context).supportFluffyChat),
+              trailing: const Icon(Icons.open_in_new_outlined),
+              onTap: () => launchUrlString(AppConfig.helpUrl),
             ),
             Divider(color: theme.dividerColor),
             ListTile(

@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -10,7 +10,6 @@ import 'package:fluffychat/widgets/matrix.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:matrix/matrix.dart' hide Result;
-import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../utils/fluffy_share.dart';
 import 'chat_list.dart';
@@ -78,16 +77,6 @@ class ClientChooserButton extends StatelessWidget {
             const Icon(Icons.settings_outlined),
             const SizedBox(width: 18),
             Text(L10n.of(context).settings),
-          ],
-        ),
-      ),
-      PopupMenuItem(
-        value: SettingsAction.support,
-        child: Row(
-          children: [
-            Icon(Icons.favorite, color: Colors.red),
-            const SizedBox(width: 18),
-            Text(L10n.of(context).supportFluffyChat),
           ],
         ),
       ),
@@ -211,11 +200,6 @@ class ClientChooserButton extends StatelessWidget {
         case SettingsAction.invite:
           FluffyShare.shareInviteLink(context);
           break;
-        case SettingsAction.support:
-          launchUrlString(
-            'https://ko-fi.com/post/How-can-I-support-FluffyChat-J2G325WE6I',
-          );
-          break;
         case SettingsAction.settings:
           context.go('/rooms/settings');
           break;
@@ -235,7 +219,6 @@ enum SettingsAction {
   newGroup,
   setStatus,
   invite,
-  support,
   settings,
   archive,
 }
