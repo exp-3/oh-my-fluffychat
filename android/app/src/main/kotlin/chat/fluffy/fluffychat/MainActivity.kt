@@ -1,4 +1,4 @@
-package chat.fluffy.fluffychat
+package chat.fluffy.myfluffychat
 
 import io.flutter.embedding.android.FlutterFragment
 import io.flutter.embedding.android.FlutterFragmentActivity

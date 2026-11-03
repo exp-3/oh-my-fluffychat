@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -101,13 +101,6 @@ abstract class UpdateNotifier {
           barrierDismissible: true,
           context: context,
           builder: (context) => AlertDialog(
-            title: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 256),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(AppConfig.borderRadius / 2),
-                child: Image.asset('assets/logo/mini/banner.png'),
-              ),
-            ),
             content: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 256),
               child: Column(
