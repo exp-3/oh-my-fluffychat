@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -110,7 +110,7 @@ int _serialFromHead(Uint8List data) =>
 
 /// Number of 48 kHz samples in an Opus packet, see RFC 6716 section 3.1.
 int _opusPacketSamples(Uint8List packet) {
-  final toc = packet[0];
+  final toc = packet.first;
   final config = toc >> 3;
   final int frameSize;
   if (config < 12) {
