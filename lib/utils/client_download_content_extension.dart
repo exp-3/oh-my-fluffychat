@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -8,6 +8,8 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:matrix/matrix.dart';
+
+import 'compatible_memory_image.dart';
 
 extension ClientDownloadContentExtension on Client {
   Future<Uint8List> downloadMxcCached(
@@ -72,7 +74,7 @@ Future<Uint8List> _convertToCircularImage(
   Uint8List imageBytes,
   int size,
 ) async {
-  final codec = await instantiateImageCodec(imageBytes);
+  final codec = await instantiateImageCodecWithFallback(imageBytes);
   final frame = await codec.getNextFrame();
   final originalImage = frame.image;
 

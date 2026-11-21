@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -10,6 +10,7 @@ import 'package:collection/collection.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/settings_emotes/settings_emotes.dart';
 import 'package:fluffychat/utils/client_manager.dart';
+import 'package:fluffychat/utils/compatible_memory_image.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/services.dart';
@@ -259,8 +260,8 @@ class _EmojiImportPreviewState extends State<_EmojiImportPreview> {
               mainAxisAlignment: .center,
               crossAxisAlignment: .center,
               children: [
-                Image.memory(
-                  widget.entry.key.content,
+                Image(
+                  image: CompatibleMemoryImage(widget.entry.key.content),
                   height: 64,
                   width: 64,
                   errorBuilder: (context, e, s) {

@@ -3,6 +3,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -11,10 +12,13 @@ import 'package:crop_image/crop_image.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/chat/image_edit_geometry.dart';
 import 'package:fluffychat/pages/chat/trust_user_key_dialog.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
+import 'package:fluffychat/utils/compatible_memory_image.dart';
+import 'package:fluffychat/utils/image_send_options.dart';
+import 'package:fluffychat/utils/image_send_preparation.dart';
 import 'package:fluffychat/utils/other_party_can_receive.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/utils/show_scaffold_dialog.dart';
@@ -49,9 +53,10 @@ class SendFileDialog extends StatefulWidget {
 }
 
 class SendFileDialogState extends State<SendFileDialog> {
-  bool compress = true;
+  late bool compressImages = AppSettings.compressImagesByDefault.value;
+  bool compressVideos = true;
 
-  /// Images smaller than 20kb don't need compression.
+  /// Videos smaller than 20kb don't need compression.
   static const int minSizeToCompress = 20 * 1000;
 
   final TextEditingController _labelTextController = TextEditingController();
@@ -62,6 +67,42 @@ class SendFileDialogState extends State<SendFileDialog> {
   /// all reflect the edit result (always PNG). Keeping bytes + mimetype in one
   /// object avoids drift between the preview, the upload and the extension.
   late final List<XFile> _files = List<XFile>.of(widget.files);
+  final _detectedImageTypes = <XFile, String>{};
+
+  @override
+  void initState() {
+    super.initState();
+    _resolveImageTypes();
+  }
+
+  String? _mimeTypeOf(XFile file) =>
+      _detectedImageTypes[file] ?? file.mimeType ?? lookupMimeType(file.name);
+
+  Future<void> _resolveImageTypes() async {
+    var changed = false;
+    for (final file in _files) {
+      if (file.mimeType?.isNotEmpty == true &&
+          file.mimeType != 'application/octet-stream') {
+        continue;
+      }
+      try {
+        // Read only the signature, including for unnamed clipboard images.
+        final end = min(await file.length(), defaultMagicNumbersMaxLength);
+        final header = await file
+            .openRead(0, end)
+            .expand((chunk) => chunk)
+            .toList();
+        final mimeType = lookupMimeType(file.name, headerBytes: header);
+        if (mimeType != null && mimeType.startsWith('image/')) {
+          _detectedImageTypes[file] = mimeType;
+          changed = true;
+        }
+      } catch (error, stackTrace) {
+        Logs().w('Unable to identify image type', error, stackTrace);
+      }
+    }
+    if (mounted && changed) setState(() {});
+  }
 
   Future<void> _editImage(int index) async {
     if (_sending) return;
@@ -136,6 +177,7 @@ class SendFileDialogState extends State<SendFileDialog> {
       }
     }
 
+    final imageOptions = ImageSendOptions.fromSettings();
     // Fix the accepted caption before upload; retries must reuse this result.
     final labelToSend = label;
 
@@ -162,9 +204,9 @@ class SendFileDialogState extends State<SendFileDialog> {
 
       for (var i = 0; i < _files.length; i++) {
         final xfile = _files[i];
-        final MatrixFile file;
+        MatrixFile file;
         MatrixImageFile? thumbnail;
-        final mimeType = xfile.mimeType ?? lookupMimeType(xfile.path);
+        final mimeType = _mimeTypeOf(xfile);
 
         // Generate video thumbnail
         if (PlatformInfos.isMobile &&
@@ -182,7 +224,8 @@ class SendFileDialogState extends State<SendFileDialog> {
           scaffoldMessenger.clearSnackBars();
           scaffoldMessenger.showLoadingSnackBar(l10n.compressingVideo);
           file = await xfile.getVideoInfo(
-            compress: length != null && length > minSizeToCompress && compress,
+            compress:
+                length != null && length > minSizeToCompress && compressVideos,
           );
           scaffoldMessenger.clearSnackBars();
           if (!ForegroundServices.platformSupported) {
@@ -192,11 +235,18 @@ class SendFileDialogState extends State<SendFileDialog> {
           }
         } else {
           // Else we just create a MatrixFile
-          file = MatrixFile(
+          file = MatrixFile.fromMimeType(
             bytes: await _files[i].readAsBytes(),
             name: xfile.name,
             mimeType: mimeType,
-          ).detectFileType;
+          );
+          final prepared = await ImageSendPreparation.instance.prepare(
+            file,
+            compress: compressImages,
+            options: imageOptions,
+          );
+          file = prepared.file;
+          thumbnail = prepared.thumbnail;
         }
 
         if (file.bytes.length > maxUploadSize) {
@@ -207,7 +257,6 @@ class SendFileDialogState extends State<SendFileDialog> {
           await widget.room.sendFileEvent(
             file,
             thumbnail: thumbnail,
-            shrinkImageMaxDimension: compress ? 1600 : null,
             extraContent: labelToSend.isEmpty ? null : {'body': labelToSend},
             threadRootEventId: widget.threadRootEventId,
             threadLastEventId: widget.threadLastEventId,
@@ -226,7 +275,6 @@ class SendFileDialogState extends State<SendFileDialog> {
           await widget.room.sendFileEvent(
             file,
             thumbnail: thumbnail,
-            shrinkImageMaxDimension: compress ? 1600 : null,
             extraContent: labelToSend.isEmpty ? null : {'body': labelToSend},
             threadRootEventId: widget.threadRootEventId,
             threadLastEventId: widget.threadLastEventId,
@@ -261,7 +309,7 @@ class SendFileDialogState extends State<SendFileDialog> {
 
     var sendStr = L10n.of(context).sendFile;
     final uniqueFileType = _files
-        .map((file) => file.mimeType ?? lookupMimeType(file.name))
+        .map(_mimeTypeOf)
         .map((mimeType) => mimeType?.split('/').first)
         .toSet()
         .singleOrNull;
@@ -287,8 +335,10 @@ class SendFileDialogState extends State<SendFileDialog> {
       sendStr = L10n.of(context).sendVideo;
     }
 
-    final compressionSupported =
-        uniqueFileType != 'video' || PlatformInfos.isMobile;
+    final mediaTypes = _files
+        .map(_mimeTypeOf)
+        .map((mime) => mime?.split('/').first)
+        .toSet();
 
     return FutureBuilder<String>(
       future: _calcCombinedFileSize(),
@@ -352,8 +402,8 @@ class SendFileDialogState extends State<SendFileDialog> {
                                             ),
                                           );
                                         }
-                                        return Image.memory(
-                                          bytes,
+                                        return Image(
+                                          image: CompatibleMemoryImage(bytes),
                                           height: 256,
                                           width: _files.length == 1
                                               ? 256 - 36
@@ -457,58 +507,29 @@ class SendFileDialogState extends State<SendFileDialog> {
                         counterText: '',
                       ),
                     ),
-                  // Workaround for SwitchListTile.adaptive crashes in CupertinoDialog
-                  if ({'image', 'video'}.contains(uniqueFileType))
-                    Row(
-                      crossAxisAlignment: .center,
-                      children: [
-                        if ({
-                          TargetPlatform.iOS,
-                          TargetPlatform.macOS,
-                        }.contains(theme.platform))
-                          CupertinoSwitch(
-                            value: compressionSupported && compress,
-                            onChanged: !_sending && compressionSupported
-                                ? (v) => setState(() => compress = v)
-                                : null,
-                          )
-                        else
-                          Switch.adaptive(
-                            value: compressionSupported && compress,
-                            onChanged: !_sending && compressionSupported
-                                ? (v) => setState(() => compress = v)
-                                : null,
-                          ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            mainAxisSize: .min,
-                            crossAxisAlignment: .start,
-                            children: [
-                              Row(
-                                mainAxisSize: .min,
-                                children: [
-                                  Text(
-                                    L10n.of(context).compress,
-                                    style: theme.textTheme.titleMedium,
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              ),
-                              if (!compress)
-                                Text(
-                                  ' ($sizeString)',
-                                  style: theme.textTheme.labelSmall,
-                                ),
-                              if (!compressionSupported)
-                                Text(
-                                  L10n.of(context).notSupportedOnThisDevice,
-                                  style: theme.textTheme.labelSmall,
-                                ),
-                            ],
-                          ),
-                        ),
-                      ],
+                  if (mediaTypes.contains('image'))
+                    _CompressionSwitch(
+                      title: uniqueFileType == 'image'
+                          ? L10n.of(context).compress
+                          : L10n.of(context).compressImagesWhenSending,
+                      value: compressImages,
+                      enabled: true,
+                      sizeString: sizeString,
+                      onChanged: _sending
+                          ? null
+                          : (value) => setState(() => compressImages = value),
+                    ),
+                  if (mediaTypes.contains('video') && PlatformInfos.isMobile)
+                    _CompressionSwitch(
+                      title: uniqueFileType == 'video'
+                          ? L10n.of(context).compress
+                          : L10n.of(context).compressVideosWhenSending,
+                      value: compressVideos,
+                      enabled: true,
+                      sizeString: sizeString,
+                      onChanged: _sending
+                          ? null
+                          : (value) => setState(() => compressVideos = value),
                     ),
                 ],
               ),
@@ -543,6 +564,58 @@ class SendFileDialogState extends State<SendFileDialog> {
 }
 
 enum _EditMode { crop, draw }
+
+// Cupertino dialogs cannot contain SwitchListTile.adaptive.
+class _CompressionSwitch extends StatelessWidget {
+  final String title;
+  final bool value, enabled;
+  final String sizeString;
+  final ValueChanged<bool>? onChanged;
+
+  const _CompressionSwitch({
+    required this.title,
+    required this.value,
+    required this.enabled,
+    required this.sizeString,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        if ({TargetPlatform.iOS, TargetPlatform.macOS}.contains(theme.platform))
+          CupertinoSwitch(
+            value: enabled && value,
+            onChanged: enabled ? onChanged : null,
+          )
+        else
+          Switch.adaptive(
+            value: enabled && value,
+            onChanged: enabled ? onChanged : null,
+          ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: theme.textTheme.titleMedium),
+              if (!value)
+                Text(' ($sizeString)', style: theme.textTheme.labelSmall),
+              if (!enabled)
+                Text(
+                  L10n.of(context).notSupportedOnThisDevice,
+                  style: theme.textTheme.labelSmall,
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 /// The crop (a normalized rectangle held by [CropController]), the rotation
 /// (quarter turns) and the drawn strokes are only composited into a single
@@ -619,13 +692,17 @@ class _ImageEditPageState extends State<_ImageEditPage> {
 
   Future<void> _decode() async {
     try {
-      final codec = await ui.instantiateImageCodec(widget.bytes);
-      final frame = await codec.getNextFrame();
-      if (!mounted) {
-        frame.image.dispose();
-        return;
+      final codec = await instantiateImageCodecWithFallback(widget.bytes);
+      try {
+        final frame = await codec.getNextFrame();
+        if (!mounted) {
+          frame.image.dispose();
+          return;
+        }
+        setState(() => _image = frame.image);
+      } finally {
+        codec.dispose();
       }
-      setState(() => _image = frame.image);
     } catch (e, s) {
       Logs().w('Unable to decode image for editing', e, s);
       if (mounted) setState(() => _decodeError = e);
@@ -846,7 +923,9 @@ class _ImageEditPageState extends State<_ImageEditPage> {
                                 // its Image widget disposes the underlying
                                 // ui.Image — which would be our [_image],
                                 // breaking draw mode and save.
-                                image: Image.memory(widget.bytes),
+                                image: Image(
+                                  image: CompatibleMemoryImage(widget.bytes),
+                                ),
                                 overlayPainter: _strokes.isEmpty
                                     ? null
                                     : _StrokePainter(

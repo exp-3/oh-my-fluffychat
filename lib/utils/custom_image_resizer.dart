@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
-
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:matrix/matrix.dart';
 import 'package:native_imaging/native_imaging.dart' as native;
+
+import 'compatible_memory_image.dart';
 
 (int, int) _scaleToBox(int width, int height, {required int boxSize}) {
   final fit = applyBoxFit(
@@ -35,7 +35,7 @@ Future<MatrixImageFileResizedResponse?> customImageResizer(
 
   try {
     // for the other platforms
-    final dartCodec = await instantiateImageCodec(arguments.bytes);
+    final dartCodec = await instantiateImageCodecWithFallback(arguments.bytes);
     final frameCount = dartCodec.frameCount;
     final dartFrame = await dartCodec.getNextFrame();
     final rgbaData = await dartFrame.image.toByteData();

@@ -98,6 +98,16 @@
     "translationPrivacyDetails": "使用訊息翻譯或輸入翻譯時，需要翻譯的聊天訊息和輸入框文字會以明文傳送給您指定的外部大型語言模型供應商，即使是在端對端加密聊天中。輸入翻譯也可能在您傳送訊息之前，將尚未傳送的文字交給供應商處理。聊天加密不會保護傳送給翻譯服務的這份文字；供應商可以讀取其內容，如何儲存和使用這些資料取決於其隱私政策。\n\n如果聊天內容涉及機密，或您不信任供應商會尊重您和其他聊天參與者的隱私，請不要在相關房間使用訊息翻譯或輸入翻譯。您也可以改用自行部署、由您控制資料處理和儲存的語言模型。",
     "translateInput": "翻譯輸入內容",
     "messageBubbleGradient": "訊息氣泡漸變",
+    "compressImagesWhenSending": "傳送圖片時壓縮",
+    "compressImagesByDefault": "預設使用壓縮",
+    "imageFormatPolicy": "何時允許變更圖片格式",
+    "preserveImageFormat": "始終使用原格式",
+    "convertLegacyImageFormats": "圖片格式過舊時",
+    "alwaysUsePreferredImageFormat": "始終使用偏好的格式",
+    "preferredImageFormat": "偏好的格式",
+    "imageMaxDimension": "最大尺寸",
+    "imageMaxDimensionDescription": "圖片最長邊的像素上限，較小的圖片不會放大。",
+    "imageDimensionPixels": "像素",
     "about": "關於",
     "@about": {
         "type": "String",
@@ -2531,5 +2541,6 @@
     "startScreensharing": "開始分享螢幕",
     "stopScreensharing": "停止分享螢幕",
     "raiseHand": "舉手",
-    "stopRaiseHand": "放下手"
+    "stopRaiseHand": "放下手",
+    "compressVideosWhenSending": "傳送影片時壓縮"
 }

@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -15,6 +15,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'settings_chat.dart';
+import 'settings_image_sending.dart';
 
 class SettingsChatView extends StatelessWidget {
   final SettingsChatController controller;
@@ -134,6 +135,8 @@ class SettingsChatView extends StatelessWidget {
                     }
                   },
                 ),
+              Divider(color: theme.dividerColor),
+              const SettingsImageSending(),
               Divider(color: theme.dividerColor),
               ListTile(
                 title: Text(

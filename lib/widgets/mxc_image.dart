@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -11,6 +11,7 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/utils/client_download_content_extension.dart';
+import 'package:fluffychat/utils/compatible_memory_image.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:lottie/lottie.dart';
@@ -194,8 +195,8 @@ class _MxcImageState extends State<MxcImage> {
                   fit: widget.fit,
                   errorBuilder: errorFallback,
                 )
-              : Image.memory(
-                  data,
+              : Image(
+                  image: CompatibleMemoryImage(data),
                   width: widget.width,
                   height: widget.height,
                   fit: widget.fit,

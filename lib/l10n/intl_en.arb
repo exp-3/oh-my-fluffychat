@@ -119,6 +119,16 @@
     "translationPrivacyDetails": "When you use message translation or input translation, the chat messages and input text being translated are sent in plaintext to the external LLM provider you specify, even in end-to-end encrypted chats. Input translation may also send text to the provider before you send the message. Chat encryption does not protect this copy of the text sent to the translation service; the provider can read its contents, and how the data is stored and used depends on its privacy policy.\n\nIf the conversation contains confidential information, or you do not trust the provider to respect your privacy and that of other participants, do not use message translation or input translation in those rooms. Alternatively, use a self-hosted language model whose data processing and storage you control.",
     "translateInput": "Translate input",
     "messageBubbleGradient": "Message bubble gradient",
+    "compressImagesWhenSending": "Compress images when sending",
+    "compressImagesByDefault": "Use compression by default",
+    "imageFormatPolicy": "When to allow image format changes",
+    "preserveImageFormat": "Always use the original format",
+    "convertLegacyImageFormats": "When the image format is outdated",
+    "alwaysUsePreferredImageFormat": "Always use the preferred format",
+    "preferredImageFormat": "Preferred image format",
+    "imageMaxDimension": "Maximum image dimension",
+    "imageMaxDimensionDescription": "Maximum length of the longest edge. Smaller images are not enlarged.",
+    "imageDimensionPixels": "px",
     "editImage": "Edit image",
     "@editImage": {
         "type": "String",
@@ -2971,6 +2981,7 @@
             }
         }
     },
+    "compressVideosWhenSending": "Compress videos when sending",
     "senderMessage": "{sender}: {message}",
     "@senderMessage": {
         "placeholders": {

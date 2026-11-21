@@ -1,11 +1,12 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/new_group/new_group.dart';
+import 'package:fluffychat/utils/compatible_memory_image.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
@@ -66,8 +67,8 @@ class NewGroupView extends StatelessWidget {
                     ? const Icon(Icons.add_a_photo_outlined)
                     : ClipRRect(
                         borderRadius: BorderRadius.circular(90),
-                        child: Image.memory(
-                          avatar,
+                        child: Image(
+                          image: CompatibleMemoryImage(avatar),
                           width: Avatar.defaultSize * 2,
                           height: Avatar.defaultSize * 2,
                           fit: BoxFit.cover,
