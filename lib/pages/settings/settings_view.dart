@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -231,6 +231,14 @@ class SettingsView extends StatelessWidget {
               title: Text(L10n.of(context).security),
               onTap: () => context.go('/rooms/settings/security'),
               tileColor: activeRoute.startsWith('/rooms/settings/security')
+                  ? theme.colorScheme.surfaceContainerHigh
+                  : null,
+            ),
+            ListTile(
+              leading: const Icon(Icons.translate_outlined),
+              title: Text(L10n.of(context).translation),
+              onTap: () => context.go('/rooms/settings/translation'),
+              tileColor: activeRoute.startsWith('/rooms/settings/translation')
                   ? theme.colorScheme.surfaceContainerHigh
                   : null,
             ),

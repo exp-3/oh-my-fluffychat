@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -10,14 +10,13 @@ import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/utils/file_description.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/event_extension.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
 import 'package:fluffychat/widgets/blur_hash.dart';
 import 'package:fluffychat/widgets/mxc_image.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../image_viewer/image_viewer.dart';
+import 'file_caption.dart';
 
 class EventVideoPlayer extends StatelessWidget {
   final Event event;
@@ -45,6 +44,7 @@ class EventVideoPlayer extends StatelessWidget {
         ) ??
         fallbackBlurHash;
     final fileDescription = event.fileDescription;
+    final textColor = this.textColor;
     const maxDimension = 300.0;
     final infoMap = event.content.tryGetMap<String, Object?>('info');
     final videoWidth = infoMap?.tryGet<int>('w') ?? maxDimension;
@@ -137,24 +137,13 @@ class EventVideoPlayer extends StatelessWidget {
         if (fileDescription != null && textColor != null && linkColor != null)
           SizedBox(
             width: width,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Linkify(
-                text: fileDescription,
-                textScaleFactor: MediaQuery.textScalerOf(context).scale(1),
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: AppConfig.messageFontSize,
-                ),
-                options: const LinkifyOptions(humanize: false),
-                linkStyle: TextStyle(
-                  color: linkColor,
-                  fontSize: AppConfig.messageFontSize,
-                  decoration: TextDecoration.underline,
-                  decorationColor: linkColor,
-                ),
-                onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
-              ),
+            child: FileCaption(
+              event: event,
+              description: fileDescription,
+              textColor: textColor,
+              linkColor: linkColor,
+              fontSize: AppConfig.messageFontSize,
+              timeline: timeline,
             ),
           ),
       ],

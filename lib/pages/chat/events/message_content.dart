@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -16,6 +16,7 @@ import 'package:matrix/matrix.dart';
 import '../../../config/app_config.dart';
 import '../../../utils/event_checkbox_extension.dart';
 import '../../../utils/platform_infos.dart';
+import '../../../utils/translation/translation_runtime.dart';
 import '../../../utils/url_launcher.dart';
 import 'audio_player.dart';
 import 'cute_events.dart';
@@ -23,6 +24,7 @@ import 'html_message.dart';
 import 'image_bubble.dart';
 import 'map_bubble.dart';
 import 'message_download_content.dart';
+import 'translated_message.dart';
 
 class MessageContent extends StatelessWidget {
   final Event event;
@@ -47,7 +49,12 @@ class MessageContent extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: TranslationRuntime.instance,
+    builder: (context, _) => _buildContent(context),
+  );
+
+  Widget _buildContent(BuildContext context) {
     const fontSize = AppConfig.messageFontSize;
     final buttonTextColor = textColor;
     switch (event.type) {
@@ -90,6 +97,7 @@ class MessageContent extends StatelessWidget {
               borderRadius: borderRadius,
               timeline: timeline,
               textColor: textColor,
+              linkColor: linkColor,
               onTap: () => showDialog(
                 context: context,
                 builder: (_) => ImageViewer(
@@ -111,12 +119,14 @@ class MessageContent extends StatelessWidget {
                 color: textColor,
                 linkColor: linkColor,
                 fontSize: fontSize,
+                timeline: timeline,
               );
             }
             return MessageDownloadContent(
               event,
               textColor: textColor,
               linkColor: linkColor,
+              timeline: timeline,
             );
           case MessageTypes.Video:
             return EventVideoPlayer(
@@ -130,6 +140,7 @@ class MessageContent extends StatelessWidget {
               event,
               textColor: textColor,
               linkColor: linkColor,
+              timeline: timeline,
             );
           case MessageTypes.Location:
             final geoUri = Uri.tryParse(
@@ -178,26 +189,46 @@ class MessageContent extends StatelessWidget {
             final bigEmotes =
                 !event.isRichMessage && bigEmojis.contains(event.body);
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: HtmlMessage(
-                html: html,
-                textColor: textColor,
-                room: event.room,
-                fontSize: AppConfig.messageFontSize * (bigEmotes ? 5 : 1),
-                linkStyle: TextStyle(
-                  color: linkColor,
-                  fontSize: AppConfig.messageFontSize,
-                  decoration: TextDecoration.underline,
-                  decorationColor: linkColor,
+            if (!TranslationRuntime.instance.enabled ||
+                !(const {
+                  MessageTypes.Text,
+                  MessageTypes.Notice,
+                  MessageTypes.Emote,
+                }.contains(event.messageType)) ||
+                event.body.trim().isEmpty) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
                 ),
-                onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
-                eventId: event.eventId,
-                checkboxCheckedEvents: event.aggregatedEvents(
-                  timeline,
-                  EventCheckboxRoomExtension.relationshipType,
+                child: HtmlMessage(
+                  html: html,
+                  textColor: textColor,
+                  room: event.room,
+                  fontSize: AppConfig.messageFontSize * (bigEmotes ? 5 : 1),
+                  linkStyle: TextStyle(
+                    color: linkColor,
+                    fontSize: AppConfig.messageFontSize,
+                    decoration: TextDecoration.underline,
+                    decorationColor: linkColor,
+                  ),
+                  onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
+                  eventId: event.eventId,
+                  checkboxCheckedEvents: event.aggregatedEvents(
+                    timeline,
+                    EventCheckboxRoomExtension.relationshipType,
+                  ),
                 ),
-              ),
+              );
+            }
+
+            return TranslatedMessage(
+              event: event,
+              originalHtml: html,
+              textColor: textColor,
+              linkColor: linkColor,
+              originalFontSize: AppConfig.messageFontSize * (bigEmotes ? 5 : 1),
+              timeline: timeline,
             );
         }
       case PollEventContent.startType:

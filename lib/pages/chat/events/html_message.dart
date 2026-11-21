@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -26,6 +26,7 @@ class HtmlMessage extends StatelessWidget {
   final String html;
   final Room room;
   final Color textColor;
+  final List<Shadow>? textShadows;
   final double fontSize;
   final TextStyle linkStyle;
   final void Function(LinkableElement) onOpen;
@@ -39,6 +40,7 @@ class HtmlMessage extends StatelessWidget {
     required this.fontSize,
     required this.linkStyle,
     this.textColor = Colors.black,
+    this.textShadows,
     required this.onOpen,
     this.eventId,
     this.checkboxCheckedEvents,
@@ -590,7 +592,11 @@ class HtmlMessage extends StatelessWidget {
     final configuredMaxLines = AppSettings.messagePreviewMaxLines.value;
     final maxLines = configuredMaxLines <= 0 ? null : configuredMaxLines;
     final span = _renderHtml(element, context);
-    final style = TextStyle(fontSize: fontSize, color: textColor);
+    final style = TextStyle(
+      fontSize: fontSize,
+      color: textColor,
+      shadows: textShadows,
+    );
 
     if (maxLines == null) {
       return Text.rich(

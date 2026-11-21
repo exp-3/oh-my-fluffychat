@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -32,6 +32,7 @@ import 'package:fluffychat/pages/settings_notifications/settings_notifications.d
 import 'package:fluffychat/pages/settings_password/settings_password.dart';
 import 'package:fluffychat/pages/settings_security/settings_security.dart';
 import 'package:fluffychat/pages/settings_style/settings_style.dart';
+import 'package:fluffychat/pages/settings_translation/settings_translation.dart';
 import 'package:fluffychat/pages/sign_in/sign_in_page.dart';
 import 'package:fluffychat/widgets/config_viewer.dart';
 import 'package:fluffychat/widgets/layouts/empty_page.dart';
@@ -246,6 +247,27 @@ abstract class AppRoutes {
                         state,
                         const SettingsStyle(),
                       ),
+                      redirect: loggedOutRedirect,
+                    ),
+                    GoRoute(
+                      path: 'translation',
+                      pageBuilder: (context, state) => defaultPageBuilder(
+                        context,
+                        state,
+                        const SettingsTranslation(),
+                      ),
+                      routes: [
+                        GoRoute(
+                          path: 'provider',
+                          pageBuilder: (context, state) => defaultPageBuilder(
+                            context,
+                            state,
+                            SettingsTranslationProvider(
+                              providerId: state.uri.queryParameters['id'],
+                            ),
+                          ),
+                        ),
+                      ],
                       redirect: loggedOutRedirect,
                     ),
                     GoRoute(

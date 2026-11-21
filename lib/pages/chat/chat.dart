@@ -31,6 +31,7 @@ import 'package:fluffychat/utils/ogg_opus_remuxer.dart';
 import 'package:fluffychat/utils/other_party_can_receive.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/utils/show_scaffold_dialog.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
@@ -276,6 +277,11 @@ class ChatController extends State<ChatPageWithRoom>
     );
     if (!mounted) return;
     if (success.error != null) return;
+    await TranslationRuntime.instance.invalidateRoomUnlessLocallyReferenced(
+      room.id,
+      excludingClient: room.client,
+    );
+    if (!mounted) return;
     context.go('/rooms');
   }
 
@@ -727,6 +733,8 @@ class ChatController extends State<ChatPageWithRoom>
 
   TextEditingController sendController = TextEditingController();
 
+  bool inputTranslationInProgress = false;
+
   void setSendingClient(Client c) {
     // first cancel typing with the old sending client
     if (currentlyTyping) {
@@ -753,16 +761,22 @@ class ChatController extends State<ChatPageWithRoom>
     Matrix.of(context).setActiveClient(c);
   });
 
-  Future<void> send() async {
+  Future<void> send({bool? translate}) async {
+    final runtime = TranslationRuntime.instance;
+    if (runtime.enabled && inputTranslationInProgress) return;
+    final inputSnapshot = sendController.text;
+    if (inputSnapshot.trim().isEmpty) return;
+    final sendRevision = runtime.revision;
+    final translateOnSend = runtime.shouldTranslateInputOnSend(
+      room,
+      requested: translate,
+    );
     final proceed = await showTrustUserInRoomDialog(context, room);
     if (!mounted || !proceed) return;
-    if (sendController.text.trim().isEmpty) return;
-    _storeInputTimeoutTimer?.cancel();
-    final prefs = Matrix.of(context).store;
-    prefs.remove('draft_$roomId');
+    if (sendController.text != inputSnapshot) return;
     var parseCommands = true;
 
-    final commandMatch = RegExp(r'^\/(\w+)').firstMatch(sendController.text);
+    final commandMatch = RegExp(r'^\/(\w+)').firstMatch(inputSnapshot);
     if (commandMatch != null &&
         !sendingClient.commands.keys.contains(commandMatch[1]!.toLowerCase())) {
       final l10n = L10n.of(context);
@@ -776,6 +790,42 @@ class ChatController extends State<ChatPageWithRoom>
       if (dialogResult == OkCancelResult.cancel) return;
       parseCommands = false;
     }
+    if (!mounted || sendController.text != inputSnapshot) return;
+    if (translateOnSend &&
+        runtime.revision != sendRevision &&
+        runtime.enabled) {
+      return;
+    }
+
+    var textToSend = inputSnapshot;
+    final translateRequested =
+        translateOnSend &&
+        runtime.shouldAutoTranslateInput(room) &&
+        !inputSnapshot.startsWith('/');
+    if (translateRequested) {
+      // A translated send is an explicit action. If the room or provider is
+      // no longer eligible, do not silently send the source text instead.
+      if (!runtime.shouldAutoTranslateInput(room)) return;
+      setState(() => inputTranslationInProgress = true);
+      try {
+        textToSend = await runtime.translateInputText(room, inputSnapshot);
+        if (!mounted ||
+            sendController.text != inputSnapshot ||
+            runtime.revision != sendRevision ||
+            !runtime.shouldAutoTranslateInput(room)) {
+          return;
+        }
+      } catch (_) {
+        if (mounted && runtime.enabled) _showInputTranslationFailure();
+        return;
+      } finally {
+        if (mounted) setState(() => inputTranslationInProgress = false);
+      }
+    }
+
+    _storeInputTimeoutTimer?.cancel();
+    final prefs = Matrix.of(context).store;
+    prefs.remove('draft_$roomId');
 
     if (currentlyTyping) {
       typingCoolDown?.cancel();
@@ -785,7 +835,7 @@ class ChatController extends State<ChatPageWithRoom>
 
     // ignore: unawaited_futures
     room.sendTextEvent(
-      sendController.text,
+      textToSend,
       inReplyTo: replyEvent,
       editEventId: editEvent?.eventId,
       parseCommands: parseCommands,
@@ -803,6 +853,48 @@ class ChatController extends State<ChatPageWithRoom>
       editEvent = null;
       pendingText = '';
     });
+  }
+
+  Future<void> translateInputManually({
+    bool requireCollapsedSelection = false,
+  }) async {
+    final runtime = TranslationRuntime.instance;
+    if (inputTranslationInProgress ||
+        !runtime.canManuallyTranslateInput(room)) {
+      return;
+    }
+    final selection = sendController.selection;
+    if (requireCollapsedSelection &&
+        selection.isValid &&
+        !selection.isCollapsed) {
+      return;
+    }
+    final inputSnapshot = sendController.text;
+    if (inputSnapshot.trim().isEmpty) return;
+    setState(() => inputTranslationInProgress = true);
+    try {
+      final translation = await runtime.translateInputText(room, inputSnapshot);
+      if (!mounted ||
+          !runtime.enabled ||
+          sendController.text != inputSnapshot) {
+        return;
+      }
+      sendController.value = TextEditingValue(
+        text: translation,
+        selection: TextSelection.collapsed(offset: translation.length),
+      );
+      onInputBarChanged(translation, handleClientPrefix: false);
+    } catch (_) {
+      if (mounted && runtime.enabled) _showInputTranslationFailure();
+    } finally {
+      if (mounted) setState(() => inputTranslationInProgress = false);
+    }
+  }
+
+  void _showInputTranslationFailure() {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(L10n.of(context).translationFailed)));
   }
 
   Future<void> sendFileAction({FileType type = FileType.any}) async {
@@ -1086,6 +1178,53 @@ class ChatController extends State<ChatPageWithRoom>
       showEmojiPicker = false;
       selectedEvents.clear();
     });
+  }
+
+  Future<void> translateSelectedEventsAction() async {
+    final runtime = TranslationRuntime.instance;
+    final currentTimeline = timeline;
+    if (currentTimeline == null) return;
+    final events = selectedEvents
+        .map((event) {
+          final displayed = event.getDisplayEvent(currentTimeline);
+          runtime.observeDisplayEvent(event, displayed);
+          return displayed;
+        })
+        .where(runtime.canTranslateEvent)
+        .toList(growable: false);
+    if (!runtime.enabled || events.isEmpty) return;
+    if (!runtime.privacyAccepted) {
+      final result = await showOkCancelAlertDialog(
+        context: context,
+        title: L10n.of(context).translation,
+        message: L10n.of(context).translationPrivacyNotice,
+        okLabel: L10n.of(context).ok,
+        cancelLabel: L10n.of(context).cancel,
+      );
+      if (result != OkCancelResult.ok) return;
+      await runtime.acceptPrivacyNotice();
+    }
+    // Snapshot every selection before starting any task: shared updates from
+    // an earlier selection must not turn the same click into a refresh.
+    final requests = [
+      for (final event in events)
+        (
+          event: event,
+          force: runtime.stateForEvent(event).value.translation != null,
+        ),
+    ];
+    clearSelectedEvents();
+    for (final request in requests) {
+      unawaited(
+        runtime
+            .translateEvent(
+              request.event,
+              manual: true,
+              forceRefresh: request.force,
+            )
+            .catchError((_) => null),
+      );
+    }
   }
 
   Future<void> reportEventAction() async {
@@ -1472,7 +1611,16 @@ class ChatController extends State<ChatPageWithRoom>
     if (!mounted) return;
     context.go('/rooms/${result.result!}');
 
-    await showFutureLoadingDialog(context: context, future: room.leave);
+    final leaveResult = await showFutureLoadingDialog(
+      context: context,
+      future: room.leave,
+    );
+    if (leaveResult.error == null) {
+      await TranslationRuntime.instance.invalidateRoomUnlessLocallyReferenced(
+        room.id,
+        excludingClient: room.client,
+      );
+    }
   }
 
   void onSelectMessage(Event event) {
@@ -1597,7 +1745,7 @@ class ChatController extends State<ChatPageWithRoom>
     }
   }
 
-  void onInputBarChanged(String text) {
+  void onInputBarChanged(String text, {bool handleClientPrefix = true}) {
     if (_inputTextIsEmpty != text.isEmpty) {
       setState(() {
         _inputTextIsEmpty = text.isEmpty;
@@ -1609,7 +1757,9 @@ class ChatController extends State<ChatPageWithRoom>
       final prefs = Matrix.of(context).store;
       await prefs.setString('draft_$roomId', text);
     });
-    if (text.endsWith(' ') && Matrix.of(context).hasComplexBundles) {
+    if (handleClientPrefix &&
+        text.endsWith(' ') &&
+        Matrix.of(context).hasComplexBundles) {
       final clients = currentRoomBundle;
       for (final client in clients) {
         final prefix = client!.sendPrefix;

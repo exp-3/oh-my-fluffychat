@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -23,12 +23,14 @@ import 'package:material_ui/material_ui.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../config/app_config.dart';
+import '../../../utils/translation/translation_runtime.dart';
 import '../sticker_picker_dialog.dart';
 import 'message_content.dart';
 import 'message_reactions.dart';
 import 'reply_content.dart';
 import 'state_message.dart';
 import 'swipe_to_reply.dart';
+import 'translated_message.dart';
 
 class Message extends StatelessWidget {
   final Event event;
@@ -143,6 +145,7 @@ class Message extends StatelessWidget {
         : MainAxisAlignment.start;
 
     final displayEvent = event.getDisplayEvent(timeline);
+    TranslationRuntime.instance.observeDisplayEvent(event, displayEvent);
     const hardCorner = Radius.circular(3);
     const roundedCorner = Radius.circular(AppConfig.borderRadius);
     final borderRadius = BorderRadius.only(
@@ -546,6 +549,32 @@ class Message extends StatelessWidget {
                               ),
                             ),
 
+                            GestureDetector(
+                              onLongPress: longPressSelect
+                                  ? null
+                                  : () {
+                                      HapticFeedback.heavyImpact();
+                                      onSelect(event);
+                                    },
+                              child: AnimatedBuilder(
+                                animation: TranslationRuntime.instance,
+                                builder: (context, _) {
+                                  final runtime = TranslationRuntime.instance;
+                                  if (!runtime.enabled) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  runtime.observeDisplayEvent(
+                                    event,
+                                    displayEvent,
+                                  );
+                                  return OutsideBubbleTranslation(
+                                    event: displayEvent,
+                                    timeline: timeline,
+                                    textShadows: wallpaperTextShadow,
+                                  );
+                                },
+                              ),
+                            ),
                             AnimatedSize(
                               duration: FluffyThemes.animationDuration,
                               curve: FluffyThemes.animationCurve,

@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -20,6 +20,7 @@ import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/utils/show_scaffold_dialog.dart';
 import 'package:fluffychat/utils/size_string.dart';
 import 'package:fluffychat/utils/start_push_foreground_service.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/dialog_text_field.dart';
 import 'package:material_ui/material_ui.dart';
@@ -54,6 +55,7 @@ class SendFileDialogState extends State<SendFileDialog> {
   static const int minSizeToCompress = 20 * 1000;
 
   final TextEditingController _labelTextController = TextEditingController();
+  bool _sending = false;
 
   /// Mutable working copy of [SendFileDialog.files]. Editing an image replaces
   /// its entry with a new [XFile] whose bytes, mimetype and filename extension
@@ -62,13 +64,14 @@ class SendFileDialogState extends State<SendFileDialog> {
   late final List<XFile> _files = List<XFile>.of(widget.files);
 
   Future<void> _editImage(int index) async {
+    if (_sending) return;
     final bytes = await _files[index].readAsBytes();
-    if (!mounted) return;
+    if (!mounted || _sending) return;
     final result = await showScaffoldDialog<Uint8List?>(
       context: context,
       builder: (_) => _ImageEditPage(bytes: bytes),
     );
-    if (!mounted || result == null) return;
+    if (!mounted || _sending || result == null) return;
     final original = _files[index];
     final dot = original.name.lastIndexOf('.');
     final baseName = dot > 0 ? original.name.substring(0, dot) : original.name;
@@ -82,15 +85,59 @@ class SendFileDialogState extends State<SendFileDialog> {
     });
   }
 
-  Future<void> _send(String? uniqueFileType) async {
+  Future<void> _send() async {
+    if (_sending) return;
+    setState(() => _sending = true);
+    try {
+      await _sendFiles();
+    } finally {
+      if (mounted) setState(() => _sending = false);
+    }
+  }
+
+  Future<void> _sendFiles() async {
     final l10n = L10n.of(context);
     final scaffoldMessenger = ScaffoldMessenger.of(widget.outerContext);
+    final route = ModalRoute.of(context);
+    final runtime = TranslationRuntime.instance;
+    final captionSnapshot = _labelTextController.text;
+    final sendRevision = runtime.revision;
+    var label = captionSnapshot.trim();
+    final translateCaption =
+        label.isNotEmpty && runtime.shouldTranslateInputOnSend(widget.room);
+
+    bool captionIsCurrent() =>
+        mounted &&
+        (route?.isCurrent ?? true) &&
+        _labelTextController.text == captionSnapshot;
+
+    bool translationIsCurrent() =>
+        runtime.revision == sendRevision &&
+        runtime.shouldTranslateInputOnSend(widget.room);
 
     final proceed = await showTrustUserInRoomDialog(
       widget.outerContext,
       widget.room,
     );
-    if (!context.mounted || !proceed) return;
+    if (!captionIsCurrent() || !proceed) return;
+
+    if (translateCaption) {
+      if (!translationIsCurrent()) return;
+      try {
+        label = await runtime.translateInputText(widget.room, label);
+        if (!captionIsCurrent() || !translationIsCurrent()) return;
+      } catch (_) {
+        if (captionIsCurrent() && runtime.enabled) {
+          scaffoldMessenger.showSnackBar(
+            SnackBar(content: Text(l10n.translationFailed)),
+          );
+        }
+        return;
+      }
+    }
+
+    // Fix the accepted caption before upload; retries must reuse this result.
+    final labelToSend = label;
 
     if (ForegroundServices.platformSupported) {
       await ForegroundServices.startService('send_files');
@@ -103,7 +150,11 @@ class SendFileDialogState extends State<SendFileDialog> {
       if (!widget.room.otherPartyCanReceiveMessages) {
         throw OtherPartyCanNotReceiveMessages();
       }
-      if (!mounted) return;
+      if (!mounted ||
+          !captionIsCurrent() ||
+          (translateCaption && !translationIsCurrent())) {
+        return;
+      }
       Navigator.of(context, rootNavigator: false).pop();
       final clientConfig = await Result.capture(widget.room.client.getConfig());
       final maxUploadSize =
@@ -152,14 +203,12 @@ class SendFileDialogState extends State<SendFileDialog> {
           throw FileTooBigMatrixException(file.bytes.length, maxUploadSize);
         }
 
-        final label = _labelTextController.text.trim();
-
         try {
           await widget.room.sendFileEvent(
             file,
             thumbnail: thumbnail,
             shrinkImageMaxDimension: compress ? 1600 : null,
-            extraContent: label.isEmpty ? null : {'body': label},
+            extraContent: labelToSend.isEmpty ? null : {'body': labelToSend},
             threadRootEventId: widget.threadRootEventId,
             threadLastEventId: widget.threadLastEventId,
           );
@@ -178,7 +227,9 @@ class SendFileDialogState extends State<SendFileDialog> {
             file,
             thumbnail: thumbnail,
             shrinkImageMaxDimension: compress ? 1600 : null,
-            extraContent: label.isEmpty ? null : {'body': label},
+            extraContent: labelToSend.isEmpty ? null : {'body': labelToSend},
+            threadRootEventId: widget.threadRootEventId,
+            threadLastEventId: widget.threadLastEventId,
           );
         }
       }
@@ -342,7 +393,9 @@ class SendFileDialogState extends State<SendFileDialog> {
                                           color: Colors.white,
                                           size: 20,
                                         ),
-                                        onPressed: () => _editImage(i),
+                                        onPressed: _sending
+                                            ? null
+                                            : () => _editImage(i),
                                       ),
                                     ),
                                   ),
@@ -396,6 +449,7 @@ class SendFileDialogState extends State<SendFileDialog> {
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: DialogTextField(
                         controller: _labelTextController,
+                        readOnly: _sending,
                         labelText: L10n.of(context).optionalMessage,
                         minLines: 1,
                         maxLines: 1,
@@ -414,14 +468,14 @@ class SendFileDialogState extends State<SendFileDialog> {
                         }.contains(theme.platform))
                           CupertinoSwitch(
                             value: compressionSupported && compress,
-                            onChanged: compressionSupported
+                            onChanged: !_sending && compressionSupported
                                 ? (v) => setState(() => compress = v)
                                 : null,
                           )
                         else
                           Switch.adaptive(
                             value: compressionSupported && compress,
-                            onChanged: compressionSupported
+                            onChanged: !_sending && compressionSupported
                                 ? (v) => setState(() => compress = v)
                                 : null,
                           ),
@@ -467,8 +521,19 @@ class SendFileDialogState extends State<SendFileDialog> {
               child: Text(L10n.of(context).cancel),
             ),
             AdaptiveDialogAction(
-              onPressed: () => _send(uniqueFileType),
-              child: Text(L10n.of(context).send),
+              onPressed: _sending ? null : _send,
+              child: Row(
+                mainAxisSize: .min,
+                spacing: 8,
+                children: [
+                  if (_sending)
+                    const SizedBox.square(
+                      dimension: 16,
+                      child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+                    ),
+                  Text(L10n.of(context).send),
+                ],
+              ),
             ),
           ],
         );

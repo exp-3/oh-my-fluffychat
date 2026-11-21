@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -14,6 +14,7 @@ import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_file_extension.dar
 import 'package:fluffychat/utils/notification_background_handler.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/utils/push_helper.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/utils/uia_request_manager.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/fluffy_chat_app.dart';
@@ -163,6 +164,9 @@ class MatrixState extends State<Matrix> {
                   store,
                 );
                 _registerSubs(_loginClientCandidate!.clientName);
+                TranslationRuntime.instance.attachClient(
+                  _loginClientCandidate!,
+                );
                 setActiveClient(_loginClientCandidate);
                 _loginClientCandidate = null;
                 FluffyChatApp.router.go('/backup');
@@ -256,10 +260,11 @@ class MatrixState extends State<Matrix> {
         });
     onLogoutSub[name] ??= c.onLoginStateChanged.stream
         .where((state) => state == LoginState.loggedOut)
-        .listen((_) {
+        .listen((_) async {
           final loggedInWithMultipleClients = widget.clients.length > 1;
 
           _cancelSubs(c.clientName);
+          await TranslationRuntime.instance.detachLoggedOutClient(c);
           widget.clients.remove(c);
           ClientManager.removeClientNameFromStore(c.clientName, store);
           InitWithRestoreExtension.deleteSessionBackup(name);
@@ -320,6 +325,8 @@ class MatrixState extends State<Matrix> {
   }
 
   Future<void> initMatrix() async {
+    TranslationRuntime.instance.attachClients(widget.clients);
+
     if (PlatformInfos.isMobile) {
       backgroundPush = BackgroundPush(
         this,

@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -16,6 +16,7 @@ import 'package:fluffychat/pages/chat/pinned_events.dart';
 import 'package:fluffychat/pages/chat/reply_display.dart';
 import 'package:fluffychat/utils/account_config.dart';
 import 'package:fluffychat/utils/matrix_live_kit_calls/matrix_live_kit_call.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/widgets/chat_settings_popup_menu.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:fluffychat/widgets/mxc_image.dart';
@@ -119,6 +120,15 @@ class ChatView extends StatelessWidget {
                 title: ChatAppBarTitle(controller),
                 actions: [
                   if (controller.selectMode) ...[
+                    if (TranslationRuntime.instance.enabled &&
+                        controller.selectedEvents.any(
+                          TranslationRuntime.instance.canTranslateEvent,
+                        ))
+                      IconButton(
+                        icon: const Icon(Icons.translate_outlined),
+                        tooltip: L10n.of(context).translateSelectedMessages,
+                        onPressed: controller.translateSelectedEventsAction,
+                      ),
                     if (controller.canEditSelectedEvents)
                       IconButton(
                         icon: const Icon(Icons.edit_outlined),

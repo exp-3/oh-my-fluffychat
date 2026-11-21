@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -12,9 +12,7 @@ import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/utils/error_reporter.dart';
 import 'package:fluffychat/utils/file_description.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:matrix/matrix.dart';
@@ -24,12 +22,14 @@ import 'package:path_provider/path_provider.dart';
 import '../../../utils/matrix_sdk_extensions/event_extension.dart';
 import '../../../widgets/fluffy_chat_app.dart';
 import '../../../widgets/matrix.dart';
+import 'file_caption.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
   final Color color;
   final Color linkColor;
   final double fontSize;
   final Event event;
+  final Timeline? timeline;
 
   static const int wavesCount = 40;
 
@@ -38,6 +38,7 @@ class AudioPlayerWidget extends StatefulWidget {
     required this.color,
     required this.linkColor,
     required this.fontSize,
+    this.timeline,
     super.key,
   });
 
@@ -502,30 +503,13 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                   ),
                   if (fileDescription != null) ...[
                     const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      child: Linkify(
-                        text: fileDescription,
-                        textScaleFactor: MediaQuery.textScalerOf(
-                          context,
-                        ).scale(1),
-                        style: TextStyle(
-                          color: widget.color,
-                          fontSize: widget.fontSize,
-                        ),
-                        options: const LinkifyOptions(humanize: false),
-                        linkStyle: TextStyle(
-                          color: widget.linkColor,
-                          fontSize: widget.fontSize,
-                          decoration: TextDecoration.underline,
-                          decorationColor: widget.linkColor,
-                        ),
-                        onOpen: (url) =>
-                            UrlLauncher(context, url.url).launchUrl(),
-                      ),
+                    FileCaption(
+                      event: widget.event,
+                      description: fileDescription,
+                      textColor: widget.color,
+                      linkColor: widget.linkColor,
+                      fontSize: widget.fontSize,
+                      timeline: widget.timeline,
                     ),
                   ],
                 ],

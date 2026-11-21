@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -10,6 +10,8 @@ import 'package:fluffychat/pages/chat/recording_input_row.dart';
 import 'package:fluffychat/pages/chat/recording_view_model.dart';
 import 'package:fluffychat/utils/other_party_can_receive.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:fluffychat/utils/translation/translation_models.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/hover_builder.dart';
 import 'package:fluffychat/widgets/matrix.dart';
@@ -28,12 +30,99 @@ class ChatInputRow extends StatelessWidget {
   const ChatInputRow(this.controller, {super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: Listenable.merge([
+      TranslationRuntime.instance,
+      controller.sendController,
+    ]),
+    builder: (context, _) => LayoutBuilder(builder: _build),
+  );
+
+  Widget _build(BuildContext context, BoxConstraints constraints) {
     final theme = Theme.of(context);
+    const leadingButtonWidth = 40.0;
+    const stackedButtonsHeight = height + leadingButtonWidth;
+    const inputPadding = EdgeInsets.only(
+      left: 6.0,
+      right: 6.0,
+      bottom: 6.0,
+      top: 3.0,
+    );
+    const inputOuterPadding = EdgeInsets.symmetric(vertical: 2.0);
+    const inputMaxLines = 8;
+    final leadingButtonStyle = IconButton.styleFrom(
+      fixedSize: const Size.square(leadingButtonWidth),
+      shape: const CircleBorder(),
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    );
+    final translationRuntime = TranslationRuntime.instance;
     final textMessageOnly =
         controller.sendController.text.isNotEmpty ||
         controller.replyEvent != null ||
         controller.editEvent != null;
+    final showInputTranslationButton =
+        controller.sendController.text.trim().isNotEmpty &&
+        translationRuntime.inputTrigger == InputTranslationTrigger.button &&
+        translationRuntime.canManuallyTranslateInput(controller.room);
+    final automaticInputTranslation = translationRuntime
+        .shouldAutoTranslateInput(controller.room);
+    final shortPressTranslates = translationRuntime.shouldTranslateInputOnSend(
+      controller.room,
+    );
+    final showAccountPicker =
+        Matrix.of(context).isMultiAccount &&
+        Matrix.of(context).hasComplexBundles &&
+        Matrix.of(context).currentBundle!.length > 1;
+    // Measure at the stacked layout's width. Only stack when the wider input
+    // is tall enough for both buttons, without increasing the input row height.
+    // Using the same width in both layouts also prevents switching back and forth.
+    final stackedInputWidth =
+        constraints.maxWidth -
+        8 -
+        leadingButtonWidth -
+        (showAccountPicker ? 48 : 0) -
+        height -
+        inputPadding.horizontal;
+    var stackInputTranslationButton = false;
+    if (showInputTranslationButton &&
+        stackedInputWidth.isFinite &&
+        stackedInputWidth > 0) {
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: controller.sendController.text,
+          style: theme.textTheme.bodyLarge,
+        ),
+        textDirection: Directionality.of(context),
+        textScaler: TextScaler.linear(AppSettings.fontSizeFactor.value),
+        locale: Localizations.localeOf(context),
+        maxLines: inputMaxLines,
+      )..layout(maxWidth: stackedInputWidth);
+      final estimatedInputHeight =
+          textPainter.height +
+          inputPadding.vertical +
+          inputOuterPadding.vertical;
+      stackInputTranslationButton =
+          estimatedInputHeight >= stackedButtonsHeight;
+      textPainter.dispose();
+    }
+    final inputTranslationButton = IconButton(
+      style: leadingButtonStyle,
+      tooltip: L10n.of(context).translateInput,
+      color: theme.colorScheme.onPrimaryContainer,
+      onPressed:
+          (TranslationRuntime.instance.enabled &&
+              controller.inputTranslationInProgress)
+          ? null
+          : controller.translateInputManually,
+      icon:
+          (TranslationRuntime.instance.enabled &&
+              controller.inputTranslationInProgress)
+          ? const SizedBox.square(
+              dimension: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : const Icon(Icons.translate_outlined),
+    );
 
     if (!controller.room.otherPartyCanReceiveMessages) {
       return Center(
@@ -136,142 +225,167 @@ class ChatInputRow extends StatelessWidget {
                   AnimatedContainer(
                     duration: FluffyThemes.animationDuration,
                     curve: FluffyThemes.animationCurve,
-                    width: textMessageOnly ? 0 : 48,
+                    width: stackInputTranslationButton
+                        ? 0
+                        : showInputTranslationButton
+                        ? leadingButtonWidth
+                        : textMessageOnly
+                        ? 0
+                        : leadingButtonWidth,
                     height: height,
                     alignment: Alignment.center,
                     decoration: const BoxDecoration(),
                     clipBehavior: Clip.hardEdge,
-                    child: PopupMenuButton<AddPopupMenuActions>(
-                      useRootNavigator: true,
-                      icon: const Icon(Icons.add_circle_outline),
-                      iconColor: theme.colorScheme.onPrimaryContainer,
-                      onSelected: controller.onAddPopupMenuButtonSelected,
-                      itemBuilder: (BuildContext context) => [
-                        if (PlatformInfos.isMobile)
-                          PopupMenuItem(
-                            value: AddPopupMenuActions.location,
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor:
-                                    theme.colorScheme.onPrimaryContainer,
-                                foregroundColor:
-                                    theme.colorScheme.primaryContainer,
-                                child: const Icon(Icons.gps_fixed_outlined),
+                    child: stackInputTranslationButton
+                        ? const SizedBox.shrink()
+                        : showInputTranslationButton
+                        ? inputTranslationButton
+                        : PopupMenuButton<AddPopupMenuActions>(
+                            useRootNavigator: true,
+                            style: leadingButtonStyle,
+                            icon: const Icon(Icons.add_circle_outline),
+                            iconColor: theme.colorScheme.onPrimaryContainer,
+                            onSelected: controller.onAddPopupMenuButtonSelected,
+                            itemBuilder: (BuildContext context) => [
+                              if (PlatformInfos.isMobile)
+                                PopupMenuItem(
+                                  value: AddPopupMenuActions.location,
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor:
+                                          theme.colorScheme.onPrimaryContainer,
+                                      foregroundColor:
+                                          theme.colorScheme.primaryContainer,
+                                      child: const Icon(
+                                        Icons.gps_fixed_outlined,
+                                      ),
+                                    ),
+                                    title: Text(L10n.of(context).shareLocation),
+                                    contentPadding: const EdgeInsets.all(0),
+                                  ),
+                                ),
+                              PopupMenuItem(
+                                value: AddPopupMenuActions.poll,
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundColor:
+                                        theme.colorScheme.onPrimaryContainer,
+                                    foregroundColor:
+                                        theme.colorScheme.primaryContainer,
+                                    child: const Icon(Icons.poll_outlined),
+                                  ),
+                                  title: Text(L10n.of(context).startPoll),
+                                  contentPadding: const EdgeInsets.all(0),
+                                ),
                               ),
-                              title: Text(L10n.of(context).shareLocation),
-                              contentPadding: const EdgeInsets.all(0),
-                            ),
-                          ),
-                        PopupMenuItem(
-                          value: AddPopupMenuActions.poll,
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor:
-                                  theme.colorScheme.onPrimaryContainer,
-                              foregroundColor:
-                                  theme.colorScheme.primaryContainer,
-                              child: const Icon(Icons.poll_outlined),
-                            ),
-                            title: Text(L10n.of(context).startPoll),
-                            contentPadding: const EdgeInsets.all(0),
-                          ),
-                        ),
-                        PopupMenuDivider(),
-                        if (PlatformInfos.isMobile) ...[
-                          PopupMenuItem(
-                            value: AddPopupMenuActions.videoCamera,
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor:
-                                    theme.colorScheme.onPrimaryContainer,
-                                foregroundColor:
-                                    theme.colorScheme.primaryContainer,
-                                child: const Icon(Icons.videocam_outlined),
+                              PopupMenuDivider(),
+                              if (PlatformInfos.isMobile) ...[
+                                PopupMenuItem(
+                                  value: AddPopupMenuActions.videoCamera,
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor:
+                                          theme.colorScheme.onPrimaryContainer,
+                                      foregroundColor:
+                                          theme.colorScheme.primaryContainer,
+                                      child: const Icon(
+                                        Icons.videocam_outlined,
+                                      ),
+                                    ),
+                                    title: Text(L10n.of(context).recordAVideo),
+                                    contentPadding: const EdgeInsets.all(0),
+                                  ),
+                                ),
+                                PopupMenuItem(
+                                  value: AddPopupMenuActions.photoCamera,
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor:
+                                          theme.colorScheme.onPrimaryContainer,
+                                      foregroundColor:
+                                          theme.colorScheme.primaryContainer,
+                                      child: const Icon(
+                                        Icons.camera_alt_outlined,
+                                      ),
+                                    ),
+                                    title: Text(L10n.of(context).takeAPhoto),
+                                    contentPadding: const EdgeInsets.all(0),
+                                  ),
+                                ),
+                                PopupMenuDivider(),
+                              ],
+                              PopupMenuItem(
+                                value: AddPopupMenuActions.video,
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundColor:
+                                        theme.colorScheme.onPrimaryContainer,
+                                    foregroundColor:
+                                        theme.colorScheme.primaryContainer,
+                                    child: const Icon(Icons.movie_outlined),
+                                  ),
+                                  title: Text(L10n.of(context).sendVideo),
+                                  contentPadding: const EdgeInsets.all(0),
+                                ),
                               ),
-                              title: Text(L10n.of(context).recordAVideo),
-                              contentPadding: const EdgeInsets.all(0),
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: AddPopupMenuActions.photoCamera,
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor:
-                                    theme.colorScheme.onPrimaryContainer,
-                                foregroundColor:
-                                    theme.colorScheme.primaryContainer,
-                                child: const Icon(Icons.camera_alt_outlined),
+                              PopupMenuItem(
+                                value: AddPopupMenuActions.image,
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundColor:
+                                        theme.colorScheme.onPrimaryContainer,
+                                    foregroundColor:
+                                        theme.colorScheme.primaryContainer,
+                                    child: const Icon(Icons.image_outlined),
+                                  ),
+                                  title: Text(L10n.of(context).sendImage),
+                                  contentPadding: const EdgeInsets.all(0),
+                                ),
                               ),
-                              title: Text(L10n.of(context).takeAPhoto),
-                              contentPadding: const EdgeInsets.all(0),
-                            ),
+                              PopupMenuItem(
+                                value: AddPopupMenuActions.file,
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundColor:
+                                        theme.colorScheme.onPrimaryContainer,
+                                    foregroundColor:
+                                        theme.colorScheme.primaryContainer,
+                                    child: const Icon(
+                                      Icons.attachment_outlined,
+                                    ),
+                                  ),
+                                  title: Text(L10n.of(context).sendFile),
+                                  contentPadding: const EdgeInsets.all(0),
+                                ),
+                              ),
+                            ],
                           ),
-                          PopupMenuDivider(),
-                        ],
-                        PopupMenuItem(
-                          value: AddPopupMenuActions.video,
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor:
-                                  theme.colorScheme.onPrimaryContainer,
-                              foregroundColor:
-                                  theme.colorScheme.primaryContainer,
-                              child: const Icon(Icons.movie_outlined),
-                            ),
-                            title: Text(L10n.of(context).sendVideo),
-                            contentPadding: const EdgeInsets.all(0),
+                  ),
+                  SizedBox(
+                    height: stackInputTranslationButton
+                        ? stackedButtonsHeight
+                        : height,
+                    width: leadingButtonWidth,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (stackInputTranslationButton) inputTranslationButton,
+                        IconButton(
+                          style: leadingButtonStyle,
+                          tooltip: L10n.of(context).emojis,
+                          color: theme.colorScheme.onPrimaryContainer,
+                          icon: Icon(
+                            controller.showEmojiPicker
+                                ? Icons.keyboard
+                                : Icons.add_reaction_outlined,
+                            key: ValueKey(controller.showEmojiPicker),
                           ),
-                        ),
-                        PopupMenuItem(
-                          value: AddPopupMenuActions.image,
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor:
-                                  theme.colorScheme.onPrimaryContainer,
-                              foregroundColor:
-                                  theme.colorScheme.primaryContainer,
-                              child: const Icon(Icons.image_outlined),
-                            ),
-                            title: Text(L10n.of(context).sendImage),
-                            contentPadding: const EdgeInsets.all(0),
-                          ),
-                        ),
-                        PopupMenuItem(
-                          value: AddPopupMenuActions.file,
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor:
-                                  theme.colorScheme.onPrimaryContainer,
-                              foregroundColor:
-                                  theme.colorScheme.primaryContainer,
-                              child: const Icon(Icons.attachment_outlined),
-                            ),
-                            title: Text(L10n.of(context).sendFile),
-                            contentPadding: const EdgeInsets.all(0),
-                          ),
+                          onPressed: controller.emojiPickerAction,
                         ),
                       ],
                     ),
                   ),
-                  Container(
-                    height: height,
-                    width: 48,
-                    alignment: Alignment.center,
-                    child: IconButton(
-                      tooltip: L10n.of(context).emojis,
-                      color: theme.colorScheme.onPrimaryContainer,
-                      icon: Icon(
-                        controller.showEmojiPicker
-                            ? Icons.keyboard
-                            : Icons.add_reaction_outlined,
-                        key: ValueKey(controller.showEmojiPicker),
-                      ),
-                      onPressed: controller.emojiPickerAction,
-                    ),
-                  ),
-                  if (Matrix.of(context).isMultiAccount &&
-                      Matrix.of(context).hasComplexBundles &&
-                      Matrix.of(context).currentBundle!.length > 1)
+                  if (showAccountPicker)
                     Container(
                       height: height,
                       width: 48,
@@ -280,11 +394,11 @@ class ChatInputRow extends StatelessWidget {
                     ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 2.0),
+                      padding: inputOuterPadding,
                       child: InputBar(
                         room: controller.room,
                         minLines: 1,
-                        maxLines: 8,
+                        maxLines: inputMaxLines,
                         autofocus: !PlatformInfos.isMobile,
                         keyboardType: TextInputType.multiline,
                         textInputAction:
@@ -293,16 +407,31 @@ class ChatInputRow extends StatelessWidget {
                             ? TextInputAction.send
                             : null,
                         onSubmitted: controller.onInputBarSubmitted,
+                        onLongPress:
+                            translationRuntime.inputTrigger ==
+                                    InputTranslationTrigger.longPress &&
+                                translationRuntime.canManuallyTranslateInput(
+                                  controller.room,
+                                )
+                            ? () => controller.translateInputManually(
+                                requireCollapsedSelection: true,
+                              )
+                            : null,
+                        onDoubleTap:
+                            translationRuntime.inputTrigger ==
+                                    InputTranslationTrigger.doubleTap &&
+                                translationRuntime.canManuallyTranslateInput(
+                                  controller.room,
+                                )
+                            ? () => controller.translateInputManually(
+                                requireCollapsedSelection: true,
+                              )
+                            : null,
                         onSubmitImage: controller.sendImageFromClipBoard,
                         focusNode: controller.inputFocus,
                         controller: controller.sendController,
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.only(
-                            left: 6.0,
-                            right: 6.0,
-                            bottom: 6.0,
-                            top: 3.0,
-                          ),
+                          contentPadding: inputPadding,
                           counter: const SizedBox.shrink(),
                           hintText: controller.room.encrypted
                               ? L10n.of(context).encryptedMessage
@@ -333,7 +462,9 @@ class ChatInputRow extends StatelessWidget {
                     width: height,
                     alignment: Alignment.center,
                     child:
-                        PlatformInfos.platformCanRecord &&
+                        !(TranslationRuntime.instance.enabled &&
+                                controller.inputTranslationInProgress) &&
+                            PlatformInfos.platformCanRecord &&
                             !controller.sendController.text.isNotEmpty &&
                             controller.editEvent == null
                         ? HoverBuilder(
@@ -374,12 +505,36 @@ class ChatInputRow extends StatelessWidget {
                         : IconButton(
                             key: Key('send_button'),
                             tooltip: L10n.of(context).send,
-                            onPressed: controller.send,
+                            onPressed:
+                                (TranslationRuntime.instance.enabled &&
+                                    controller.inputTranslationInProgress)
+                                ? null
+                                : () => controller.send(
+                                    translate: shortPressTranslates,
+                                  ),
+                            onLongPress:
+                                (TranslationRuntime.instance.enabled &&
+                                        controller
+                                            .inputTranslationInProgress) ||
+                                    !automaticInputTranslation
+                                ? null
+                                : () => controller.send(
+                                    translate: !shortPressTranslates,
+                                  ),
                             style: IconButton.styleFrom(
                               backgroundColor: theme.bubbleColor,
                               foregroundColor: theme.onBubbleColor,
                             ),
-                            icon: const Icon(Icons.send_outlined),
+                            icon:
+                                (TranslationRuntime.instance.enabled &&
+                                    controller.inputTranslationInProgress)
+                                ? const SizedBox.square(
+                                    dimension: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.send_outlined),
                           ),
                   ),
                 ],

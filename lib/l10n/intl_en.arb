@@ -1,4 +1,6 @@
 {
+    "@@locale": "en",
+    "@@last_modified": "2021-08-14 12:38:37.885451",
     "databaseInitializationFailed": "Local archive initialization failed",
     "databaseInitializationFailedBody": "The local archive for \"{clientName}\" could not be opened. It may be corrupted, or a required runtime component may be missing.\n\nResetting permanently deletes this device's local archive. Server data can be synchronized again, but unsent or local-only data may be lost. Do you want to reset it?",
     "@databaseInitializationFailedBody": {
@@ -8,6 +10,114 @@
             }
         }
     },
+    "translation": "Translation",
+    "enableTranslation": "Enable AI translation",
+    "translationPrivacyNotice": "Chat content will be sent in plaintext to the LLM provider you specify.",
+    "translationProviderRequired": "Add and select a provider with an API key before enabling translation.",
+    "translationProviders": "Translation providers",
+    "noTranslationProviders": "No translation providers configured",
+    "addTranslationProvider": "Add translation provider",
+    "editTranslationProvider": "Edit translation provider",
+    "deleteTranslationProvider": "Delete provider",
+    "providerName": "Provider name",
+    "translationEndpoint": "API endpoint",
+    "translationEndpointIsComplete": "This is a complete API endpoint",
+    "translationProtocol": "API protocol",
+    "translationReasoningEffort": "Reasoning effort",
+    "translationReasoningUnspecified": "Default (Unspecified)",
+    "model": "Model",
+    "apiKey": "API key",
+    "leaveEmptyToKeepCurrent": "Leave empty to keep the current value",
+    "translationProviderTestPassed": "Provider test passed",
+    "test": "Test",
+    "automaticTranslation": "Automatic translation",
+    "automaticTranslationScope": "Automatic translation scope",
+    "translationScopeNone": "No rooms (manual setup)",
+    "translationScopeAllRooms": "Messages in all rooms",
+    "translationScopeUnencryptedRooms": "Messages in unencrypted rooms",
+    "translationScopeOverrideHint": "You can override this rule in each room's settings. Cached translations are displayed even when automatic translation is off.",
+    "sourceLanguage": "Original message language",
+    "targetLanguage": "Your preferred language",
+    "preferRoomLanguageForSource": "Prefer the room language as the input language",
+    "preferRoomLanguageForInputTarget": "Prefer the room language as the translation target",
+    "translationAutoDetect": "Detect automatically",
+    "bilingual": "Bilingual",
+    "translationBilingualColor": "Translation text color",
+    "translationBilingualStyle": "Bilingual style",
+    "translationStyleBody": "Body",
+    "translationStyleAccent": "Accent",
+    "translationStyleSecondary": "Secondary",
+    "translationStyleTertiary": "Tertiary",
+    "translationStyleMuted": "Muted",
+    "translationStyleDivider": "Divider",
+    "translationStyleDuotone": "Duotone",
+    "translationStyleOutsideBubble": "Outside bubble",
+    "translationStyleBackground": "Background box",
+    "translationStyleGlow": "Glow effect",
+    "translationStylePlain": "No distinction",
+    "batchTranslation": "Batch translation",
+    "translationMergeWait": "Merge wait",
+    "translationMaxMessages": "Maximum messages per batch",
+    "translationMaxCharacters": "Maximum characters per batch",
+    "translationStructureRetries": "Malformed response retries",
+    "decrease": "Decrease",
+    "increase": "Increase",
+    "translationCache": "Translation cache",
+    "cleanInvalidTranslationCache": "Clean obsolete cache",
+    "clearTranslationCache": "Clear all translation cache",
+    "clearTranslationCacheWarning": "This will clear all saved translation cache and cannot be undone. Translating these messages again may incur API charges. Do you want to continue?",
+    "noTranslationCache": "There is no translation cache to clean.",
+    "translationCacheCleared": "Translation cache cleared",
+    "translationCacheCleanupResult": "Checked {checked}, retained {retained}, deleted {deleted}.",
+    "@translationCacheCleanupResult": {
+        "placeholders": {
+            "checked": {
+                "type": "int"
+            },
+            "retained": {
+                "type": "int"
+            },
+            "deleted": {
+                "type": "int"
+            }
+        }
+    },
+    "translateSelectedMessages": "Translate selected messages",
+    "translationFailed": "Translation failed",
+    "automaticTranslationForThisRoom": "Automatically translate this room",
+    "roomAutomaticTranslation": "Room automatic translation",
+    "roomTranslationFollowDefault": "Follow default",
+    "roomTranslationAlwaysOn": "Always on",
+    "roomTranslationAlwaysOff": "Always off",
+    "translationDefaultForRoom": "Default: {scope}",
+    "@translationDefaultForRoom": {
+        "placeholders": {
+            "scope": {
+                "type": "String"
+            }
+        }
+    },
+    "roomCommunicationLanguage": "Room communication language",
+    "roomLanguageFollowGlobal": "Not set (follow global)",
+    "translateRoom": "Translate",
+    "translationDisabledGlobally": "Enable translation in app settings first.",
+    "inputTranslation": "Input translation",
+    "inputTranslationModeManual": "Use translation manually",
+    "inputTranslationModeAutomatic": "Translate when sending",
+    "inputTranslationScope": "Input translation availability",
+    "inputTranslationScopeAutomaticRooms": "Rooms with automatic translation enabled",
+    "inputTranslationScopeAllRooms": "Available in all rooms",
+    "inputSourceLanguage": "Common input language",
+    "inputTargetLanguage": "Translation target language",
+    "inputTranslationSendModeTitle": "Message send button behavior",
+    "inputTranslationSendModeLongTrans": "Long press sends translation",
+    "inputTranslationSendModeShortTrans": "Short press sends translation",
+    "inputTranslationTrigger": "Translation trigger method",
+    "inputTranslationTriggerButton": "Translation button",
+    "inputTranslationTriggerLongPress": "Long press input field",
+    "inputTranslationTriggerDoubleTap": "Quick double-tap input field",
+    "translationPrivacyDetails": "When you use message translation or input translation, the chat messages and input text being translated are sent in plaintext to the external LLM provider you specify, even in end-to-end encrypted chats. Input translation may also send text to the provider before you send the message. Chat encryption does not protect this copy of the text sent to the translation service; the provider can read its contents, and how the data is stored and used depends on its privacy policy.\n\nIf the conversation contains confidential information, or you do not trust the provider to respect your privacy and that of other participants, do not use message translation or input translation in those rooms. Alternatively, use a self-hosted language model whose data processing and storage you control.",
+    "translateInput": "Translate input",
     "editImage": "Edit image",
     "@editImage": {
         "type": "String",
@@ -58,8 +168,6 @@
         "type": "String",
         "placeholders": {}
     },
-    "@@locale": "en",
-    "@@last_modified": "2021-08-14 12:38:37.885451",
     "repeatPassword": "Repeat password",
     "notAnImage": "Not an image file.",
     "remove": "Remove",
@@ -2872,5 +2980,5 @@
                 "type": "String"
             }
         }
-    }
+}
 }

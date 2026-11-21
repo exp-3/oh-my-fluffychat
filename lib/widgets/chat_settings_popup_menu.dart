@@ -1,11 +1,12 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import 'dart:async';
 
 import 'package:fluffychat/l10n/l10n.dart';
+import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:go_router/go_router.dart';
@@ -72,6 +73,11 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
                   future: () => widget.room.leave(),
                 );
                 if (result.error == null) {
+                  await TranslationRuntime.instance
+                      .invalidateRoomUnlessLocallyReferenced(
+                        widget.room.id,
+                        excludingClient: widget.room.client,
+                      );
                   router.go('/rooms');
                 }
 
