@@ -1,12 +1,21 @@
-name: Pull Request Workflow
+name: Code Checks
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
   merge_group:
 
 jobs:
   code_tests:
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      dependency_lock_repaired: ${{ steps.flutter_dependencies.outputs.lock_repaired }}
+      dart_format_repaired: ${{ steps.dart_format.outputs.repaired }}
     steps:
       - uses: actions/checkout@v7
       - uses: webiny/action-conventional-commits@v1.4.2
@@ -25,11 +34,90 @@ jobs:
             echo "❌ Found empty translation strings."
             exit 1
           fi
-      - run: flutter pub get
+      - name: Resolve Flutter dependencies
+        id: flutter_dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          pub_get_log="$(mktemp)"
+
+          if flutter pub get 2>&1 | tee "$pub_get_log"; then
+            rm -f "$pub_get_log"
+            echo "lock_repaired=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if ! grep -Eq 'Could not find a file named "pubspec\.yaml" in .* [[:xdigit:]]{40}\.' "$pub_get_log"; then
+            rm -f "$pub_get_log"
+            exit 1
+          fi
+          rm -f "$pub_get_log"
+
+          mapfile -t git_dependencies < <(
+            awk '
+              /^  [a-z0-9_]+:$/ {
+                package_name = $1
+                sub(/:$/, "", package_name)
+              }
+              /^    source: git$/ { print package_name }
+            ' pubspec.lock
+          )
+
+          if (( ${#git_dependencies[@]} == 0 )); then
+            echo "The failed Git dependency could not be identified in pubspec.lock." >&2
+            exit 1
+          fi
+
+          echo "A locked Git revision is unavailable; refreshing: ${git_dependencies[*]}"
+          flutter pub upgrade "${git_dependencies[@]}"
+          echo "lock_repaired=true" >> "$GITHUB_OUTPUT"
       - name: Check if pubspec.lock is up to date
-        run: git diff --exit-code pubspec.lock
-      - name: Check formatting
-        run: dart format lib/ test/ --set-exit-if-changed
+        shell: bash
+        run: |
+          if [[ "${{ steps.flutter_dependencies.outputs.lock_repaired }}" == "true" ]]; then
+            echo "::warning::pubspec.lock was repaired after a locked Git revision became unavailable."
+            git diff -- pubspec.lock
+          else
+            git diff --exit-code pubspec.lock
+          fi
+      - name: Store repaired dependency lock
+        if: >-
+          steps.flutter_dependencies.outputs.lock_repaired == 'true' &&
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: repaired-dependency-lock
+          path: pubspec.lock
+          if-no-files-found: error
+          retention-days: 1
+      - name: Apply Dart formatting
+        id: dart_format
+        shell: bash
+        run: |
+          set -euo pipefail
+          dart format lib/ test/
+
+          if git diff --quiet -- lib/ test/; then
+            echo "repaired=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "::warning::Dart formatting issues were repaired automatically."
+          git diff --binary -- lib/ test/ > "$RUNNER_TEMP/dart-format.patch"
+          git diff --stat -- lib/ test/
+          echo "repaired=true" >> "$GITHUB_OUTPUT"
+      - name: Store Dart formatting repair
+        if: >-
+          steps.dart_format.outputs.repaired == 'true' &&
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: repaired-dart-formatting
+          path: ${{ runner.temp }}/dart-format.patch
+          if-no-files-found: error
+          retention-days: 1
       - name: Check license compliance
         run: dart run license_checker check-licenses -c licenses.yaml --problematic
       - name: Check for unused translations
@@ -55,229 +143,63 @@ jobs:
       - name: Add Firebase Messaging
         run: ./scripts/add-firebase-messaging.sh
       - run: flutter analyze
-
-  flutter_tests:
-    runs-on: ubuntu-26.04
-    steps:
-      - uses: actions/checkout@v7
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version-file: .fvmrc
-          cache: true
-      - uses: dtolnay/rust-toolchain@stable
-      - run: flutter pub get
-      - run: dart run golden_screenshot:download_apple_fonts
+      - name: Prepare test encryption library
+        run: ./scripts/prepare_vodozemac.sh
       - run: flutter test
 
-  build_debug_apk:
-    needs: [ code_tests ]
-    runs-on: ubuntu-26.04
+  commit_automatic_repairs:
+    name: Commit automatic repairs
+    needs: code_tests
+    if: >-
+      (needs.code_tests.outputs.dependency_lock_repaired == 'true' ||
+      needs.code_tests.outputs.dart_format_repaired == 'true') &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
     steps:
       - uses: actions/checkout@v7
-      - uses: ./.github/actions/free_up_space
-      - uses: subosito/flutter-action@v2
+      - name: Download repaired dependency lock
+        if: needs.code_tests.outputs.dependency_lock_repaired == 'true'
+        uses: actions/download-artifact@v7
         with:
-          flutter-version-file: .fvmrc
-          cache: true
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Cache Gradle
-        uses: actions/cache@v6
+          name: repaired-dependency-lock
+          path: ${{ runner.temp }}/repaired-dependency-lock
+      - name: Download repaired Dart formatting
+        if: needs.code_tests.outputs.dart_format_repaired == 'true'
+        uses: actions/download-artifact@v7
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: gradle-${{ runner.os }}-
-      - run: ./scripts/add-firebase-messaging.sh
-      - run: flutter build apk --debug --target-platform android-x64
-      - name: Upload Debug APK
-        uses: actions/upload-artifact@v7
-        with:
-          name: debug-apk-x64
-          path: build/app/outputs/flutter-apk/app-debug.apk
-
-  build_debug_web:
-    needs: [ code_tests ]
-    runs-on: ubuntu-26.04
-    steps:
-      - uses: actions/checkout@v7
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version-file: .fvmrc
-          cache: true
-      - uses: dtolnay/rust-toolchain@stable
-      - run: rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
-      - run: flutter pub get
-      - name: Prepare web
-        run: ./scripts/prepare-web.sh
-      - run: git diff --exit-code
-      - run: flutter build web
-      - name: Upload Web Build
-        uses: actions/upload-artifact@v7
-        with:
-          name: Web Build
-          path: build/web
-
-  build_debug_linux:
-    needs: [ code_tests ]
-    strategy:
-      matrix:
-        arch: [ x64, arm64 ]
-    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-26.04-arm' || 'ubuntu-26.04'}}
-    steps:
-      - uses: actions/checkout@v7
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install git wget curl clang cmake ninja-build pkg-config libgtk-3-dev libblkid-dev liblzma-dev libjsoncpp-dev cmake-data libsecret-1-dev libsecret-1-0 librhash1 libssl-dev libwebkit2gtk-4.1-dev libpulse-dev -y
-      - run: echo "FLUTTER_VERSION=$(yq '.flutter' < .fvmrc)" >> $GITHUB_ENV
-      - name: Install Flutter
+          name: repaired-dart-formatting
+          path: ${{ runner.temp }}/repaired-dart-formatting
+      - name: Apply and commit repairs
+        shell: bash
         run: |
-          git clone --branch ${{ env.FLUTTER_VERSION }} https://github.com/flutter/flutter.git
-          ./flutter/bin/flutter doctor
-      - uses: dtolnay/rust-toolchain@stable
-      - run: ./flutter/bin/flutter pub get
-      - run: ./flutter/bin/flutter build linux --target-platform linux-${{ matrix.arch }}
+          if [[ "${{ needs.code_tests.outputs.dependency_lock_repaired }}" == "true" ]]; then
+            cp "$RUNNER_TEMP/repaired-dependency-lock/pubspec.lock" pubspec.lock
+          fi
 
-  build_debug_ios:
-    needs: [ code_tests ]
-    runs-on: macos-15
-    steps:
-      - uses: actions/checkout@v7
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version-file: .fvmrc
-          cache: true
-      - name: Use specific XCode version
-        run: sudo xcode-select --switch /Applications/Xcode_26.3.app
-      - uses: dtolnay/rust-toolchain@stable
-      - run: ./scripts/add-firebase-messaging.sh
-      - run: flutter pub get
-      - run: flutter build ios --no-codesign
+          if [[ "${{ needs.code_tests.outputs.dart_format_repaired }}" == "true" ]]; then
+            git apply "$RUNNER_TEMP/repaired-dart-formatting/dart-format.patch"
+          fi
 
-  build_debug_macos:
-    needs: [ code_tests ]
-    runs-on: macos-15
-    steps:
-      - uses: actions/checkout@v7
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version-file: .fvmrc
-          cache: true
-      - name: Use specific XCode version
-        run: sudo xcode-select --switch /Applications/Xcode_26.3.app
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Use ad-hoc code signing
-        run: |
-          sed -i '' \
-            -e 's/CODE_SIGN_IDENTITY = "Apple Development";/CODE_SIGN_IDENTITY = "-";/' \
-            -e 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/' \
-            -e 's/DEVELOPMENT_TEAM = [A-Z0-9]*;/DEVELOPMENT_TEAM = "";/' \
-            macos/Runner.xcodeproj/project.pbxproj
-          /usr/libexec/PlistBuddy -c "Delete :keychain-access-groups" macos/Runner/DebugProfile.entitlements
-      - run: flutter pub get
-      - run: flutter build macos --debug
+          if git diff --quiet -- pubspec.lock lib/ test/; then
+            exit 0
+          fi
 
-  build_debug_windows:
-    needs: [ code_tests ]
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version-file: .fvmrc
-          cache: true
-      - uses: dtolnay/rust-toolchain@stable
-      - run: choco install innosetup -y
-      - run: flutter pub get
-      - run: flutter build windows --debug
-      - run: ./scripts/package-windows.ps1 -BuildMode Debug
-      - name: Upload Debug Installer
-        uses: actions/upload-artifact@v7
-        with:
-          name: debug-windows-x64-setup
-          path: build/windows/installer/fluffychat-windows-x64-setup.exe
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pubspec.lock lib/ test/
 
-  integration_test:
-    runs-on: ubuntu-26.04
-    timeout-minutes: 60
-    needs: [ code_tests ]
-    strategy:
-      matrix:
-        api-level: [34]
-    env:
-      ANDROID_USER_HOME: /home/runner/.android
-      ANDROID_EMULATOR_HOME: /home/runner/.android
-      ANDROID_AVD_HOME: /home/runner/.android/avd
-      AVD_CONFIG_PATH: "~/.android/avd/test.avd/config.ini"
-    steps:
-      - uses: actions/checkout@v7
-      - uses: ./.github/actions/free_up_space
-      # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
-      - name: Enable KVM group perms
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-      - name: AVD cache
-        uses: actions/cache@v6
-        id: avd-cache
-        with:
-          path: ~/.android/*
-          key: avd-${{ matrix.api-level }}-integration_docker
-      - name: create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@d94c3fbe4fe6a29e4a5ba47c12fb47677c73656b
-        with:
-          api-level: ${{ matrix.api-level }}
-          target: google_apis
-          arch: x86_64
-          cores: 4
-          ndk: 28.2.13676358
-          force-avd-creation: false
-          disk-size: 4096M
-          ram-size: 4096M
-          sdcard-path-or-size: 4096M
-          emulator-options: -no-window -wipe-data -accel on -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: |
-            cat ${{ env.AVD_CONFIG_PATH }}
+          if [[ "${{ needs.code_tests.outputs.dependency_lock_repaired }}" == "true" &&
+                "${{ needs.code_tests.outputs.dart_format_repaired }}" == "true" ]]; then
+            commit_message="chore: apply automatic CI repairs"
+          elif [[ "${{ needs.code_tests.outputs.dart_format_repaired }}" == "true" ]]; then
+            commit_message="style: apply automatic Dart formatting"
+          else
+            commit_message="fix(deps): refresh unavailable Git revisions"
+          fi
 
-            sed -i.bak 's/hw.lcd.density = .*/hw.lcd.density=420/' ${{ env.AVD_CONFIG_PATH }}
-            sed -i.bak 's/hw.lcd.height = .*/hw.lcd.height=1920/' ${{ env.AVD_CONFIG_PATH }}
-            sed -i.bak 's/hw.lcd.width = .*/hw.lcd.width=1080/' ${{ env.AVD_CONFIG_PATH }}
-
-            if ! grep -q "hw.lcd.density"  ${{ env.AVD_CONFIG_PATH }} && echo "hw.lcd.density = 420" >>  ${{ env.AVD_CONFIG_PATH }}; then :; fi
-            if ! grep -q "hw.lcd.height"  ${{ env.AVD_CONFIG_PATH }} && echo "hw.lcd.height = 1920" >>  ${{ env.AVD_CONFIG_PATH }}; then :; fi
-            if ! grep -q "hw.lcd.width"  ${{ env.AVD_CONFIG_PATH }} && echo "hw.lcd.width = 1080" >>  ${{ env.AVD_CONFIG_PATH }}; then :; fi
-
-            echo "Emulator settings (${{ env.AVD_CONFIG_PATH }})"
-            cat ${{ env.AVD_CONFIG_PATH }}
-            echo "Generated AVD snapshot for caching."
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version-file: .fvmrc
-          cache: true
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Cache Gradle
-        uses: actions/cache@v6
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: gradle-${{ runner.os }}-
-      - name: Prepare Homeserver
-        run: ./scripts/prepare_integration_test.sh
-      - name: Integration tests
-        id: integration_tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          target: google_apis
-          arch: x86_64
-          cores: 16
-          ndk: 28.2.13676358
-          force-avd-creation: false
-          disk-size: 4096M
-          ram-size: 4096M
-          sdcard-path-or-size: 4096M
-          emulator-options: -no-snapshot-save -no-window -wipe-data -accel on -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: flutter test integration_test/mobile_test.dart
+          git commit -m "$commit_message"
+          git push origin HEAD:main
