@@ -2293,5 +2293,19 @@
                 "type": "String"
             }
         }
+    },
+    "chatSearchSearching": "Se caută mesaje…",
+    "chatSearchPaused": "Căutarea mesajelor este pusă pe pauză",
+    "chatSearchFailed": "Căutarea mesajelor a eșuat",
+    "chatSearchComplete": "Căutarea mesajelor s-a încheiat",
+    "chatSearchStop": "Oprește",
+    "chatSearchUndecryptableCount": "{count, plural, one{Nu s-a putut decripta {count} mesaj} few{Nu s-au putut decripta {count} mesaje} other{Nu s-au putut decripta {count} de mesaje}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

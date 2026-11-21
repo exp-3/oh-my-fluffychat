@@ -2204,5 +2204,19 @@
                 "type": "String"
             }
         }
+    },
+    "chatSearchSearching": "Претрага порука…",
+    "chatSearchPaused": "Претрага порука је паузирана",
+    "chatSearchFailed": "Претрага порука није успела",
+    "chatSearchComplete": "Претрага порука је завршена",
+    "chatSearchStop": "Заустави",
+    "chatSearchUndecryptableCount": "{count, plural, one{Није могуће дешифровати {count} поруку} few{Није могуће дешифровати {count} поруке} other{Није могуће дешифровати {count} порука}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

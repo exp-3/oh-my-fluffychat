@@ -2076,5 +2076,19 @@
     "@areGuestsAllowedToJoin": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "Po kërkohen mesazhet…",
+    "chatSearchPaused": "Kërkimi i mesazheve u pezullua",
+    "chatSearchFailed": "Kërkimi i mesazheve dështoi",
+    "chatSearchComplete": "Kërkimi i mesazheve përfundoi",
+    "chatSearchStop": "Ndalo",
+    "chatSearchUndecryptableCount": "{count, plural, =1{Nuk mund të deshifrohej 1 mesazh} other{Nuk mund të deshifroheshin {count} mesazhe}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

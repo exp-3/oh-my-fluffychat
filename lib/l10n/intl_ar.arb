@@ -2868,5 +2868,19 @@
             }
         }
     },
-    "toggleMicrophone": "تشغيل/إيقاف الميكروفون"
+    "toggleMicrophone": "تشغيل/إيقاف الميكروفون",
+    "chatSearchSearching": "جارٍ البحث عن الرسائل…",
+    "chatSearchPaused": "تم إيقاف البحث عن الرسائل مؤقتًا",
+    "chatSearchFailed": "فشل البحث عن الرسائل",
+    "chatSearchComplete": "اكتمل البحث عن الرسائل",
+    "chatSearchStop": "إيقاف",
+    "chatSearchUndecryptableCount": "تعذر فك تشفير {count} من الرسائل",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

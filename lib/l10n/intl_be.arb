@@ -2930,5 +2930,19 @@
         }
     },
     "download": "Спампаваць",
-    "sharedLocation": "Агульныя геаметкі"
+    "sharedLocation": "Агульныя геаметкі",
+    "chatSearchSearching": "Пошук паведамленняў…",
+    "chatSearchPaused": "Пошук паведамленняў прыпынены",
+    "chatSearchFailed": "Памылка пошуку паведамленняў",
+    "chatSearchComplete": "Пошук паведамленняў завершаны",
+    "chatSearchStop": "Спыніць",
+    "chatSearchUndecryptableCount": "{count, plural, one{Не ўдалося расшыфраваць {count} паведамленне} few{Не ўдалося расшыфраваць {count} паведамленні} other{Не ўдалося расшыфраваць {count} паведамленняў}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

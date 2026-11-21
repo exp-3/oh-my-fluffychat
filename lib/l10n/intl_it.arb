@@ -2652,5 +2652,19 @@
     "removeTag": "Rimuovi l'etichetta",
     "tagName": "Nome dell'etichetta",
     "createNewTag": "Crea una nuova etichetta",
-    "hideRoomsInSpaces": "Nascondi le stanze che sono in uno spazio"
+    "hideRoomsInSpaces": "Nascondi le stanze che sono in uno spazio",
+    "chatSearchSearching": "Ricerca dei messaggi…",
+    "chatSearchPaused": "Ricerca dei messaggi in pausa",
+    "chatSearchFailed": "Ricerca dei messaggi non riuscita",
+    "chatSearchComplete": "Ricerca dei messaggi completata",
+    "chatSearchStop": "Interrompi",
+    "chatSearchUndecryptableCount": "{count, plural, one{Impossibile decrittografare {count} messaggio} other{Impossibile decrittografare {count} messaggi}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

@@ -2344,5 +2344,19 @@
     "signIn": "ログイン",
     "createNewAccount": "アカウントを作成",
     "signUpGreeting": "FluffyChatは分散型です！アカウントを作成したいサーバーを選択して、さあ始めましょう！",
-    "sendReadReceipts": "既読通知を送信"
+    "sendReadReceipts": "既読通知を送信",
+    "chatSearchSearching": "メッセージを検索中…",
+    "chatSearchPaused": "メッセージ検索を一時停止しました",
+    "chatSearchFailed": "メッセージ検索に失敗しました",
+    "chatSearchComplete": "メッセージ検索が完了しました",
+    "chatSearchStop": "停止",
+    "chatSearchUndecryptableCount": "{count} 件のメッセージを復号できませんでした",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

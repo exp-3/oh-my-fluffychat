@@ -2767,5 +2767,19 @@
     "@openFile": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "Buscando mensajes…",
+    "chatSearchPaused": "Búsqueda de mensajes pausada",
+    "chatSearchFailed": "La búsqueda de mensajes ha fallado",
+    "chatSearchComplete": "Búsqueda de mensajes completada",
+    "chatSearchStop": "Detener",
+    "chatSearchUndecryptableCount": "{count, plural, one{No se pudo descifrar {count} mensaje} other{No se pudieron descifrar {count} mensajes}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

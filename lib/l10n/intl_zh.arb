@@ -2242,6 +2242,19 @@
     "publicChatAddresses": "公开聊天的地址",
     "createNewAddress": "新建地址",
     "searchMore": "搜索更多…",
+    "chatSearchSearching": "正在搜索消息…",
+    "chatSearchPaused": "消息搜索已暂停",
+    "chatSearchFailed": "消息搜索失败",
+    "chatSearchComplete": "消息搜索完成",
+    "chatSearchStop": "停止",
+    "chatSearchUndecryptableCount": "有 {count} 条消息无法解密，未能搜索其内容",
+    "@chatSearchUndecryptableCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "gallery": "图库",
     "files": "文件",
     "searchIn": "在 “{chat}” 聊天中搜索…",

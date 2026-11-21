@@ -2969,5 +2969,19 @@
                 "type": "String"
             }
         }
+    },
+    "chatSearchSearching": "Sõnumite otsimine…",
+    "chatSearchPaused": "Sõnumite otsing peatatud",
+    "chatSearchFailed": "Sõnumite otsing nurjus",
+    "chatSearchComplete": "Sõnumite otsing lõpetatud",
+    "chatSearchStop": "Peata",
+    "chatSearchUndecryptableCount": "{count} sõnumit ei saanud dekrüpteerida",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

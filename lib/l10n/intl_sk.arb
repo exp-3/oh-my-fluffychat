@@ -1374,5 +1374,19 @@
         "type": "String",
         "placeholders": {}
     },
-    "confirmMatrixId": "Prosím potvrďte svoje Matrix ID pre odstránenie účtu."
+    "confirmMatrixId": "Prosím potvrďte svoje Matrix ID pre odstránenie účtu.",
+    "chatSearchSearching": "Vyhľadávanie správ…",
+    "chatSearchPaused": "Vyhľadávanie správ pozastavené",
+    "chatSearchFailed": "Vyhľadávanie správ zlyhalo",
+    "chatSearchComplete": "Vyhľadávanie správ dokončené",
+    "chatSearchStop": "Zastaviť",
+    "chatSearchUndecryptableCount": "{count, plural, one{Nepodarilo sa dešifrovať {count} správu} few{Nepodarilo sa dešifrovať {count} správy} other{Nepodarilo sa dešifrovať {count} správ}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

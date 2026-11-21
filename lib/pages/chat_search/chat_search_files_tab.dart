@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -17,6 +17,7 @@ class ChatSearchFilesTab extends StatelessWidget {
   final void Function() onStartSearch;
   final bool endReached, isLoading;
   final DateTime? searchedUntil;
+  final Object? error;
 
   const ChatSearchFilesTab({
     required this.room,
@@ -26,6 +27,7 @@ class ChatSearchFilesTab extends StatelessWidget {
     required this.isLoading,
     super.key,
     required this.searchedUntil,
+    this.error,
   });
 
   @override
@@ -33,6 +35,7 @@ class ChatSearchFilesTab extends StatelessWidget {
     final theme = Theme.of(context);
     return SelectionArea(
       child: ListView.builder(
+        key: PageStorageKey('chat-search-files-${room.id}'),
         padding: const EdgeInsets.all(8.0),
         itemCount: events.length + 1,
         itemBuilder: (context, i) {
@@ -42,6 +45,7 @@ class ChatSearchFilesTab extends StatelessWidget {
               endReached: endReached,
               isLoading: isLoading,
               onStartSearch: onStartSearch,
+              error: error,
             );
           }
           final event = events[i];

@@ -2979,5 +2979,19 @@
                 "type": "String"
             }
         }
+    },
+    "chatSearchSearching": "Nachrichten werden gesucht…",
+    "chatSearchPaused": "Nachrichtensuche pausiert",
+    "chatSearchFailed": "Nachrichtensuche fehlgeschlagen",
+    "chatSearchComplete": "Nachrichtensuche abgeschlossen",
+    "chatSearchStop": "Stoppen",
+    "chatSearchUndecryptableCount": "{count, plural, one{{count} Nachricht konnte nicht entschlüsselt werden} other{{count} Nachrichten konnten nicht entschlüsselt werden}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

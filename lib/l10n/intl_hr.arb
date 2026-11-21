@@ -2575,5 +2575,19 @@
     "logs": "Zapisi",
     "advancedConfigs": "Napredne konfiguracije",
     "advancedConfigurations": "Napredne konfiguracije",
-    "matrixId": "Matrix ID"
+    "matrixId": "Matrix ID",
+    "chatSearchSearching": "Traženje poruka…",
+    "chatSearchPaused": "Pretraga poruka pauzirana",
+    "chatSearchFailed": "Pretraga poruka nije uspjela",
+    "chatSearchComplete": "Pretraga poruka dovršena",
+    "chatSearchStop": "Zaustavi",
+    "chatSearchUndecryptableCount": "{count, plural, one{Nije moguće dešifrirati {count} poruku} few{Nije moguće dešifrirati {count} poruke} other{Nije moguće dešifrirati {count} poruka}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

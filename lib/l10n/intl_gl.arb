@@ -2969,5 +2969,19 @@
                 "type": "String"
             }
         }
+    },
+    "chatSearchSearching": "Buscando mensaxes…",
+    "chatSearchPaused": "Busca de mensaxes pausada",
+    "chatSearchFailed": "A busca de mensaxes fallou",
+    "chatSearchComplete": "Busca de mensaxes completada",
+    "chatSearchStop": "Deter",
+    "chatSearchUndecryptableCount": "{count, plural, one{Non se puido descifrar {count} mensaxe} other{Non se puideron descifrar {count} mensaxes}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

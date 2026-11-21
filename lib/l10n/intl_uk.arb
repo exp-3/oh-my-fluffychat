@@ -2721,5 +2721,19 @@
     "@resetAccount": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "Пошук повідомлень…",
+    "chatSearchPaused": "Пошук повідомлень призупинено",
+    "chatSearchFailed": "Пошук повідомлень не вдався",
+    "chatSearchComplete": "Пошук повідомлень завершено",
+    "chatSearchStop": "Зупинити",
+    "chatSearchUndecryptableCount": "{count, plural, one{Не вдалося розшифрувати {count} повідомлення} few{Не вдалося розшифрувати {count} повідомлення} many{Не вдалося розшифрувати {count} повідомлень} other{Не вдалося розшифрувати {count} повідомлень}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

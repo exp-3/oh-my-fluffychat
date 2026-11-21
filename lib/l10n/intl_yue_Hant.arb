@@ -1993,5 +1993,19 @@
     "@noGoogleServicesWarning": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "搜尋緊訊息…",
+    "chatSearchPaused": "訊息搜尋已暫停",
+    "chatSearchFailed": "訊息搜尋失敗",
+    "chatSearchComplete": "訊息搜尋完成",
+    "chatSearchStop": "停止",
+    "chatSearchUndecryptableCount": "有 {count} 條訊息無法解密",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

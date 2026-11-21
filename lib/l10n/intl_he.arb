@@ -2157,5 +2157,19 @@
     "@unbanFromChat": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "מחפש הודעות…",
+    "chatSearchPaused": "חיפוש ההודעות מושהה",
+    "chatSearchFailed": "חיפוש ההודעות נכשל",
+    "chatSearchComplete": "חיפוש ההודעות הושלם",
+    "chatSearchStop": "עצור",
+    "chatSearchUndecryptableCount": "{count, plural, one{לא ניתן לפענח הודעה אחת} other{לא ניתן לפענח {count} הודעות}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

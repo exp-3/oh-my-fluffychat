@@ -2675,5 +2675,19 @@
     "@passphraseNumberRequirement": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "Mezuak bilatzen…",
+    "chatSearchPaused": "Mezuen bilaketa pausatuta",
+    "chatSearchFailed": "Mezuen bilaketak huts egin du",
+    "chatSearchComplete": "Mezuen bilaketa amaitu da",
+    "chatSearchStop": "Gelditu",
+    "chatSearchUndecryptableCount": "{count, plural, one{Ezin izan da {count} mezu deszifratu} other{Ezin izan dira {count} mezu deszifratu}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

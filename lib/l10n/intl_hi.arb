@@ -1953,5 +1953,19 @@
     "@areGuestsAllowedToJoin": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "संदेश खोजे जा रहे हैं…",
+    "chatSearchPaused": "संदेश खोज अस्थायी रूप से रोक दी गई",
+    "chatSearchFailed": "संदेश खोज विफल रही",
+    "chatSearchComplete": "संदेश खोज पूरी हुई",
+    "chatSearchStop": "रोकें",
+    "chatSearchUndecryptableCount": "{count, plural, =1{{count} संदेश को डिक्रिप्ट नहीं किया जा सका} other{{count} संदेशों को डिक्रिप्ट नहीं किया जा सका}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

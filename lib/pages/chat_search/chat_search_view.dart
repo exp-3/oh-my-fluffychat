@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -9,9 +9,12 @@ import 'package:fluffychat/pages/chat_search/chat_search_files_tab.dart';
 import 'package:fluffychat/pages/chat_search/chat_search_images_tab.dart';
 import 'package:fluffychat/pages/chat_search/chat_search_message_tab.dart';
 import 'package:fluffychat/pages/chat_search/chat_search_page.dart';
+import 'package:fluffychat/pages/chat_search/search_status.dart';
+import 'package:fluffychat/utils/chat_search_models.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:matrix/matrix.dart';
 
 class ChatSearchView extends StatelessWidget {
   final ChatSearchController controller;
@@ -21,7 +24,9 @@ class ChatSearchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final room = controller.room;
-    if (room == null) {
+    if (room == null ||
+        !room.client.isLogged() ||
+        room.membership != Membership.join) {
       return Scaffold(
         appBar: AppBar(title: Text(L10n.of(context).oopsSomethingWentWrong)),
         body: Center(
@@ -34,6 +39,7 @@ class ChatSearchView extends StatelessWidget {
     }
 
     final theme = Theme.of(context);
+    final session = controller.session;
 
     return Scaffold(
       appBar: AppBar(
@@ -55,7 +61,8 @@ class ChatSearchView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: TextField(
                 controller: controller.searchController,
-                onSubmitted: (_) => controller.restartSearch(),
+                onSubmitted: (_) => controller.submitQuery(),
+                textInputAction: TextInputAction.search,
                 autofocus: true,
                 enabled: controller.tabController.index == 0,
                 decoration: InputDecoration(
@@ -74,6 +81,18 @@ class ChatSearchView extends StatelessWidget {
                 ),
               ),
             ),
+            if (session != null)
+              ListenableBuilder(
+                listenable: session,
+                builder: (context, _) => ChatSearchStatus(
+                  query: session.query,
+                  runState: session.runState,
+                  searchedUntil: session.searchedUntil,
+                  undecryptableCount: session.undecryptableCount,
+                  onPause: controller.pauseSearch,
+                  onResume: controller.resumeSearch,
+                ),
+              ),
             TabBar(
               controller: controller.tabController,
               tabs: [
@@ -86,30 +105,35 @@ class ChatSearchView extends StatelessWidget {
               child: TabBarView(
                 controller: controller.tabController,
                 children: [
-                  ChatSearchMessageTab(
-                    searchQuery: controller.searchController.text,
-                    room: room,
-                    onStartSearch: controller.startSearch,
-                    events: controller.messages,
-                    endReached: controller.messagesEndReached,
-                    isLoading: controller.isLoading,
-                    searchedUntil: controller.searchedUntil,
+                  ListenableBuilder(
+                    listenable: session ?? controller.tabController,
+                    builder: (context, _) => ChatSearchMessageTab(
+                      key: ObjectKey(session),
+                      searchQuery: session?.query ?? '',
+                      room: room,
+                      onResume: controller.resumeSearch,
+                      results: session?.results ?? const [],
+                      runState: session?.runState ?? ChatSearchRunState.idle,
+                      queryRevision: session?.queryRevision ?? 0,
+                    ),
                   ),
                   ChatSearchImagesTab(
                     room: room,
-                    onStartSearch: controller.startSearch,
-                    events: controller.images,
-                    endReached: controller.imagesEndReached,
-                    isLoading: controller.isLoading,
-                    searchedUntil: controller.searchedUntil,
+                    onStartSearch: controller.loadImages,
+                    events: controller.imagesState.events,
+                    endReached: controller.imagesState.endReached,
+                    isLoading: controller.imagesState.isLoading,
+                    searchedUntil: controller.imagesState.searchedUntil,
+                    error: controller.imagesState.error,
                   ),
                   ChatSearchFilesTab(
                     room: room,
-                    onStartSearch: controller.startSearch,
-                    events: controller.files,
-                    endReached: controller.filesEndReached,
-                    isLoading: controller.isLoading,
-                    searchedUntil: controller.searchedUntil,
+                    onStartSearch: controller.loadFiles,
+                    events: controller.filesState.events,
+                    endReached: controller.filesState.endReached,
+                    isLoading: controller.filesState.isLoading,
+                    searchedUntil: controller.filesState.searchedUntil,
+                    error: controller.filesState.error,
                   ),
                 ],
               ),

@@ -1984,5 +1984,19 @@
     "@noGoogleServicesWarning": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "Αναζήτηση μηνυμάτων…",
+    "chatSearchPaused": "Η αναζήτηση μηνυμάτων τέθηκε σε παύση",
+    "chatSearchFailed": "Η αναζήτηση μηνυμάτων απέτυχε",
+    "chatSearchComplete": "Η αναζήτηση μηνυμάτων ολοκληρώθηκε",
+    "chatSearchStop": "Διακοπή",
+    "chatSearchUndecryptableCount": "{count, plural, one{Δεν ήταν δυνατή η αποκρυπτογράφηση {count} μηνύματος} other{Δεν ήταν δυνατή η αποκρυπτογράφηση {count} μηνυμάτων}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

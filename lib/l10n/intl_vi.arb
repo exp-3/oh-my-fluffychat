@@ -2062,5 +2062,19 @@
     "@passwordForgotten": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "Đang tìm kiếm tin nhắn…",
+    "chatSearchPaused": "Đã tạm dừng tìm kiếm tin nhắn",
+    "chatSearchFailed": "Tìm kiếm tin nhắn không thành công",
+    "chatSearchComplete": "Đã hoàn tất tìm kiếm tin nhắn",
+    "chatSearchStop": "Dừng",
+    "chatSearchUndecryptableCount": "Không thể giải mã {count} tin nhắn",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

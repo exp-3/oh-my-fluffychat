@@ -1,9 +1,12 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+import 'dart:async';
+
 import 'package:fluffychat/pages/chat_search/chat_search_view.dart';
+import 'package:fluffychat/utils/chat_search_session.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:matrix/matrix.dart';
@@ -16,122 +19,209 @@ class ChatSearchPage extends StatefulWidget {
   ChatSearchController createState() => ChatSearchController();
 }
 
+class ChatSearchMediaState {
+  final List<Event> events = [];
+  String? nextBatch;
+  bool initialized = false;
+  bool isLoading = false;
+  bool endReached = false;
+  DateTime? searchedUntil;
+  Object? error;
+}
+
 class ChatSearchController extends State<ChatSearchPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   Room? get room => Matrix.of(context).client.getRoomById(widget.roomId);
 
   final TextEditingController searchController = TextEditingController();
   late final TabController tabController;
 
-  final List<Event> messages = [];
-  final List<Event> images = [];
-  final List<Event> files = [];
-  String? messagesNextBatch, imagesNextBatch, filesNextBatch;
-  bool messagesEndReached = false;
-  bool imagesEndReached = false;
-  bool filesEndReached = false;
-  bool isLoading = false;
-  DateTime? searchedUntil;
+  ChatSearchSession? session;
+  ChatSearchMediaState imagesState = ChatSearchMediaState();
+  ChatSearchMediaState filesState = ChatSearchMediaState();
+  int _selectedTab = 0;
+  int _bindingRevision = 0;
+  bool _availabilityUpdatePending = false;
 
-  void restartSearch() {
+  void submitQuery() => session?.submitQuery(searchController.text);
+
+  void pauseSearch() => session?.pause();
+
+  void resumeSearch() => session?.resume();
+
+  Future<void> loadImages() => _loadMedia(imagesState, images: true);
+
+  Future<void> loadFiles() => _loadMedia(filesState, images: false);
+
+  Future<void> _loadMedia(
+    ChatSearchMediaState state, {
+    required bool images,
+  }) async {
+    final searchRoom = room;
+    if (searchRoom == null ||
+        !searchRoom.client.isLogged() ||
+        searchRoom.membership != Membership.join ||
+        state.isLoading ||
+        state.endReached) {
+      return;
+    }
+    final revision = _bindingRevision;
     setState(() {
-      messages.clear();
-      images.clear();
-      files.clear();
-      messagesNextBatch = imagesNextBatch = filesNextBatch = searchedUntil =
-          null;
-      messagesEndReached = imagesEndReached = filesEndReached = false;
+      state.initialized = true;
+      state.isLoading = true;
+      state.error = null;
     });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      startSearch();
-    });
-  }
-
-  Future<void> startSearch() async {
-    switch (tabController.index) {
-      case 0:
-        final searchQuery = searchController.text.trim();
-        if (searchQuery.isEmpty) return;
+    bool isCurrent() =>
+        mounted &&
+        revision == _bindingRevision &&
+        identical(room, searchRoom) &&
+        searchRoom.client.isLogged() &&
+        searchRoom.membership == Membership.join;
+    try {
+      final result = await searchRoom.searchEvents(
+        searchFunc: images
+            ? (event) => const {
+                MessageTypes.Image,
+                MessageTypes.Video,
+              }.contains(event.messageType)
+            : (event) =>
+                  event.messageType == MessageTypes.File ||
+                  (event.messageType == MessageTypes.Audio &&
+                      !event.content.containsKey('org.matrix.msc3245.voice')),
+        nextBatch: state.nextBatch,
+      );
+      if (!isCurrent()) return;
+      setState(() {
+        final merged = <String, Event>{
+          for (final event in state.events) event.eventId: event,
+          for (final event in result.events) event.eventId: event,
+        };
+        state.events
+          ..clear()
+          ..addAll(merged.values);
+        state.nextBatch = result.nextBatch;
+        state.endReached = result.nextBatch == null;
+        state.searchedUntil = result.searchedUntil;
+      });
+    } catch (error, stackTrace) {
+      if (!isCurrent()) return;
+      Logs().w('Unable to search room media', error, stackTrace);
+      setState(() {
+        state.error = error;
+      });
+    } finally {
+      if (isCurrent()) {
         setState(() {
-          isLoading = true;
+          state.isLoading = false;
         });
-        final result = await room!.searchEvents(
-          searchTerm: searchController.text.trim(),
-          nextBatch: messagesNextBatch,
-        );
-        setState(() {
-          isLoading = false;
-          messages.addAll(result.events);
-          messagesNextBatch = result.nextBatch;
-          messagesEndReached = result.nextBatch == null;
-          searchedUntil = result.searchedUntil;
-        });
-        return;
-      case 1:
-        setState(() {
-          isLoading = true;
-        });
-        final result = await room!.searchEvents(
-          searchFunc: (event) => {
-            MessageTypes.Image,
-            MessageTypes.Video,
-          }.contains(event.messageType),
-          nextBatch: imagesNextBatch,
-        );
-        setState(() {
-          isLoading = false;
-          images.addAll(result.events);
-          imagesNextBatch = result.nextBatch;
-          imagesEndReached = result.nextBatch == null;
-          searchedUntil = result.searchedUntil;
-        });
-        return;
-      case 2:
-        setState(() {
-          isLoading = true;
-        });
-        final result = await room!.searchEvents(
-          searchFunc: (event) =>
-              event.messageType == MessageTypes.File ||
-              (event.messageType == MessageTypes.Audio &&
-                  !event.content.containsKey('org.matrix.msc3245.voice')),
-          nextBatch: filesNextBatch,
-        );
-        setState(() {
-          isLoading = false;
-          files.addAll(result.events);
-          filesNextBatch = result.nextBatch;
-          filesEndReached = result.nextBatch == null;
-          searchedUntil = result.searchedUntil;
-        });
-        return;
-      default:
-        return;
+      }
     }
   }
 
   void _onTabChanged() {
-    switch (tabController.index) {
+    final index = tabController.index;
+    if (index == _selectedTab) return;
+    setState(() {
+      _selectedTab = index;
+    });
+    switch (index) {
       case 1:
+        if (!imagesState.initialized) unawaited(loadImages());
+        break;
       case 2:
-        startSearch();
+        if (!filesState.initialized) unawaited(loadFiles());
         break;
-      case 0:
-      default:
-        restartSearch();
-        break;
+    }
+  }
+
+  void _onRoomAvailabilityChanged() {
+    if (!mounted || _availabilityUpdatePending) return;
+    final searchRoom = session?.room;
+    if (searchRoom == null ||
+        (identical(room, searchRoom) &&
+            searchRoom.client.isLogged() &&
+            searchRoom.membership == Membership.join)) {
+      return;
+    }
+    // Normal batches only rebuild the two ListenableBuilders. Rebuild the
+    // enclosing page once when its account/room is no longer available.
+    _availabilityUpdatePending = true;
+    scheduleMicrotask(() {
+      _availabilityUpdatePending = false;
+      if (!mounted) return;
+      setState(() {
+        _bindingRevision++;
+        imagesState = ChatSearchMediaState();
+        filesState = ChatSearchMediaState();
+      });
+    });
+  }
+
+  void _bindSession() {
+    final candidate = room;
+    final searchRoom =
+        candidate != null &&
+            candidate.client.isLogged() &&
+            candidate.membership == Membership.join
+        ? candidate
+        : null;
+    if (identical(session?.room, searchRoom)) return;
+    _bindingRevision++;
+    session?.removeListener(_onRoomAvailabilityChanged);
+    session?.dispose();
+    session = null;
+    imagesState = ChatSearchMediaState();
+    filesState = ChatSearchMediaState();
+    searchController.clear();
+    if (searchRoom == null) return;
+    final nextSession = ChatSearchSession(searchRoom);
+    final lifecycle = WidgetsBinding.instance.lifecycleState;
+    nextSession.setForeground(
+      lifecycle == null || lifecycle == AppLifecycleState.resumed,
+    );
+    nextSession.addListener(_onRoomAvailabilityChanged);
+    session = nextSession;
+    if (_selectedTab == 1 || _selectedTab == 2) {
+      final revision = _bindingRevision;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || revision != _bindingRevision) return;
+        if (_selectedTab == 1) unawaited(loadImages());
+        if (_selectedTab == 2) unawaited(loadFiles());
+      });
     }
   }
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     tabController = TabController(initialIndex: 0, length: 3, vsync: this);
     tabController.addListener(_onTabChanged);
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _bindSession();
+  }
+
+  @override
+  void didUpdateWidget(covariant ChatSearchPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.roomId != widget.roomId) _bindSession();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    session?.setForeground(state == AppLifecycleState.resumed);
+  }
+
+  @override
   void dispose() {
+    _bindingRevision++;
+    WidgetsBinding.instance.removeObserver(this);
+    session?.removeListener(_onRoomAvailabilityChanged);
+    session?.dispose();
     tabController.removeListener(_onTabChanged);
     searchController.dispose();
     tabController.dispose();
@@ -139,5 +229,10 @@ class ChatSearchController extends State<ChatSearchPage>
   }
 
   @override
-  Widget build(BuildContext context) => ChatSearchView(this);
+  Widget build(BuildContext context) {
+    // Matrix.of intentionally does not listen to active-account changes.
+    // Reconcile on parent rebuilds as well as dependency/widget changes.
+    _bindSession();
+    return ChatSearchView(this);
+  }
 }

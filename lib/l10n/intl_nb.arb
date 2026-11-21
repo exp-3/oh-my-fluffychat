@@ -2979,5 +2979,19 @@
                 "type": "String"
             }
         }
+    },
+    "chatSearchSearching": "Søker etter meldinger…",
+    "chatSearchPaused": "Meldingssøk satt på pause",
+    "chatSearchFailed": "Meldingssøk mislyktes",
+    "chatSearchComplete": "Meldingssøk fullført",
+    "chatSearchStop": "Stopp",
+    "chatSearchUndecryptableCount": "{count, plural, =1{Kunne ikke dekryptere 1 melding} other{Kunne ikke dekryptere {count} meldinger}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

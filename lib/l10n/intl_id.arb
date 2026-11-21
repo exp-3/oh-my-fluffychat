@@ -2904,5 +2904,19 @@
     "stopScreensharing": "Hentikan berbagi layar",
     "raiseHand": "Angkat tangan",
     "stopRaiseHand": "Turunkan tangan",
-    "preferSpeaker": "Utamakan pengeras suara"
+    "preferSpeaker": "Utamakan pengeras suara",
+    "chatSearchSearching": "Mencari pesan…",
+    "chatSearchPaused": "Pencarian pesan dijeda",
+    "chatSearchFailed": "Pencarian pesan gagal",
+    "chatSearchComplete": "Pencarian pesan selesai",
+    "chatSearchStop": "Hentikan",
+    "chatSearchUndecryptableCount": "{count} pesan tidak dapat didekripsi",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

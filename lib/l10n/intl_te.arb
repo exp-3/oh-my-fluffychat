@@ -2081,5 +2081,19 @@
     "@areGuestsAllowedToJoin": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "సందేశాలను శోధిస్తోంది…",
+    "chatSearchPaused": "సందేశ శోధన తాత్కాలికంగా నిలిపివేయబడింది",
+    "chatSearchFailed": "సందేశ శోధన విఫలమైంది",
+    "chatSearchComplete": "సందేశ శోధన పూర్తయింది",
+    "chatSearchStop": "ఆపండి",
+    "chatSearchUndecryptableCount": "{count, plural, =1{1 సందేశాన్ని డీక్రిప్ట్ చేయడం సాధ్యం కాలేదు} other{{count} సందేశాలను డీక్రిప్ట్ చేయడం సాధ్యం కాలేదు}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

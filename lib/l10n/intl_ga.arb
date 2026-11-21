@@ -2975,5 +2975,19 @@
                 "type": "String"
             }
         }
+    },
+    "chatSearchSearching": "Teachtaireachtaí á gcuardach…",
+    "chatSearchPaused": "Cuardach teachtaireachtaí curtha ar sos",
+    "chatSearchFailed": "Theip ar chuardach na dteachtaireachtaí",
+    "chatSearchComplete": "Cuardach teachtaireachtaí críochnaithe",
+    "chatSearchStop": "Stop",
+    "chatSearchUndecryptableCount": "Teachtaireachtaí nárbh fhéidir a dhíchriptiú: {count}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

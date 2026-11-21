@@ -2060,5 +2060,19 @@
     "logs": "Žurnalai",
     "baseUrl": "Pradinis URL",
     "identityServer": "Identifikavimo serveris:",
-    "matrixId": "„Matrix“ ID"
+    "matrixId": "„Matrix“ ID",
+    "chatSearchSearching": "Ieškoma žinučių…",
+    "chatSearchPaused": "Žinučių paieška pristabdyta",
+    "chatSearchFailed": "Žinučių paieška nepavyko",
+    "chatSearchComplete": "Žinučių paieška baigta",
+    "chatSearchStop": "Stabdyti",
+    "chatSearchUndecryptableCount": "{count, plural, one{Nepavyko iššifruoti {count} žinutės} other{Nepavyko iššifruoti {count} žinučių}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

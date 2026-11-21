@@ -2216,6 +2216,19 @@
         }
     },
     "searchMore": "搜尋更多......",
+    "chatSearchSearching": "正在搜尋訊息…",
+    "chatSearchPaused": "訊息搜尋已暫停",
+    "chatSearchFailed": "訊息搜尋失敗",
+    "chatSearchComplete": "訊息搜尋完成",
+    "chatSearchStop": "停止",
+    "chatSearchUndecryptableCount": "有 {count} 則訊息無法解密，未能搜尋其內容",
+    "@chatSearchUndecryptableCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "gallery": "畫廊",
     "sendReadReceiptsDescription": "聊天室中的其他參與者可以看到您已讀取一條訊息。",
     "formattedMessages": "格式化訊息",

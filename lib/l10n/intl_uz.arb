@@ -2564,5 +2564,19 @@
     "advancedConfigurations": "Kengaytirilgan sozlamalar",
     "@mute": {
         "description": "This should be a very short string because there is not much space in the button!"
+    },
+    "chatSearchSearching": "Xabarlar qidirilmoqda…",
+    "chatSearchPaused": "Xabarlarni qidirish vaqtincha to‘xtatildi",
+    "chatSearchFailed": "Xabarlarni qidirish muvaffaqiyatsiz tugadi",
+    "chatSearchComplete": "Xabarlarni qidirish yakunlandi",
+    "chatSearchStop": "To‘xtatish",
+    "chatSearchUndecryptableCount": "{count} ta xabarni deshifrlab bo‘lmadi",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

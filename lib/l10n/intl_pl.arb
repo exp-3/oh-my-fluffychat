@@ -2809,5 +2809,19 @@
     "biometricsDescription": "Za pomocą biometrycznego uwierzytelniania możesz odblokować aplikację za pomocą swojej twarzy lub odsisku palca. Możliwości zależą od twojego urządzenia.",
     "doubleTapToReact": "Podwójne dotknięcie, aby zareagować",
     "doubleTapToReactDescription": "Podwójne dotknięcie wiadomości reaguje zamiast zaznaczania tekstu",
-    "doubleTapReaction": "Reakcja podwójnego dotknięcia"
+    "doubleTapReaction": "Reakcja podwójnego dotknięcia",
+    "chatSearchSearching": "Wyszukiwanie wiadomości…",
+    "chatSearchPaused": "Wyszukiwanie wiadomości wstrzymane",
+    "chatSearchFailed": "Wyszukiwanie wiadomości nie powiodło się",
+    "chatSearchComplete": "Wyszukiwanie wiadomości zakończone",
+    "chatSearchStop": "Zatrzymaj",
+    "chatSearchUndecryptableCount": "Nie udało się odszyfrować {count} wiadomości",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

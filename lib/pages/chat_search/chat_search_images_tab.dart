@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -18,6 +18,7 @@ class ChatSearchImagesTab extends StatelessWidget {
   final void Function() onStartSearch;
   final bool endReached, isLoading;
   final DateTime? searchedUntil;
+  final Object? error;
 
   const ChatSearchImagesTab({
     required this.room,
@@ -27,6 +28,7 @@ class ChatSearchImagesTab extends StatelessWidget {
     required this.isLoading,
     super.key,
     required this.searchedUntil,
+    this.error,
   });
 
   @override
@@ -48,6 +50,7 @@ class ChatSearchImagesTab extends StatelessWidget {
     const padding = 8.0;
 
     return ListView.builder(
+      key: PageStorageKey('chat-search-images-${room.id}'),
       itemCount: eventsByMonth.length + 1,
       itemBuilder: (context, i) {
         if (i == eventsByMonth.length) {
@@ -56,6 +59,7 @@ class ChatSearchImagesTab extends StatelessWidget {
             endReached: endReached,
             isLoading: isLoading,
             onStartSearch: onStartSearch,
+            error: error,
           );
         }
 

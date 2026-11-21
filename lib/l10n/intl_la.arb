@@ -159,5 +159,19 @@
     "@mirror": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "Nuntios quaerens…",
+    "chatSearchPaused": "Quaestio nuntiorum intermissa",
+    "chatSearchFailed": "Quaestio nuntiorum defecit",
+    "chatSearchComplete": "Quaestio nuntiorum perfecta",
+    "chatSearchStop": "Siste",
+    "chatSearchUndecryptableCount": "{count, plural, one{{count} nuntius decryptari non potuit} other{{count} nuntii decryptari non potuerunt}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

@@ -1965,5 +1965,19 @@
     "@areGuestsAllowedToJoin": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "Søger efter beskeder…",
+    "chatSearchPaused": "Beskedsøgning sat på pause",
+    "chatSearchFailed": "Beskedsøgning mislykkedes",
+    "chatSearchComplete": "Beskedsøgning fuldført",
+    "chatSearchStop": "Stop",
+    "chatSearchUndecryptableCount": "{count, plural, one{{count} besked kunne ikke dekrypteres} other{{count} beskeder kunne ikke dekrypteres}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

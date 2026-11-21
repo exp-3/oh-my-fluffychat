@@ -2219,5 +2219,19 @@
                 "type": "String"
             }
         }
+    },
+    "chatSearchSearching": "Serĉante mesaĝojn…",
+    "chatSearchPaused": "Serĉado de mesaĝoj paŭzita",
+    "chatSearchFailed": "Serĉado de mesaĝoj malsukcesis",
+    "chatSearchComplete": "Serĉado de mesaĝoj finita",
+    "chatSearchStop": "Ĉesigi",
+    "chatSearchUndecryptableCount": "{count, plural, one{Ne eblis malĉifri {count} mesaĝon} other{Ne eblis malĉifri {count} mesaĝojn}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

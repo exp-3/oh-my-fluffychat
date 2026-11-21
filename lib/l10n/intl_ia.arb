@@ -2094,5 +2094,19 @@
     "@areGuestsAllowedToJoin": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "Cerca de messages…",
+    "chatSearchPaused": "Cerca de messages pausate",
+    "chatSearchFailed": "Cerca de messages fallite",
+    "chatSearchComplete": "Cerca de messages completate",
+    "chatSearchStop": "Stoppar",
+    "chatSearchUndecryptableCount": "{count, plural, one{Impossibile decifrar {count} message} other{Impossibile decifrar {count} messages}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

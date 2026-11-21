@@ -2428,5 +2428,19 @@
     "@accountsAndSettings": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "Mesajlar aranıyor…",
+    "chatSearchPaused": "Mesaj araması duraklatıldı",
+    "chatSearchFailed": "Mesaj araması başarısız oldu",
+    "chatSearchComplete": "Mesaj araması tamamlandı",
+    "chatSearchStop": "Durdur",
+    "chatSearchUndecryptableCount": "{count} mesajın şifresi çözülemedi",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

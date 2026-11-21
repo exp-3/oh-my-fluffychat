@@ -2945,5 +2945,19 @@
     },
     "download": "Загрузить",
     "unifiedPushDistributors": "Дистрибьюторы Unified Push:",
-    "sharedLocation": "Общие геометки"
+    "sharedLocation": "Общие геометки",
+    "chatSearchSearching": "Поиск сообщений…",
+    "chatSearchPaused": "Поиск сообщений приостановлен",
+    "chatSearchFailed": "Не удалось выполнить поиск сообщений",
+    "chatSearchComplete": "Поиск сообщений завершён",
+    "chatSearchStop": "Остановить",
+    "chatSearchUndecryptableCount": "{count, plural, one{Не удалось расшифровать {count} сообщение} few{Не удалось расшифровать {count} сообщения} many{Не удалось расшифровать {count} сообщений} other{Не удалось расшифровать {count} сообщений}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

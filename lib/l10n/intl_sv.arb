@@ -2805,5 +2805,19 @@
                 "type": "int"
             }
         }
+    },
+    "chatSearchSearching": "Söker efter meddelanden…",
+    "chatSearchPaused": "Meddelandesökning pausad",
+    "chatSearchFailed": "Meddelandesökningen misslyckades",
+    "chatSearchComplete": "Meddelandesökningen är klar",
+    "chatSearchStop": "Stoppa",
+    "chatSearchUndecryptableCount": "{count, plural, =1{1 meddelande kunde inte dekrypteras} other{{count} meddelanden kunde inte dekrypteras}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

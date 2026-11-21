@@ -2529,5 +2529,19 @@
                 "type": "String"
             }
         }
+    },
+    "chatSearchSearching": "Üzenetek keresése…",
+    "chatSearchPaused": "Az üzenetkeresés szüneteltetve",
+    "chatSearchFailed": "Az üzenetkeresés sikertelen",
+    "chatSearchComplete": "Az üzenetkeresés befejeződött",
+    "chatSearchStop": "Leállítás",
+    "chatSearchUndecryptableCount": "{count} üzenetet nem sikerült visszafejteni",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

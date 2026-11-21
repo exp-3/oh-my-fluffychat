@@ -2115,5 +2115,19 @@
     "@areGuestsAllowedToJoin": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "Sercha de missages…",
+    "chatSearchPaused": "Sercha de missages pausat",
+    "chatSearchFailed": "Sercha de missages ne successat",
+    "chatSearchComplete": "Sercha de missages finit",
+    "chatSearchStop": "Stoppar",
+    "chatSearchUndecryptableCount": "{count, plural, one{Ne posset deciffrar {count} missage} other{Ne posset deciffrar {count} missages}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

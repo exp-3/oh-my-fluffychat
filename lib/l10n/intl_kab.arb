@@ -2449,5 +2449,19 @@
                 "type": "String"
             }
         }
+    },
+    "chatSearchSearching": "Anadi n yiznan…",
+    "chatSearchPaused": "Anadi n yiznan yeḥbes",
+    "chatSearchFailed": "Anadi n yiznan ur yeddi ara",
+    "chatSearchComplete": "Anadi n yiznan yemmed",
+    "chatSearchStop": "Ḥbes",
+    "chatSearchUndecryptableCount": "Ur izmer ara tukksa n uwgelhen n yiznan: {count}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

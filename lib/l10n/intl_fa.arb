@@ -2601,5 +2601,19 @@
                 "type": "int"
             }
         }
+    },
+    "chatSearchSearching": "در حال جست‌وجوی پیام‌ها…",
+    "chatSearchPaused": "جست‌وجوی پیام‌ها موقتاً متوقف شد",
+    "chatSearchFailed": "جست‌وجوی پیام‌ها ناموفق بود",
+    "chatSearchComplete": "جست‌وجوی پیام‌ها کامل شد",
+    "chatSearchStop": "توقف",
+    "chatSearchUndecryptableCount": "رمزگشایی از {count} پیام ممکن نبود",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

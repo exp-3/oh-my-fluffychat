@@ -2852,5 +2852,19 @@
     "loadingMessages": "செய்திகளை ஏற்றுகிறது...",
     "buildDoesNotSupportFirebase": "இந்த பில்ட் ஃபயர்பேச் முகில் மெசேசிங்கை ஆதரிக்காது.",
     "unableToRegisterDeviceForFirebase": "ஃபயர்பேச் முகில் மெசேசிங்கிற்கான சாதனத்தைப் பதிவு செய்ய முடியவில்லை.",
-    "unifiedPushDistributors": "ஒருங்கிணைந்த புச் விநியோகச்தர்கள்:"
+    "unifiedPushDistributors": "ஒருங்கிணைந்த புச் விநியோகச்தர்கள்:",
+    "chatSearchSearching": "செய்திகளைத் தேடுகிறது…",
+    "chatSearchPaused": "செய்தி தேடல் இடைநிறுத்தப்பட்டது",
+    "chatSearchFailed": "செய்தி தேடல் தோல்வியடைந்தது",
+    "chatSearchComplete": "செய்தி தேடல் முடிந்தது",
+    "chatSearchStop": "நிறுத்து",
+    "chatSearchUndecryptableCount": "{count, plural, =1{1 செய்தியின் குறியாக்கத்தை நீக்க முடியவில்லை} other{{count} செய்திகளின் குறியாக்கத்தை நீக்க முடியவில்லை}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

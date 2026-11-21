@@ -116,5 +116,19 @@
     "importEmojis": "Emojiləri idxal edin",
     "importFromZipFile": ".zip faylından idxal edin",
     "exportEmotePack": "Emote paketini .zip formatında ixrac edin",
-    "replace": "Əvəz et"
+    "replace": "Əvəz et",
+    "chatSearchSearching": "Mesajlar axtarılır…",
+    "chatSearchPaused": "Mesaj axtarışı müvəqqəti dayandırıldı",
+    "chatSearchFailed": "Mesaj axtarışı uğursuz oldu",
+    "chatSearchComplete": "Mesaj axtarışı tamamlandı",
+    "chatSearchStop": "Dayandır",
+    "chatSearchUndecryptableCount": "{count} mesajın şifrəsi açıla bilmədi",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

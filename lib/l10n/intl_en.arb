@@ -2265,6 +2265,20 @@
         }
     },
     "searchMore": "Search more...",
+    "chatSearchSearching": "Searching messages…",
+    "chatSearchPaused": "Message search paused",
+    "chatSearchFailed": "Message search failed",
+    "chatSearchComplete": "Message search complete",
+    "chatSearchStop": "Stop",
+    "chatSearchUndecryptableCount": "{count, plural, =1{1 message could not be decrypted} other{{count} messages could not be decrypted}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "gallery": "Gallery",
     "files": "Files",
     "sessionLostBody": "Your session is lost. Please report this error to the developers at {url}. The error message is: {error}",

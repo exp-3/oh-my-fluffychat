@@ -2496,5 +2496,19 @@
                 "type": "String"
             }
         }
+    },
+    "chatSearchSearching": "메시지 검색 중…",
+    "chatSearchPaused": "메시지 검색이 일시 중지됨",
+    "chatSearchFailed": "메시지 검색 실패",
+    "chatSearchComplete": "메시지 검색 완료",
+    "chatSearchStop": "중지",
+    "chatSearchUndecryptableCount": "{count}개의 메시지를 복호화할 수 없습니다",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

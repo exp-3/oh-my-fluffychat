@@ -1969,5 +1969,19 @@
     "@unbanFromChat": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "বার্তা খোঁজা হচ্ছে…",
+    "chatSearchPaused": "বার্তা অনুসন্ধান সাময়িকভাবে থামানো হয়েছে",
+    "chatSearchFailed": "বার্তা অনুসন্ধান ব্যর্থ হয়েছে",
+    "chatSearchComplete": "বার্তা অনুসন্ধান সম্পূর্ণ হয়েছে",
+    "chatSearchStop": "থামান",
+    "chatSearchUndecryptableCount": "{count}টি বার্তার ডিক্রিপশন করা যায়নি",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

@@ -1979,5 +1979,19 @@
     "@noGoogleServicesWarning": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "กำลังค้นหาข้อความ…",
+    "chatSearchPaused": "หยุดการค้นหาข้อความชั่วคราวแล้ว",
+    "chatSearchFailed": "การค้นหาข้อความล้มเหลว",
+    "chatSearchComplete": "ค้นหาข้อความเสร็จสมบูรณ์",
+    "chatSearchStop": "หยุด",
+    "chatSearchUndecryptableCount": "ไม่สามารถถอดรหัสข้อความ {count} รายการได้",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

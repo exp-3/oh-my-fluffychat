@@ -2064,5 +2064,19 @@
     "@noGoogleServicesWarning": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "მიმდინარეობს შეტყობინებების ძებნა…",
+    "chatSearchPaused": "შეტყობინებების ძებნა დროებით შეჩერებულია",
+    "chatSearchFailed": "შეტყობინებების ძებნა ვერ მოხერხდა",
+    "chatSearchComplete": "შეტყობინებების ძებნა დასრულდა",
+    "chatSearchStop": "შეჩერება",
+    "chatSearchUndecryptableCount": "{count} შეტყობინების გაშიფვრა ვერ მოხერხდა",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

@@ -2100,5 +2100,19 @@
     "@noGoogleServicesWarning": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "Naghahanap ng mga mensahe…",
+    "chatSearchPaused": "Naka-pause ang paghahanap ng mensahe",
+    "chatSearchFailed": "Nabigo ang paghahanap ng mensahe",
+    "chatSearchComplete": "Tapos na ang paghahanap ng mensahe",
+    "chatSearchStop": "Itigil",
+    "chatSearchUndecryptableCount": "Hindi ma-decrypt ang {count} mensahe",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

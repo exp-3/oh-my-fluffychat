@@ -2944,5 +2944,19 @@
         }
     },
     "download": "Downloaden",
-    "sharedLocation": "Gedeelde locatie"
+    "sharedLocation": "Gedeelde locatie",
+    "chatSearchSearching": "Berichten zoeken…",
+    "chatSearchPaused": "Het zoeken naar berichten is gepauzeerd",
+    "chatSearchFailed": "Het zoeken naar berichten is mislukt",
+    "chatSearchComplete": "Het zoeken naar berichten is voltooid",
+    "chatSearchStop": "Stoppen",
+    "chatSearchUndecryptableCount": "{count, plural, =1{1 bericht kon niet worden ontsleuteld} other{{count} berichten konden niet worden ontsleuteld}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

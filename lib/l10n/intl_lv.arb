@@ -2911,5 +2911,19 @@
             }
         }
     },
-    "preferSpeaker": "Priekšroku dot skaļrunim"
+    "preferSpeaker": "Priekšroku dot skaļrunim",
+    "chatSearchSearching": "Meklē ziņas…",
+    "chatSearchPaused": "Ziņu meklēšana uz laiku apturēta",
+    "chatSearchFailed": "Ziņu meklēšana neizdevās",
+    "chatSearchComplete": "Ziņu meklēšana pabeigta",
+    "chatSearchStop": "Apturēt",
+    "chatSearchUndecryptableCount": "{count, plural, zero{Nevarēja atšifrēt {count} ziņu} one{Nevarēja atšifrēt {count} ziņu} other{Nevarēja atšifrēt {count} ziņas}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

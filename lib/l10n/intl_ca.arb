@@ -2602,5 +2602,19 @@
     "support": "Aporta",
     "setLowPriority": "Estableix una prioritat baixa",
     "unsetLowPriority": "Restableix la prioritat",
-    "playSoundOnNotification": "Notificacions sonores"
+    "playSoundOnNotification": "Notificacions sonores",
+    "chatSearchSearching": "S'estan cercant missatges…",
+    "chatSearchPaused": "Cerca de missatges pausada",
+    "chatSearchFailed": "La cerca de missatges ha fallat",
+    "chatSearchComplete": "Cerca de missatges completada",
+    "chatSearchStop": "Atura",
+    "chatSearchUndecryptableCount": "{count, plural, one{No s'ha pogut desxifrar {count} missatge} other{No s'han pogut desxifrar {count} missatges}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

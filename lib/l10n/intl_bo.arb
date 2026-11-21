@@ -2076,5 +2076,19 @@
     "@areGuestsAllowedToJoin": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "འཕྲིན་ཡིག་འཚོལ་ཞིབ་བྱེད་བཞིན་པ…",
+    "chatSearchPaused": "འཕྲིན་ཡིག་འཚོལ་ཞིབ་གནས་སྐབས་མཚམས་བཞག་པ།",
+    "chatSearchFailed": "འཕྲིན་ཡིག་འཚོལ་ཞིབ་ཕམ་པ།",
+    "chatSearchComplete": "འཕྲིན་ཡིག་འཚོལ་ཞིབ་ཚར་ཟིན།",
+    "chatSearchStop": "མཚམས་འཇོག",
+    "chatSearchUndecryptableCount": "འཕྲིན་ཡིག་ {count} གསང་འགྲོལ་བྱེད་མ་ཐུབ།",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

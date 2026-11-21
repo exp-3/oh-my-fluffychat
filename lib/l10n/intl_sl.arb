@@ -2028,5 +2028,19 @@
     "@noGoogleServicesWarning": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "Iskanje sporočil…",
+    "chatSearchPaused": "Iskanje sporočil je začasno ustavljeno",
+    "chatSearchFailed": "Iskanje sporočil ni uspelo",
+    "chatSearchComplete": "Iskanje sporočil je končano",
+    "chatSearchStop": "Ustavi",
+    "chatSearchUndecryptableCount": "{count, plural, one{Dešifriranje {count} sporočila ni uspelo} other{Dešifriranje {count} sporočil ni uspelo}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

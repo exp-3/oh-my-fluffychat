@@ -2105,5 +2105,19 @@
     "@unbanFromChat": {
         "type": "String",
         "placeholders": {}
+    },
+    "chatSearchSearching": "Pesquisando mensagens…",
+    "chatSearchPaused": "Pesquisa de mensagens pausada",
+    "chatSearchFailed": "A pesquisa de mensagens falhou",
+    "chatSearchComplete": "Pesquisa de mensagens concluída",
+    "chatSearchStop": "Parar",
+    "chatSearchUndecryptableCount": "{count, plural, =1{Não foi possível descriptografar 1 mensagem} other{Não foi possível descriptografar {count} mensagens}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

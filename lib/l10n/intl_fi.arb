@@ -2554,5 +2554,19 @@
                 "type": "String"
             }
         }
+    },
+    "chatSearchSearching": "Haetaan viestejä…",
+    "chatSearchPaused": "Viestihaku keskeytetty",
+    "chatSearchFailed": "Viestihaku epäonnistui",
+    "chatSearchComplete": "Viestihaku valmis",
+    "chatSearchStop": "Pysäytä",
+    "chatSearchUndecryptableCount": "{count} viestin salauksen purku ei onnistunut",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
     }
 }

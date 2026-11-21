@@ -2603,5 +2603,19 @@
     "sendCanceled": "Odeslání přerušeno",
     "loginWithMatrixId": "Přihlásit se pomocí Matrix ID",
     "doesNotSeemToBeAValidHomeserver": "Vypadá to, že domovský server není kompatibilní. Je URL adresa správná?",
-    "calculatingFileSize": "Vypočítávám velikost souboru..."
+    "calculatingFileSize": "Vypočítávám velikost souboru...",
+    "chatSearchSearching": "Probíhá hledání zpráv…",
+    "chatSearchPaused": "Hledání zpráv pozastaveno",
+    "chatSearchFailed": "Hledání zpráv se nezdařilo",
+    "chatSearchComplete": "Hledání zpráv dokončeno",
+    "chatSearchStop": "Zastavit",
+    "chatSearchUndecryptableCount": "{count, plural, one{Nepodařilo se dešifrovat {count} zprávu} few{Nepodařilo se dešifrovat {count} zprávy} other{Nepodařilo se dešifrovat {count} zpráv}}",
+    "@chatSearchUndecryptableCount": {
+        "description": "Messages encountered during search whose contents could not be decrypted and searched.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
 }

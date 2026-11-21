@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -11,6 +11,7 @@ class SearchFooter extends StatelessWidget {
   final DateTime? searchedUntil;
   final bool endReached, isLoading;
   final void Function() onStartSearch;
+  final Object? error;
 
   const SearchFooter({
     super.key,
@@ -18,11 +19,12 @@ class SearchFooter extends StatelessWidget {
     required this.endReached,
     required this.isLoading,
     required this.onStartSearch,
+    this.error,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (endReached) {
+    if (endReached && error == null) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -38,6 +40,11 @@ class SearchFooter extends StatelessWidget {
         child: Column(
           mainAxisSize: .min,
           children: [
+            if (error != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(L10n.of(context).oopsSomethingWentWrong),
+              ),
             if (searchedUntil != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
@@ -61,8 +68,16 @@ class SearchFooter extends StatelessWidget {
                         strokeWidth: 2,
                       ),
                     )
-                  : const Icon(Icons.arrow_downward_outlined),
-              label: Text(L10n.of(context).searchMore),
+                  : Icon(
+                      error == null
+                          ? Icons.arrow_downward_outlined
+                          : Icons.refresh_outlined,
+                    ),
+              label: Text(
+                error == null
+                    ? L10n.of(context).searchMore
+                    : L10n.of(context).tryAgain,
+              ),
             ),
           ],
         ),
