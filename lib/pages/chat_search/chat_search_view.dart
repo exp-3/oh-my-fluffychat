@@ -53,10 +53,11 @@ class ChatSearchView extends StatelessWidget {
       ),
       body: MaxWidthBody(
         withScrolling: false,
+        contentPadding: const EdgeInsets.only(top: 16),
         child: Column(
           children: [
             if (FluffyThemes.isThreeColumnMode(context))
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: TextField(
@@ -66,8 +67,17 @@ class ChatSearchView extends StatelessWidget {
                 autofocus: true,
                 enabled: controller.tabController.index == 0,
                 decoration: InputDecoration(
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   hintText: L10n.of(context).search,
                   prefixIcon: const Icon(Icons.search_outlined),
+                  prefixIconConstraints: const BoxConstraints(
+                    minWidth: 40,
+                    minHeight: 40,
+                  ),
                   filled: true,
                   fillColor: theme.colorScheme.secondaryContainer,
                   border: OutlineInputBorder(
@@ -81,61 +91,99 @@ class ChatSearchView extends StatelessWidget {
                 ),
               ),
             ),
-            if (session != null)
-              ListenableBuilder(
-                listenable: session,
-                builder: (context, _) => ChatSearchStatus(
-                  query: session.query,
-                  runState: session.runState,
-                  searchedUntil: session.searchedUntil,
-                  undecryptableCount: session.undecryptableCount,
-                  onPause: controller.pauseSearch,
-                  onResume: controller.resumeSearch,
-                ),
-              ),
             TabBar(
               controller: controller.tabController,
               tabs: [
-                Tab(child: Text(L10n.of(context).messages)),
-                Tab(child: Text(L10n.of(context).gallery)),
-                Tab(child: Text(L10n.of(context).files)),
+                Tab(height: 36, child: Text(L10n.of(context).messages)),
+                Tab(height: 36, child: Text(L10n.of(context).gallery)),
+                Tab(height: 36, child: Text(L10n.of(context).files)),
               ],
             ),
             Expanded(
-              child: TabBarView(
-                controller: controller.tabController,
-                children: [
-                  ListenableBuilder(
-                    listenable: session ?? controller.tabController,
-                    builder: (context, _) => ChatSearchMessageTab(
-                      key: ObjectKey(session),
-                      searchQuery: session?.query ?? '',
-                      room: room,
-                      onResume: controller.resumeSearch,
-                      results: session?.results ?? const [],
-                      runState: session?.runState ?? ChatSearchRunState.idle,
-                      queryRevision: session?.queryRevision ?? 0,
-                    ),
-                  ),
-                  ChatSearchImagesTab(
-                    room: room,
-                    onStartSearch: controller.loadImages,
-                    events: controller.imagesState.events,
-                    endReached: controller.imagesState.endReached,
-                    isLoading: controller.imagesState.isLoading,
-                    searchedUntil: controller.imagesState.searchedUntil,
-                    error: controller.imagesState.error,
-                  ),
-                  ChatSearchFilesTab(
-                    room: room,
-                    onStartSearch: controller.loadFiles,
-                    events: controller.filesState.events,
-                    endReached: controller.filesState.endReached,
-                    isLoading: controller.filesState.isLoading,
-                    searchedUntil: controller.filesState.searchedUntil,
-                    error: controller.filesState.error,
-                  ),
-                ],
+              child: ListenableBuilder(
+                listenable: controller.statusController,
+                builder: (context, _) {
+                  final status = controller.statusController;
+                  return Stack(
+                    children: [
+                      TabBarView(
+                        controller: controller.tabController,
+                        children: [
+                          NotificationListener<ScrollNotification>(
+                            onNotification: (notification) =>
+                                status.onScrollNotification(0, notification),
+                            child: ListenableBuilder(
+                              listenable: session ?? controller.tabController,
+                              builder: (context, _) => ChatSearchMessageTab(
+                                key: ObjectKey(session),
+                                searchQuery: session?.query ?? '',
+                                room: room,
+                                onResume: controller.resumeSearch,
+                                results: session?.results ?? const [],
+                                runState:
+                                    session?.runState ??
+                                    ChatSearchRunState.idle,
+                                queryRevision: session?.queryRevision ?? 0,
+                                bottomInset: status.bottomInset,
+                              ),
+                            ),
+                          ),
+                          NotificationListener<ScrollNotification>(
+                            onNotification: (notification) =>
+                                status.onScrollNotification(1, notification),
+                            child: ChatSearchImagesTab(
+                              room: room,
+                              onStartSearch: controller.loadImages,
+                              events: controller.imagesState.events,
+                              endReached: controller.imagesState.endReached,
+                              isLoading: controller.imagesState.isLoading,
+                              searchedUntil:
+                                  controller.imagesState.searchedUntil,
+                              error: controller.imagesState.error,
+                              bottomInset: status.bottomInset,
+                            ),
+                          ),
+                          NotificationListener<ScrollNotification>(
+                            onNotification: (notification) =>
+                                status.onScrollNotification(2, notification),
+                            child: ChatSearchFilesTab(
+                              room: room,
+                              onStartSearch: controller.loadFiles,
+                              events: controller.filesState.events,
+                              endReached: controller.filesState.endReached,
+                              isLoading: controller.filesState.isLoading,
+                              searchedUntil:
+                                  controller.filesState.searchedUntil,
+                              error: controller.filesState.error,
+                              bottomInset: status.bottomInset,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (session != null)
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          child: ListenableBuilder(
+                            listenable: session,
+                            builder: (context, _) => ChatSearchStatus(
+                              query: session.query,
+                              runState: session.runState,
+                              searchedUntil: session.searchedUntil,
+                              undecryptableCount: session.undecryptableCount,
+                              onPause: controller.pauseSearch,
+                              onResume: controller.resumeSearch,
+                              collapsed: status.collapsed,
+                              onExpand: status.expand,
+                              onCollapse: status.collapse,
+                              onHeightChanged: status.updateExpandedHeight,
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
               ),
             ),
           ],

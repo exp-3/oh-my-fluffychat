@@ -27,56 +27,73 @@ class SearchFooter extends StatelessWidget {
     if (endReached && error == null) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(L10n.of(context).noMoreResultsFound),
         ),
       );
     }
     final theme = Theme.of(context);
     final searchedUntil = this.searchedUntil;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: .min,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: LayoutBuilder(
+        builder: (context, constraints) => Row(
+          textDirection: TextDirection.ltr,
           children: [
-            if (error != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Text(L10n.of(context).oopsSomethingWentWrong),
-              ),
-            if (searchedUntil != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                  L10n.of(
-                    context,
-                  ).chatSearchedUntil(searchedUntil.localizedTime(context)),
-                  style: TextStyle(fontSize: 10.5),
-                ),
-              ),
-            TextButton.icon(
-              style: TextButton.styleFrom(
-                backgroundColor: theme.colorScheme.secondaryContainer,
-                foregroundColor: theme.colorScheme.onSecondaryContainer,
-              ),
-              onPressed: isLoading ? null : onStartSearch,
-              icon: isLoading
-                  ? SizedBox.square(
-                      dimension: 18,
-                      child: const CircularProgressIndicator.adaptive(
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : Icon(
-                      error == null
-                          ? Icons.arrow_downward_outlined
-                          : Icons.refresh_outlined,
+            Expanded(
+              child: Wrap(
+                spacing: 12,
+                runSpacing: 2,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  if (error != null)
+                    Text(
+                      L10n.of(context).oopsSomethingWentWrong,
+                      style: theme.textTheme.bodySmall,
                     ),
-              label: Text(
-                error == null
-                    ? L10n.of(context).searchMore
-                    : L10n.of(context).tryAgain,
+                  if (searchedUntil != null)
+                    Text(
+                      L10n.of(
+                        context,
+                      ).chatSearchedUntil(searchedUntil.localizedTime(context)),
+                      style: theme.textTheme.bodySmall,
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: constraints.maxWidth / 2),
+              child: TextButton.icon(
+                style: TextButton.styleFrom(
+                  backgroundColor: theme.colorScheme.secondaryContainer,
+                  foregroundColor: theme.colorScheme.onSecondaryContainer,
+                  minimumSize: const Size(0, 32),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  iconSize: 18,
+                ),
+                onPressed: isLoading ? null : onStartSearch,
+                icon: isLoading
+                    ? const SizedBox.square(
+                        dimension: 16,
+                        child: CircularProgressIndicator.adaptive(
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Icon(
+                        error == null
+                            ? Icons.arrow_downward_outlined
+                            : Icons.refresh_outlined,
+                      ),
+                label: Text(
+                  error == null
+                      ? L10n.of(context).searchMore
+                      : L10n.of(context).tryAgain,
+                ),
               ),
             ),
           ],

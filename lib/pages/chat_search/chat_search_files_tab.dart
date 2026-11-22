@@ -18,6 +18,7 @@ class ChatSearchFilesTab extends StatelessWidget {
   final bool endReached, isLoading;
   final DateTime? searchedUntil;
   final Object? error;
+  final double bottomInset;
 
   const ChatSearchFilesTab({
     required this.room,
@@ -28,6 +29,7 @@ class ChatSearchFilesTab extends StatelessWidget {
     super.key,
     required this.searchedUntil,
     this.error,
+    this.bottomInset = 0,
   });
 
   @override
@@ -36,7 +38,7 @@ class ChatSearchFilesTab extends StatelessWidget {
     return SelectionArea(
       child: ListView.builder(
         key: PageStorageKey('chat-search-files-${room.id}'),
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.fromLTRB(8, 8, 8, 8 + bottomInset),
         itemCount: events.length + 1,
         itemBuilder: (context, i) {
           if (i == events.length) {

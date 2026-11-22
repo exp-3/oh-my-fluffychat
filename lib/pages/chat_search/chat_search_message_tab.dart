@@ -25,6 +25,7 @@ class ChatSearchMessageTab extends StatefulWidget {
   final VoidCallback onResume;
   final ChatSearchRunState runState;
   final int queryRevision;
+  final double bottomInset;
 
   const ChatSearchMessageTab({
     required this.searchQuery,
@@ -33,6 +34,7 @@ class ChatSearchMessageTab extends StatefulWidget {
     required this.results,
     required this.runState,
     required this.queryRevision,
+    this.bottomInset = 0,
     super.key,
   });
 
@@ -203,7 +205,7 @@ class _ChatSearchMessageTabState extends State<ChatSearchMessageTab>
               child: ListView.custom(
                 controller: _scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.zero,
+                padding: EdgeInsets.only(bottom: widget.bottomInset),
                 childrenDelegate: SliverChildBuilderDelegate(
                   (context, i) {
                     if (i == widget.results.length) {
@@ -285,7 +287,7 @@ class _SearchProgressFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Center(
         child: runState == ChatSearchRunState.running
             ? const SizedBox.square(
@@ -321,43 +323,54 @@ class _MessageSearchResultListTile extends StatelessWidget {
     );
 
     return ListTile(
-      title: Row(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+      minTileHeight: 0,
+      minVerticalPadding: 2,
+      title: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Avatar(
-            client: room.client,
-            mxContent: sender.avatarUrl,
-            name: displayname,
-            size: 16,
+          Row(
+            children: [
+              Avatar(
+                client: room.client,
+                mxContent: sender.avatarUrl,
+                name: displayname,
+                size: 16,
+              ),
+              const SizedBox(width: 8),
+              Text(displayname),
+              Expanded(
+                child: Text(
+                  ' | ${result.originalTimestamp.localizedTimeShort(context)}',
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 8),
-          Text(displayname),
-          Expanded(
-            child: Text(
-              ' | ${result.originalTimestamp.localizedTimeShort(context)}',
-              style: const TextStyle(fontSize: 12),
+          Linkify(
+            textScaleFactor: MediaQuery.textScalerOf(context).scale(1),
+            options: const LinkifyOptions(humanize: false),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface,
             ),
+            linkStyle: TextStyle(
+              color: theme.colorScheme.primary,
+              decoration: TextDecoration.underline,
+              decorationColor: theme.colorScheme.primary,
+            ),
+            onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
+            text: result.displayEvent
+                .calcLocalizedBody(
+                  plaintextBody: true,
+                  removeMarkdown: true,
+                  MatrixLocals(L10n.of(context)),
+                )
+                .trim(),
+            maxLines: 7,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
-      ),
-      subtitle: Linkify(
-        textScaleFactor: MediaQuery.textScalerOf(context).scale(1),
-        options: const LinkifyOptions(humanize: false),
-        style: TextStyle(color: theme.colorScheme.onSurface),
-        linkStyle: TextStyle(
-          color: theme.colorScheme.primary,
-          decoration: TextDecoration.underline,
-          decorationColor: theme.colorScheme.primary,
-        ),
-        onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
-        text: result.displayEvent
-            .calcLocalizedBody(
-              plaintextBody: true,
-              removeMarkdown: true,
-              MatrixLocals(L10n.of(context)),
-            )
-            .trim(),
-        maxLines: 7,
-        overflow: TextOverflow.ellipsis,
       ),
       trailing: IconButton(
         icon: const Icon(Icons.chevron_right_outlined),

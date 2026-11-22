@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+// SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -12,12 +12,14 @@ class MaxWidthBody extends StatelessWidget {
   final double maxWidth;
   final bool withScrolling;
   final EdgeInsets? innerPadding;
+  final EdgeInsets contentPadding;
 
   const MaxWidthBody({
     required this.child,
     this.maxWidth = 600,
     this.withScrolling = true,
     this.innerPadding,
+    this.contentPadding = const EdgeInsets.symmetric(vertical: 16),
     super.key,
   });
   @override
@@ -45,10 +47,7 @@ class MaxWidthBody extends StatelessWidget {
                         side: BorderSide(color: theme.dividerColor),
                       ),
                       clipBehavior: Clip.hardEdge,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        child: child,
-                      ),
+                      child: Padding(padding: contentPadding, child: child),
                     ),
                   ),
                 );

@@ -5,6 +5,7 @@
 
 import 'dart:async';
 
+import 'package:fluffychat/pages/chat_search/chat_search_status_controller.dart';
 import 'package:fluffychat/pages/chat_search/chat_search_view.dart';
 import 'package:fluffychat/utils/chat_search_session.dart';
 import 'package:fluffychat/widgets/matrix.dart';
@@ -35,6 +36,7 @@ class ChatSearchController extends State<ChatSearchPage>
 
   final TextEditingController searchController = TextEditingController();
   late final TabController tabController;
+  final statusController = ChatSearchStatusController();
 
   ChatSearchSession? session;
   ChatSearchMediaState imagesState = ChatSearchMediaState();
@@ -45,9 +47,15 @@ class ChatSearchController extends State<ChatSearchPage>
 
   void submitQuery() => session?.submitQuery(searchController.text);
 
-  void pauseSearch() => session?.pause();
+  void pauseSearch() {
+    statusController.expand();
+    session?.pause();
+  }
 
-  void resumeSearch() => session?.resume();
+  void resumeSearch() {
+    statusController.expand();
+    session?.resume();
+  }
 
   Future<void> loadImages() => _loadMedia(imagesState, images: true);
 
@@ -121,6 +129,7 @@ class ChatSearchController extends State<ChatSearchPage>
   void _onTabChanged() {
     final index = tabController.index;
     if (index == _selectedTab) return;
+    statusController.selectTab(index);
     setState(() {
       _selectedTab = index;
     });
@@ -134,17 +143,24 @@ class ChatSearchController extends State<ChatSearchPage>
     }
   }
 
-  void _onRoomAvailabilityChanged() {
-    if (!mounted || _availabilityUpdatePending) return;
-    final searchRoom = session?.room;
-    if (searchRoom == null ||
-        (identical(room, searchRoom) &&
-            searchRoom.client.isLogged() &&
-            searchRoom.membership == Membership.join)) {
+  void _onSessionChanged() {
+    if (!mounted) return;
+    final currentSession = session;
+    if (currentSession == null) return;
+    statusController.updateSearch(
+      query: currentSession.query,
+      queryRevision: currentSession.queryRevision,
+      runState: currentSession.runState,
+    );
+    if (_availabilityUpdatePending) return;
+    final searchRoom = currentSession.room;
+    if (identical(room, searchRoom) &&
+        searchRoom.client.isLogged() &&
+        searchRoom.membership == Membership.join) {
       return;
     }
-    // Normal batches only rebuild the two ListenableBuilders. Rebuild the
-    // enclosing page once when its account/room is no longer available.
+    // Progress only rebuilds the results and overlay. Rebuild the enclosing
+    // page once when its account/room is no longer available.
     _availabilityUpdatePending = true;
     scheduleMicrotask(() {
       _availabilityUpdatePending = false;
@@ -167,9 +183,10 @@ class ChatSearchController extends State<ChatSearchPage>
         : null;
     if (identical(session?.room, searchRoom)) return;
     _bindingRevision++;
-    session?.removeListener(_onRoomAvailabilityChanged);
+    session?.removeListener(_onSessionChanged);
     session?.dispose();
     session = null;
+    statusController.reset();
     imagesState = ChatSearchMediaState();
     filesState = ChatSearchMediaState();
     searchController.clear();
@@ -179,7 +196,7 @@ class ChatSearchController extends State<ChatSearchPage>
     nextSession.setForeground(
       lifecycle == null || lifecycle == AppLifecycleState.resumed,
     );
-    nextSession.addListener(_onRoomAvailabilityChanged);
+    nextSession.addListener(_onSessionChanged);
     session = nextSession;
     if (_selectedTab == 1 || _selectedTab == 2) {
       final revision = _bindingRevision;
@@ -220,11 +237,12 @@ class ChatSearchController extends State<ChatSearchPage>
   void dispose() {
     _bindingRevision++;
     WidgetsBinding.instance.removeObserver(this);
-    session?.removeListener(_onRoomAvailabilityChanged);
+    session?.removeListener(_onSessionChanged);
     session?.dispose();
     tabController.removeListener(_onTabChanged);
     searchController.dispose();
     tabController.dispose();
+    statusController.dispose();
     super.dispose();
   }
 

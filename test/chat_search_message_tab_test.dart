@@ -259,7 +259,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('fixed search status exposes stop, continue and failure retry', (
+  testWidgets('search status exposes stop, continue and failure retry', (
     tester,
   ) async {
     var pauses = 0;

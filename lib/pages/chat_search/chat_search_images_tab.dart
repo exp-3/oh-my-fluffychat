@@ -19,6 +19,7 @@ class ChatSearchImagesTab extends StatelessWidget {
   final bool endReached, isLoading;
   final DateTime? searchedUntil;
   final Object? error;
+  final double bottomInset;
 
   const ChatSearchImagesTab({
     required this.room,
@@ -29,6 +30,7 @@ class ChatSearchImagesTab extends StatelessWidget {
     super.key,
     required this.searchedUntil,
     this.error,
+    this.bottomInset = 0,
   });
 
   @override
@@ -51,6 +53,7 @@ class ChatSearchImagesTab extends StatelessWidget {
 
     return ListView.builder(
       key: PageStorageKey('chat-search-images-${room.id}'),
+      padding: EdgeInsets.only(bottom: bottomInset),
       itemCount: eventsByMonth.length + 1,
       itemBuilder: (context, i) {
         if (i == eventsByMonth.length) {
