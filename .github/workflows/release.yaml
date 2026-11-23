@@ -3,18 +3,50 @@ name: Release Workflow
 on:
   release:
     types:
-      - released
-
-concurrency:
-  group: release_workflow
-  cancel-in-progress: true
+      - published
 
 permissions:
   contents: write
 
 jobs:
+  build_debug:
+    name: Build debug artifacts
+    if: github.event.release.prerelease == true
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-debug.yaml
+    secrets: inherit
+
+  check_release:
+    name: Check latest release
+    if: github.event.release.prerelease == false && github.event.release.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      is_latest: ${{ steps.latest.outputs.is_latest }}
+    steps:
+      - name: Check whether this release is marked as latest
+        id: latest
+        uses: actions/github-script@v8
+        with:
+          script: |
+            let isLatest = false;
+            try {
+              const { data: latest } = await github.rest.repos.getLatestRelease(context.repo);
+              isLatest = latest.id === context.payload.release.id;
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
+            core.setOutput('is_latest', isLatest);
+            core.info(isLatest ? 'Building the latest release.' : 'Skipping a release without the Latest marker.');
+
   build_web:
-    if: github.event.release.prerelease == false
+    needs: check_release
+    if: needs.check_release.outputs.is_latest == 'true'
+    concurrency:
+      group: release_workflow-web
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -63,7 +95,11 @@ jobs:
 
   build_release_apks:
     name: Build release APK (${{ matrix.id }})
-    if: github.event.release.prerelease == false
+    needs: check_release
+    if: needs.check_release.outputs.is_latest == 'true'
+    concurrency:
+      group: release_workflow-apk-${{ matrix.id }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -152,7 +188,11 @@ jobs:
         run: rm -f android/release.jks android/key.properties
 
   build_windows:
-    if: github.event.release.prerelease == false
+    needs: check_release
+    if: needs.check_release.outputs.is_latest == 'true'
+    concurrency:
+      group: release_workflow-windows
+      cancel-in-progress: true
     runs-on: windows-latest
     env:
       CL: /D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS
@@ -169,28 +209,23 @@ jobs:
       - run: flutter pub get
       - name: Build Windows Release
         run: flutter build windows --release
-      - name: Include Windows runtime files
+      - name: Install Inno Setup
         shell: pwsh
-        run: |
-          $ErrorActionPreference = "Stop"
-          $bundle = "build\windows\x64\runner\Release"
-          if (-not (Test-Path "$bundle\fluffychat.exe")) {
-            throw "No Windows build found in $bundle. Run 'flutter build windows' first."
-          }
-
-          foreach ($dll in @("msvcp140.dll", "vcruntime140.dll", "vcruntime140_1.dll")) {
-            Copy-Item -Path "$env:SystemRoot\System32\$dll" -Destination $bundle -Force
-          }
-      - name: Create Windows release archive
+        run: choco install innosetup -y
+      - name: Create Windows release installer
         shell: pwsh
-        run: Compress-Archive -Path "build\windows\x64\runner\Release\*" -DestinationPath "fluffychat-windows.zip"
-      - name: Attach Windows archive to release
+        run: ./scripts/package-windows.ps1 -BuildMode Release
+      - name: Attach Windows installer to release
         if: github.event.release.prerelease == false
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${{ github.event.release.tag_name }}" fluffychat-windows.zip --repo "${{ github.repository }}" --clobber
+        run: gh release upload "${{ github.event.release.tag_name }}" "build/windows/installer/fluffychat-windows-x64-setup.exe" --repo "${{ github.repository }}" --clobber
   build_linux:
-    if: github.event.release.prerelease == false
+    needs: check_release
+    if: needs.check_release.outputs.is_latest == 'true'
+    concurrency:
+      group: release_workflow-linux-${{ matrix.arch }}
+      cancel-in-progress: true
     strategy:
       matrix:
         arch: [ x64, arm64 ]

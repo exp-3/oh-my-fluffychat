@@ -1,11 +1,10 @@
 # SPDX-FileCopyrightText: 2019-Present Christian Kußowski
-# SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
+# SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat and Oh-My-FluffyChat
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Packages an existing `flutter build windows` output into an installer
-# (build/windows/installer/fluffychat-windows-x64-setup.exe) and a portable
-# zip archive (build/windows/installer/fluffychat-windows-x64.zip).
+# (build/windows/installer/fluffychat-windows-x64-setup.exe).
 param(
     [ValidateSet("Release", "Debug")]
     [string]$BuildMode = "Release"
@@ -37,5 +36,3 @@ if (-not $iscc) {
 if ($LASTEXITCODE -ne 0) {
     throw "Inno Setup failed with exit code $LASTEXITCODE"
 }
-
-Compress-Archive -Path "$buildDir\*" -DestinationPath build\windows\installer\fluffychat-windows-x64.zip -Force
