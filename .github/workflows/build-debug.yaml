@@ -1,9 +1,7 @@
 name: Debug Builds
 
 on:
-   release:
-      types:
-         - published
+   workflow_call:
 
 permissions:
    contents: read
@@ -126,12 +124,10 @@ jobs:
               if ($ucrt) {
                 Copy-Item -Path $ucrt.FullName -Destination $bundle -ErrorAction SilentlyContinue
               }
-         - name: Create Windows debug archive
-           shell: pwsh
-           run: Compress-Archive -Path "build\windows\x64\runner\Debug\*" -DestinationPath "fluffychat-windows-debug.zip"
          - name: Upload Debug Windows
            uses: actions/upload-artifact@v7
            with:
               name: debug-windows-x64
-              path: fluffychat-windows-debug.zip
+              path: build/windows/x64/runner/Debug/
+              if-no-files-found: error
               retention-days: 7

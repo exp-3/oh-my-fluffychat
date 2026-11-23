@@ -15,7 +15,7 @@ jobs:
       pull-requests: read
     outputs:
       dependency_lock_repaired: ${{ steps.flutter_dependencies.outputs.lock_repaired }}
-      dart_format_repaired: ${{ steps.dart_format.outputs.repaired }}
+      dart_sources_repaired: ${{ steps.dart_repairs.outputs.repaired }}
     steps:
       - uses: actions/checkout@v7
       - uses: webiny/action-conventional-commits@v1.4.2
@@ -82,6 +82,7 @@ jobs:
           fi
       - name: Store repaired dependency lock
         if: >-
+          always() &&
           steps.flutter_dependencies.outputs.lock_repaired == 'true' &&
           github.event_name == 'push' &&
           github.ref == 'refs/heads/main'
@@ -91,31 +92,45 @@ jobs:
           path: pubspec.lock
           if-no-files-found: error
           retention-days: 1
-      - name: Apply Dart formatting
-        id: dart_format
+      - name: Apply Dart fixes
+        id: dart_fix
         shell: bash
         run: |
           set -euo pipefail
-          dart format lib/ test/
+          fix_status=0
+          dart fix --apply lib/ || fix_status=$?
+          dart fix --apply test/ || fix_status=$?
+          exit "$fix_status"
+      - name: Apply Dart formatting
+        if: ${{ !cancelled() && steps.dart_fix.outcome != 'skipped' }}
+        shell: bash
+        run: dart format lib/ test/
+      - name: Capture Dart repairs
+        id: dart_repairs
+        if: ${{ always() && steps.dart_fix.outcome != 'skipped' }}
+        shell: bash
+        run: |
+          set -euo pipefail
 
           if git diff --quiet -- lib/ test/; then
             echo "repaired=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          echo "::warning::Dart formatting issues were repaired automatically."
-          git diff --binary -- lib/ test/ > "$RUNNER_TEMP/dart-format.patch"
+          echo "::warning::Dart fixes and formatting were applied automatically."
+          git diff --binary -- lib/ test/ > "$RUNNER_TEMP/dart-repairs.patch"
           git diff --stat -- lib/ test/
           echo "repaired=true" >> "$GITHUB_OUTPUT"
-      - name: Store Dart formatting repair
+      - name: Store Dart repairs
         if: >-
-          steps.dart_format.outputs.repaired == 'true' &&
+          always() &&
+          steps.dart_repairs.outputs.repaired == 'true' &&
           github.event_name == 'push' &&
           github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v7
         with:
-          name: repaired-dart-formatting
-          path: ${{ runner.temp }}/dart-format.patch
+          name: repaired-dart-sources
+          path: ${{ runner.temp }}/dart-repairs.patch
           if-no-files-found: error
           retention-days: 1
       - name: Check license compliance
@@ -151,8 +166,9 @@ jobs:
     name: Commit automatic repairs
     needs: code_tests
     if: >-
+      always() &&
       (needs.code_tests.outputs.dependency_lock_repaired == 'true' ||
-      needs.code_tests.outputs.dart_format_repaired == 'true') &&
+      needs.code_tests.outputs.dart_sources_repaired == 'true') &&
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -167,21 +183,22 @@ jobs:
         with:
           name: repaired-dependency-lock
           path: ${{ runner.temp }}/repaired-dependency-lock
-      - name: Download repaired Dart formatting
-        if: needs.code_tests.outputs.dart_format_repaired == 'true'
+      - name: Download repaired Dart sources
+        if: needs.code_tests.outputs.dart_sources_repaired == 'true'
         uses: actions/download-artifact@v7
         with:
-          name: repaired-dart-formatting
-          path: ${{ runner.temp }}/repaired-dart-formatting
+          name: repaired-dart-sources
+          path: ${{ runner.temp }}/repaired-dart-sources
       - name: Apply and commit repairs
         shell: bash
         run: |
+          set -euo pipefail
           if [[ "${{ needs.code_tests.outputs.dependency_lock_repaired }}" == "true" ]]; then
             cp "$RUNNER_TEMP/repaired-dependency-lock/pubspec.lock" pubspec.lock
           fi
 
-          if [[ "${{ needs.code_tests.outputs.dart_format_repaired }}" == "true" ]]; then
-            git apply "$RUNNER_TEMP/repaired-dart-formatting/dart-format.patch"
+          if [[ "${{ needs.code_tests.outputs.dart_sources_repaired }}" == "true" ]]; then
+            git apply "$RUNNER_TEMP/repaired-dart-sources/dart-repairs.patch"
           fi
 
           if git diff --quiet -- pubspec.lock lib/ test/; then
@@ -193,10 +210,10 @@ jobs:
           git add pubspec.lock lib/ test/
 
           if [[ "${{ needs.code_tests.outputs.dependency_lock_repaired }}" == "true" &&
-                "${{ needs.code_tests.outputs.dart_format_repaired }}" == "true" ]]; then
+                "${{ needs.code_tests.outputs.dart_sources_repaired }}" == "true" ]]; then
             commit_message="chore: apply automatic CI repairs"
-          elif [[ "${{ needs.code_tests.outputs.dart_format_repaired }}" == "true" ]]; then
-            commit_message="style: apply automatic Dart formatting"
+          elif [[ "${{ needs.code_tests.outputs.dart_sources_repaired }}" == "true" ]]; then
+            commit_message="fix: apply automatic Dart fixes and formatting"
           else
             commit_message="fix(deps): refresh unavailable Git revisions"
           fi
