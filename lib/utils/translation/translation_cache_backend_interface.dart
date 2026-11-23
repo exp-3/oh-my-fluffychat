@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Oh-My-FluffyChat Project
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-/// Sealed version 1/2 envelopes, also used by migration tests.
+/// A sealed translation envelope in the version 1/2 cache format.
 class TranslationCacheRecord {
   final String cacheKey, roomId, eventId, nonce, ciphertext, sourceBinding, aad;
   const TranslationCacheRecord({
@@ -65,8 +65,8 @@ abstract interface class TranslationCacheTransaction {
   Future<void> put(CacheStore store, CacheRow row);
   Future<void> delete(CacheStore store, String key);
 
-  /// Bounded keyset pagination. Legacy native order is rowid; Web order is
-  /// cache_key. `_cursor` is also the deterministic legacy migration rank.
+  /// Bounded keyset pagination. Older native rows use rowid; Web rows use
+  /// cache_key. `_cursor` identifies the last row for the next page.
   Future<List<CacheRow>> query(
     CacheStore store, {
     String? index,

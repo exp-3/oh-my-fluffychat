@@ -283,67 +283,64 @@ void main() {
     (width: 240.0, textScale: 1.0, stacked: true),
     (width: 320.0, textScale: 2.0, stacked: true),
   ]) {
-    testWidgets(
-      'status layout adapts at width ${layout.width} '
-      'and scale ${layout.textScale}',
-      (tester) async {
-        for (final textDirection in TextDirection.values) {
-          await _showSearch(
-            tester,
-            status,
-            scroll,
-            runState: ChatSearchRunState.failed,
-            searchedUntil: DateTime.utc(2026, 1, 1),
-            textDirection: textDirection,
-            width: layout.width,
-            textScale: layout.textScale,
-            reducedMotion: true,
-          );
-          final bar = find.byType(ChatSearchStatus);
-          final panel = tester.getRect(
-            find.byKey(const ValueKey('search-panel')),
-          );
-          final details = tester.getRect(
-            find.descendant(of: bar, matching: find.byType(Wrap)),
-          );
-          final action = tester.getRect(
-            find.byWidgetPredicate((widget) => widget is TextButton),
-          );
-          expect(action.left, greaterThanOrEqualTo(panel.center.dx));
-          expect(action.right, closeTo(panel.right - 16, 0.5));
-          expect(action.top, greaterThanOrEqualTo(panel.top));
-          expect(action.bottom, lessThanOrEqualTo(panel.bottom));
-          if (layout.stacked) {
-            expect(details.width, closeTo(panel.width - 32, 0.5));
-            expect(action.top, greaterThanOrEqualTo(details.bottom));
-          } else {
-            expect(details.right, lessThanOrEqualTo(action.left));
-            expect(action.top, lessThan(details.bottom));
-            expect(action.bottom, greaterThan(details.top));
-          }
-
-          final inset = status.bottomInset;
-          final listRect = tester.getRect(find.byType(ListView));
-          final extent = scroll.position.maxScrollExtent;
-          expect(inset, closeTo(tester.getSize(bar).height, 0.5));
-          expect(
-            tester.widget<ListView>(find.byType(ListView)).padding,
-            EdgeInsets.only(bottom: inset),
-          );
-          status.collapse();
-          await tester.pumpAndSettle();
-          expect(status.bottomInset, inset);
-          expect(tester.getRect(find.byType(ListView)), listRect);
-          expect(scroll.position.maxScrollExtent, extent);
-          status.expand();
-          await tester.pumpAndSettle();
-          expect(status.bottomInset, inset);
-          expect(tester.getRect(find.byType(ListView)), listRect);
-          expect(scroll.position.maxScrollExtent, extent);
-          expect(tester.takeException(), isNull);
+    testWidgets('status layout adapts at width ${layout.width} '
+        'and scale ${layout.textScale}', (tester) async {
+      for (final textDirection in TextDirection.values) {
+        await _showSearch(
+          tester,
+          status,
+          scroll,
+          runState: ChatSearchRunState.failed,
+          searchedUntil: DateTime.utc(2026, 1, 1),
+          textDirection: textDirection,
+          width: layout.width,
+          textScale: layout.textScale,
+          reducedMotion: true,
+        );
+        final bar = find.byType(ChatSearchStatus);
+        final panel = tester.getRect(
+          find.byKey(const ValueKey('search-panel')),
+        );
+        final details = tester.getRect(
+          find.descendant(of: bar, matching: find.byType(Wrap)),
+        );
+        final action = tester.getRect(
+          find.byWidgetPredicate((widget) => widget is TextButton),
+        );
+        expect(action.left, greaterThanOrEqualTo(panel.center.dx));
+        expect(action.right, closeTo(panel.right - 16, 0.5));
+        expect(action.top, greaterThanOrEqualTo(panel.top));
+        expect(action.bottom, lessThanOrEqualTo(panel.bottom));
+        if (layout.stacked) {
+          expect(details.width, closeTo(panel.width - 32, 0.5));
+          expect(action.top, greaterThanOrEqualTo(details.bottom));
+        } else {
+          expect(details.right, lessThanOrEqualTo(action.left));
+          expect(action.top, lessThan(details.bottom));
+          expect(action.bottom, greaterThan(details.top));
         }
-      },
-    );
+
+        final inset = status.bottomInset;
+        final listRect = tester.getRect(find.byType(ListView));
+        final extent = scroll.position.maxScrollExtent;
+        expect(inset, closeTo(tester.getSize(bar).height, 0.5));
+        expect(
+          tester.widget<ListView>(find.byType(ListView)).padding,
+          EdgeInsets.only(bottom: inset),
+        );
+        status.collapse();
+        await tester.pumpAndSettle();
+        expect(status.bottomInset, inset);
+        expect(tester.getRect(find.byType(ListView)), listRect);
+        expect(scroll.position.maxScrollExtent, extent);
+        status.expand();
+        await tester.pumpAndSettle();
+        expect(status.bottomInset, inset);
+        expect(tester.getRect(find.byType(ListView)), listRect);
+        expect(scroll.position.maxScrollExtent, extent);
+        expect(tester.takeException(), isNull);
+      }
+    });
   }
 
   testWidgets('large text keeps actions right with reduced motion', (

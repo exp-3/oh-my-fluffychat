@@ -17,6 +17,20 @@ import 'translation_cache.dart';
 import 'translation_languages.dart';
 import 'translation_models.dart';
 import 'translation_preferences.dart';
+import 'translation_roaming.dart';
+
+typedef TranslationRoamingServiceFactory =
+    TranslationRoamingService Function(
+      TranslationRoamingConfig config,
+      TranslationRoamingSecrets secrets,
+    );
+
+typedef _RoamingResult = ({
+  int revision,
+  int roamingRevision,
+  int order,
+  TranslationResultState result,
+});
 
 enum RoomTranslationLockReason {
   none,
@@ -55,12 +69,26 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   TranslationApiClient? _apiClient;
   TranslationBatcher? _batcher;
   TranslationBatcher? _inputBatcher;
+  TranslationRoamingPreferences? _roamingPreferences;
+  TranslationRoamingConfig _roamingConfig = const TranslationRoamingConfig();
+  TranslationRoamingService? _roamingService;
+  Future<TranslationRoamingService?>? _roamingLoading;
+  TranslationRoamingServiceFactory _roamingFactory = (config, secrets) =>
+      TranslationRoamingService(config: config, secrets: secrets);
+  void Function(VoidCallback)? _afterRoamingFrame;
+  Future<void> _roamingSaveTail = Future.value();
+  int _roamingRevision = 0;
+  bool _roamingMutationInProgress = false;
+  bool _disposed = false;
   final Map<String, ValueNotifier<TranslationResultState>> _states = {};
-  final Map<String, ({int revision, bool forced, Future<String> future})>
+  final Map<String, ({int revision, bool forced, Future<String?> future})>
   _inFlight = {};
   final Map<String, TranslationCacheKey> _observed = {};
   final Map<String, Future<TranslationCacheLookup>> _cacheReads = {};
   final Map<String, int> _requestOrders = {};
+  final Map<String, int> _manualRequests = {};
+  final Map<String, _RoamingResult> _roamingResults = {};
+  final Map<String, TranslationResultState> _roamingSaveRequests = {};
   final Map<Client, String> _clientUserIds = {};
   StreamSubscription<void>? _cacheSubscription;
   final Map<String, Future<List<Event>>> _localHistories = {};
@@ -141,15 +169,113 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       _preferences ??
       (throw StateError('Translation runtime is not initialized'));
 
+  TranslationRoamingConfig get roamingConfig => _roamingConfig;
+
+  Future<TranslationRoamingSecrets> readRoamingSecrets() =>
+      _roamingPreferences!.readSecrets();
+
+  Future<void> saveRoaming(
+    TranslationRoamingConfig config,
+    TranslationRoamingSecrets secrets,
+  ) {
+    final operation = _roamingSaveTail.then((_) async {
+      if (_disposed) return;
+      if (config.enabled &&
+          (!config.isValid ||
+              !config.supportedOnPlatform ||
+              !secrets.isValidFor(config))) {
+        throw ArgumentError('Invalid translation roaming configuration');
+      }
+      _roamingMutationInProgress = true;
+      _resetRoaming();
+      _bumpRevision(clearPending: true, clearStates: false);
+      try {
+        await _roamingPreferences!.save(config, secrets);
+        if (_disposed) return;
+        _roamingConfig = config;
+      } catch (_) {
+        // A partially saved configuration must never reuse an old connection.
+        _roamingConfig = _roamingConfig.copyWith(enabled: false);
+        rethrow;
+      } finally {
+        _roamingMutationInProgress = false;
+        if (!_disposed) notifyListeners();
+      }
+    });
+    _roamingSaveTail = operation.catchError((Object _) {});
+    return operation;
+  }
+
+  Future<void> testRoaming(
+    TranslationRoamingConfig config,
+    TranslationRoamingSecrets secrets,
+  ) async {
+    if (!config.isValid ||
+        !config.supportedOnPlatform ||
+        !secrets.isValidFor(config)) {
+      throw ArgumentError('Invalid translation roaming configuration');
+    }
+    final service = _roamingFactory(config, secrets);
+    try {
+      await service.testConnection();
+    } finally {
+      service.dispose();
+    }
+  }
+
+  void _resetRoaming() {
+    _roamingRevision++;
+    _roamingLoading = null;
+    _roamingService?.dispose();
+    _roamingService = null;
+  }
+
+  Future<TranslationRoamingService?> _getRoaming() {
+    if (_disposed ||
+        !_enabled ||
+        _roamingMutationInProgress ||
+        !_roamingConfig.enabled ||
+        !_roamingConfig.isValid ||
+        !_roamingConfig.supportedOnPlatform) {
+      return Future.value();
+    }
+    final existing = _roamingService;
+    if (existing != null) return Future.value(existing);
+    return _roamingLoading ??= _loadRoaming(_roamingRevision);
+  }
+
+  Future<TranslationRoamingService?> _loadRoaming(int revision) async {
+    try {
+      final secrets = await readRoamingSecrets();
+      if (_disposed ||
+          !_enabled ||
+          revision != _roamingRevision ||
+          !secrets.isValidFor(_roamingConfig)) {
+        return null;
+      }
+      return _roamingService = _roamingFactory(_roamingConfig, secrets);
+    } catch (_) {
+      return null;
+    } finally {
+      if (revision == _roamingRevision) _roamingLoading = null;
+    }
+  }
+
   Future<void> initialize(
     SharedPreferences store, {
     String defaultTargetLanguage = 'en',
     TranslationSecretStore secrets = const SecureTranslationSecretStore(),
     TranslationApiClient? apiClient,
     TranslationCache? cache,
+    TranslationRoamingServiceFactory? roamingFactory,
+    void Function(VoidCallback)? afterRoamingFrame,
   }) async {
     if (_initialized) return;
     final preferences = _preferences = TranslationPreferences(store, secrets);
+    _roamingPreferences = TranslationRoamingPreferences(store, secrets);
+    _roamingConfig = _roamingPreferences!.config;
+    if (roamingFactory != null) _roamingFactory = roamingFactory;
+    _afterRoamingFrame = afterRoamingFrame;
     _cache = cache ?? TranslationCache(secrets);
     _apiClient = apiClient ?? TranslationApiClient();
     _providers = preferences.providers;
@@ -339,6 +465,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     }
     if (mutationToken != _enabledMutationToken) return false;
     _enabled = value;
+    if (!value) _resetRoaming();
     _bumpRevision(clearPending: true, clearStates: true);
     try {
       await preferences.setEnabled(value);
@@ -734,7 +861,8 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
 
   /// Cache display is independent of provider configuration and room auto mode.
   bool canTranslateEvent(Event event) {
-    if (!_enabled ||
+    if (_disposed ||
+        !_enabled ||
         _safetyOperations != 0 ||
         (event.type != EventTypes.Message &&
             event.type != EventTypes.Sticker) ||
@@ -807,10 +935,16 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     if (!canTranslateEvent(event)) return _disabledState;
     final key = _stateKey(event);
     _observed[key] = _cacheKey(event, sourceForEvent(event));
-    return _states.putIfAbsent(
-      key,
-      () => ValueNotifier(TranslationResultState.idle),
-    );
+    final contentKey = _contentKey(_observed[key]!);
+    final restored = _roamingResults[contentKey];
+    final current =
+        restored != null &&
+            restored.revision == _revision &&
+            restored.roamingRevision == _roamingRevision &&
+            restored.order == _requestOrders[contentKey]
+        ? restored.result
+        : TranslationResultState.idle;
+    return _states.putIfAbsent(key, () => ValueNotifier(current));
   }
 
   String _contentKey(TranslationCacheKey key) =>
@@ -867,25 +1001,38 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     if (pending != null &&
         pending.revision == taskRevision &&
         (!force || pending.forced)) {
+      if (manual) {
+        // A user click upgrades an automatic cloud lookup while it is pending.
+        // Otherwise a miss in an auto-off room could silently consume the click.
+        _manualRequests[contentKey] = _requestOrders[contentKey] ?? 0;
+      }
       if (state.value.translation == null && cached.translation != null) {
         state.value = TranslationResultState.refreshing(cached.translation!);
       }
-      return pending.future;
+      final result = await pending.future;
+      if (taskRevision != _revision || !_displayTaskValid(event, key)) {
+        return null;
+      }
+      if (result == null && manual) {
+        // The automatic miss may have completed while this alias registered
+        // its local reference, before the manual intent could be upgraded.
+        return translateEvent(event, manual: true, forceRefresh: true);
+      }
+      _saveObservedRoaming(event, key, cached, contentKey, state.value);
+      return result;
     }
     if (!force) {
       final current = state.value.translation;
-      if (current != null) return current;
+      if (current != null) {
+        _saveObservedRoaming(event, key, cached, contentKey, state.value);
+        return current;
+      }
       if (cached.status == TranslationCacheLookupStatus.hit) {
         _publish(
           contentKey,
           TranslationResultState.translated(cached.translation!),
         );
         return cached.translation;
-      }
-      if (!manual &&
-          (!shouldAutoTranslate(event) ||
-              cached.status != TranslationCacheLookupStatus.miss)) {
-        return null;
       }
     }
     if (cached.status == TranslationCacheLookupStatus.unavailable ||
@@ -899,13 +1046,15 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     }
     final order = (_requestOrders[contentKey] ?? 0) + 1;
     _requestOrders[contentKey] = order;
-    final operation = _translate(
+    if (manual) _manualRequests[contentKey] = order;
+    final operation = _restoreOrTranslate(
       event,
       key,
       cached.ticket!,
       contentKey,
       order,
       manual,
+      force,
     );
     _inFlight[contentKey] = (
       revision: taskRevision,
@@ -929,6 +1078,185 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     }
   }
 
+  Future<String?> _restoreOrTranslate(
+    Event event,
+    TranslationCacheKey key,
+    TranslationCacheTicket ticket,
+    String contentKey,
+    int order,
+    bool manual,
+    bool force,
+  ) async {
+    final taskRevision = _revision;
+    final roamingRevision = _roamingRevision;
+    bool valid() =>
+        taskRevision == _revision &&
+        roamingRevision == _roamingRevision &&
+        _requestOrders[contentKey] == order &&
+        _displayTaskValid(event, key);
+    if (!force && _roamingConfig.enabled) {
+      final roaming = await _getRoaming();
+      if (!valid()) return null;
+      if (roaming != null) {
+        final restored = await roaming.lookup(
+          source: key.source,
+          targetLanguage: key.targetLanguage,
+        );
+        if (!valid()) return null;
+        if (restored.status == TranslationRoamingLookupStatus.hit &&
+            restored.translation != null) {
+          final result = TranslationResultState.translated(
+            restored.translation!,
+          );
+          _roamingResults[contentKey] = (
+            revision: taskRevision,
+            roamingRevision: roamingRevision,
+            order: order,
+            result: result,
+          );
+          _publish(contentKey, result);
+          _saveRoamingAfterFrame(
+            key,
+            ticket,
+            contentKey,
+            _stateKey(event),
+            result,
+            valid,
+          );
+          return restored.translation;
+        }
+      }
+    }
+    final requestedManually = manual || _manualRequests[contentKey] == order;
+    if (!valid() || (!requestedManually && !shouldAutoTranslate(event))) {
+      return null;
+    }
+    return _translate(event, key, ticket, contentKey, order, requestedManually);
+  }
+
+  void _saveRoamingAfterFrame(
+    TranslationCacheKey key,
+    TranslationCacheTicket ticket,
+    String contentKey,
+    String stateKey,
+    TranslationResultState result,
+    bool Function() isValid,
+  ) {
+    if (identical(_roamingSaveRequests[stateKey], result)) return;
+    _roamingSaveRequests[stateKey] = result;
+    void save() {
+      if (!isValid()) return;
+      unawaited(_persistRoaming(key, ticket, contentKey, result, isValid));
+    }
+
+    final scheduler = _afterRoamingFrame;
+    if (scheduler != null) {
+      scheduler(save);
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) => save());
+      WidgetsBinding.instance.ensureVisualUpdate();
+    }
+  }
+
+  void _saveObservedRoaming(
+    Event event,
+    TranslationCacheKey key,
+    TranslationCacheLookup cached,
+    String contentKey,
+    TranslationResultState current,
+  ) {
+    final restored = _roamingResults[contentKey];
+    if (restored == null ||
+        !identical(current, restored.result) ||
+        cached.status != TranslationCacheLookupStatus.miss ||
+        cached.ticket == null) {
+      return;
+    }
+    // An alias may appear before the first disk save. Reuse memory and save
+    // its own reference without another GETEX or a duplicate per-event write.
+    _saveRoamingAfterFrame(
+      key,
+      cached.ticket!,
+      contentKey,
+      _stateKey(event),
+      restored.result,
+      () =>
+          restored.revision == _revision &&
+          restored.roamingRevision == _roamingRevision &&
+          restored.order == _requestOrders[contentKey] &&
+          _displayTaskValid(event, key),
+    );
+  }
+
+  Future<void> _persistRoaming(
+    TranslationCacheKey key,
+    TranslationCacheTicket ticket,
+    String contentKey,
+    TranslationResultState result,
+    bool Function() isValid,
+  ) async {
+    try {
+      await cache.write(
+        key,
+        result.translation!,
+        ticket: ticket,
+        isValid: isValid,
+      );
+      if (isValid()) _forgetCacheReads(contentKey);
+    } on TranslationCacheWriteInvalidated {
+      // Runtime changes already decide whether visible results should remain.
+      // A superseded save must not undo that decision (e.g. auto mode off).
+      if (!isValid()) return;
+      if (identical(_roamingResults[contentKey]?.result, result)) {
+        _roamingResults.remove(contentKey);
+      }
+      // Never let a late save erase a newer result from a deliberate refresh.
+      for (final entry in _observed.entries) {
+        if (_contentKey(entry.value) != contentKey) continue;
+        final state = _states[entry.key];
+        if (state != null && identical(state.value, result)) {
+          state.value = TranslationResultState.idle;
+          _cacheReads.remove(entry.key);
+        }
+      }
+    } catch (_) {
+      // An ordinary disk failure does not undo a valid, visible translation.
+    }
+  }
+
+  void _forgetCacheReads(String contentKey) {
+    _cacheReads.removeWhere(
+      (stateKey, _) =>
+          _observed[stateKey] != null &&
+          _contentKey(_observed[stateKey]!) == contentKey,
+    );
+  }
+
+  Future<void> _uploadRoaming(
+    TranslationCacheKey key,
+    String translation,
+    int roamingRevision,
+    bool Function() isValid,
+  ) async {
+    try {
+      if (!isValid() || roamingRevision != _roamingRevision) return;
+      final roaming = await _getRoaming();
+      if (roaming == null ||
+          !isValid() ||
+          roamingRevision != _roamingRevision) {
+        return;
+      }
+      await roaming.upload(
+        source: key.source,
+        targetLanguage: key.targetLanguage,
+        translation: translation,
+        isValid: () => isValid() && roamingRevision == _roamingRevision,
+      );
+    } catch (_) {
+      // Roaming is optional: upload failure cannot fail local translation.
+    }
+  }
+
   Future<String> _translate(
     Event event,
     TranslationCacheKey key,
@@ -938,6 +1266,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     bool manual,
   ) async {
     final taskRevision = _revision;
+    final roamingRevision = _roamingRevision;
     final provider = _activeProvider;
     final previous = _states[_stateKey(event)]?.value.translation;
     bool valid() =>
@@ -981,12 +1310,9 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       final writeKey = _cacheKey(event, key.source, model: provider.model);
       await cache.write(writeKey, result, ticket: ticket, isValid: valid);
       if (!valid()) throw StateError('Translation task expired');
-      _cacheReads.removeWhere(
-        (stateKey, _) =>
-            _observed[stateKey] != null &&
-            _contentKey(_observed[stateKey]!) == contentKey,
-      );
+      _forgetCacheReads(contentKey);
       _publish(contentKey, TranslationResultState.translated(result));
+      unawaited(_uploadRoaming(writeKey, result, roamingRevision, valid));
       return result;
     } catch (error) {
       if (taskRevision == _revision &&
@@ -1158,21 +1484,8 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   Future<TranslationCacheCleanupResult> cleanInvalidCache() async {
     _localHistories.clear();
     _bumpRevision(clearPending: true, clearStates: true);
-    final revision = _revision;
-    final migrated = await cache.migrateLegacy(
-      owners: (roomId) => _clients
-          .where(
-            (client) => client.isLogged() && client.getRoomById(roomId) != null,
-          )
-          .map((client) => client.userID)
-          .whereType<String>()
-          .toList(),
-      localSource: _localSource,
-      // Explicit cache maintenance also works while translation is disabled.
-      isEnabled: () => revision == _revision,
-    );
     final result = await cache.cleanInvalid(_localSource);
-    if (migrated || result.deleted > 0) {
+    if (result.deleted > 0) {
       _bumpRevision(clearPending: true, clearStates: true);
     }
     return result;
@@ -1509,12 +1822,15 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
 
   void _bumpRevision({required bool clearPending, required bool clearStates}) {
     _revision++;
+    _roamingResults.clear();
+    _roamingSaveRequests.clear();
     _cacheReads.clear();
     if (clearPending) {
       _batcher?.cancelPending();
       _inputBatcher?.cancelPending();
       _inFlight.clear();
       _requestOrders.clear();
+      _manualRequests.clear();
       for (final notifier in _states.values) {
         if (notifier.value.status == TranslationStatus.loading) {
           final previous = notifier.value.translation;
@@ -1530,6 +1846,9 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _disposed = true;
+    _revision++;
+    _resetRoaming();
     WidgetsBinding.instance.removeObserver(this);
     unawaited(_cacheSubscription?.cancel());
     _batcher?.dispose();
@@ -1543,6 +1862,8 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       notifier.dispose();
     }
     _observed.clear();
+    _roamingResults.clear();
+    _roamingSaveRequests.clear();
     _originalEventIds.clear();
     _localHistories.clear();
     _knownEditChains.clear();

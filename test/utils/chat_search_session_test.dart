@@ -231,35 +231,32 @@ void main() {
     expect(session.results.single.originalEventId, 'beta');
   });
 
-  test(
-    'live redactions publish while paused with history pending',
-    () async {
-      database.events.add(message('root', 'needle'));
-      final history = Completer<GetRoomEventsResponse>();
-      client.onRequest = (_) => history.future;
-      session.submitQuery('needle');
-      await client.requestStarted.future;
-      expect(session.results.single.originalEventId, 'root');
-      session.pause();
+  test('live redactions publish while paused with history pending', () async {
+    database.events.add(message('root', 'needle'));
+    final history = Completer<GetRoomEventsResponse>();
+    client.onRequest = (_) => history.future;
+    session.submitQuery('needle');
+    await client.requestStarted.future;
+    expect(session.results.single.originalEventId, 'root');
+    session.pause();
 
-      client.onTimelineEvent.add(
-        Event(
-          room: room,
-          eventId: 'live-redaction',
-          senderId: '@sender:test',
-          type: EventTypes.Redaction,
-          originServerTs: DateTime.utc(2026, 2),
-          redacts: 'root',
-          content: {},
-        ),
-      );
-      await _until(session, () => session.results.isEmpty);
-      expect(history.isCompleted, isFalse);
-      expect(client.requests, [null]);
-      expect(session.runState, ChatSearchRunState.paused);
-      history.complete(page([]));
-    },
-  );
+    client.onTimelineEvent.add(
+      Event(
+        room: room,
+        eventId: 'live-redaction',
+        senderId: '@sender:test',
+        type: EventTypes.Redaction,
+        originServerTs: DateTime.utc(2026, 2),
+        redacts: 'root',
+        content: {},
+      ),
+    );
+    await _until(session, () => session.results.isEmpty);
+    expect(history.isCompleted, isFalse);
+    expect(client.requests, [null]);
+    expect(session.runState, ChatSearchRunState.paused);
+    history.complete(page([]));
+  });
 
   test(
     'backgrounding preserves an in-flight page until foreground resumes',

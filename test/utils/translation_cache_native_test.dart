@@ -96,29 +96,6 @@ nonce TEXT NOT NULL, ciphertext TEXT NOT NULL, source_binding TEXT NOT NULL, aad
   });
 
   test(
-    'native v2 migration chooses greatest rowid and keeps losing references',
-    () async {
-      await seedV2([
-        legacyEnvelope(master, event: r'$older', text: 'old'),
-        legacyEnvelope(master, event: r'$newer', text: 'latest'),
-      ]);
-      await cache.migrateLegacy(
-        owners: (_) => ['@alice:test'],
-        localSource: (_, _, _) async => TranslationLocalSource.unavailable,
-        isEnabled: () => true,
-        pageSize: 1,
-      );
-      expect(await cache.read(key()), 'latest');
-      expect(
-        await backend.transaction((tx) => tx.count(CacheStore.translations)),
-        0,
-      );
-      await cache.invalidateEventIfExists('!room:test', r'$older');
-      expect(await cache.read(key()), isNull);
-    },
-  );
-
-  test(
     'native transaction rollback and generation protect deleted source',
     () async {
       await cache.write(key(), 'old');

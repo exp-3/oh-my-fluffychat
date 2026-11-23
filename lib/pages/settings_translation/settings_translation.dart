@@ -14,6 +14,8 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:uuid/uuid.dart';
 
+import 'translation_roaming_settings.dart';
+
 class SettingsTranslation extends StatefulWidget {
   const SettingsTranslation({super.key});
 
@@ -755,6 +757,8 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                     ],
                   ),
                 ],
+                Divider(color: theme.dividerColor),
+                TranslationRoamingSettings(runtime: runtime),
                 Divider(color: theme.dividerColor),
                 _SectionTitle(l10n.translationCache),
                 ListTile(

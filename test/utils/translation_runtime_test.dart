@@ -10,6 +10,7 @@ import 'package:fluffychat/utils/translation/translation_cache.dart';
 import 'package:fluffychat/utils/translation/translation_languages.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
 import 'package:fluffychat/utils/translation/translation_preferences.dart';
+import 'package:fluffychat/utils/translation/translation_roaming.dart';
 import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:matrix/matrix.dart';
@@ -1257,7 +1258,241 @@ void main() {
       expect(api.pending, hasLength(1));
     },
   );
+
+  test('roaming displays before the frame and delayed local save', () async {
+    final api = _RecordingApiClient();
+    final saves = <void Function()>[];
+    late _ControlledRoaming roaming;
+    final fixture = await _RuntimeFixture.create(
+      apiClient: api,
+      roamingFactory: (config, secrets) =>
+          roaming = _ControlledRoaming(config, secrets),
+      afterRoamingFrame: saves.add,
+    );
+    addTearDown(fixture.runtime.dispose);
+    await _enableRoaming(fixture.runtime);
+    final event = _event(fixture);
+    final restored = fixture.runtime.restoreEvent(event);
+    await Future<void>.delayed(Duration.zero);
+    roaming.result.complete(
+      const TranslationRoamingLookup(
+        TranslationRoamingLookupStatus.hit,
+        translation: 'cloud translation',
+      ),
+    );
+    expect(await restored, 'cloud translation');
+    expect(
+      fixture.runtime.stateForEvent(event).value.translation,
+      'cloud translation',
+    );
+    expect(fixture.backend.present, isFalse);
+    expect(api.calls, 0);
+    expect(saves, hasLength(1));
+    expect(await fixture.runtime.restoreEvent(event), 'cloud translation');
+    expect(roaming.reads, 1);
+
+    final alias = _event(fixture, id: r'$cloud-alias');
+    expect(await fixture.runtime.restoreEvent(alias), 'cloud translation');
+    expect(roaming.reads, 1);
+    expect(saves, hasLength(2));
+
+    final writeStarted = Completer<void>();
+    final releaseWrite = Completer<void>();
+    fixture.backend.beforePutAll = () async {
+      writeStarted.complete();
+      await releaseWrite.future;
+    };
+    saves.first();
+    await writeStarted.future;
+    expect(
+      fixture.runtime.stateForEvent(event).value.translation,
+      'cloud translation',
+    );
+    releaseWrite.complete();
+    expect(
+      await fixture.runtime.cache.read(_eventCacheKey(event)),
+      'cloud translation',
+    );
+    fixture.backend.beforePutAll = null;
+    saves.last();
+    expect(
+      await fixture.runtime.cache.read(_eventCacheKey(alias)),
+      'cloud translation',
+    );
+    expect(roaming.uploads, isEmpty);
+  });
+
+  test('ordinary roaming save failure keeps the visible translation', () async {
+    final saves = <void Function()>[];
+    final fixture = await _RuntimeFixture.create(
+      roamingFactory: _ImmediateRoaming.new,
+      afterRoamingFrame: saves.add,
+    );
+    addTearDown(fixture.runtime.dispose);
+    await _enableRoaming(fixture.runtime);
+    final event = _event(fixture);
+    expect(await fixture.runtime.restoreEvent(event), 'cloud translation');
+    fixture.backend.failOpenAfterCreate = true;
+    saves.single();
+    // Reading joins the cache serialization queue behind the failed write.
+    await fixture.runtime.cache.read(_eventCacheKey(event));
+    expect(
+      fixture.runtime.stateForEvent(event).value.translation,
+      'cloud translation',
+    );
+  });
+
+  test(
+    'an obsolete save preserves completed text after auto mode changes',
+    () async {
+      final saves = <void Function()>[];
+      final fixture = await _RuntimeFixture.create(
+        roamingFactory: _ImmediateRoaming.new,
+        afterRoamingFrame: saves.add,
+      );
+      addTearDown(fixture.runtime.dispose);
+      await _enableRoaming(fixture.runtime);
+      final event = _event(fixture);
+      expect(await fixture.runtime.restoreEvent(event), 'cloud translation');
+      final writeStarted = Completer<void>();
+      final releaseWrite = Completer<void>();
+      fixture.backend.beforePutAll = () async {
+        writeStarted.complete();
+        await releaseWrite.future;
+      };
+      saves.single();
+      await writeStarted.future;
+      await fixture.runtime.setRoomTranslationOverride(event.room, false);
+      releaseWrite.complete();
+      await fixture.runtime.cache.read(_eventCacheKey(event));
+      expect(
+        fixture.runtime.stateForEvent(event).value.translation,
+        'cloud translation',
+      );
+    },
+  );
+
+  test('clearing after display cancels the deferred roaming save', () async {
+    final saves = <void Function()>[];
+    final fixture = await _RuntimeFixture.create(
+      roamingFactory: _ImmediateRoaming.new,
+      afterRoamingFrame: saves.add,
+    );
+    addTearDown(fixture.runtime.dispose);
+    await _enableRoaming(fixture.runtime);
+    final event = _event(fixture);
+    expect(await fixture.runtime.restoreEvent(event), 'cloud translation');
+    await fixture.runtime.clearCache();
+    saves.single();
+    expect(fixture.runtime.stateForEvent(event).value.translation, isNull);
+    expect(fixture.backend.present, isFalse);
+    expect(fixture.backend.createCalls, 0);
+  });
+
+  test('local hit stays offline and forced refresh replaces roaming', () async {
+    final api = _RecordingApiClient();
+    final services = <_ImmediateRoaming>[];
+    final fixture = await _RuntimeFixture.create(
+      apiClient: api,
+      roamingFactory: (config, secrets) {
+        final service = _ImmediateRoaming(config, secrets);
+        services.add(service);
+        return service;
+      },
+      mergeWindowMs: 0,
+    );
+    addTearDown(fixture.runtime.dispose);
+    await _enableRoaming(fixture.runtime);
+    final event = _event(fixture);
+    await fixture.runtime.cache.write(_eventCacheKey(event), 'local');
+    expect(await fixture.runtime.restoreEvent(event), 'local');
+    expect(services, isEmpty);
+    expect(
+      await fixture.runtime.translateEvent(
+        event,
+        manual: true,
+        forceRefresh: true,
+      ),
+      'translated',
+    );
+    await Future<void>.delayed(Duration.zero);
+    expect(services.single.reads, 0);
+    expect(services.single.uploads, ['translated']);
+    expect(api.calls, 1);
+  });
+
+  test(
+    'a late remote hit cannot undo clearing or unavailable storage',
+    () async {
+      late _ControlledRoaming roaming;
+      final fixture = await _RuntimeFixture.create(
+        roamingFactory: (config, secrets) =>
+            roaming = _ControlledRoaming(config, secrets),
+        afterRoamingFrame: (_) => fail('Invalidated result must not be saved'),
+      );
+      addTearDown(fixture.runtime.dispose);
+      await _enableRoaming(fixture.runtime);
+      final event = _event(fixture);
+      final restored = fixture.runtime.restoreEvent(event);
+      await Future<void>.delayed(Duration.zero);
+      await fixture.runtime.clearCache();
+      roaming.result.complete(
+        const TranslationRoamingLookup(
+          TranslationRoamingLookupStatus.hit,
+          translation: 'obsolete',
+        ),
+      );
+      expect(await restored, isNull);
+      expect(fixture.runtime.stateForEvent(event).value.translation, isNull);
+      fixture.backend.unavailable = true;
+      expect(await fixture.runtime.restoreEvent(event), isNull);
+      expect(roaming.reads, 1);
+    },
+  );
+
+  test(
+    'a manual click upgrades a pending roaming miss in an auto-off room',
+    () async {
+      late _ControlledRoaming roaming;
+      final api = _RecordingApiClient();
+      final fixture = await _RuntimeFixture.create(
+        apiClient: api,
+        roamingFactory: (config, secrets) =>
+            roaming = _ControlledRoaming(config, secrets),
+        mergeWindowMs: 0,
+      );
+      addTearDown(fixture.runtime.dispose);
+      await _enableRoaming(fixture.runtime);
+      final event = _event(fixture);
+      final restoration = fixture.runtime.restoreEvent(event);
+      await Future<void>.delayed(Duration.zero);
+      final manual = fixture.runtime.translateEvent(event, manual: true);
+      await Future<void>.delayed(Duration.zero);
+      roaming.result.complete(TranslationRoamingLookup.miss);
+      expect(await manual, 'translated');
+      expect(await restoration, 'translated');
+      expect(api.calls, 1);
+      expect(roaming.reads, 1);
+    },
+  );
 }
+
+Future<void> _enableRoaming(TranslationRuntime runtime) => runtime.saveRoaming(
+  const TranslationRoamingConfig(enabled: true, host: 'redis.example.invalid'),
+  TranslationRoamingSecrets(
+    preSharedKey: TranslationRoamingCrypto.generatePreSharedKey(),
+  ),
+);
+
+TranslationCacheKey _eventCacheKey(Event event) => TranslationCacheKey(
+  userId: event.room.client.userID!,
+  roomId: event.room.id,
+  eventId: event.eventId,
+  source: event.body,
+  sourceLanguage: 'auto',
+  targetLanguage: 'en',
+  messageType: event.messageType,
+);
 
 Event _event(
   _RuntimeFixture fixture, {
@@ -1318,6 +1553,8 @@ class _RuntimeFixture {
   static Future<_RuntimeFixture> create({
     _MemorySecrets? secrets,
     TranslationApiClient? apiClient,
+    TranslationRoamingServiceFactory? roamingFactory,
+    void Function(void Function())? afterRoamingFrame,
     int mergeWindowMs = 100,
     InputTranslationMode inputMode = InputTranslationMode.disabled,
   }) async {
@@ -1343,6 +1580,8 @@ class _RuntimeFixture {
       secrets: memorySecrets,
       apiClient: apiClient,
       cache: TranslationCache(memorySecrets, backend),
+      roamingFactory: roamingFactory,
+      afterRoamingFrame: afterRoamingFrame,
     );
     final client = await prepareTestClient(loggedIn: true);
     return _RuntimeFixture(runtime, client, backend, memorySecrets);
@@ -1430,3 +1669,50 @@ class _MemorySecrets implements TranslationSecretStore {
 }
 
 class _MemoryBackend extends MemoryTranslationBackend {}
+
+class _ImmediateRoaming extends TranslationRoamingService {
+  int reads = 0;
+  final uploads = <String>[];
+
+  _ImmediateRoaming(
+    TranslationRoamingConfig config,
+    TranslationRoamingSecrets secrets,
+  ) : super(config: config, secrets: secrets);
+
+  @override
+  Future<TranslationRoamingLookup> lookup({
+    required String source,
+    required String targetLanguage,
+  }) async {
+    reads++;
+    return const TranslationRoamingLookup(
+      TranslationRoamingLookupStatus.hit,
+      translation: 'cloud translation',
+    );
+  }
+
+  @override
+  Future<void> upload({
+    required String source,
+    required String targetLanguage,
+    required String translation,
+    required bool Function() isValid,
+  }) async {
+    if (isValid()) uploads.add(translation);
+  }
+}
+
+class _ControlledRoaming extends _ImmediateRoaming {
+  final result = Completer<TranslationRoamingLookup>();
+
+  _ControlledRoaming(super.config, super.secrets);
+
+  @override
+  Future<TranslationRoamingLookup> lookup({
+    required String source,
+    required String targetLanguage,
+  }) {
+    reads++;
+    return result.future;
+  }
+}

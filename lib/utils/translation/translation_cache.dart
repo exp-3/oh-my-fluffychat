@@ -48,6 +48,12 @@ class TranslationCacheKey {
 
 enum TranslationCacheLookupStatus { hit, miss, unavailable }
 
+/// A safety check rejected a late write, rather than an ordinary I/O failure.
+class TranslationCacheWriteInvalidated extends StateError {
+  TranslationCacheWriteInvalidated()
+    : super('Translation cache write invalidated');
+}
+
 class TranslationCacheTicket {
   final String sourceDigest;
   final int epoch;
@@ -332,7 +338,7 @@ class TranslationCache {
             captured.values.any(
               (ticket) => (_epochs[ticket.sourceDigest] ?? 0) != ticket.epoch,
             )) {
-          throw StateError('Translation cache write expired');
+          throw TranslationCacheWriteInvalidated();
         }
       }
 
@@ -365,7 +371,7 @@ class TranslationCache {
         }
         ensureValid();
         if (!await _replayPending()) {
-          throw StateError('Translation cache cleanup pending');
+          throw TranslationCacheWriteInvalidated();
         }
         await backend.transaction(
           (tx) async {
@@ -383,7 +389,7 @@ class TranslationCache {
                   (captured[key]!.generation != generation ||
                       (captured[key]!.storeId.isNotEmpty &&
                           captured[key]!.storeId != storeId))) {
-                throw StateError('Translation source invalidated');
+                throw TranslationCacheWriteInvalidated();
               }
               ensureValid();
               final row = _encrypt(master, key, entry.value, generation);
@@ -702,211 +708,6 @@ class TranslationCache {
       cursor = rows.last['_cursor'];
     }
   }
-
-  /// Reindexes sealed envelopes in batches without requiring plaintext. The
-  /// actual AES-GCM conversion happens only with an available matching source.
-  Future<bool> migrateLegacy({
-    required List<String> Function(String roomId) owners,
-    required TranslationSourceResolver localSource,
-    required bool Function() isEnabled,
-    int pageSize = 200,
-  }) => _serialized(() async {
-    var changed = false;
-    if (!isEnabled()) return changed;
-    final startEpoch = _safetyEpoch;
-    try {
-      if (!await _openExisting(migrate: true) || !await _replayPending()) {
-        return changed;
-      }
-      Object? cursor;
-      final checkpoint = await backend.transaction(
-        (tx) => tx.get(CacheStore.metadata, 'legacy_cursor'),
-      );
-      if (checkpoint != null) {
-        cursor = jsonDecode(cacheString(checkpoint, 'value'));
-      }
-      while (isEnabled() && startEpoch == _safetyEpoch) {
-        final rows = await backend.transaction(
-          (tx) => tx.query(
-            CacheStore.translations,
-            after: cursor,
-            limit: pageSize.clamp(1, 200),
-          ),
-        );
-        if (rows.isEmpty) {
-          await backend.transaction(
-            (tx) => tx.delete(CacheStore.metadata, 'legacy_cursor'),
-            write: true,
-          );
-          return changed;
-        }
-        final resolved =
-            <({CacheRow row, String user, TranslationLocalSource source})>[];
-        for (final row in rows) {
-          final room = cacheString(row, 'room_id');
-          final event = cacheString(row, 'event_id');
-          for (final owner in owners(room).toSet()) {
-            TranslationLocalSource source;
-            try {
-              source = await localSource(owner, room, event);
-            } catch (_) {
-              source = TranslationLocalSource.unavailable;
-            }
-            resolved.add((row: row, user: owner, source: source));
-          }
-        }
-        if (!isEnabled() || startEpoch != _safetyEpoch) return changed;
-        final batchChanged = await backend.transaction(
-          (tx) async {
-            final processed = <String>{};
-            var updated = false;
-            for (final entry in resolved) {
-              final row = entry.row;
-              final oldKey = cacheString(row, 'cache_key');
-              if (await tx.get(CacheStore.translations, oldKey) == null) {
-                continue;
-              }
-              updated = true;
-              final binding = cacheString(row, 'source_binding');
-              List<Object?> aad;
-              try {
-                aad = (jsonDecode(cacheString(row, 'aad')) as List)
-                    .cast<Object?>();
-                if (aad.length != 7 ||
-                    aad.first != 1 ||
-                    aad[1] != row['room_id'] ||
-                    aad[2] != row['event_id'] ||
-                    binding.isEmpty ||
-                    !aad.skip(1).every((value) => value is String)) {
-                  throw const FormatException();
-                }
-              } catch (_) {
-                await tx.delete(CacheStore.translations, oldKey);
-                continue;
-              }
-              if (entry.source.status ==
-                      TranslationLocalSourceStatus.obsolete ||
-                  (entry.source.source != null &&
-                      _sourceBinding(_masterKey!, entry.source.source!) !=
-                          binding)) {
-                await _deleteBindings(tx, {binding});
-                continue;
-              }
-              // A pre-existing tombstone always wins over an old envelope.
-              final generation = await _generation(tx, binding);
-              if (generation.isNotEmpty) {
-                await tx.delete(CacheStore.translations, oldKey);
-                continue;
-              }
-              final identity = [
-                entry.user,
-                binding,
-                aad[3]! as String,
-                aad[4]! as String,
-                aad[6]! as String,
-              ];
-              final key = _storageKey(_masterKey!, identity);
-              final current = await tx.get(CacheStore.contents, key);
-              final order = row['_cursor'];
-              final rank = order is int
-                  ? order.toString().padLeft(20, '0')
-                  : order! as String;
-              if (current == null ||
-                  (current['legacy'] != 0 &&
-                      cacheString(current, 'rank').compareTo(rank) < 0)) {
-                var content = <String, Object?>{
-                  ...row,
-                  'cache_key': key,
-                  'user_id': entry.user,
-                  'legacy': 1,
-                  'rank': rank,
-                  'generation': generation,
-                }..remove('_cursor');
-                if (entry.source.status == TranslationLocalSourceStatus.valid) {
-                  try {
-                    final source = entry.source.source!;
-                    final translation = _decrypt(_masterKey!, source, row);
-                    content = _encrypt(
-                      _masterKey!,
-                      TranslationCacheKey(
-                        userId: entry.user,
-                        roomId: cacheString(row, 'room_id'),
-                        eventId: cacheString(row, 'event_id'),
-                        source: source,
-                        sourceLanguage: aad[3]! as String,
-                        targetLanguage: aad[4]! as String,
-                        messageType: aad[6]! as String,
-                      ),
-                      translation,
-                      generation,
-                      legacyModel: _legacyModel(row),
-                    )..addAll({'legacy': 2, 'rank': rank});
-                  } catch (_) {
-                    // Isolate a malformed envelope instead of aborting the
-                    // batch; lookup/maintenance can discard this one record.
-                  }
-                }
-                await tx.put(CacheStore.contents, content);
-              }
-              // Loser records still contribute references for destructive cleanup.
-              final refIdentity = [
-                entry.user,
-                row['room_id'],
-                row['event_id'],
-                key,
-              ];
-              await tx.put(CacheStore.refs, {
-                'cache_key': _storageKey(_masterKey!, refIdentity),
-                'user_id': entry.user,
-                'room_id': row['room_id'],
-                'event_id': row['event_id'],
-                'source_binding': binding,
-                'content_key': key,
-                'original_event_id':
-                    entry.source.originalEventId ?? row['event_id'],
-              });
-              final root = entry.source.originalEventId;
-              if (root != null && root != row['event_id']) {
-                await tx.put(CacheStore.refs, {
-                  'cache_key': _storageKey(_masterKey!, [
-                    entry.user,
-                    row['room_id'],
-                    root,
-                    key,
-                  ]),
-                  'user_id': entry.user,
-                  'room_id': row['room_id'],
-                  'event_id': root,
-                  'source_binding': binding,
-                  'content_key': key,
-                  'original_event_id': root,
-                });
-              }
-              processed.add(oldKey);
-            }
-            for (final key in processed) {
-              await tx.delete(CacheStore.translations, key);
-            }
-            await tx.put(CacheStore.metadata, {
-              'cache_key': 'legacy_cursor',
-              'value': jsonEncode(rows.last['_cursor']),
-            });
-            if (!isEnabled() || startEpoch != _safetyEpoch) {
-              throw StateError('Migration expired');
-            }
-            return updated;
-          },
-          write: true,
-          notify: resolved.isNotEmpty,
-        );
-        changed = changed || batchChanged;
-        cursor = rows.last['_cursor'];
-      }
-    } catch (_) {
-      /* Sealed rows/checkpoint survive for the next attempt. */
-    }
-    return changed;
-  });
 
   Future<TranslationCacheCleanupResult> cleanInvalid(
     TranslationSourceResolver localSource, {

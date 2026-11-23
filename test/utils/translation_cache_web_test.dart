@@ -46,56 +46,41 @@ void main() {
     },
   );
 
-  test(
-    'Web v2 safety opens do not upgrade; migration uses greatest legacy key',
-    () async {
-      final master = Uint8List.fromList(List.generate(32, (i) => i));
-      secrets.values[masterKeyName] = base64UrlEncode(master);
-      final rows = [
-        legacyEnvelope(master, event: r'$old', text: 'first'),
-        legacyEnvelope(master, event: r'$new', text: 'last'),
-      ];
-      rows.sort(
-        (a, b) =>
-            cacheString(a, 'cache_key').compareTo(cacheString(b, 'cache_key')),
+  test('Web v2 safety cleanup does not upgrade the schema', () async {
+    final master = Uint8List.fromList(List.generate(32, (i) => i));
+    secrets.values[masterKeyName] = base64UrlEncode(master);
+    final row = legacyEnvelope(master);
+    final request = factory.open('fluffychat_translation_cache', 2);
+    request.onupgradeneeded = ((web.IDBVersionChangeEvent _) {
+      final db = request.result as web.IDBDatabase;
+      final store = db.createObjectStore(
+        'translations',
+        web.IDBObjectStoreParameters(keyPath: 'cache_key'.toJS),
       );
-      final request = factory.open('fluffychat_translation_cache', 2);
-      request.onupgradeneeded = ((web.IDBVersionChangeEvent _) {
-        final db = request.result as web.IDBDatabase;
-        final store = db.createObjectStore(
-          'translations',
-          web.IDBObjectStoreParameters(keyPath: 'cache_key'.toJS),
-        );
-        store.createIndex('room_id', 'room_id'.toJS);
-        store.createIndex('event_id', ['room_id'.toJS, 'event_id'.toJS].toJS);
-        for (final row in rows) {
-          store.put(row.jsify());
-        }
-      }).toJS;
-      final db = await _opened(request);
-      db.close();
-      expect(await backend.openExisting('unused'), isTrue);
-      expect(
-        await backend.transaction(
-          (tx) async => tx.hasStore(CacheStore.contents),
-        ),
-        isFalse,
-      );
-      await cache.migrateLegacy(
-        owners: (_) => ['@alice:test'],
-        localSource: (_, _, _) async => TranslationLocalSource.unavailable,
-        isEnabled: () => true,
-        pageSize: 1,
-      );
-      final expected = rows.last['event_id'] == r'$new' ? 'last' : 'first';
-      expect(await cache.read(key()), expected);
-      await cache.invalidateEventIfExists(
-        '!room:test',
-        cacheString(rows.first, 'event_id'),
-      );
-      expect(await cache.read(key()), isNull);
-    },
-  );
+      store.createIndex('room_id', 'room_id'.toJS);
+      store.createIndex('event_id', ['room_id'.toJS, 'event_id'.toJS].toJS);
+      store.put(row.jsify());
+    }).toJS;
+    final db = await _opened(request);
+    db.close();
+    expect(await backend.openExisting('unused'), isTrue);
+    expect(
+      await backend.transaction((tx) async => tx.hasStore(CacheStore.contents)),
+      isFalse,
+    );
+    final result = await cache.cleanInvalid(
+      (_, _, _) async => TranslationLocalSource.obsolete,
+    );
+    expect(result.deleted, 1);
+    expect(
+      await backend.transaction((tx) => tx.count(CacheStore.translations)),
+      0,
+    );
+    expect(
+      await backend.transaction((tx) async => tx.hasStore(CacheStore.contents)),
+      isFalse,
+    );
+  });
 
   test(
     'Web cross-context notification and disk tombstones reject late writes',
