@@ -1535,11 +1535,12 @@ packages:
   pointycastle:
     dependency: "direct main"
     description:
-      name: pointycastle
-      sha256: "92aa3841d083cc4b0f4709b5c74fd6409a3e6ba833ffc7dc6a8fee096366acf5"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.0.0"
+      path: "."
+      ref: "099dc23ddcfb5e2bfb8edf080a6556696b54e962"
+      resolved-ref: "099dc23ddcfb5e2bfb8edf080a6556696b54e962"
+      url: "https://github.com/exp-3/pointycastle-dart-fix"
+    source: git
+    version: "4.0.1"
   pool:
     dependency: transitive
     description:
