@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:fluffychat/utils/translation/translation_api_client.dart';
+import 'package:fluffychat/utils/translation/translation_diagnostics.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -292,6 +293,78 @@ void main() {
       );
     },
   );
+
+  test(
+    'HTTP diagnostics retain named errors while redacting credentials',
+    () async {
+      final apiClient = TranslationApiClient(
+        MockClient(
+          (_) async => http.Response(
+            jsonEncode({
+              'error': {
+                'message':
+                    'Unknown model; key test-key; '
+                    'https://user:password@example.test/v1?token=query-secret',
+                'code': 'model_not_found',
+                'type': 'invalid_request_error',
+                'request': 'private request data',
+              },
+              'private': 'private response data',
+            }),
+            400,
+          ),
+        ),
+      );
+      await expectLater(
+        _translate(apiClient, protocol: TranslationProtocol.anthropicMessages),
+        throwsA(
+          isA<TranslationHttpException>()
+              .having(
+                (error) => error.toString(),
+                'safe default description',
+                isNot(contains('Unknown model')),
+              )
+              .having(
+                translationErrorDetails,
+                'diagnostic details',
+                allOf([
+                  contains('HTTP 400'),
+                  contains('Unknown model'),
+                  contains('model_not_found'),
+                  isNot(contains('test-key')),
+                  isNot(contains('user:password')),
+                  isNot(contains('query-secret')),
+                  isNot(contains('private request data')),
+                  isNot(contains('private response data')),
+                ]),
+              ),
+        ),
+      );
+    },
+  );
+
+  test('diagnostic formatting bounds text and omits decoder source', () {
+    const secret = 'secret/with"quotes';
+    final json = jsonEncode(secret);
+    final escaped = json.substring(1, json.length - 1);
+    final diagnostic = sanitizeTranslationDiagnostic(
+      '$secret ${Uri.encodeComponent(secret)} $escaped\n'
+      'Authorization: Basic private-basic-credentials\n'
+      '${List.filled(5000, 'x').join()}',
+      secrets: [secret],
+    );
+    expect(diagnostic.length, lessThanOrEqualTo(4096));
+    for (final value in [secret, Uri.encodeComponent(secret), escaped]) {
+      expect(diagnostic, isNot(contains(value)));
+    }
+    expect(diagnostic, isNot(contains('private-basic-credentials')));
+    expect(
+      translationErrorDetails(
+        const FormatException('bad response', 'private response source'),
+      ),
+      isNot(contains('private response source')),
+    );
+  });
 }
 
 const _translations = {

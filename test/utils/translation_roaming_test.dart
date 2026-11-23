@@ -195,6 +195,56 @@ void main() {
   );
 
   test(
+    'REST diagnostics retain errors without tokens or command arguments',
+    () async {
+      const key = 'private-record-key';
+      const value = 'private-encrypted-envelope';
+      final store = RestTranslationRoamingStore(
+        endpoint: Uri.parse('https://redis.example.invalid'),
+        token: _secrets.restToken,
+        clientFactory: () => MockClient(
+          (_) async => http.Response(
+            jsonEncode({
+              'error': 'NOPERM SET denied for ${_secrets.restToken}; $key $value',
+              'request': 'unselected private data',
+            }),
+            403,
+          ),
+        ),
+      );
+      addTearDown(store.dispose);
+      await expectLater(
+        store.set(key, value, 60),
+        throwsA(
+          isA<TranslationRoamingException>()
+              .having(
+                (error) => error.error,
+                'classification',
+                TranslationRoamingError.authentication,
+              )
+              .having(
+                (error) => error.toString(),
+                'safe default description',
+                isNot(contains('NOPERM')),
+              )
+              .having(
+                (error) => error.diagnosticDetails,
+                'diagnostic details',
+                allOf(
+                  contains('HTTP 403'),
+                  contains('NOPERM'),
+                  isNot(contains(_secrets.restToken)),
+                  isNot(contains(key)),
+                  isNot(contains(value)),
+                  isNot(contains('unselected private data')),
+                ),
+              ),
+        ),
+      );
+    },
+  );
+
+  test(
     'concurrent lookups share GETEX and reject a late disposed result',
     () async {
       final gate = Completer<String?>();
@@ -247,6 +297,49 @@ void main() {
     expect(store.writes, 3);
     expect(delays, 2);
   });
+
+  test(
+    'the enabled flag preserves configuration and never accesses secrets',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final store = await SharedPreferences.getInstance();
+      final secrets = _MemorySecrets();
+      final preferences = TranslationRoamingPreferences(store, secrets);
+      final config = _config.copyWith(
+        enabled: true,
+        tls: false,
+        database: 3,
+        username: 'configured-user',
+        keyPrefix: 'configured-prefix',
+        retentionDays: 12,
+      );
+      await preferences.save(config, _secrets);
+      final savedSecrets = Map<String, String>.of(secrets.values);
+      final reads = secrets.reads;
+      secrets.failAccess = true;
+
+      await preferences.saveEnabled(false);
+      expect(
+        preferences.config.toJson(),
+        config.copyWith(enabled: false).toJson(),
+      );
+      await preferences.saveEnabled(true);
+      expect(preferences.config.toJson(), config.toJson());
+      expect(secrets.values, savedSecrets);
+      expect(secrets.reads, reads);
+
+      await store.setString(
+        TranslationRoamingPreferences.configKey,
+        jsonEncode(
+          config.copyWith(endpoint: 'https://user:password@example.test').toJson(),
+        ),
+      );
+      await expectLater(
+        preferences.saveEnabled(false),
+        throwsA(isA<TranslationRoamingException>()),
+      );
+    },
+  );
 
   test(
     'preferences keep credentials out of ordinary storage and read lazily',
@@ -331,16 +424,24 @@ class _MemoryStore implements TranslationRoamingStore {
 class _MemorySecrets implements TranslationSecretStore {
   final values = <String, String>{};
   var reads = 0;
+  var failAccess = false;
 
   @override
   Future<String?> read(String key) async {
     reads++;
+    if (failAccess) throw StateError('Secrets must not be read');
     return values[key];
   }
 
   @override
-  Future<void> write(String key, String value) async => values[key] = value;
+  Future<void> write(String key, String value) async {
+    if (failAccess) throw StateError('Secrets must not be written');
+    values[key] = value;
+  }
 
   @override
-  Future<void> delete(String key) async => values.remove(key);
+  Future<void> delete(String key) async {
+    if (failAccess) throw StateError('Secrets must not be deleted');
+    values.remove(key);
+  }
 }

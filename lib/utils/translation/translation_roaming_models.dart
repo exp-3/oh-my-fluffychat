@@ -5,6 +5,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'translation_diagnostics.dart';
+
 enum TranslationRoamingType { redis, upstash }
 
 enum TranslationRoamingLookupStatus { hit, miss, unavailable }
@@ -19,12 +21,14 @@ enum TranslationRoamingError {
   disposed,
 }
 
-/// Only classified errors may leave a transport. Server errors can contain
-/// credentials or submitted command arguments and must never be exposed.
-class TranslationRoamingException implements Exception {
+/// Transports classify failures and attach only sanitized diagnostic details.
+/// Default strings stay safe for callers that log the exception itself.
+class TranslationRoamingException implements TranslationDiagnosticException {
   final TranslationRoamingError error;
+  @override
+  final String? diagnosticDetails;
 
-  const TranslationRoamingException(this.error);
+  const TranslationRoamingException(this.error, {this.diagnosticDetails});
 
   @override
   String toString() => 'TranslationRoamingException: ${error.name}';

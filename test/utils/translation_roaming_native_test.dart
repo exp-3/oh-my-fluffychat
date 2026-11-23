@@ -69,9 +69,70 @@ void main() {
       );
     },
   );
+
+  test(
+    'native authentication errors retain reasons without credentials',
+    () async {
+      final server = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+      final sockets = <Socket>[];
+      final tasks = <Future<void>>[];
+      final subscription = server.listen((socket) {
+        sockets.add(socket);
+        tasks.add(
+          _serve(
+            socket,
+            [],
+            authenticationError: 'WRONGPASS invalid tester native-secret',
+          ),
+        );
+      });
+      final store = NativeTranslationRoamingStore(
+        TranslationRoamingConfig(
+          host: InternetAddress.loopbackIPv4.address,
+          port: server.port,
+          tls: false,
+          username: 'tester',
+        ),
+        'native-secret',
+      );
+      addTearDown(() async {
+        store.dispose();
+        await subscription.cancel();
+        for (final socket in sockets) {
+          socket.destroy();
+        }
+        await server.close();
+        await Future.wait(tasks);
+      });
+      await expectLater(
+        store.getEx('unused', 60),
+        throwsA(
+          isA<TranslationRoamingException>()
+              .having(
+                (error) => error.error,
+                'classification',
+                TranslationRoamingError.authentication,
+              )
+              .having(
+                (error) => error.diagnosticDetails,
+                'diagnostic details',
+                allOf(
+                  contains('WRONGPASS'),
+                  isNot(contains('native-secret')),
+                  isNot(contains('tester')),
+                ),
+              ),
+        ),
+      );
+    },
+  );
 }
 
-Future<void> _serve(Socket socket, List<List<String>> commands) async {
+Future<void> _serve(
+  Socket socket,
+  List<List<String>> commands, {
+  String? authenticationError,
+}) async {
   final input = _RequestReader(socket);
   try {
     while (true) {
@@ -79,6 +140,8 @@ Future<void> _serve(Socket socket, List<List<String>> commands) async {
       if (command == null) return;
       commands.add(command);
       final response = switch (command.first) {
+        'AUTH' when authenticationError != null =>
+          utf8.encode('-$authenticationError\r\n'),
         'AUTH' || 'SELECT' || 'SET' => utf8.encode('+OK\r\n'),
         'DEL' => utf8.encode(':1\r\n'),
         'GETEX' => [

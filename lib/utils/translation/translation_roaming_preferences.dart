@@ -53,6 +53,28 @@ class TranslationRoamingPreferences {
     }
   }
 
+  /// Changes only the ordinary configuration; enabling may precede setup.
+  Future<TranslationRoamingConfig> saveEnabled(bool enabled) async {
+    final value = config.copyWith(enabled: enabled);
+    if (!value.hasSafeEndpoint) {
+      throw const TranslationRoamingException(
+        TranslationRoamingError.configuration,
+      );
+    }
+    try {
+      if (!await store.setString(configKey, jsonEncode(value.toJson()))) {
+        throw const TranslationRoamingException(
+          TranslationRoamingError.configuration,
+        );
+      }
+      return value;
+    } catch (_) {
+      throw const TranslationRoamingException(
+        TranslationRoamingError.configuration,
+      );
+    }
+  }
+
   Future<void> save(
     TranslationRoamingConfig config,
     TranslationRoamingSecrets value,

@@ -7,6 +7,7 @@ import 'dart:io';
 
 import 'package:redis/redis.dart' as redis;
 
+import 'translation_diagnostics.dart';
 import 'translation_roaming_models.dart';
 import 'translation_roaming_store.dart';
 
@@ -106,10 +107,7 @@ class NativeTranslationRoamingStore implements TranslationRoamingStore {
       socket?.destroy();
       if (generation == _generation) reset();
       if (error is TranslationRoamingException) rethrow;
-      // Redis exceptions may echo arguments. Do not propagate their text.
-      throw const TranslationRoamingException(
-        TranslationRoamingError.connection,
-      );
+      throw _failure(error);
     }
   }
 
@@ -132,15 +130,66 @@ class NativeTranslationRoamingStore implements TranslationRoamingStore {
     } catch (error) {
       if (generation == _generation) reset();
       if (error is TranslationRoamingException) rethrow;
-      throw const TranslationRoamingException(
-        TranslationRoamingError.connection,
-      );
+      throw _failure(error);
     }
   }
 
   // The package exposes a non-generic Future. Keep its dynamic boundary here.
-  Future<Object?> _send(redis.Command command, List<String> parts) =>
-      command.send_object(parts);
+  Future<Object?> _send(redis.Command command, List<String> parts) async {
+    try {
+      return await command.send_object(parts);
+    } catch (error) {
+      if (error is TranslationRoamingException) rethrow;
+      throw _failure(error, command: parts);
+    }
+  }
+
+  TranslationRoamingException _failure(
+    Object error, {
+    List<String> command = const [],
+  }) {
+    final String description;
+    if (error is SocketException) {
+      description =
+          'SocketException: ${error.message}'
+          '${error.osError == null ? '' : '\n${error.osError}'}';
+    } else if (error is TlsException) {
+      description =
+          '${error.runtimeType}: ${error.message}'
+          '${error.osError == null ? '' : '\n${error.osError}'}';
+    } else if (error is TimeoutException) {
+      description = 'TimeoutException: Redis operation timed out';
+    } else if (error is FormatException) {
+      description = 'FormatException: Invalid Redis response';
+    } else {
+      // Redis server errors may echo command arguments; sanitize at this boundary.
+      description = error.toString();
+    }
+    final authentication =
+        command.firstOrNull == 'AUTH' ||
+        RegExp(r'\b(NOAUTH|WRONGPASS)\b').hasMatch(description);
+    final category = error is TimeoutException
+        ? TranslationRoamingError.timeout
+        : error is SocketException || error is TlsException
+        ? TranslationRoamingError.connection
+        : authentication
+        ? TranslationRoamingError.authentication
+        : command.isNotEmpty || error is FormatException
+        ? TranslationRoamingError.protocol
+        : TranslationRoamingError.connection;
+    return TranslationRoamingException(
+      category,
+      diagnosticDetails: sanitizeTranslationDiagnostic(
+        '${command.isEmpty ? '' : '${command.first}: '}$description',
+        secrets: [
+          password,
+          config.username.trim(),
+          if (command.length > 1) command[1],
+          if (command.firstOrNull == 'SET' && command.length > 2) command[2],
+        ],
+      ),
+    );
+  }
 
   @override
   Future<String?> getEx(String key, int ttlSeconds) async {

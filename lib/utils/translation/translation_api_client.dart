@@ -6,14 +6,26 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'translation_diagnostics.dart';
 import 'translation_models.dart';
 
-class TranslationProtocolException implements Exception {
+class TranslationProtocolException implements TranslationDiagnosticException {
   final String message;
   const TranslationProtocolException(this.message);
 
   @override
+  String get diagnosticDetails => message;
+
+  @override
   String toString() => 'TranslationProtocolException: $message';
+}
+
+class TranslationHttpException extends http.ClientException
+    implements TranslationDiagnosticException {
+  @override
+  final String diagnosticDetails;
+
+  TranslationHttpException(super.message, {required this.diagnosticDetails});
 }
 
 class TranslationApiClient {
@@ -82,24 +94,38 @@ class TranslationApiClient {
       },
     };
     final requestEndpoint = provider.requestEndpoint;
-    final response = await client.post(
-      requestEndpoint,
-      headers: {
-        'authorization': 'Bearer $normalizedApiKey',
-        'x-api-key': normalizedApiKey,
-        if (provider.protocol == TranslationProtocol.anthropicMessages)
-          'anthropic-version': '2026-10-21',
-        if (_isWeb &&
-            provider.protocol == TranslationProtocol.anthropicMessages)
-          'anthropic-dangerous-direct-browser-access': 'true',
-        'content-type': 'application/json',
-      },
-      body: jsonEncode(body),
-    );
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw http.ClientException(
-        'Translation provider returned HTTP ${response.statusCode}',
+    final http.Response response;
+    try {
+      response = await client.post(
         requestEndpoint,
+        headers: {
+          'authorization': 'Bearer $normalizedApiKey',
+          'x-api-key': normalizedApiKey,
+          if (provider.protocol == TranslationProtocol.anthropicMessages)
+            'anthropic-version': '2026-10-21',
+          if (_isWeb &&
+              provider.protocol == TranslationProtocol.anthropicMessages)
+            'anthropic-dangerous-direct-browser-access': 'true',
+          'content-type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+    } catch (error) {
+      throw TranslationHttpException(
+        'Translation provider request failed',
+        diagnosticDetails: translationErrorDetails(
+          error,
+          secrets: [normalizedApiKey],
+        ),
+      );
+    }
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw TranslationHttpException(
+        'Translation provider returned HTTP ${response.statusCode}',
+        diagnosticDetails: translationHttpResponseDetails(
+          response,
+          secrets: [normalizedApiKey],
+        ),
       );
     }
     final decoded = jsonDecode(utf8.decode(response.bodyBytes));

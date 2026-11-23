@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'translation_diagnostics.dart';
 import 'translation_roaming_models.dart';
 import 'translation_roaming_store.dart';
 
@@ -29,6 +30,12 @@ class RestTranslationRoamingStore implements TranslationRoamingStore {
     }
     final generation = _generation;
     final client = _client ??= _clientFactory();
+    final sensitive = [
+      token,
+      token.trim(),
+      parts[1],
+      if (parts.first == 'SET') parts[2],
+    ];
     try {
       final request = http.Request('POST', endpoint)
         ..followRedirects = false
@@ -46,28 +53,43 @@ class RestTranslationRoamingStore implements TranslationRoamingStore {
         );
       }
       if (response.statusCode == 401 || response.statusCode == 403) {
-        throw const TranslationRoamingException(
+        throw TranslationRoamingException(
           TranslationRoamingError.authentication,
+          diagnosticDetails: translationHttpResponseDetails(
+            response,
+            secrets: sensitive,
+          ),
         );
       }
       if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw const TranslationRoamingException(
+        throw TranslationRoamingException(
           TranslationRoamingError.connection,
+          diagnosticDetails: translationHttpResponseDetails(
+            response,
+            secrets: sensitive,
+          ),
         );
       }
       final decoded = _decode(utf8.decode(response.bodyBytes));
       if (decoded is! Map<String, Object?> ||
           decoded['error'] != null ||
           !decoded.containsKey('result')) {
-        throw const TranslationRoamingException(
+        throw TranslationRoamingException(
           TranslationRoamingError.protocol,
+          diagnosticDetails: translationHttpResponseDetails(
+            response,
+            secrets: sensitive,
+          ),
         );
       }
       return decoded['result'];
     } catch (error) {
       if (error is TranslationRoamingException) rethrow;
-      throw const TranslationRoamingException(
-        TranslationRoamingError.connection,
+      throw TranslationRoamingException(
+        error is FormatException
+            ? TranslationRoamingError.protocol
+            : TranslationRoamingError.connection,
+        diagnosticDetails: translationErrorDetails(error, secrets: sensitive),
       );
     }
   }

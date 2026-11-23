@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+import 'dart:async';
+
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/translation/translation_languages.dart';
@@ -15,6 +17,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:uuid/uuid.dart';
 
 import 'translation_roaming_settings.dart';
+import 'translation_test_feedback.dart';
 
 class SettingsTranslation extends StatefulWidget {
   const SettingsTranslation({super.key});
@@ -945,8 +948,11 @@ class _SettingsTranslationProviderState
   bool testing = false;
   bool saving = false;
   bool deleting = false;
-  bool? testPassed;
-  String? testMessage;
+  bool _loadingApiKey = false;
+  bool _apiKeyVisible = false;
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? _testFeedback;
+
+  bool get _busy => testing || saving || deleting;
 
   @override
   void initState() {
@@ -961,6 +967,27 @@ class _SettingsTranslationProviderState
     reasoningEffort =
         existing?.reasoningEffort ?? TranslationReasoningEffort.unspecified;
     useFullEndpoint = existing?.useFullEndpoint ?? false;
+    if (existing != null) {
+      _loadingApiKey = true;
+      unawaited(_loadApiKey());
+    }
+  }
+
+  Future<void> _loadApiKey() async {
+    try {
+      final value = await runtime.preferences.readApiKey(providerId);
+      if (!mounted) return;
+      apiKey.text = value ?? '';
+    } catch (_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(L10n.of(context).oopsSomethingWentWrong)),
+        );
+      });
+    } finally {
+      if (mounted) setState(() => _loadingApiKey = false);
+    }
   }
 
   TranslationProviderConfig? _findProvider(String? id) {
@@ -1000,39 +1027,51 @@ class _SettingsTranslationProviderState
   }
 
   void formChanged() {
-    setState(() {
-      testPassed = null;
-      testMessage = null;
-    });
+    _clearTestFeedback();
+    setState(() {});
+  }
+
+  void _clearTestFeedback() {
+    _testFeedback?.close();
+    _testFeedback = null;
+  }
+
+  void _showTestFeedback({required String message, Object? error}) {
+    final feedback = showTranslationTestFeedback(
+      context,
+      message: message,
+      error: error,
+      secrets: [apiKey.text],
+    );
+    _testFeedback = feedback;
+    unawaited(
+      feedback.closed.then((_) {
+        if (identical(_testFeedback, feedback)) _testFeedback = null;
+      }),
+    );
   }
 
   Future<void> test() async {
+    if (_busy || _loadingApiKey) return;
+    _clearTestFeedback();
     final value = config;
     if (value == null || (existing == null && apiKey.text.trim().isEmpty)) {
-      setState(() {
-        testPassed = false;
-        testMessage = L10n.of(context).translationProviderRequired;
-      });
+      _showTestFeedback(message: L10n.of(context).translationProviderRequired);
       return;
     }
-    setState(() {
-      testing = true;
-      testPassed = null;
-      testMessage = null;
-    });
+    setState(() => testing = true);
     try {
       await runtime.testProvider(value, apiKey.text);
       if (!mounted) return;
-      setState(() {
-        testPassed = true;
-        testMessage = L10n.of(context).translationProviderTestPassed;
-      });
+      _showTestFeedback(
+        message: L10n.of(context).translationProviderTestPassed,
+      );
     } catch (error) {
       if (!mounted) return;
-      setState(() {
-        testPassed = false;
-        testMessage = '${L10n.of(context).translationFailed}: $error';
-      });
+      _showTestFeedback(
+        message: L10n.of(context).oopsSomethingWentWrong,
+        error: error,
+      );
     } finally {
       if (mounted) setState(() => testing = false);
     }
@@ -1042,7 +1081,8 @@ class _SettingsTranslationProviderState
     final value = config;
     if (value == null ||
         (existing == null && apiKey.text.trim().isEmpty) ||
-        saving) {
+        _busy ||
+        _loadingApiKey) {
       return;
     }
     setState(() => saving = true);
@@ -1105,8 +1145,7 @@ class _SettingsTranslationProviderState
             draft.endpoint.host.isNotEmpty
         ? draft.requestEndpoint
         : null;
-    final testMessage = this.testMessage;
-    final busy = testing || saving || deleting;
+    final busy = _busy;
     if (widget.providerId != null && existing == null) {
       return Scaffold(
         appBar: AppBar(title: Text(l10n.editTranslationProvider)),
@@ -1131,6 +1170,7 @@ class _SettingsTranslationProviderState
             child: FilledButton(
               onPressed:
                   busy ||
+                      _loadingApiKey ||
                       value == null ||
                       (existing == null && apiKey.text.trim().isEmpty)
                   ? null
@@ -1262,55 +1302,36 @@ class _SettingsTranslationProviderState
                   ),
                   TextField(
                     controller: apiKey,
-                    enabled: !busy,
-                    obscureText: true,
+                    enabled: !busy && !_loadingApiKey,
+                    obscureText: !_apiKeyVisible,
+                    autocorrect: false,
+                    enableSuggestions: false,
+                    enableIMEPersonalizedLearning: false,
                     decoration: InputDecoration(
                       labelText: l10n.apiKey,
                       helperText: existing == null
                           ? null
                           : l10n.leaveEmptyToKeepCurrent,
+                      suffixIcon: IconButton(
+                        tooltip: _apiKeyVisible ? l10n.showLess : l10n.showMore,
+                        onPressed: busy || _loadingApiKey
+                            ? null
+                            : () => setState(
+                                () => _apiKeyVisible = !_apiKeyVisible,
+                              ),
+                        icon: Icon(
+                          _apiKeyVisible
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                        ),
+                      ),
                     ),
                     onChanged: (_) => formChanged(),
                   ),
-                  if (testMessage != null)
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: testPassed == true
-                            ? theme.colorScheme.primaryContainer
-                            : theme.colorScheme.errorContainer,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 8,
-                        children: [
-                          Icon(
-                            testPassed == true
-                                ? Icons.check_circle_outline
-                                : Icons.error_outline,
-                            color: testPassed == true
-                                ? theme.colorScheme.onPrimaryContainer
-                                : theme.colorScheme.onErrorContainer,
-                          ),
-                          Expanded(
-                            child: Text(
-                              testMessage,
-                              style: TextStyle(
-                                color: testPassed == true
-                                    ? theme.colorScheme.onPrimaryContainer
-                                    : theme.colorScheme.onErrorContainer,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton.icon(
-                      onPressed: busy ? null : test,
+                      onPressed: busy || _loadingApiKey ? null : test,
                       icon: testing
                           ? const SizedBox.square(
                               dimension: 16,

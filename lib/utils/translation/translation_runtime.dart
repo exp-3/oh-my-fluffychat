@@ -78,6 +78,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   void Function(VoidCallback)? _afterRoamingFrame;
   Future<void> _roamingSaveTail = Future.value();
   int _roamingRevision = 0;
+  int _roamingPendingMutations = 0;
   bool _roamingMutationInProgress = false;
   bool _disposed = false;
   final Map<String, ValueNotifier<TranslationResultState>> _states = {};
@@ -174,35 +175,78 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   Future<TranslationRoamingSecrets> readRoamingSecrets() =>
       _roamingPreferences!.readSecrets();
 
+  Future<({TranslationRoamingConfig config, TranslationRoamingSecrets secrets})>
+  readRoamingSettings() {
+    if (_disposed) {
+      return Future.error(StateError('Translation runtime has been disposed'));
+    }
+    final operation = _roamingSaveTail.then((_) async {
+      if (_disposed) throw StateError('Translation runtime has been disposed');
+      final secrets = await _roamingPreferences!.readSecrets();
+      if (_disposed) throw StateError('Translation runtime has been disposed');
+      return (config: _roamingConfig, secrets: secrets);
+    });
+    // Later writes must wait until both parts of the snapshot have been read.
+    _roamingSaveTail = operation.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {},
+    );
+    return operation;
+  }
+
   Future<void> saveRoaming(
     TranslationRoamingConfig config,
-    TranslationRoamingSecrets secrets,
-  ) {
-    final operation = _roamingSaveTail.then((_) async {
-      if (_disposed) return;
-      if (config.enabled &&
-          (!config.isValid ||
-              !config.supportedOnPlatform ||
-              !secrets.isValidFor(config))) {
-        throw ArgumentError('Invalid translation roaming configuration');
-      }
-      _roamingMutationInProgress = true;
-      _resetRoaming();
-      _bumpRevision(clearPending: true, clearStates: false);
-      try {
-        await _roamingPreferences!.save(config, secrets);
-        if (_disposed) return;
-        _roamingConfig = config;
-      } catch (_) {
-        // A partially saved configuration must never reuse an old connection.
+    TranslationRoamingSecrets secrets, {
+    bool Function()? isCurrent,
+  }) => _mutateRoaming(() async {
+    if (isCurrent != null && !isCurrent()) return;
+    if (config.enabled &&
+        (!config.isValid ||
+            !config.supportedOnPlatform ||
+            !secrets.isValidFor(config))) {
+      throw ArgumentError('Invalid translation roaming configuration');
+    }
+    try {
+      await _roamingPreferences!.save(config, secrets);
+      if (!_disposed) _roamingConfig = config;
+    } catch (_) {
+      // A partially saved configuration must never reuse an old connection.
+      if (!_disposed) {
         _roamingConfig = _roamingConfig.copyWith(enabled: false);
-        rethrow;
+      }
+      rethrow;
+    }
+  });
+
+  Future<void> setRoamingEnabled(bool enabled) => _mutateRoaming(() async {
+    try {
+      final config = await _roamingPreferences!.saveEnabled(enabled);
+      if (!_disposed) _roamingConfig = config;
+    } catch (_) {
+      if (!_disposed) {
+        _roamingConfig = _roamingConfig.copyWith(enabled: false);
+      }
+      rethrow;
+    }
+  });
+
+  Future<void> _mutateRoaming(Future<void> Function() mutation) {
+    if (_disposed) return Future.value();
+    _roamingPendingMutations++;
+    _roamingMutationInProgress = true;
+    _resetRoaming();
+    final operation = _roamingSaveTail.then((_) async {
+      try {
+        if (!_disposed) await mutation();
       } finally {
-        _roamingMutationInProgress = false;
-        if (!_disposed) notifyListeners();
+        _roamingPendingMutations--;
+        _roamingMutationInProgress = _roamingPendingMutations != 0;
+        if (!_disposed && !_roamingMutationInProgress) notifyListeners();
       }
     });
     _roamingSaveTail = operation.catchError((Object _) {});
+    // Publish the queue entry before notifying potentially reentrant listeners.
+    _bumpRevision(clearPending: true, clearStates: false);
     return operation;
   }
 

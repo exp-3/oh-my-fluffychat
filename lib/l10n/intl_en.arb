@@ -15,10 +15,8 @@
     "translationRoamingRetentionDays": "Expiry after inactivity (days)",
     "translationRoamingWebUnsupported": "Redis native is unavailable in browsers. Choose Upstash style.",
     "translationRoamingTestPassed": "Connection test passed",
-    "translationRoamingSaved": "Roaming settings saved",
     "translationRoamingToken": "Bearer token",
     "translationRoamingUsername": "Username",
-    "translationRoamingSaveHint": "Changes take effect after saving. Local cache hits do not renew cloud expiry.",
     "databaseInitializationFailed": "Local archive initialization failed",
     "databaseInitializationFailedBody": "The local archive for \"{clientName}\" could not be opened. It may be corrupted, or a required runtime component may be missing.\n\nResetting permanently deletes this device's local archive. Server data can be synchronized again, but unsent or local-only data may be lost. Do you want to reset it?",
     "@databaseInitializationFailedBody": {

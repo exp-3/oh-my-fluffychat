@@ -1259,6 +1259,111 @@ void main() {
     },
   );
 
+  test('enabling roaming before setup persists without a connection', () async {
+    final fixture = await _RuntimeFixture.create(
+      roamingFactory: (_, _) => fail('Incomplete roaming must stay offline'),
+    );
+    addTearDown(fixture.runtime.dispose);
+
+    await fixture.runtime.setRoamingEnabled(true);
+    expect(fixture.runtime.roamingConfig.enabled, isTrue);
+    expect(fixture.runtime.roamingConfig.isValid, isFalse);
+    expect(await fixture.runtime.restoreEvent(_event(fixture)), isNull);
+    final preferences = TranslationRoamingPreferences(
+      await SharedPreferences.getInstance(),
+      fixture.secrets,
+    );
+    expect(preferences.config.enabled, isTrue);
+    expect(
+      fixture.secrets.values,
+      isNot(contains(TranslationRoamingPreferences.secretsKey)),
+    );
+    await expectLater(
+      fixture.runtime.saveRoaming(
+        fixture.runtime.roamingConfig,
+        const TranslationRoamingSecrets(),
+      ),
+      throwsArgumentError,
+    );
+  });
+
+  test(
+    'queued snapshots stay consistent and switch off follows delayed saves',
+    () async {
+      final services = <_ImmediateRoaming>[];
+      final fixture = await _RuntimeFixture.create(
+        roamingFactory: (config, secrets) {
+          final service = _ImmediateRoaming(config, secrets);
+          services.add(service);
+          return service;
+        },
+      );
+      addTearDown(fixture.runtime.dispose);
+      await _enableRoaming(fixture.runtime);
+      final secrets = await fixture.runtime.readRoamingSecrets();
+      final writeStarted = Completer<void>();
+      final releaseWrite = Completer<void>();
+      var roamingWrites = 0;
+      addTearDown(() {
+        if (!releaseWrite.isCompleted) releaseWrite.complete();
+      });
+      fixture.secrets.beforeWrite = (key) async {
+        if (key != TranslationRoamingPreferences.secretsKey) return;
+        roamingWrites++;
+        if (roamingWrites == 1) {
+          writeStarted.complete();
+          await releaseWrite.future;
+        }
+      };
+      final notifiedEnabled = <bool>[];
+      fixture.runtime.addListener(() {
+        notifiedEnabled.add(fixture.runtime.roamingConfig.enabled);
+      });
+      final config = fixture.runtime.roamingConfig.copyWith(
+        host: 'updated-redis.example.invalid',
+        retentionDays: 7,
+      );
+      final updatedSecrets = secrets.copyWith(redisPassword: 'updated-password');
+      final saving = fixture.runtime.saveRoaming(config, updatedSecrets);
+      await writeStarted.future;
+      final stale = fixture.runtime.saveRoaming(
+        config.copyWith(host: 'obsolete-redis.example.invalid'),
+        secrets,
+        isCurrent: () => false,
+      );
+      final reading = fixture.runtime.readRoamingSettings();
+      final disabling = fixture.runtime.setRoamingEnabled(false);
+      expect(await fixture.runtime.restoreEvent(_event(fixture)), isNull);
+      expect(services, isEmpty);
+      notifiedEnabled.clear();
+      releaseWrite.complete();
+      await Future.wait([saving, stale, disabling]);
+      final snapshot = await reading;
+
+      expect(snapshot.config.toJson(), config.toJson());
+      expect(snapshot.secrets.redisPassword, 'updated-password');
+      expect(roamingWrites, 1);
+      expect(notifiedEnabled, isNot(contains(true)));
+      expect(
+        fixture.runtime.roamingConfig.toJson(),
+        config.copyWith(enabled: false).toJson(),
+      );
+      final preferences = TranslationRoamingPreferences(
+        await SharedPreferences.getInstance(),
+        fixture.secrets,
+      );
+      expect(
+        preferences.config.toJson(),
+        config.copyWith(enabled: false).toJson(),
+      );
+      expect(
+        await fixture.runtime.restoreEvent(_event(fixture, id: r'$after-off')),
+        isNull,
+      );
+      expect(services, isEmpty);
+    },
+  );
+
   test('roaming displays before the frame and delayed local save', () async {
     final api = _RecordingApiClient();
     final saves = <void Function()>[];
@@ -1648,6 +1753,7 @@ class _MemorySecrets implements TranslationSecretStore {
   final Completer<void>? readStarted;
   final Completer<void>? releaseRead;
   int readCalls = 0;
+  Future<void> Function(String key)? beforeWrite;
 
   _MemorySecrets({this.delayedReadNumber, this.readStarted, this.releaseRead});
 
@@ -1665,7 +1771,11 @@ class _MemorySecrets implements TranslationSecretStore {
   }
 
   @override
-  Future<void> write(String key, String value) async => values[key] = value;
+  Future<void> write(String key, String value) async {
+    final before = beforeWrite;
+    if (before != null) await before(key);
+    values[key] = value;
+  }
 }
 
 class _MemoryBackend extends MemoryTranslationBackend {}

@@ -10,7 +10,10 @@ import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Edits a local draft. No connection is opened until a test or saved use.
+import 'roaming_actions.dart';
+import 'translation_test_feedback.dart';
+
+/// Saves valid edits automatically and keeps incomplete input local.
 class TranslationRoamingSettings extends StatefulWidget {
   final TranslationRuntime runtime;
 
@@ -39,10 +42,17 @@ class _TranslationRoamingSettingsState
   late final TextEditingController _days;
   bool _loading = true;
   bool _loadFailed = false;
-  bool _saving = false;
   bool _testing = false;
+  bool _switchFailed = false;
+  bool _saveFailed = false;
+  bool _passwordVisible = false;
+  bool _tokenVisible = false;
+  bool _pskVisible = false;
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? _testFeedback;
+  int _saveVersion = 0;
+  int _switchVersion = 0;
 
-  bool get _busy => _loading || _saving || _testing;
+  bool get _busy => _loading || _testing;
 
   @override
   void initState() {
@@ -85,14 +95,30 @@ class _TranslationRoamingSettingsState
 
   Future<void> _loadSecrets() async {
     if (!_loading) setState(() => _loading = true);
+    final switchVersion = _switchVersion;
+    var generatedKey = false;
     try {
-      final secrets = await widget.runtime.readRoamingSecrets();
+      final settings = await widget.runtime.readRoamingSettings();
       if (!mounted) return;
+      final config = settings.config;
+      final secrets = settings.secrets;
+      _saved = config;
+      _type = config.type;
+      _tls = config.tls;
+      if (switchVersion == _switchVersion) _enabled = config.enabled;
+      _host.text = config.host;
+      _port.text = config.port.toString();
+      _username.text = config.username;
+      _database.text = config.database.toString();
+      _endpoint.text = config.endpoint;
+      _prefix.text = config.keyPrefix;
+      _days.text = config.retentionDays.toString();
       _password.text = secrets.redisPassword;
       _token.text = secrets.restToken;
       _psk.text = secrets.preSharedKey.isEmpty
           ? TranslationRoamingCrypto.generatePreSharedKey()
           : secrets.preSharedKey;
+      generatedKey = secrets.preSharedKey.isEmpty;
       _loadFailed = false;
     } catch (_) {
       if (!mounted) return;
@@ -100,6 +126,7 @@ class _TranslationRoamingSettingsState
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+    if (mounted && generatedKey && !_loadFailed && _enabled) _queueAutosave();
   }
 
   TranslationRoamingConfig? get _draft {
@@ -145,34 +172,108 @@ class _TranslationRoamingSettingsState
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Future<void> _save() async {
-    if (_busy || _loadFailed) return;
-    final l10n = L10n.of(context);
+  void _clearTestFeedback() {
+    final feedback = _testFeedback;
+    _testFeedback = null;
+    feedback?.close();
+  }
+
+  void _showTestFeedback(String message, {Object? error}) {
+    if (!mounted) return;
+    final feedback = showTranslationTestFeedback(
+      context,
+      message: message,
+      error: error,
+      secrets: [_password.text, _token.text, _psk.text],
+    );
+    _testFeedback = feedback;
+    unawaited(
+      feedback.closed.then((_) {
+        if (identical(_testFeedback, feedback)) _testFeedback = null;
+      }),
+    );
+  }
+
+  void _settingsChanged() {
+    _clearTestFeedback();
+    _queueAutosave();
+  }
+
+  void _queueAutosave() {
+    final version = ++_saveVersion;
     final config = _draft;
     final secrets = _secrets;
-    if (config == null ||
-        (config.enabled &&
-            (!config.isValid ||
-                !config.supportedOnPlatform ||
-                !secrets.isValidFor(config)))) {
-      _message(l10n.invalidInput);
+    if (_loading ||
+        _loadFailed ||
+        !_enabled ||
+        config == null ||
+        !config.isValid ||
+        !config.supportedOnPlatform ||
+        !secrets.isValidFor(config)) {
+      setState(() {});
       return;
     }
-    setState(() => _saving = true);
-    try {
-      await widget.runtime.saveRoaming(config, secrets);
-      if (!mounted) return;
-      _saved = config;
-      _message(l10n.translationRoamingSaved);
-    } catch (_) {
-      _message(l10n.oopsSomethingWentWrong);
-    } finally {
-      if (mounted) setState(() => _saving = false);
-    }
+    setState(() => _saveFailed = false);
+    final runtime = widget.runtime;
+    // Publish the snapshot now so a newly opened page reads behind this save.
+    final operation = runtime.saveRoaming(
+      config,
+      secrets,
+      isCurrent: () => version == _saveVersion,
+    );
+    unawaited(
+      operation.then<void>(
+        (_) {
+          if (!mounted || version != _saveVersion) return;
+          setState(() {
+            _saved = config;
+            _saveFailed = false;
+            _switchFailed = false;
+          });
+        },
+        onError: (Object error, StackTrace stackTrace) {
+          if (!mounted || version != _saveVersion) return;
+          setState(() => _saveFailed = true);
+        },
+      ),
+    );
+  }
+
+  void _setEnabled(bool value) {
+    if (_testing || (value && (_loading || _loadFailed))) return;
+    _clearTestFeedback();
+    ++_saveVersion;
+    final version = ++_switchVersion;
+    setState(() {
+      _enabled = value;
+      _switchFailed = false;
+      _saveFailed = false;
+      if (!value) {
+        _passwordVisible = false;
+        _tokenVisible = false;
+        _pskVisible = false;
+      }
+    });
+    // Invalid field text must not prevent persisting the switch.
+    final operation = widget.runtime.setRoamingEnabled(value);
+    unawaited(
+      operation.then<void>(
+        (_) {
+          if (!mounted || version != _switchVersion) return;
+          setState(() => _saved = _saved.copyWith(enabled: value));
+        },
+        onError: (Object error, StackTrace stackTrace) {
+          if (!mounted || version != _switchVersion) return;
+          setState(() => _switchFailed = true);
+        },
+      ),
+    );
+    if (value) _queueAutosave();
   }
 
   Future<void> _test() async {
     if (_busy || _loadFailed) return;
+    _clearTestFeedback();
     final l10n = L10n.of(context);
     final config = _draft;
     final secrets = _secrets;
@@ -180,15 +281,15 @@ class _TranslationRoamingSettingsState
         !config.isValid ||
         !config.supportedOnPlatform ||
         !secrets.isValidFor(config)) {
-      _message(l10n.invalidInput);
+      _showTestFeedback(l10n.invalidInput);
       return;
     }
     setState(() => _testing = true);
     try {
       await widget.runtime.testRoaming(config, secrets);
-      _message(l10n.translationRoamingTestPassed);
-    } catch (_) {
-      _message(l10n.oopsSomethingWentWrong);
+      _showTestFeedback(l10n.translationRoamingTestPassed);
+    } catch (error) {
+      _showTestFeedback(l10n.oopsSomethingWentWrong, error: error);
     } finally {
       if (mounted) setState(() => _testing = false);
     }
@@ -208,6 +309,11 @@ class _TranslationRoamingSettingsState
     final l10n = L10n.of(context);
     final theme = Theme.of(context);
     final unsupported = !_saved.copyWith(type: _type).supportedOnPlatform;
+    final draft = _draft;
+    final invalidInput =
+        !_loading &&
+        !_loadFailed &&
+        (draft == null || !draft.isValid || !_secrets.isValidFor(draft));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -222,9 +328,9 @@ class _TranslationRoamingSettingsState
           ),
           subtitle: Text(l10n.translationRoamingDescription),
           value: _enabled,
-          onChanged: _busy || _loadFailed
+          onChanged: _testing || (!_enabled && (_loading || _loadFailed))
               ? null
-              : (value) => setState(() => _enabled = value),
+              : _setEnabled,
         ),
         if (_loading)
           const Padding(
@@ -240,176 +346,268 @@ class _TranslationRoamingSettingsState
               label: Text(l10n.tryAgain),
             ),
           ),
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            spacing: 12,
-            children: [
-              DropdownButtonFormField<TranslationRoamingType>(
-                initialValue: _type,
-                isExpanded: true,
-                decoration: InputDecoration(
-                  labelText: l10n.translationRoamingConnectionType,
-                ),
-                items: [
-                  DropdownMenuItem(
-                    value: TranslationRoamingType.redis,
-                    child: Text(l10n.translationRoamingNative),
+        if (_switchFailed || _saveFailed)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    l10n.oopsSomethingWentWrong,
+                    style: TextStyle(color: theme.colorScheme.error),
                   ),
-                  DropdownMenuItem(
-                    value: TranslationRoamingType.upstash,
-                    child: Text(l10n.translationRoamingUpstash),
+                ),
+                TextButton.icon(
+                  onPressed: _testing || (_enabled && (_loading || _loadFailed))
+                      ? null
+                      : () => _setEnabled(_enabled),
+                  icon: const Icon(Icons.refresh),
+                  label: Text(l10n.tryAgain),
+                ),
+              ],
+            ),
+          ),
+        if (_enabled)
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: 12,
+              children: [
+                DropdownButtonFormField<TranslationRoamingType>(
+                  initialValue: _type,
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    labelText: l10n.translationRoamingConnectionType,
+                  ),
+                  items: [
+                    DropdownMenuItem(
+                      value: TranslationRoamingType.redis,
+                      child: Text(l10n.translationRoamingNative),
+                    ),
+                    DropdownMenuItem(
+                      value: TranslationRoamingType.upstash,
+                      child: Text(l10n.translationRoamingUpstash),
+                    ),
+                  ],
+                  onChanged: _busy || _loadFailed
+                      ? null
+                      : (value) {
+                          if (value == null || value == _type) return;
+                          _type = value;
+                          _settingsChanged();
+                        },
+                ),
+                if (unsupported)
+                  Text(
+                    l10n.translationRoamingWebUnsupported,
+                    style: TextStyle(color: theme.colorScheme.error),
+                  ),
+                if (_type == TranslationRoamingType.redis) ...[
+                  _RoamingFields(
+                    children: [
+                      TextField(
+                        controller: _host,
+                        enabled: !_busy && !_loadFailed,
+                        autocorrect: false,
+                        keyboardType: TextInputType.url,
+                        decoration: InputDecoration(
+                          labelText: l10n.translationRoamingHost,
+                        ),
+                        onChanged: (_) => _settingsChanged(),
+                      ),
+                      TextField(
+                        controller: _port,
+                        enabled: !_busy && !_loadFailed,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: l10n.translationRoamingPort,
+                        ),
+                        onChanged: (_) => _settingsChanged(),
+                      ),
+                      TextField(
+                        controller: _username,
+                        enabled: !_busy && !_loadFailed,
+                        autocorrect: false,
+                        decoration: InputDecoration(
+                          labelText: l10n.translationRoamingUsername,
+                        ),
+                        onChanged: (_) => _settingsChanged(),
+                      ),
+                      TextField(
+                        controller: _password,
+                        enabled: !_busy && !_loadFailed,
+                        obscureText: !_passwordVisible,
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        enableIMEPersonalizedLearning: false,
+                        decoration: InputDecoration(
+                          labelText: l10n.password,
+                          suffixIcon: IconButton(
+                            tooltip: _passwordVisible
+                                ? l10n.showLess
+                                : l10n.showMore,
+                            onPressed: _busy || _loadFailed
+                                ? null
+                                : () => setState(
+                                    () => _passwordVisible = !_passwordVisible,
+                                  ),
+                            icon: Icon(
+                              _passwordVisible
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                            ),
+                          ),
+                        ),
+                        onChanged: (_) => _settingsChanged(),
+                      ),
+                      TextField(
+                        controller: _database,
+                        enabled: !_busy && !_loadFailed,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: l10n.translationRoamingDatabase,
+                        ),
+                        onChanged: (_) => _settingsChanged(),
+                      ),
+                      DropdownButtonFormField<bool>(
+                        initialValue: _tls,
+                        isExpanded: true,
+                        decoration: const InputDecoration(labelText: 'TLS'),
+                        items: [
+                          DropdownMenuItem(
+                            value: true,
+                            child: Text(
+                              l10n.roomTranslationAlwaysOn,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: false,
+                            child: Text(
+                              l10n.roomTranslationAlwaysOff,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                        onChanged: _busy || _loadFailed
+                            ? null
+                            : (value) {
+                                if (value == null || value == _tls) return;
+                                _tls = value;
+                                _settingsChanged();
+                              },
+                      ),
+                    ],
+                  ),
+                ] else ...[
+                  TextField(
+                    controller: _endpoint,
+                    enabled: !_busy && !_loadFailed,
+                    autocorrect: false,
+                    keyboardType: TextInputType.url,
+                    decoration: InputDecoration(
+                      labelText: l10n.translationEndpoint,
+                      hintText: 'https://example.upstash.io',
+                    ),
+                    onChanged: (_) => _settingsChanged(),
+                  ),
+                  TextField(
+                    controller: _token,
+                    enabled: !_busy && !_loadFailed,
+                    obscureText: !_tokenVisible,
+                    autocorrect: false,
+                    enableSuggestions: false,
+                    enableIMEPersonalizedLearning: false,
+                    decoration: InputDecoration(
+                      labelText: l10n.translationRoamingToken,
+                      suffixIcon: IconButton(
+                        tooltip: _tokenVisible ? l10n.showLess : l10n.showMore,
+                        onPressed: _busy || _loadFailed
+                            ? null
+                            : () => setState(
+                                () => _tokenVisible = !_tokenVisible,
+                              ),
+                        icon: Icon(
+                          _tokenVisible
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                        ),
+                      ),
+                    ),
+                    onChanged: (_) => _settingsChanged(),
                   ),
                 ],
-                onChanged: _busy || _loadFailed
-                    ? null
-                    : (value) {
-                        if (value != null) setState(() => _type = value);
-                      },
-              ),
-              if (unsupported)
-                Text(
-                  l10n.translationRoamingWebUnsupported,
-                  style: TextStyle(color: theme.colorScheme.error),
-                ),
-              if (_type == TranslationRoamingType.redis) ...[
                 _RoamingFields(
                   children: [
                     TextField(
-                      controller: _host,
+                      controller: _prefix,
                       enabled: !_busy && !_loadFailed,
                       autocorrect: false,
-                      keyboardType: TextInputType.url,
                       decoration: InputDecoration(
-                        labelText: l10n.translationRoamingHost,
+                        labelText: l10n.translationRoamingKeyPrefix,
                       ),
+                      onChanged: (_) => _settingsChanged(),
                     ),
                     TextField(
-                      controller: _port,
+                      controller: _days,
                       enabled: !_busy && !_loadFailed,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: l10n.translationRoamingPort,
+                        labelText: l10n.translationRoamingRetentionDays,
                       ),
-                    ),
-                    TextField(
-                      controller: _username,
-                      enabled: !_busy && !_loadFailed,
-                      autocorrect: false,
-                      decoration: InputDecoration(
-                        labelText: l10n.translationRoamingUsername,
-                      ),
-                    ),
-                    TextField(
-                      controller: _password,
-                      enabled: !_busy && !_loadFailed,
-                      obscureText: true,
-                      autocorrect: false,
-                      enableSuggestions: false,
-                      enableIMEPersonalizedLearning: false,
-                      decoration: InputDecoration(labelText: l10n.password),
-                    ),
-                    TextField(
-                      controller: _database,
-                      enabled: !_busy && !_loadFailed,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: l10n.translationRoamingDatabase,
-                      ),
+                      onChanged: (_) => _settingsChanged(),
                     ),
                   ],
                 ),
-                SwitchListTile.adaptive(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('TLS'),
-                  value: _tls,
-                  onChanged: _busy || _loadFailed
-                      ? null
-                      : (value) => setState(() => _tls = value),
-                ),
-              ] else ...[
                 TextField(
-                  controller: _endpoint,
+                  controller: _psk,
                   enabled: !_busy && !_loadFailed,
-                  autocorrect: false,
-                  keyboardType: TextInputType.url,
-                  decoration: InputDecoration(
-                    labelText: l10n.translationEndpoint,
-                    hintText: 'https://example.upstash.io',
-                  ),
-                ),
-                TextField(
-                  controller: _token,
-                  enabled: !_busy && !_loadFailed,
-                  obscureText: true,
+                  obscureText: !_pskVisible,
                   autocorrect: false,
                   enableSuggestions: false,
                   enableIMEPersonalizedLearning: false,
                   decoration: InputDecoration(
-                    labelText: l10n.translationRoamingToken,
-                  ),
-                ),
-              ],
-              _RoamingFields(
-                children: [
-                  TextField(
-                    controller: _prefix,
-                    enabled: !_busy && !_loadFailed,
-                    autocorrect: false,
-                    decoration: InputDecoration(
-                      labelText: l10n.translationRoamingKeyPrefix,
+                    labelText: l10n.translationRoamingPreSharedKey,
+                    suffixIcon: IconButton(
+                      tooltip: _pskVisible ? l10n.showLess : l10n.showMore,
+                      onPressed: _busy || _loadFailed
+                          ? null
+                          : () => setState(() => _pskVisible = !_pskVisible),
+                      icon: Icon(
+                        _pskVisible
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                      ),
                     ),
                   ),
-                  TextField(
-                    controller: _days,
-                    enabled: !_busy && !_loadFailed,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: l10n.translationRoamingRetentionDays,
-                    ),
-                  ),
-                ],
-              ),
-              TextField(
-                controller: _psk,
-                enabled: !_busy && !_loadFailed,
-                obscureText: true,
-                autocorrect: false,
-                enableSuggestions: false,
-                enableIMEPersonalizedLearning: false,
-                decoration: InputDecoration(
-                  labelText: l10n.translationRoamingPreSharedKey,
+                  onChanged: (_) => _settingsChanged(),
                 ),
-              ),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  OutlinedButton.icon(
-                    onPressed: _busy || _loadFailed
-                        ? null
-                        : () {
-                            _psk.text =
-                                TranslationRoamingCrypto.generatePreSharedKey();
-                          },
-                    icon: const Icon(Icons.key_outlined),
-                    label: Text(l10n.translationRoamingGenerateKey),
+                if (invalidInput)
+                  Text(
+                    l10n.invalidInput,
+                    style: TextStyle(color: theme.colorScheme.error),
                   ),
-                  OutlinedButton.icon(
-                    onPressed: _busy || _loadFailed ? null : _copyKey,
-                    icon: const Icon(Icons.copy_outlined),
-                    label: Text(l10n.copyToClipboard),
-                  ),
-                ],
-              ),
-              Text(l10n.translationRoamingSaveHint),
-              Wrap(
-                alignment: WrapAlignment.end,
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  OutlinedButton(
+                RoamingActions(
+                  keyActions: [
+                    OutlinedButton.icon(
+                      onPressed: _busy || _loadFailed
+                          ? null
+                          : () {
+                              _psk.text =
+                                  TranslationRoamingCrypto.generatePreSharedKey();
+                              _settingsChanged();
+                            },
+                      icon: const Icon(Icons.key_outlined),
+                      label: Text(l10n.translationRoamingGenerateKey),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: _busy || _loadFailed ? null : _copyKey,
+                      icon: const Icon(Icons.copy_outlined),
+                      label: Text(l10n.copyToClipboard),
+                    ),
+                  ],
+                  testAction: OutlinedButton(
                     onPressed: _busy || _loadFailed || unsupported
                         ? null
                         : _test,
@@ -420,20 +618,10 @@ class _TranslationRoamingSettingsState
                           )
                         : Text(l10n.test),
                   ),
-                  FilledButton(
-                    onPressed: _busy || _loadFailed ? null : _save,
-                    child: _saving
-                        ? const SizedBox.square(
-                            dimension: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(l10n.saveChanges),
-                  ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
-        ),
       ],
     );
   }
