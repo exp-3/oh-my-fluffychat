@@ -72,7 +72,7 @@ class TranslationRoamingConfig {
     this.username = '',
     this.database = 0,
     this.endpoint = '',
-    this.keyPrefix = 'fluffychat:translation',
+    this.keyPrefix = 'fluffy:trans',
     this.retentionDays = 30,
   });
 
@@ -166,7 +166,7 @@ class TranslationRoamingConfig {
         endpoint: json['endpoint'] is String ? json['endpoint']! as String : '',
         keyPrefix: json['keyPrefix'] is String
             ? json['keyPrefix']! as String
-            : 'fluffychat:translation',
+            : 'fluffy:trans',
         retentionDays: json['retentionDays'] is int
             ? json['retentionDays']! as int
             : 30,

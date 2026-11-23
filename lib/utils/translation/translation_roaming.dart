@@ -125,12 +125,18 @@ class TranslationRoamingService {
       targetLanguage: targetLanguage,
       keyPrefix: config.keyPrefix,
     );
-    final envelope = crypto.encrypt(
-      source: source,
-      targetLanguage: targetLanguage,
-      key: key,
-      translation: translation,
-    );
+    final String envelope;
+    try {
+      envelope = crypto.encrypt(
+        source: source,
+        targetLanguage: targetLanguage,
+        key: key,
+        translation: translation,
+      );
+    } on TranslationRoamingException {
+      // Translations outside the roaming size limits remain local.
+      return;
+    }
     for (var attempt = 0; attempt < 2; attempt++) {
       if (!available || !isValid()) return;
       try {

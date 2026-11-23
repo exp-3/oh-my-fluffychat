@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:archive/archive.dart' show Deflate, ZLibDecoder;
 import 'package:crypto/crypto.dart';
 import 'package:pointycastle/export.dart';
 
@@ -13,6 +14,12 @@ import 'translation_roaming_models.dart';
 
 /// PSK and source-dependent key derivation stay entirely on the client.
 class TranslationRoamingCrypto {
+  static const maxTranslationBytes = 3 * 1024 * 1024;
+  static const maxCompressedTranslationBytes = 600 * 1024;
+  static const _compressionThreshold = 256;
+  static const _nonceLength = 12;
+  static const _tagLength = 16;
+
   final Uint8List _preSharedKey;
 
   TranslationRoamingCrypto(String preSharedKey)
@@ -41,7 +48,29 @@ class TranslationRoamingCrypto {
     required String key,
     required String translation,
   }) {
-    final nonce = _randomBytes(12);
+    var plaintext = Uint8List.fromList(utf8.encode(translation));
+    if (plaintext.length > maxTranslationBytes) {
+      throw const TranslationRoamingException(TranslationRoamingError.protocol);
+    }
+    var compressedLength = plaintext.length;
+    var header = 'A';
+    if (plaintext.length >= _compressionThreshold) {
+      try {
+        final compressed = Deflate(plaintext, level: 6).getBytes();
+        compressedLength = compressed.length;
+        // Fixed nonce/tag overhead and Base64 encoding preserve this saving.
+        if (compressed.length < plaintext.length) {
+          plaintext = compressed;
+          header = 'B';
+        }
+      } catch (_) {
+        // Compression is optional; the original bytes can still be encrypted.
+      }
+    }
+    if (compressedLength >= maxCompressedTranslationBytes) {
+      throw const TranslationRoamingException(TranslationRoamingError.protocol);
+    }
+    final nonce = _randomBytes(_nonceLength);
     final derived = _derive(source, targetLanguage);
     try {
       final cipher = GCMBlockCipher(AESEngine())
@@ -54,13 +83,13 @@ class TranslationRoamingCrypto {
             Uint8List.fromList(utf8.encode(key)),
           ),
         );
-      return jsonEncode({
-        'v': 1,
-        'nonce': _encode(nonce),
-        'ciphertext': _encode(
-          cipher.process(Uint8List.fromList(utf8.encode(translation))),
-        ),
-      });
+      final encrypted = cipher.process(plaintext);
+      final payload = Uint8List(nonce.length + encrypted.length)
+        ..setAll(0, nonce)
+        ..setAll(nonce.length, encrypted);
+      // One independent Base64URL character: 000 reserved | 000/001 codec.
+      // The following encoded bytes are nonce | ciphertext | GCM tag.
+      return '$header${_encode(payload)}';
     } finally {
       derived.fillRange(0, derived.length, 0);
     }
@@ -73,21 +102,26 @@ class TranslationRoamingCrypto {
     required String envelope,
   }) {
     try {
-      final json = (jsonDecode(envelope) as Map).cast<String, Object?>();
-      if (json['v'] != 1 ||
-          json['nonce'] is! String ||
-          json['ciphertext'] is! String) {
+      const maxPayloadBytes =
+          maxCompressedTranslationBytes - 1 + _nonceLength + _tagLength;
+      const maxEnvelopeLength = 1 + (maxPayloadBytes * 4 + 2) ~/ 3;
+      if (envelope.isEmpty ||
+          envelope.length > maxEnvelopeLength ||
+          (envelope[0] != 'A' && envelope[0] != 'B')) {
         throw const TranslationRoamingException(
           TranslationRoamingError.protocol,
         );
       }
-      final nonce = _decode(json['nonce']! as String);
-      final encrypted = _decode(json['ciphertext']! as String);
-      if (nonce.length != 12 || encrypted.length < 16) {
+      final payload = _decode(envelope.substring(1));
+      if (payload.length < _nonceLength + _tagLength ||
+          payload.length - _nonceLength - _tagLength >=
+              maxCompressedTranslationBytes) {
         throw const TranslationRoamingException(
           TranslationRoamingError.protocol,
         );
       }
+      final nonce = Uint8List.sublistView(payload, 0, _nonceLength);
+      final encrypted = Uint8List.sublistView(payload, _nonceLength);
       final derived = _derive(source, targetLanguage);
       try {
         final cipher = GCMBlockCipher(AESEngine())
@@ -100,7 +134,22 @@ class TranslationRoamingCrypto {
               Uint8List.fromList(utf8.encode(key)),
             ),
           );
-        final translation = utf8.decode(cipher.process(encrypted));
+        // Authenticate the complete payload before decoding or decompressing.
+        var plaintext = cipher.process(encrypted);
+        if (envelope[0] == 'B') {
+          plaintext = const ZLibDecoder().decodeBytes(
+            plaintext,
+            raw: true,
+            throwOnError: true,
+            maxOutputSize: maxTranslationBytes,
+          );
+        }
+        if (plaintext.length > maxTranslationBytes) {
+          throw const TranslationRoamingException(
+            TranslationRoamingError.protocol,
+          );
+        }
+        final translation = utf8.decode(plaintext);
         if (translation.trim().isEmpty) {
           throw const TranslationRoamingException(
             TranslationRoamingError.protocol,

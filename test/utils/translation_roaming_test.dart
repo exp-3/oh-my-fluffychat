@@ -4,13 +4,18 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
+import 'dart:typed_data';
 
+import 'package:archive/archive.dart' show Deflate;
+import 'package:crypto/crypto.dart' show sha512;
 import 'package:fluffychat/utils/translation/translation_preferences.dart';
 import 'package:fluffychat/utils/translation/translation_roaming.dart';
 import 'package:fluffychat/utils/translation/translation_roaming_store_rest.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:pointycastle/export.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const _psk = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
@@ -80,10 +85,14 @@ void main() {
       source: source,
       targetLanguage: 'zh-Hant',
       key: key,
-      translation: '翻譯',
+      translation: '翻譯\n🙂',
     );
-    final json = (jsonDecode(envelope) as Map).cast<String, Object?>();
-    expect(json.keys, unorderedEquals(['v', 'nonce', 'ciphertext']));
+    expect(envelope, matches(r'^A[A-Za-z0-9_-]+$'));
+    final payload = base64Url.decode(
+      base64Url.normalize(envelope.substring(1)),
+    );
+    expect(payload.length, 12 + utf8.encode('翻譯\n🙂').length + 16);
+    expect(base64UrlEncode(payload.sublist(0, 12)), envelope.substring(1, 17));
     expect(envelope, isNot(contains(source)));
     expect(envelope, isNot(contains(_psk)));
     expect(
@@ -93,7 +102,7 @@ void main() {
         key: key,
         envelope: envelope,
       ),
-      '翻譯',
+      '翻譯\n🙂',
     );
     expect(
       () => second.decrypt(
@@ -113,20 +122,217 @@ void main() {
       ),
       throwsA(isA<TranslationRoamingException>()),
     );
-    final nonce = json['nonce']! as String;
-    final tampered = jsonEncode({
-      ...json,
-      'nonce': '${nonce.startsWith('A') ? 'B' : 'A'}${nonce.substring(1)}',
-    });
+    expect(
+      () => other.decrypt(
+        source: source,
+        targetLanguage: 'zh-Hant',
+        key: key,
+        envelope: envelope,
+      ),
+      throwsA(isA<TranslationRoamingException>()),
+    );
     expect(
       () => second.decrypt(
         source: source,
         targetLanguage: 'zh-Hant',
-        key: key,
-        envelope: tampered,
+        key: '$key:other',
+        envelope: envelope,
       ),
       throwsA(isA<TranslationRoamingException>()),
     );
+    for (final offset in [0, 12, payload.length - 1]) {
+      final tampered = Uint8List.fromList(payload)..[offset] ^= 1;
+      expect(
+        () => second.decrypt(
+          source: source,
+          targetLanguage: 'zh-Hant',
+          key: key,
+          envelope: 'A${_encode(tampered)}',
+        ),
+        throwsA(isA<TranslationRoamingException>()),
+      );
+    }
+  });
+
+  test('compression preserves Unicode and only reduces stored size', () {
+    final crypto = TranslationRoamingCrypto(_psk);
+    addTearDown(crypto.dispose);
+    final key = crypto.storageKey(
+      source: 'source',
+      targetLanguage: 'en',
+      keyPrefix: _config.keyPrefix,
+    );
+    final random = Random(7);
+    final fixtures = [
+      List.filled(255, 'a').join(),
+      List.filled(256, 'a').join(),
+      List.filled(86, '界').join(),
+      List.filled(64, '翻譯\r\n🙂 ').join(),
+      String.fromCharCodes(List.generate(256, (_) => random.nextInt(128))),
+    ];
+    for (final translation in fixtures) {
+      final bytes = utf8.encode(translation);
+      final compressed = Deflate(bytes, level: 6).getBytes();
+      final envelope = crypto.encrypt(
+        source: 'source',
+        targetLanguage: 'en',
+        key: key,
+        translation: translation,
+      );
+      expect(
+        envelope[0],
+        bytes.length >= 256 && compressed.length < bytes.length ? 'B' : 'A',
+      );
+      expect(
+        envelope.length,
+        lessThanOrEqualTo(1 + _encode(Uint8List(bytes.length + 28)).length),
+      );
+      expect(
+        crypto.decrypt(
+          source: 'source',
+          targetLanguage: 'en',
+          key: key,
+          envelope: envelope,
+        ),
+        translation,
+      );
+    }
+  });
+
+  test('invalid envelopes and authenticated invalid payloads are rejected', () {
+    final crypto = TranslationRoamingCrypto(_psk);
+    addTearDown(crypto.dispose);
+    final key = crypto.storageKey(
+      source: 'source',
+      targetLanguage: 'en',
+      keyPrefix: _config.keyPrefix,
+    );
+    final valid = crypto.encrypt(
+      source: 'source',
+      targetLanguage: 'en',
+      key: key,
+      translation: 'translated',
+    );
+    // A fixed raw DEFLATE vector also verifies that these independently sealed
+    // payloads use the same key/AAD, so failures below reach the payload decoder.
+    expect(
+      crypto.decrypt(
+        source: 'source',
+        targetLanguage: 'en',
+        key: key,
+        envelope: _sealPayload(
+          [0xcb, 0x48, 0xcd, 0xc9, 0xc9, 0x07, 0x00],
+          key: key,
+          header: 'B',
+        ),
+      ),
+      'hello',
+    );
+    final invalid = [
+      '',
+      'A',
+      'AAAA',
+      'C${valid.substring(1)}',
+      'I${valid.substring(1)}',
+      '$valid=',
+      jsonEncode({'v': 1, 'nonce': 'AA', 'ciphertext': 'AA'}),
+      _sealPayload([0xff], key: key),
+      // BTYPE=3 is reserved and invalid on both native and Web decoders.
+      _sealPayload([0x07], key: key, header: 'B'),
+      _sealPayload(Deflate([0xff]).getBytes(), key: key, header: 'B'),
+    ];
+    for (final envelope in invalid) {
+      expect(
+        () => crypto.decrypt(
+          source: 'source',
+          targetLanguage: 'en',
+          key: key,
+          envelope: envelope,
+        ),
+        throwsA(isA<TranslationRoamingException>()),
+      );
+    }
+  });
+
+  test('roaming requires both size limits and rejects legacy values', () async {
+    final store = _MemoryStore();
+    final service = TranslationRoamingService(
+      config: _config,
+      secrets: _secrets,
+      store: store,
+    );
+    addTearDown(service.dispose);
+    final largeTranslation = List.filled(
+      TranslationRoamingCrypto.maxTranslationBytes,
+      'a',
+    ).join();
+    await service.upload(
+      source: 'source',
+      targetLanguage: 'en',
+      translation: largeTranslation,
+      isValid: () => true,
+    );
+    expect(store.writes, 1);
+    final restored = await service.lookup(
+      source: 'source',
+      targetLanguage: 'en',
+    );
+    expect(restored.status, TranslationRoamingLookupStatus.hit);
+    expect(restored.translation, largeTranslation);
+
+    await service.upload(
+      source: 'too-large',
+      targetLanguage: 'en',
+      translation: '${largeTranslation}a',
+      isValid: () => true,
+    );
+    expect(store.writes, 1);
+
+    final random = Random(7);
+    final incompressible = String.fromCharCodes(
+      List.generate(1024 * 1024, (_) => random.nextInt(128)),
+    );
+    expect(
+      Deflate(utf8.encode(incompressible), level: 6).getBytes().length,
+      greaterThanOrEqualTo(
+        TranslationRoamingCrypto.maxCompressedTranslationBytes,
+      ),
+    );
+    await service.upload(
+      source: 'incompressible',
+      targetLanguage: 'en',
+      translation: incompressible,
+      isValid: () => true,
+    );
+    expect(store.writes, 1);
+    final crypto = TranslationRoamingCrypto(_psk);
+    addTearDown(crypto.dispose);
+    final key = crypto.storageKey(
+      source: 'source',
+      targetLanguage: 'en',
+      keyPrefix: _config.keyPrefix,
+    );
+    expect(
+      () => crypto.decrypt(
+        source: 'source',
+        targetLanguage: 'en',
+        key: key,
+        envelope: _sealPayload(
+          Deflate(utf8.encode('${largeTranslation}a'), level: 6).getBytes(),
+          key: key,
+          header: 'B',
+        ),
+      ),
+      throwsA(isA<TranslationRoamingException>()),
+    );
+    store.records[key] = jsonEncode({
+      'v': 1,
+      'nonce': 'AA',
+      'ciphertext': 'AA',
+    });
+    final result = await service.lookup(source: 'source', targetLanguage: 'en');
+    expect(result.status, TranslationRoamingLookupStatus.unavailable);
+    expect(result.translation, isNull);
   });
 
   test(
@@ -351,6 +557,15 @@ void main() {
       final secrets = _MemorySecrets();
       final preferences = TranslationRoamingPreferences(store, secrets);
       expect(preferences.config.enabled, isFalse);
+      expect(preferences.config.keyPrefix, 'fluffy:trans');
+      expect(TranslationRoamingConfig.fromJson({}).keyPrefix, 'fluffy:trans');
+      for (final prefix in ['fluffychat:translation', 'custom-prefix']) {
+        await store.setString(
+          TranslationRoamingPreferences.configKey,
+          jsonEncode(_config.copyWith(keyPrefix: prefix).toJson()),
+        );
+        expect(preferences.config.keyPrefix, prefix);
+      }
       expect(secrets.reads, 0);
       await preferences.save(_config, _secrets);
       final encoded = store.getString(TranslationRoamingPreferences.configKey)!;
@@ -383,6 +598,47 @@ void main() {
       );
     },
   );
+}
+
+String _encode(List<int> bytes) => base64UrlEncode(bytes).replaceAll('=', '');
+
+// Seal arbitrary payloads so malformed UTF-8 and compressed data reach the
+// decoder after successful GCM authentication, rather than failing tag checks.
+String _sealPayload(
+  List<int> bytes, {
+  required String key,
+  String header = 'A',
+}) {
+  final derivator = HKDFKeyDerivator(SHA256Digest())
+    ..init(
+      HkdfParameters(
+        Uint8List(32),
+        32,
+        Uint8List.fromList(sha512.convert(utf8.encode('source')).bytes),
+        Uint8List.fromList(
+          utf8.encode(jsonEncode(['fluffychat.translation.roaming', 1, 'en'])),
+        ),
+      ),
+    );
+  final derived = Uint8List(32);
+  derivator.deriveKey(null, 0, derived, 0);
+  try {
+    final nonce = Uint8List(12);
+    final cipher = GCMBlockCipher(AESEngine())
+      ..init(
+        true,
+        AEADParameters(
+          KeyParameter(derived),
+          128,
+          nonce,
+          Uint8List.fromList(utf8.encode(key)),
+        ),
+      );
+    final payload = [...nonce, ...cipher.process(Uint8List.fromList(bytes))];
+    return '$header${_encode(payload)}';
+  } finally {
+    derived.fillRange(0, derived.length, 0);
+  }
 }
 
 class _MemoryStore implements TranslationRoamingStore {
