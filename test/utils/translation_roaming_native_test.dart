@@ -140,8 +140,9 @@ Future<void> _serve(
       if (command == null) return;
       commands.add(command);
       final response = switch (command.first) {
-        'AUTH' when authenticationError != null =>
-          utf8.encode('-$authenticationError\r\n'),
+        'AUTH' when authenticationError != null => utf8.encode(
+          '-$authenticationError\r\n',
+        ),
         'AUTH' || 'SELECT' || 'SET' => utf8.encode('+OK\r\n'),
         'DEL' => utf8.encode(':1\r\n'),
         'GETEX' => [

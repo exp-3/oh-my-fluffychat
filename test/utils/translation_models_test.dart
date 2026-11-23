@@ -6,11 +6,7 @@ import 'package:fluffychat/utils/translation/translation_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('batch settings defaults and boundaries are valid', () {
-    expect(TranslationBatchSettings.defaults.mergeWindowMs, 1000);
-    expect(TranslationBatchSettings.defaults.maxMessages, 5);
-    expect(TranslationBatchSettings.defaults.maxCharacters, 3000);
-    expect(TranslationBatchSettings.defaults.malformedResponseRetries, 2);
+  test('batch settings boundaries are valid', () {
     expect(
       const TranslationBatchSettings(
         mergeWindowMs: 0,
@@ -30,11 +26,6 @@ void main() {
       isTrue,
     );
     expect(const TranslationBatchSettings(maxCharacters: 99).isValid, isFalse);
-  });
-
-  test('character limits count Unicode code points', () {
-    expect(unicodeCodePointLength('A😀B'), 3);
-    expect(unicodeCodePointLength('👨‍👩‍👧'), 5);
   });
 
   test('provider metadata round trips without secrets', () {

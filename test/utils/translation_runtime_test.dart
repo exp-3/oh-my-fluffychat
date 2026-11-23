@@ -1323,7 +1323,9 @@ void main() {
         host: 'updated-redis.example.invalid',
         retentionDays: 7,
       );
-      final updatedSecrets = secrets.copyWith(redisPassword: 'updated-password');
+      final updatedSecrets = secrets.copyWith(
+        redisPassword: 'updated-password',
+      );
       final saving = fixture.runtime.saveRoaming(config, updatedSecrets);
       await writeStarted.future;
       final stale = fixture.runtime.saveRoaming(

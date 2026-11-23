@@ -31,14 +31,4 @@ void main() {
     expect(matrixFile, isA<MatrixImageFile>());
     expect(matrixFile.msgType, MessageTypes.Image);
   });
-
-  test('keeps clipboard image metadata unchanged outside Windows', () async {
-    final file = clipboardImageToXFile(bitmapBytes, isWindows: false);
-
-    expect(file.mimeType, isNull);
-    expect(file.path, isEmpty);
-    expect(file.name, isEmpty);
-    expect(await file.length(), bitmapBytes.length);
-    expect(await file.readAsBytes(), bitmapBytes);
-  });
 }

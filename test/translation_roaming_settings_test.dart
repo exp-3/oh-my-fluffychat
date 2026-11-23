@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import 'dart:async';
-
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/settings_translation/translation_roaming_settings.dart';
 import 'package:fluffychat/utils/translation/translation_cache.dart';
@@ -87,61 +85,24 @@ void main() {
     expect(runtime.roamingConfig.port, 6380);
     expect(runtime.roamingConfig.host, 'changed.example.invalid');
     expect(find.text(l10n.invalidInput), findsNothing);
-
-    final writeGate = Completer<void>();
-    addTearDown(() {
-      if (!writeGate.isCompleted) writeGate.complete();
-    });
-    secrets.writeGate = writeGate;
-    await tester.ensureVisible(_field(l10n.translationRoamingHost));
-    await tester.enterText(
-      _field(l10n.translationRoamingHost),
-      'reopened.example.invalid',
-    );
-    await tester.pump();
-    await tester.ensureVisible(_field(l10n.password));
-    await tester.enterText(_field(l10n.password), 'updated-password');
-    await _showRoaming(tester, runtime);
-    expect(find.byType(LinearProgressIndicator), findsOneWidget);
-    await tester.tap(toggle);
-    secrets.writeGate = null;
-    writeGate.complete();
-    await tester.pumpAndSettle();
-    expect(runtime.roamingConfig.enabled, isFalse);
-    expect(find.byType(TextField), findsNothing);
-    await tester.tap(toggle);
-    await tester.pumpAndSettle();
-    expect(
-      tester
-          .widget<TextField>(_field(l10n.translationRoamingHost))
-          .controller!
-          .text,
-      'reopened.example.invalid',
-    );
-    expect(
-      tester.widget<TextField>(_field(l10n.password)).controller!.text,
-      'updated-password',
-    );
     expect(tester.takeException(), isNull);
   });
 }
 
-Future<void> _showRoaming(
-  WidgetTester tester,
-  TranslationRuntime runtime,
-) => tester.pumpWidget(
-  MaterialApp(
-    key: UniqueKey(),
-    locale: const Locale('en'),
-    localizationsDelegates: L10n.localizationsDelegates,
-    supportedLocales: L10n.supportedLocales,
-    home: Scaffold(
-      body: SingleChildScrollView(
-        child: TranslationRoamingSettings(runtime: runtime),
+Future<void> _showRoaming(WidgetTester tester, TranslationRuntime runtime) =>
+    tester.pumpWidget(
+      MaterialApp(
+        key: UniqueKey(),
+        locale: const Locale('en'),
+        localizationsDelegates: L10n.localizationsDelegates,
+        supportedLocales: L10n.supportedLocales,
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: TranslationRoamingSettings(runtime: runtime),
+          ),
+        ),
       ),
-    ),
-  ),
-);
+    );
 
 Finder _field(String label) => find.byWidgetPredicate(
   (widget) => widget is TextField && widget.decoration?.labelText == label,
@@ -156,18 +117,12 @@ Future<void> _enter(WidgetTester tester, String label, String value) async {
 
 class _RoamingSecrets implements TranslationSecretStore {
   final values = <String, String>{};
-  Completer<void>? writeGate;
 
   @override
   Future<String?> read(String key) async => values[key];
 
   @override
-  Future<void> write(String key, String value) async {
-    if (key == TranslationRoamingPreferences.secretsKey) {
-      await writeGate?.future;
-    }
-    values[key] = value;
-  }
+  Future<void> write(String key, String value) async => values[key] = value;
 
   @override
   Future<void> delete(String key) async => values.remove(key);

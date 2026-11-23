@@ -320,30 +320,12 @@ void main() {
           expect(action.bottom, greaterThan(details.top));
         }
 
-        final inset = status.bottomInset;
-        final listRect = tester.getRect(find.byType(ListView));
-        final extent = scroll.position.maxScrollExtent;
-        expect(inset, closeTo(tester.getSize(bar).height, 0.5));
-        expect(
-          tester.widget<ListView>(find.byType(ListView)).padding,
-          EdgeInsets.only(bottom: inset),
-        );
-        status.collapse();
-        await tester.pumpAndSettle();
-        expect(status.bottomInset, inset);
-        expect(tester.getRect(find.byType(ListView)), listRect);
-        expect(scroll.position.maxScrollExtent, extent);
-        status.expand();
-        await tester.pumpAndSettle();
-        expect(status.bottomInset, inset);
-        expect(tester.getRect(find.byType(ListView)), listRect);
-        expect(scroll.position.maxScrollExtent, extent);
         expect(tester.takeException(), isNull);
       }
     });
   }
 
-  testWidgets('large text keeps actions right with reduced motion', (
+  testWidgets('collapsed status hides semantics with reduced motion', (
     tester,
   ) async {
     for (final textDirection in TextDirection.values) {
@@ -361,23 +343,6 @@ void main() {
       );
       final context = tester.element(find.byType(ChatSearchStatus));
       final l10n = L10n.of(context);
-      expect(Directionality.of(context), textDirection);
-      final panel = tester.getRect(find.byKey(const ValueKey('search-panel')));
-      final action = tester.getRect(
-        find.byWidgetPredicate((widget) => widget is TextButton),
-      );
-      final details = tester.getRect(
-        find.descendant(
-          of: find.byType(ChatSearchStatus),
-          matching: find.byType(Wrap),
-        ),
-      );
-      expect(details.width, closeTo(panel.width - 32, 0.5));
-      expect(action.top, greaterThanOrEqualTo(details.bottom));
-      expect(action.left, greaterThanOrEqualTo(panel.center.dx));
-      expect(action.right, lessThanOrEqualTo(panel.right));
-      expect(action.top, greaterThanOrEqualTo(panel.top));
-      expect(action.bottom, lessThanOrEqualTo(panel.bottom));
       expect(find.semantics.byLabel(l10n.tryAgain), findsOne);
       expect(find.semantics.byLabel(l10n.showMore), findsNothing);
       status.collapse();

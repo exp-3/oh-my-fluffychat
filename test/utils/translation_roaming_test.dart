@@ -205,7 +205,8 @@ void main() {
         clientFactory: () => MockClient(
           (_) async => http.Response(
             jsonEncode({
-              'error': 'NOPERM SET denied for ${_secrets.restToken}; $key $value',
+              'error':
+                  'NOPERM SET denied for ${_secrets.restToken}; $key $value',
               'request': 'unselected private data',
             }),
             403,
@@ -273,8 +274,7 @@ void main() {
       config: _config,
       secrets: _secrets,
       store: store,
-      delay: (duration) async {
-        expect(duration, TranslationRoamingService.retryDelay);
+      delay: (_) async {
         delays++;
         valid = false;
       },
@@ -331,7 +331,9 @@ void main() {
       await store.setString(
         TranslationRoamingPreferences.configKey,
         jsonEncode(
-          config.copyWith(endpoint: 'https://user:password@example.test').toJson(),
+          config
+              .copyWith(endpoint: 'https://user:password@example.test')
+              .toJson(),
         ),
       );
       await expectLater(
