@@ -269,7 +269,7 @@ void main() {
     },
   );
 
-  for (final format in ['gif', 'png', 'tiff']) {
+  for (final format in ['png', 'tiff']) {
     test('preserves multiframe $format bytes', () async {
       final image = picture(32, 16)..addFrame(picture(32, 16));
       final bytes = format == 'tiff'

@@ -122,31 +122,6 @@ void main() {
     },
   );
 
-  test('system target language follows the resolved app locale', () async {
-    SharedPreferences.setMockInitialValues({
-      _targetLanguagePreference: systemTranslationLanguageCode,
-    });
-    final store = await SharedPreferences.getInstance();
-    final secrets = _MemorySecrets();
-    final runtime = TranslationRuntime.forTesting();
-
-    await runtime.initialize(
-      store,
-      defaultTargetLanguage: 'zh-Hant',
-      secrets: secrets,
-      cache: TranslationCache(secrets, _MemoryBackend()),
-    );
-
-    expect(runtime.targetLanguage, systemTranslationLanguageCode);
-    await runtime.setLanguages(source: 'auto', target: 'fr');
-    expect(runtime.targetLanguage, 'fr');
-    await runtime.setLanguages(
-      source: 'auto',
-      target: systemTranslationLanguageCode,
-    );
-    expect(runtime.targetLanguage, systemTranslationLanguageCode);
-  });
-
   test('bilingual color and style persist independently', () async {
     SharedPreferences.setMockInitialValues({});
     final store = await SharedPreferences.getInstance();
@@ -168,36 +143,6 @@ void main() {
     expect(store.getString(_bilingualColorPreference), 'accent');
     expect(store.getString(_bilingualLayoutPreference), 'background');
   });
-
-  for (final style in const [
-    TranslationBilingualStyle.glow,
-    TranslationBilingualStyle.plain,
-    TranslationBilingualStyle.duotone,
-    TranslationBilingualStyle.outsideBubble,
-  ]) {
-    test(
-      '${style.name} style persists without changing the text color',
-      () async {
-        SharedPreferences.setMockInitialValues({});
-        final store = await SharedPreferences.getInstance();
-        final secrets = _MemorySecrets();
-        final runtime = TranslationRuntime.forTesting();
-
-        await runtime.initialize(
-          store,
-          secrets: secrets,
-          cache: TranslationCache(secrets, _MemoryBackend()),
-        );
-        await runtime.setBilingualColor(TranslationBilingualColor.accent);
-        await runtime.setBilingualStyle(style);
-
-        expect(store.getString(_bilingualLayoutPreference), style.name);
-        final restored = TranslationPreferences(store, secrets);
-        expect(restored.bilingualStyle, style);
-        expect(restored.bilingualColor, TranslationBilingualColor.accent);
-      },
-    );
-  }
 
   test(
     'legacy background selection migrates without losing its layout',

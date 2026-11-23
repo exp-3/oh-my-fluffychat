@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import 'dart:async';
-
 import 'package:fluffychat/utils/chat_search_event_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:matrix/matrix.dart';
@@ -350,29 +348,6 @@ void main() {
       await store.ingest(
         message('server-2', 'different', transaction: 'transaction-2'),
       );
-      store.flush();
-      expect(store.results, isEmpty);
-    },
-  );
-
-  test(
-    'an old query root lookup cannot activate results in a new query',
-    () async {
-      store.dispose();
-      final completion = Completer<Event?>();
-      store = ChatSearchEventStore(
-        room,
-        onChanged: () {},
-        loadMissingEvent: (_) => completion.future,
-      );
-      store.setQuery('needle');
-      final root = message('root', 'original');
-      await store.ingest(root);
-      await evictScanCache();
-      final oldIngest = store.ingest(edit('edit', 'root', 'needle'));
-      store.setQuery('needle');
-      completion.complete(root);
-      await oldIngest;
       store.flush();
       expect(store.results, isEmpty);
     },

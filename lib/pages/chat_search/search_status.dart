@@ -88,66 +88,87 @@ class _ChatSearchStatusState extends State<ChatSearchStatus> {
     final reducedMotion = MediaQuery.disableAnimationsOf(context);
     const shape = BorderRadius.vertical(top: Radius.circular(12));
 
+    final summary = Row(
+      textDirection: TextDirection.ltr,
+      children: [
+        if (isRunning) ...[
+          const SizedBox.square(
+            dimension: 16,
+            child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+          ),
+          const SizedBox(width: 8),
+        ],
+        Expanded(
+          child: DefaultTextStyle.merge(
+            style: theme.textTheme.bodySmall,
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 2,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Semantics(liveRegion: true, child: Text(label)),
+                if (searchedUntil != null)
+                  Text(
+                    l10n.chatSearchedUntil(
+                      searchedUntil.localizedTime(context),
+                    ),
+                  ),
+                if (widget.undecryptableCount > 0)
+                  Text(
+                    l10n.chatSearchUndecryptableCount(
+                      widget.undecryptableCount,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
     final details = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       child: LayoutBuilder(
-        builder: (context, constraints) => Row(
-          textDirection: TextDirection.ltr,
-          children: [
-            if (isRunning) ...[
-              const SizedBox.square(
-                dimension: 16,
-                child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+        builder: (context, constraints) {
+          if (!isRunning && !canResume) return summary;
+          final action = ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: constraints.maxWidth / 2),
+            child: TextButton.icon(
+              style: TextButton.styleFrom(
+                minimumSize: const Size(0, 32),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                iconSize: 18,
               ),
-              const SizedBox(width: 8),
-            ],
-            Expanded(
-              child: DefaultTextStyle.merge(
-                style: theme.textTheme.bodySmall,
-                child: Wrap(
-                  spacing: 12,
-                  runSpacing: 2,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Semantics(liveRegion: true, child: Text(label)),
-                    if (searchedUntil != null)
-                      Text(
-                        l10n.chatSearchedUntil(
-                          searchedUntil.localizedTime(context),
-                        ),
-                      ),
-                    if (widget.undecryptableCount > 0)
-                      Text(
-                        l10n.chatSearchUndecryptableCount(
-                          widget.undecryptableCount,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
+              onPressed: isRunning ? widget.onPause : widget.onResume,
+              icon: Icon(actionIcon),
+              label: Text(actionLabel),
             ),
-            if (isRunning || canResume) ...[
+          );
+          final fontSize = theme.textTheme.bodySmall?.fontSize ?? 12;
+          final textScale =
+              MediaQuery.textScalerOf(context).scale(fontSize) / fontSize;
+          // Give scaled details the full width before they become a tall,
+          // narrow column beside the action.
+          if (constraints.maxWidth < 280 * textScale) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                summary,
+                const SizedBox(height: 4),
+                Align(alignment: Alignment.centerRight, child: action),
+              ],
+            );
+          }
+          return Row(
+            textDirection: TextDirection.ltr,
+            children: [
+              Expanded(child: summary),
               const SizedBox(width: 8),
-              ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: constraints.maxWidth / 2),
-                child: TextButton.icon(
-                  style: TextButton.styleFrom(
-                    minimumSize: const Size(0, 32),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    iconSize: 18,
-                  ),
-                  onPressed: isRunning ? widget.onPause : widget.onResume,
-                  icon: Icon(actionIcon),
-                  label: Text(actionLabel),
-                ),
-              ),
+              action,
             ],
-          ],
-        ),
+          );
+        },
       ),
     );
     final expanded = Padding(

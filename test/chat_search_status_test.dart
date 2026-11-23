@@ -58,10 +58,7 @@ void main() {
   ) async {
     var resultTaps = 0;
     await _showSearch(tester, status, scroll, onResultTap: () => resultTaps++);
-    final l10n = L10n.of(tester.element(find.byType(ChatSearchStatus)));
-    final handle = find.byWidgetPredicate(
-      (widget) => widget is Tooltip && widget.message == l10n.showMore,
-    );
+    final handle = find.byIcon(Icons.expand_less_outlined);
     final panel = tester.getRect(find.byKey(const ValueKey('search-panel')));
     expect(tester.getRect(find.byType(ChatSearchStatus)).bottom, panel.bottom);
     status.collapse();
@@ -281,10 +278,78 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  for (final layout in [
+    (width: 320.0, textScale: 1.0, stacked: false),
+    (width: 240.0, textScale: 1.0, stacked: true),
+    (width: 320.0, textScale: 2.0, stacked: true),
+  ]) {
+    testWidgets(
+      'status layout adapts at width ${layout.width} '
+      'and scale ${layout.textScale}',
+      (tester) async {
+        for (final textDirection in TextDirection.values) {
+          await _showSearch(
+            tester,
+            status,
+            scroll,
+            runState: ChatSearchRunState.failed,
+            searchedUntil: DateTime.utc(2026, 1, 1),
+            textDirection: textDirection,
+            width: layout.width,
+            textScale: layout.textScale,
+            reducedMotion: true,
+          );
+          final bar = find.byType(ChatSearchStatus);
+          final panel = tester.getRect(
+            find.byKey(const ValueKey('search-panel')),
+          );
+          final details = tester.getRect(
+            find.descendant(of: bar, matching: find.byType(Wrap)),
+          );
+          final action = tester.getRect(
+            find.byWidgetPredicate((widget) => widget is TextButton),
+          );
+          expect(action.left, greaterThanOrEqualTo(panel.center.dx));
+          expect(action.right, closeTo(panel.right - 16, 0.5));
+          expect(action.top, greaterThanOrEqualTo(panel.top));
+          expect(action.bottom, lessThanOrEqualTo(panel.bottom));
+          if (layout.stacked) {
+            expect(details.width, closeTo(panel.width - 32, 0.5));
+            expect(action.top, greaterThanOrEqualTo(details.bottom));
+          } else {
+            expect(details.right, lessThanOrEqualTo(action.left));
+            expect(action.top, lessThan(details.bottom));
+            expect(action.bottom, greaterThan(details.top));
+          }
+
+          final inset = status.bottomInset;
+          final listRect = tester.getRect(find.byType(ListView));
+          final extent = scroll.position.maxScrollExtent;
+          expect(inset, closeTo(tester.getSize(bar).height, 0.5));
+          expect(
+            tester.widget<ListView>(find.byType(ListView)).padding,
+            EdgeInsets.only(bottom: inset),
+          );
+          status.collapse();
+          await tester.pumpAndSettle();
+          expect(status.bottomInset, inset);
+          expect(tester.getRect(find.byType(ListView)), listRect);
+          expect(scroll.position.maxScrollExtent, extent);
+          status.expand();
+          await tester.pumpAndSettle();
+          expect(status.bottomInset, inset);
+          expect(tester.getRect(find.byType(ListView)), listRect);
+          expect(scroll.position.maxScrollExtent, extent);
+          expect(tester.takeException(), isNull);
+        }
+      },
+    );
+  }
+
   testWidgets('large text keeps actions right with reduced motion', (
     tester,
   ) async {
-    for (final locale in [const Locale('en'), const Locale('ar')]) {
+    for (final textDirection in TextDirection.values) {
       status.expand();
       await _showSearch(
         tester,
@@ -292,37 +357,41 @@ void main() {
         scroll,
         runState: ChatSearchRunState.failed,
         searchedUntil: DateTime.utc(2026, 1, 1),
-        locale: locale,
+        textDirection: textDirection,
         width: 240,
         textScale: 2,
         reducedMotion: true,
       );
       final context = tester.element(find.byType(ChatSearchStatus));
       final l10n = L10n.of(context);
-      expect(Localizations.localeOf(context), locale);
-      expect(l10n.localeName, locale.toString());
-      expect(
-        Directionality.of(context),
-        locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr,
-      );
+      expect(Directionality.of(context), textDirection);
       final panel = tester.getRect(find.byKey(const ValueKey('search-panel')));
       final action = tester.getRect(
         find.byWidgetPredicate((widget) => widget is TextButton),
       );
-      expect(action.right, closeTo(panel.right - 16, 0.5));
+      final details = tester.getRect(
+        find.descendant(
+          of: find.byType(ChatSearchStatus),
+          matching: find.byType(Wrap),
+        ),
+      );
+      expect(details.width, closeTo(panel.width - 32, 0.5));
+      expect(action.top, greaterThanOrEqualTo(details.bottom));
+      expect(action.left, greaterThanOrEqualTo(panel.center.dx));
+      expect(action.right, lessThanOrEqualTo(panel.right));
+      expect(action.top, greaterThanOrEqualTo(panel.top));
+      expect(action.bottom, lessThanOrEqualTo(panel.bottom));
       expect(find.semantics.byLabel(l10n.tryAgain), findsOne);
       expect(find.semantics.byLabel(l10n.showMore), findsNothing);
       status.collapse();
       await tester.pump();
-      expect(
-        tester.widget<AnimatedSlide>(find.byType(AnimatedSlide)).duration,
-        Duration.zero,
-      );
+      expect(tester.hasRunningAnimations, isFalse);
       expect(find.semantics.byLabel(l10n.tryAgain), findsNothing);
       expect(find.semantics.byLabel(l10n.showMore), findsOne);
-      await tester.tap(find.byIcon(Icons.expand_less_outlined));
+      status.expand();
       await tester.pump();
       expect(status.collapsed, isFalse);
+      expect(tester.hasRunningAnimations, isFalse);
       expect(find.semantics.byLabel(l10n.tryAgain), findsOne);
       expect(find.semantics.byLabel(l10n.showMore), findsNothing);
       expect(tester.takeException(), isNull);
@@ -337,12 +406,13 @@ Future<void> _showSearch(
   ChatSearchRunState runState = ChatSearchRunState.paused,
   int itemCount = 40,
   DateTime? searchedUntil,
-  Locale locale = const Locale('en'),
+  TextDirection textDirection = TextDirection.ltr,
   double width = 320,
   double textScale = 1,
   bool reducedMotion = false,
   VoidCallback? onResultTap,
 }) async {
+  const locale = Locale('en');
   final localizations = await tester.runAsync(() => L10n.delegate.load(locale));
   expect(localizations, isNotNull);
   status.updateSearch(query: 'needle', queryRevision: 1, runState: runState);
@@ -361,7 +431,7 @@ Future<void> _showSearch(
           textScaler: TextScaler.linear(textScale),
           disableAnimations: reducedMotion,
         ),
-        child: child!,
+        child: Directionality(textDirection: textDirection, child: child!),
       ),
       home: Scaffold(
         body: Align(

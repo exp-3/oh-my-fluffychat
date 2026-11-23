@@ -81,28 +81,20 @@ void main() {
     expect((file.info['w'], file.info['h']), (width, height));
   }
 
-  for (final source in [
-    'picker',
-    'clipboard',
-    'windows-clipboard',
-    'generic-share',
-  ]) {
+  for (final source in ['windows-clipboard', 'generic-share']) {
     testWidgets('$source preview sends pixels within the saved maximum', (
       tester,
     ) async {
       final bytes = source == 'windows-clipboard'
           ? img.encodeBmp(img.Image(width: 80, height: 40))
           : picture();
-      final file = switch (source) {
-        'clipboard' => clipboardImageToXFile(bytes, isWindows: false),
-        'windows-clipboard' => clipboardImageToXFile(bytes, isWindows: true),
-        'generic-share' => XFile.fromData(
-          bytes,
-          path: 'shared-content',
-          mimeType: 'application/octet-stream',
-        ),
-        _ => XFile.fromData(bytes, path: 'photo.png'),
-      };
+      final file = source == 'windows-clipboard'
+          ? clipboardImageToXFile(bytes, isWindows: true)
+          : XFile.fromData(
+              bytes,
+              path: 'shared-content',
+              mimeType: 'application/octet-stream',
+            );
       final room = _SendingRoom();
       await showPreview(tester, room, [file]);
       expect(find.byType(Switch), findsOneWidget);

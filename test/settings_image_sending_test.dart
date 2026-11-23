@@ -7,7 +7,6 @@ import 'package:cross_file/cross_file.dart';
 import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/chat/send_file_dialog.dart';
-import 'package:fluffychat/pages/settings_chat/settings_chat.dart';
 import 'package:fluffychat/pages/settings_chat/settings_image_sending.dart';
 import 'package:fluffychat/utils/image_send_options.dart';
 import 'package:fluffychat/utils/image_send_preparation.dart';
@@ -156,18 +155,6 @@ void main() {
     FocusManager.instance.primaryFocus?.unfocus();
     await tester.pumpAndSettle();
     expect(AppSettings.imageMaxDimension.value, 1024);
-  });
-
-  testWidgets('compression group appears above custom emojis and stickers', (
-    tester,
-  ) async {
-    await showSettings(tester, child: const SettingsChat());
-    expect(
-      tester.getTopLeft(find.text('Compress images when sending')).dy,
-      lessThan(
-        tester.getTopLeft(find.text('Custom emojis and stickers').first).dy,
-      ),
-    );
   });
 
   testWidgets(

@@ -12,26 +12,24 @@ import 'package:matrix/matrix.dart';
 void main() {
   final bitmapBytes = Uint8List.fromList([0x42, 0x4d, 0x00, 0x00]);
 
-  test('adds BMP metadata to Windows clipboard images', () async {
+  test('Windows clipboard images have BMP metadata and Matrix type', () async {
     final file = clipboardImageToXFile(bitmapBytes, isWindows: true);
 
     expect(file.mimeType, 'image/bmp');
     expect(file.path, 'clipboard.bmp');
     expect(file.name, 'clipboard.bmp');
     expect(await file.length(), bitmapBytes.length);
-    expect(await file.readAsBytes(), bitmapBytes);
-  });
+    final bytes = await file.readAsBytes();
+    expect(bytes, bitmapBytes);
 
-  test('classifies Windows clipboard images as Matrix images', () async {
-    final xFile = clipboardImageToXFile(bitmapBytes, isWindows: true);
-    final file = MatrixFile(
-      bytes: await xFile.readAsBytes(),
-      name: xFile.name,
-      mimeType: xFile.mimeType,
+    final matrixFile = MatrixFile(
+      bytes: bytes,
+      name: file.name,
+      mimeType: file.mimeType,
     ).detectFileType;
 
-    expect(file, isA<MatrixImageFile>());
-    expect(file.msgType, MessageTypes.Image);
+    expect(matrixFile, isA<MatrixImageFile>());
+    expect(matrixFile.msgType, MessageTypes.Image);
   });
 
   test('keeps clipboard image metadata unchanged outside Windows', () async {

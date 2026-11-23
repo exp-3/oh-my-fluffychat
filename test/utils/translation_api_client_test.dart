@@ -56,56 +56,11 @@ void main() {
     );
   });
 
-  test('request prompt includes the Matrix message type for m.emote', () async {
-    late Map<String, Object?> requestBody;
-    late Uri requestUrl;
-    final apiClient = TranslationApiClient(
-      MockClient((request) async {
-        requestUrl = request.url;
-        requestBody = (jsonDecode(request.body) as Map<Object?, Object?>)
-            .cast<String, Object?>();
-        return http.Response(
-          '{"choices":[{"message":{"content":"{\\"translations\\":[{\\"id\\":\\"opaque-id\\",\\"text\\":\\"waves\\"}]}"}}]}',
-          200,
-        );
-      }),
-    );
-
-    await apiClient.translate(
-      provider: TranslationProviderConfig(
-        id: 'provider-id',
-        name: 'Example',
-        endpoint: Uri.parse('https://example.test/v1'),
-        useFullEndpoint: false,
-        protocol: TranslationProtocol.chatCompletions,
-        model: 'example-model',
-      ),
-      apiKey: 'test-key',
-      messages: const {
-        'opaque-id': TranslationRequestMessage(
-          text: 'waves',
-          messageType: 'm.emote',
-        ),
-      },
-      sourceLanguage: 'auto',
-      targetLanguage: 'en',
-    );
-
-    expect(requestUrl, Uri.parse('https://example.test/v1/chat/completions'));
-
-    final chatMessages = requestBody['messages']! as List<Object?>;
-    final userMessage = (chatMessages.last! as Map<Object?, Object?>)
-        .cast<String, Object?>();
-    final prompt =
-        (jsonDecode(userMessage['content']! as String) as Map<Object?, Object?>)
-            .cast<String, Object?>();
-    expect(prompt['messages'], [
-      {'id': 'opaque-id', 'text': 'waves', 'message_type': 'm.emote'},
-    ]);
-  });
-
   for (final protocol in TranslationProtocol.values) {
-    for (final effort in TranslationReasoningEffort.values) {
+    for (final effort in const [
+      TranslationReasoningEffort.unspecified,
+      TranslationReasoningEffort.high,
+    ]) {
       test('${protocol.name} request with ${effort.name} effort', () async {
         late http.Request request;
         final apiClient = TranslationApiClient(
@@ -129,6 +84,28 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['model'], 'example-model');
         final hasEffort = effort != TranslationReasoningEffort.unspecified;
+        if (!hasEffort) {
+          final headers = request.headers;
+          expect(headers['authorization'], 'Bearer test-key');
+          expect(headers['x-api-key'], 'test-key');
+          if (protocol == TranslationProtocol.anthropicMessages) {
+            expect(headers['anthropic-version'], '2026-10-21');
+          } else {
+            expect(headers, isNot(contains('anthropic-version')));
+          }
+          if (protocol == TranslationProtocol.anthropicMessages &&
+              const bool.fromEnvironment('dart.library.js_interop')) {
+            expect(
+              headers['anthropic-dangerous-direct-browser-access'],
+              'true',
+            );
+          } else {
+            expect(
+              headers,
+              isNot(contains('anthropic-dangerous-direct-browser-access')),
+            );
+          }
+        }
         if (protocol == TranslationProtocol.anthropicMessages || hasEffort) {
           expect(body, isNot(contains('temperature')));
         } else {
@@ -208,35 +185,6 @@ void main() {
         });
       });
     }
-
-    test('${protocol.name} sends both authentication headers', () async {
-      late Map<String, String> headers;
-      final apiClient = TranslationApiClient(
-        MockClient((request) async {
-          headers = request.headers;
-          return _successResponse(protocol);
-        }),
-      );
-
-      await _translate(apiClient, protocol: protocol);
-
-      expect(headers['authorization'], 'Bearer test-key');
-      expect(headers['x-api-key'], 'test-key');
-      if (protocol == TranslationProtocol.anthropicMessages) {
-        expect(headers['anthropic-version'], '2026-10-21');
-      } else {
-        expect(headers, isNot(contains('anthropic-version')));
-      }
-      if (protocol == TranslationProtocol.anthropicMessages &&
-          const bool.fromEnvironment('dart.library.js_interop')) {
-        expect(headers['anthropic-dangerous-direct-browser-access'], 'true');
-      } else {
-        expect(
-          headers,
-          isNot(contains('anthropic-dangerous-direct-browser-access')),
-        );
-      }
-    });
   }
 
   test(

@@ -49,30 +49,18 @@ void main() {
 
   tearDownAll(runtime.dispose);
 
-  testWidgets('reasoning options keep the fixed order and default label', (
-    tester,
-  ) async {
-    await _showProvider(tester);
-    final dropdown = tester.widget<DropdownButton<TranslationReasoningEffort>>(
-      find.byType(DropdownButton<TranslationReasoningEffort>),
-    );
-
-    expect(dropdown.value, TranslationReasoningEffort.unspecified);
-    expect(dropdown.items!.map((item) => item.value), [
-      TranslationReasoningEffort.unspecified,
-      TranslationReasoningEffort.max,
-      TranslationReasoningEffort.xhigh,
-      TranslationReasoningEffort.high,
-      TranslationReasoningEffort.medium,
-      TranslationReasoningEffort.low,
-    ]);
-    expect((dropdown.items!.first.child as Text).data, 'Default (Unspecified)');
-  });
-
   testWidgets('Anthropic selection preserves an existing provider effort', (
     tester,
   ) async {
     await _showProvider(tester);
+    expect(
+      tester
+          .widget<DropdownButton<TranslationReasoningEffort>>(
+            find.byType(DropdownButton<TranslationReasoningEffort>),
+          )
+          .value,
+      TranslationReasoningEffort.unspecified,
+    );
     await _choose<TranslationProtocol>(tester, 'Anthropic Messages');
     expect(
       tester

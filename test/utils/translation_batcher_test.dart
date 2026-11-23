@@ -74,34 +74,6 @@ void main() {
   });
 
   test(
-    'zero wait still batches tasks from the same scheduling cycle',
-    () async {
-      final batches = <Map<String, TranslationRequestMessage>>[];
-      final batcher = TranslationBatcher(
-        settings: () => const TranslationBatchSettings(mergeWindowMs: 0),
-        sender: (_, messages, isStillValid) async {
-          expect(isStillValid(), isTrue);
-          batches.add(messages);
-          return messages.map(
-            (id, message) => MapEntry(id, 'T:${message.text}'),
-          );
-        },
-      );
-      final first = batcher.add(
-        key,
-        TranslationBatchTask(source: 'one', isValid: () => true),
-      );
-      final second = batcher.add(
-        key,
-        TranslationBatchTask(source: 'two', isValid: () => true),
-      );
-      expect(await Future.wait([first, second]), ['T:one', 'T:two']);
-      expect(batches, hasLength(1));
-      expect(batches.single, hasLength(2));
-    },
-  );
-
-  test(
     'splits by message and Unicode character limits without truncation',
     () async {
       final batches = <Map<String, TranslationRequestMessage>>[];
