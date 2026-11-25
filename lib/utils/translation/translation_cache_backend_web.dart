@@ -110,10 +110,14 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
         }
         request.transaction!
             .objectStore(CacheStore.metadata.tableName)
-            .put({
-              'cache_key': 'format',
-              'value': event.oldVersion == 0 ? '$cacheFormatVersion' : 'pending',
-            }.jsify());
+            .put(
+              {
+                'cache_key': 'format',
+                'value': event.oldVersion == 0
+                    ? '$cacheFormatVersion'
+                    : 'pending',
+              }.jsify(),
+            );
       } catch (error, stack) {
         request.transaction?.abort();
         if (!completer.isCompleted) completer.completeError(error, stack);
@@ -222,7 +226,8 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
           throw StateError('Invalid translation cache key: ${store.tableName}');
         }
         for (final index
-            in (cacheIndexes[store] ?? const <String, List<String>>{}).entries) {
+            in (cacheIndexes[store] ?? const <String, List<String>>{})
+                .entries) {
           if (!objectStore.indexNames.contains(index.key)) {
             throw StateError('Missing translation cache index: ${index.key}');
           }
@@ -250,9 +255,7 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
       final transaction = tx as _WebTransaction;
       for (final store in legacyCacheStores) {
         if (tx.hasStore(store)) {
-          await _request(
-            transaction.tx.objectStore(store.tableName).clear(),
-          );
+          await _request(transaction.tx.objectStore(store.tableName).clear());
         }
       }
       await tx.put(CacheStore.metadata, {
@@ -335,7 +338,8 @@ class _WebTransaction implements TranslationCacheTransaction {
   final web.IDBDatabase db;
   _WebTransaction(this.tx, this.db);
   @override
-  bool hasStore(CacheStore store) => db.objectStoreNames.contains(store.tableName);
+  bool hasStore(CacheStore store) =>
+      db.objectStoreNames.contains(store.tableName);
   @override
   Future<CacheRow?> get(CacheStore store, String key) async {
     if (!hasStore(store)) return null;

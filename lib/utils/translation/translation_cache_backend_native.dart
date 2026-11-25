@@ -43,6 +43,7 @@ class NativeTranslationCacheBackend implements TranslationCacheBackend {
     return await _factory.databaseExists(databasePath) ||
         await File('$databasePath.pre-encryption').exists();
   }
+
   @override
   Future<T> coordinated<T>(Future<T> Function() action) async {
     final lockPath = File('${await _databasePath}.lock').absolute.path;
@@ -68,6 +69,7 @@ class NativeTranslationCacheBackend implements TranslationCacheBackend {
       }
     }
   }
+
   @override
   Future<bool> openExisting(String databaseKey, {bool migrate = false}) async {
     if (!await exists()) {
@@ -333,37 +335,42 @@ class NativeTranslationCacheBackend implements TranslationCacheBackend {
       final references = _columns[CacheStore.refs.tableName];
       final recognized = version < 3 && contents == null
           ? legacy?.containsAll({
-            'cache_key',
-            'room_id',
-            'event_id',
-            'nonce',
-            'ciphertext',
-          }) == true
+                  'cache_key',
+                  'room_id',
+                  'event_id',
+                  'nonce',
+                  'ciphertext',
+                }) ==
+                true
           : contents?.containsAll({
-            'cache_key',
-            'user_id',
-            'source_binding',
-            'nonce',
-            'ciphertext',
-            'aad',
-            'generation',
-          }) == true &&
-              references?.containsAll({
-                'cache_key',
-                'user_id',
-                'room_id',
-                'event_id',
-                'content_key',
-                'original_event_id',
-              }) == true &&
-              _columns[CacheStore.generations.tableName]?.containsAll({
-                'cache_key',
-                'value',
-              }) == true &&
-              _columns[CacheStore.metadata.tableName]?.containsAll({
-                'cache_key',
-                'value',
-              }) == true;
+                      'cache_key',
+                      'user_id',
+                      'source_binding',
+                      'nonce',
+                      'ciphertext',
+                      'aad',
+                      'generation',
+                    }) ==
+                    true &&
+                references?.containsAll({
+                      'cache_key',
+                      'user_id',
+                      'room_id',
+                      'event_id',
+                      'content_key',
+                      'original_event_id',
+                    }) ==
+                    true &&
+                _columns[CacheStore.generations.tableName]?.containsAll({
+                      'cache_key',
+                      'value',
+                    }) ==
+                    true &&
+                _columns[CacheStore.metadata.tableName]?.containsAll({
+                      'cache_key',
+                      'value',
+                    }) ==
+                    true;
       if (recognized) return true;
       throw StateError('Unrecognized translation cache schema');
     }
@@ -385,14 +392,16 @@ class NativeTranslationCacheBackend implements TranslationCacheBackend {
                 ? column['pk'] != 1
                 : column['notnull'] != 1),
       )) {
-        throw StateError('Invalid translation cache columns: ${store.tableName}');
+        throw StateError(
+          'Invalid translation cache columns: ${store.tableName}',
+        );
       }
       for (final index
           in (cacheIndexes[store] ?? const <String, List<String>>{}).entries) {
         final name = '${store.tableName}_${index.key}_idx';
-        final fields = (await database.rawQuery('PRAGMA index_info($name)'))
-            .map((row) => row['name'])
-            .toList();
+        final fields = (await database.rawQuery(
+          'PRAGMA index_info($name)',
+        )).map((row) => row['name']).toList();
         if (fields.length != index.value.length ||
             !List.generate(
               fields.length,

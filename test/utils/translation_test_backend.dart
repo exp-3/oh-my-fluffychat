@@ -18,7 +18,8 @@ class MemoryTranslationBackend implements TranslationCacheBackend {
   final deletedRoomIds = <String>[];
   final changes = StreamController<void>.broadcast();
   Future<void> _operationTail = Future.value();
-  List<CacheRow> get records => rows[CacheStore.sharedContents]!.values.toList();
+  List<CacheRow> get records =>
+      rows[CacheStore.sharedContents]!.values.toList();
   @override
   bool get supported => true;
   @override

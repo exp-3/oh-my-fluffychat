@@ -75,37 +75,60 @@ Future<Uint8List> _convertToCircularImage(
   int size,
 ) async {
   final codec = await instantiateImageCodecWithFallback(imageBytes);
-  final frame = await codec.getNextFrame();
-  final originalImage = frame.image;
+  try {
+    final frame = await codec.getNextFrame();
+    try {
+      final originalImage = frame.image;
 
-  final recorder = PictureRecorder();
-  final canvas = Canvas(recorder);
+      final recorder = PictureRecorder();
+      final canvas = Canvas(recorder);
 
-  final paint = Paint();
-  final rect = Rect.fromLTWH(0, 0, size.toDouble(), size.toDouble());
+      final paint = Paint();
+      final rect = Rect.fromLTWH(0, 0, size.toDouble(), size.toDouble());
 
-  final clipPath = Path()
-    ..addOval(
-      Rect.fromCircle(center: Offset(size / 2, size / 2), radius: size / 2),
-    );
+      final clipPath = Path()
+        ..addOval(
+          Rect.fromCircle(center: Offset(size / 2, size / 2), radius: size / 2),
+        );
 
-  canvas.clipPath(clipPath);
+      canvas.clipPath(clipPath);
 
-  canvas.drawImageRect(
-    originalImage,
-    Rect.fromLTWH(
-      0,
-      0,
-      originalImage.width.toDouble(),
-      originalImage.height.toDouble(),
-    ),
-    rect,
-    paint,
-  );
+      canvas.drawImageRect(
+        originalImage,
+        Rect.fromLTWH(
+          0,
+          0,
+          originalImage.width.toDouble(),
+          originalImage.height.toDouble(),
+        ),
+        rect,
+        paint,
+      );
 
-  final picture = recorder.endRecording();
-  final circularImage = await picture.toImage(size, size);
-
-  final byteData = await circularImage.toByteData(format: ImageByteFormat.png);
-  return byteData!.buffer.asUint8List();
+      final picture = recorder.endRecording();
+      try {
+        final circularImage = await picture.toImage(size, size);
+        try {
+          final byteData = await circularImage.toByteData(
+            format: ImageByteFormat.png,
+          );
+          if (byteData == null) {
+            throw StateError('Unable to encode the circular image');
+          }
+          return byteData.buffer.asUint8List(
+            byteData.offsetInBytes,
+            byteData.lengthInBytes,
+          );
+        } finally {
+          circularImage.dispose();
+        }
+      } finally {
+        picture.dispose();
+      }
+    } finally {
+      frame.image.dispose();
+    }
+  } finally {
+    codec.dispose();
+  }
 }

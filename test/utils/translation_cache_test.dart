@@ -172,30 +172,33 @@ void main() {
     },
   );
 
-  test('deleted message cannot write late while shared content survives', () async {
-    await cache.write(key(), 'shared');
-    final alias = key(user: '@bob:test', room: '!other:test');
-    expect(await cache.read(alias), 'shared');
-    final other = TranslationCache(secrets, backend);
-    final ticket = (await other.lookup(key())).ticket!;
-    final survivingTicket = (await other.lookup(alias)).ticket!;
+  test(
+    'deleted message cannot write late while shared content survives',
+    () async {
+      await cache.write(key(), 'shared');
+      final alias = key(user: '@bob:test', room: '!other:test');
+      expect(await cache.read(alias), 'shared');
+      final other = TranslationCache(secrets, backend);
+      final ticket = (await other.lookup(key())).ticket!;
+      final survivingTicket = (await other.lookup(alias)).ticket!;
 
-    await cache.invalidateEventIfExists('!room:test', r'$event');
-    await expectLater(
-      other.write(key(), 'late', ticket: ticket),
-      throwsStateError,
-    );
-    expect(await cache.read(alias), 'shared');
-    await other.write(alias, 'fresh', ticket: survivingTicket);
-    expect(await cache.read(alias), 'fresh');
-    expect(backend.records, hasLength(1));
-    expect(
-      backend.rows[CacheStore.messageRefs]!.values.every(
-        (row) => row['user_id'] == '@bob:test',
-      ),
-      isTrue,
-    );
-  });
+      await cache.invalidateEventIfExists('!room:test', r'$event');
+      await expectLater(
+        other.write(key(), 'late', ticket: ticket),
+        throwsStateError,
+      );
+      expect(await cache.read(alias), 'shared');
+      await other.write(alias, 'fresh', ticket: survivingTicket);
+      expect(await cache.read(alias), 'fresh');
+      expect(backend.records, hasLength(1));
+      expect(
+        backend.rows[CacheStore.messageRefs]!.values.every(
+          (row) => row['user_id'] == '@bob:test',
+        ),
+        isTrue,
+      );
+    },
+  );
 
   test(
     'redacting an edit destroys original and every historical edit binding',
@@ -223,11 +226,7 @@ void main() {
     await cache.write(edit, 'edit translation');
     expect(
       await cache.read(
-        key(
-          event: r'$edit',
-          source: 'edited source',
-          originalId: r'$original',
-        ),
+        key(event: r'$edit', source: 'edited source', originalId: r'$original'),
       ),
       'edit translation',
     );
@@ -258,11 +257,7 @@ void main() {
       'edit translation',
     );
     await cache.write(
-      key(
-        event: r'$sibling',
-        source: 'another edit',
-        originalId: r'$original',
-      ),
+      key(event: r'$sibling', source: 'another edit', originalId: r'$original'),
       'another translation',
     );
 
@@ -310,10 +305,7 @@ void main() {
     'a missing database still invalidates a relevant in-flight memory ticket',
     () async {
       final ticket = (await cache.lookup(key())).ticket!;
-      await cache.invalidateEventIfExists(
-        '!room:test',
-        r'$event',
-      );
+      await cache.invalidateEventIfExists('!room:test', r'$event');
       await expectLater(
         cache.write(key(), 'late', ticket: ticket),
         throwsStateError,
@@ -435,7 +427,11 @@ void main() {
       final master = Uint8List.fromList(List.generate(32, (i) => i));
       secrets.values[masterKeyName] = base64UrlEncode(master);
       seedAccountCache(backend, master, [
-        accountEnvelope(master, text: 'older', writtenAt: '2026-01-01T00:00:00Z'),
+        accountEnvelope(
+          master,
+          text: 'older',
+          writtenAt: '2026-01-01T00:00:00Z',
+        ),
         accountEnvelope(
           master,
           user: '@bob:test',
@@ -464,55 +460,61 @@ void main() {
     },
   );
 
-  test('startup upgrade discards missing originals and invalid ciphertext', () async {
-    final master = Uint8List.fromList(List.generate(32, (i) => i));
-    secrets.values[masterKeyName] = base64UrlEncode(master);
-    final corrupt = accountEnvelope(
-      master,
-      event: r'$corrupt',
-      source: 'corrupt source',
-    )
-      ..['ciphertext'] = 'invalid';
-    seedAccountCache(backend, master, [
-      accountEnvelope(master),
-      accountEnvelope(master, event: r'$missing', source: 'missing source'),
-      corrupt,
-    ]);
+  test(
+    'startup upgrade discards missing originals and invalid ciphertext',
+    () async {
+      final master = Uint8List.fromList(List.generate(32, (i) => i));
+      secrets.values[masterKeyName] = base64UrlEncode(master);
+      final corrupt = accountEnvelope(
+        master,
+        event: r'$corrupt',
+        source: 'corrupt source',
+      )..['ciphertext'] = 'invalid';
+      seedAccountCache(backend, master, [
+        accountEnvelope(master),
+        accountEnvelope(master, event: r'$missing', source: 'missing source'),
+        corrupt,
+      ]);
 
-    await cache.upgrade((_, _, event) async {
-      if (event == r'$missing') return TranslationLocalSource.unavailable;
-      return TranslationLocalSource.valid(
-        event == r'$corrupt' ? 'corrupt source' : 'private source',
+      await cache.upgrade((_, _, event) async {
+        if (event == r'$missing') return TranslationLocalSource.unavailable;
+        return TranslationLocalSource.valid(
+          event == r'$corrupt' ? 'corrupt source' : 'private source',
+        );
+      });
+
+      expect(await cache.needsUpgrade(), isFalse);
+      expect(await cache.read(key()), 'legacy account translation');
+      expect(backend.records, hasLength(1));
+      expect(backend.rows[CacheStore.contents], isEmpty);
+    },
+  );
+
+  test(
+    'failed startup upgrade preserves old data and can be retried',
+    () async {
+      final master = Uint8List.fromList(List.generate(32, (i) => i));
+      secrets.values[masterKeyName] = base64UrlEncode(master);
+      seedAccountCache(backend, master, [accountEnvelope(master)]);
+      backend.beforePutAll = () async => throw StateError('disk full');
+      await expectLater(
+        cache.upgrade(
+          (_, _, _) async =>
+              const TranslationLocalSource.valid('private source'),
+        ),
+        throwsStateError,
       );
-    });
+      expect(await cache.needsUpgrade(), isTrue);
+      expect(backend.rows[CacheStore.contents], hasLength(1));
 
-    expect(await cache.needsUpgrade(), isFalse);
-    expect(await cache.read(key()), 'legacy account translation');
-    expect(backend.records, hasLength(1));
-    expect(backend.rows[CacheStore.contents], isEmpty);
-  });
-
-  test('failed startup upgrade preserves old data and can be retried', () async {
-    final master = Uint8List.fromList(List.generate(32, (i) => i));
-    secrets.values[masterKeyName] = base64UrlEncode(master);
-    seedAccountCache(backend, master, [accountEnvelope(master)]);
-    backend.beforePutAll = () async => throw StateError('disk full');
-    await expectLater(
-      cache.upgrade(
+      backend.beforePutAll = null;
+      await TranslationCache(secrets, backend).upgrade(
         (_, _, _) async => const TranslationLocalSource.valid('private source'),
-      ),
-      throwsStateError,
-    );
-    expect(await cache.needsUpgrade(), isTrue);
-    expect(backend.rows[CacheStore.contents], hasLength(1));
-
-    backend.beforePutAll = null;
-    await TranslationCache(secrets, backend).upgrade(
-      (_, _, _) async => const TranslationLocalSource.valid('private source'),
-    );
-    expect(await cache.read(key()), 'legacy account translation');
-    expect(await cache.needsUpgrade(), isFalse);
-  });
+      );
+      expect(await cache.read(key()), 'legacy account translation');
+      expect(await cache.needsUpgrade(), isFalse);
+    },
+  );
 }
 
 class MemorySecrets implements TranslationSecretStore {
@@ -550,12 +552,18 @@ void seedAccountCache(
     backend.rows[CacheStore.contents]![contentKey] = envelope;
     final reference = {
       'cache_key': base64UrlEncode(
-        Hmac(sha256, master).convert(utf8.encode(jsonEncode([
-          envelope['user_id'],
-          '!room:test',
-          envelope['event_id'],
-          contentKey,
-        ]))).bytes,
+        Hmac(sha256, master)
+            .convert(
+              utf8.encode(
+                jsonEncode([
+                  envelope['user_id'],
+                  '!room:test',
+                  envelope['event_id'],
+                  contentKey,
+                ]),
+              ),
+            )
+            .bytes,
       ),
       'user_id': envelope['user_id'],
       'room_id': '!room:test',
@@ -564,7 +572,8 @@ void seedAccountCache(
       'content_key': contentKey,
       'original_event_id': envelope['event_id'],
     };
-    backend.rows[CacheStore.refs]![cacheString(reference, 'cache_key')] = reference;
+    backend.rows[CacheStore.refs]![cacheString(reference, 'cache_key')] =
+        reference;
   }
 }
 
@@ -601,7 +610,11 @@ CacheRow accountEnvelope(
     'written_at': writtenAt,
   });
   final nonce = Uint8List.fromList(
-    sha256.convert(utf8.encode('$user:$source:$payload')).bytes.take(12).toList(),
+    sha256
+        .convert(utf8.encode('$user:$source:$payload'))
+        .bytes
+        .take(12)
+        .toList(),
   );
   final cipher = GCMBlockCipher(AESEngine())
     ..init(

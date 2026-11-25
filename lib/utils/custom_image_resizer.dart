@@ -37,24 +37,27 @@ Future<MatrixImageFileResizedResponse?> customImageResizer(
     // for the other platforms
     final dartCodec = await instantiateImageCodecWithFallback(arguments.bytes);
     final frameCount = dartCodec.frameCount;
-    final dartFrame = await dartCodec.getNextFrame();
-    final rgbaData = await dartFrame.image.toByteData();
-    if (rgbaData == null) {
-      return null;
+    late native.Image nativeImg;
+    try {
+      final dartFrame = await dartCodec.getNextFrame();
+      try {
+        final rgbaData = await dartFrame.image.toByteData();
+        if (rgbaData == null) return null;
+        final rgba = Uint8List.view(
+          rgbaData.buffer,
+          rgbaData.offsetInBytes,
+          rgbaData.lengthInBytes,
+        );
+
+        width = originalWidth = dartFrame.image.width;
+        height = originalHeight = dartFrame.image.height;
+        nativeImg = native.Image.fromRGBA(width, height, rgba);
+      } finally {
+        dartFrame.image.dispose();
+      }
+    } finally {
+      dartCodec.dispose();
     }
-    final rgba = Uint8List.view(
-      rgbaData.buffer,
-      rgbaData.offsetInBytes,
-      rgbaData.lengthInBytes,
-    );
-
-    width = originalWidth = dartFrame.image.width;
-    height = originalHeight = dartFrame.image.height;
-
-    var nativeImg = native.Image.fromRGBA(width, height, rgba);
-
-    dartFrame.image.dispose();
-    dartCodec.dispose();
 
     if (arguments.calcBlurhash) {
       // scale down image for blurhashing to speed it up

@@ -7,5 +7,3 @@ Uint8List encodeAvifForSending(Uint8List png) =>
     throw UnsupportedError('AVIF encoding is unavailable on this platform');
 
 Uint8List? decodeAvifForSending(Uint8List bytes) => null;
-
-Uint8List? decodeAvifForDisplay(Uint8List bytes) => null;

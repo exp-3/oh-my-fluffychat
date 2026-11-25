@@ -441,8 +441,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
           }
           await _drainSafetyFutures();
           if (!startupUserIds.entries.any(
-            (entry) =>
-                !entry.key.isLogged() || entry.key.userID != entry.value,
+            (entry) => !entry.key.isLogged() || entry.key.userID != entry.value,
           )) {
             break;
           }
@@ -1353,8 +1352,9 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       (stateKey, _) =>
           _observed[stateKey] != null &&
           jsonEncode(
-            _observed[stateKey]!.identity(_observed[stateKey]!.source),
-          ) == identity,
+                _observed[stateKey]!.identity(_observed[stateKey]!.source),
+              ) ==
+              identity,
     );
   }
 
@@ -1483,10 +1483,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     );
   }
 
-  Future<void> invalidateEventIfExists(
-    String roomId,
-    String eventId,
-  ) async {
+  Future<void> invalidateEventIfExists(String roomId, String eventId) async {
     final affected = _observed.entries
         .where(
           (entry) =>
@@ -1528,7 +1525,8 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     for (final userId in userIds) {
       final userHasRoom = _clients.any((client) {
         if (identical(client, excludingClient) ||
-            !client.isLogged() || client.userID != userId) {
+            !client.isLogged() ||
+            client.userID != userId) {
           return false;
         }
         return client.getRoomById(roomId)?.membership == Membership.join;
@@ -1682,10 +1680,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
               targetId,
             ])] ??
             targetId;
-        await invalidateEventIfExists(
-          event.room.id,
-          targetId,
-        );
+        await invalidateEventIfExists(event.room.id, targetId);
         try {
           final target = await event.room.client.database.getEventById(
             targetId,
@@ -1693,10 +1688,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
           );
           if (target?.relationshipType == RelationshipTypes.edit) {
             originalId = target!.relationshipEventId ?? targetId;
-            await invalidateEventIfExists(
-              event.room.id,
-              originalId,
-            );
+            await invalidateEventIfExists(event.room.id, originalId);
           }
         } catch (_) {
           /* Persisted references still invalidate the direct target. */
@@ -1707,10 +1699,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
           ...await _locallyKnownEditIds(event.room, originalId),
         };
         for (final editId in relatedEditIds) {
-          await invalidateEventIfExists(
-            event.room.id,
-            editId,
-          );
+          await invalidateEventIfExists(event.room.id, editId);
         }
         for (final edits in _knownEditChains.values) {
           edits.remove(targetId);
@@ -1719,19 +1708,13 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       if (event.relationshipType == RelationshipTypes.edit) {
         final originalId = event.relationshipEventId;
         if (originalId != null) {
-          await invalidateEventIfExists(
-            event.room.id,
-            originalId,
-          );
+          await invalidateEventIfExists(event.room.id, originalId);
           final chainKey = '${event.room.id}\u0000$originalId';
           final knownEdits = _knownEditChains.putIfAbsent(chainKey, () => {});
           knownEdits.addAll(await _locallyKnownEditIds(event.room, originalId));
           for (final editId in knownEdits) {
             if (editId == event.eventId) continue;
-            await invalidateEventIfExists(
-              event.room.id,
-              editId,
-            );
+            await invalidateEventIfExists(event.room.id, editId);
           }
           knownEdits.add(event.eventId);
         }
