@@ -12,6 +12,3 @@ Uint8List encodeAvifForSending(Uint8List png) => avif.encodeAvifForSending(png);
 
 Uint8List? decodeAvifForSending(Uint8List bytes) =>
     avif.decodeAvifForSending(bytes);
-
-Uint8List? decodeAvifForDisplay(Uint8List bytes) =>
-    avif.decodeAvifForDisplay(bytes);

@@ -99,13 +99,16 @@ nonce TEXT NOT NULL, ciphertext TEXT NOT NULL, source_binding TEXT NOT NULL, aad
           );
         }
         await cache.upgrade(
-          (_, _, _) async => const TranslationLocalSource.valid('private source'),
+          (_, _, _) async =>
+              const TranslationLocalSource.valid('private source'),
           userIds: ['@alice:test'],
         );
         expect(await cache.needsUpgrade(), isFalse);
         expect(await cache.read(key()), 'legacy');
         expect(
-          await backend.transaction((tx) => tx.count(CacheStore.sharedContents)),
+          await backend.transaction(
+            (tx) => tx.count(CacheStore.sharedContents),
+          ),
           1,
         );
         expect(

@@ -46,46 +46,49 @@ void main() {
     },
   );
 
-  test('Web startup upgrade converts v2 and clears its legacy records', () async {
-    final master = Uint8List.fromList(List.generate(32, (i) => i));
-    secrets.values[masterKeyName] = base64UrlEncode(master);
-    final row = legacyEnvelope(master);
-    final request = factory.open('fluffychat_translation_cache', 2);
-    request.onupgradeneeded = ((web.IDBVersionChangeEvent _) {
-      final db = request.result as web.IDBDatabase;
-      final store = db.createObjectStore(
-        'translations',
-        web.IDBObjectStoreParameters(keyPath: 'cache_key'.toJS),
+  test(
+    'Web startup upgrade converts v2 and clears its legacy records',
+    () async {
+      final master = Uint8List.fromList(List.generate(32, (i) => i));
+      secrets.values[masterKeyName] = base64UrlEncode(master);
+      final row = legacyEnvelope(master);
+      final request = factory.open('fluffychat_translation_cache', 2);
+      request.onupgradeneeded = ((web.IDBVersionChangeEvent _) {
+        final db = request.result as web.IDBDatabase;
+        final store = db.createObjectStore(
+          'translations',
+          web.IDBObjectStoreParameters(keyPath: 'cache_key'.toJS),
+        );
+        store.createIndex('room_id', 'room_id'.toJS);
+        store.createIndex('event_id', ['room_id'.toJS, 'event_id'.toJS].toJS);
+        store.put(row.jsify());
+      }).toJS;
+      final db = await _opened(request);
+      db.close();
+      expect(await backend.openExisting('unused'), isTrue);
+      expect(
+        await backend.transaction(
+          (tx) async => tx.hasStore(CacheStore.sharedContents),
+        ),
+        isFalse,
       );
-      store.createIndex('room_id', 'room_id'.toJS);
-      store.createIndex('event_id', ['room_id'.toJS, 'event_id'.toJS].toJS);
-      store.put(row.jsify());
-    }).toJS;
-    final db = await _opened(request);
-    db.close();
-    expect(await backend.openExisting('unused'), isTrue);
-    expect(
-      await backend.transaction(
-        (tx) async => tx.hasStore(CacheStore.sharedContents),
-      ),
-      isFalse,
-    );
-    expect(await cache.needsUpgrade(), isTrue);
-    await cache.upgrade(
-      (_, _, _) async => const TranslationLocalSource.valid('private source'),
-      userIds: ['@alice:test'],
-    );
-    expect(await cache.needsUpgrade(), isFalse);
-    expect(await cache.read(key()), 'legacy');
-    expect(
-      await backend.transaction((tx) => tx.count(CacheStore.translations)),
-      0,
-    );
-    expect(
-      await backend.transaction((tx) => tx.count(CacheStore.sharedContents)),
-      1,
-    );
-  });
+      expect(await cache.needsUpgrade(), isTrue);
+      await cache.upgrade(
+        (_, _, _) async => const TranslationLocalSource.valid('private source'),
+        userIds: ['@alice:test'],
+      );
+      expect(await cache.needsUpgrade(), isFalse);
+      expect(await cache.read(key()), 'legacy');
+      expect(
+        await backend.transaction((tx) => tx.count(CacheStore.translations)),
+        0,
+      );
+      expect(
+        await backend.transaction((tx) => tx.count(CacheStore.sharedContents)),
+        1,
+      );
+    },
+  );
 
   test(
     'Web cross-context notification and disk tombstones reject late writes',
