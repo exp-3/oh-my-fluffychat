@@ -35,6 +35,7 @@ import '../pages/key_verification/key_verification_dialog.dart';
 import '../utils/account_bundles.dart';
 import '../utils/background_push.dart';
 import 'local_notifications_extension.dart';
+import 'translation_cache_upgrade_gate.dart';
 
 class Matrix extends StatefulWidget {
   final Widget? child;
@@ -215,6 +216,7 @@ class MatrixState extends State<Matrix> {
 
   AppLifecycleListener? _listener;
   AppLifecycleState? _lifecycleState;
+  final _translationCacheReady = Completer<void>();
 
   void _registerSubs(String name) {
     final c = getClientByName(name);
@@ -325,6 +327,8 @@ class MatrixState extends State<Matrix> {
   }
 
   Future<void> initMatrix() async {
+    await _translationCacheReady.future;
+    if (!mounted) return;
     TranslationRuntime.instance.attachClients(widget.clients);
 
     if (PlatformInfos.isMobile) {
@@ -435,7 +439,18 @@ class MatrixState extends State<Matrix> {
 
   @override
   Widget build(BuildContext context) {
-    return Provider(create: (_) => this, child: widget.child);
+    return Provider(
+      create: (_) => this,
+      child: TranslationCacheUpgradeGate(
+        clients: widget.clients,
+        onReady: () {
+          if (!_translationCacheReady.isCompleted) {
+            _translationCacheReady.complete();
+          }
+        },
+        child: widget.child ?? const SizedBox.shrink(),
+      ),
+    );
   }
 
   Future<void> dehydrateAction(BuildContext context) async {

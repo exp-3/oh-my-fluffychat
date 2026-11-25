@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:10.145728",
+    "translationCacheUpgrading": "S'està actualitzant l'arxiu local. Espereu un moment.",
+    "translationCacheUpgradeFailed": "No s'ha pogut actualitzar la memòria cau de traduccions",
     "translationRoaming": "Itinerància de traduccions",
     "translationRoamingDescription": "Comparteix traduccions de missatges xifrades entre dispositius amb la mateixa connexió i clau precompartida. La clau es queda al dispositiu. La itinerància es pausa quan la traducció està desactivada.",
     "translationRoamingConnectionType": "Tipus de connexió",

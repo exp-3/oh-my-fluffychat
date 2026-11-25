@@ -1,44 +1,66 @@
 // SPDX-FileCopyrightText: 2026 The Oh-My-FluffyChat Project
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-/// A sealed translation envelope in the version 1/2 cache format.
-class TranslationCacheRecord {
-  final String cacheKey, roomId, eventId, nonce, ciphertext, sourceBinding, aad;
-  const TranslationCacheRecord({
-    required this.cacheKey,
-    required this.roomId,
-    required this.eventId,
-    required this.nonce,
-    required this.ciphertext,
-    required this.sourceBinding,
-    required this.aad,
-  });
-  Map<String, Object?> toMap() => {
-    'cache_key': cacheKey,
-    'room_id': roomId,
-    'event_id': eventId,
-    'nonce': nonce,
-    'ciphertext': ciphertext,
-    'source_binding': sourceBinding,
-    'aad': aad,
-  };
-  factory TranslationCacheRecord.fromMap(Map<Object?, Object?> row) =>
-      TranslationCacheRecord(
-        cacheKey: cacheString(row, 'cache_key'),
-        roomId: cacheString(row, 'room_id'),
-        eventId: cacheString(row, 'event_id'),
-        nonce: cacheString(row, 'nonce'),
-        ciphertext: cacheString(row, 'ciphertext'),
-        sourceBinding: cacheString(row, 'source_binding'),
-        aad: cacheString(row, 'aad'),
-      );
-}
-
 typedef CacheRow = Map<String, Object?>;
 String cacheString(Map<Object?, Object?> row, String field) =>
     row[field] is String ? row[field]! as String : '';
 
-enum CacheStore { translations, contents, refs, generations, metadata }
+enum CacheStore {
+  translations,
+  contents,
+  refs,
+  generations,
+  metadata,
+  sharedContents,
+  messageRefs,
+  revisions;
+
+  String get tableName => switch (this) {
+    CacheStore.sharedContents => 'shared_contents',
+    CacheStore.messageRefs => 'message_refs',
+    _ => name,
+  };
+}
+
+const cacheFormatVersion = 4;
+const activeCacheStores = {
+  CacheStore.sharedContents,
+  CacheStore.messageRefs,
+  CacheStore.revisions,
+  CacheStore.metadata,
+};
+const legacyCacheStores = {
+  CacheStore.translations,
+  CacheStore.contents,
+  CacheStore.refs,
+  CacheStore.generations,
+};
+
+const cacheColumns = <CacheStore, List<String>>{
+  CacheStore.sharedContents: [
+    'cache_key',
+    'source_binding',
+    'source_language',
+    'target_language',
+    'message_type',
+    'nonce',
+    'ciphertext',
+    'aad',
+  ],
+  CacheStore.messageRefs: [
+    'cache_key',
+    'user_id',
+    'room_id',
+    'event_id',
+    'source_language',
+    'target_language',
+    'message_type',
+    'content_key',
+    'original_event_id',
+  ],
+  CacheStore.revisions: ['cache_key', 'value'],
+  CacheStore.metadata: ['cache_key', 'value'],
+};
 
 const cacheIndexes = <CacheStore, Map<String, List<String>>>{
   CacheStore.translations: {
@@ -56,6 +78,17 @@ const cacheIndexes = <CacheStore, Map<String, List<String>>>{
     'binding': ['source_binding'],
     'content': ['content_key'],
     'user': ['user_id'],
+  },
+  CacheStore.sharedContents: {
+    'binding': ['source_binding'],
+  },
+  CacheStore.messageRefs: {
+    'event': ['room_id', 'event_id'],
+    'root': ['room_id', 'original_event_id'],
+    'room': ['room_id'],
+    'user': ['user_id'],
+    'user_room': ['user_id', 'room_id'],
+    'content': ['content_key'],
   },
 };
 
@@ -78,6 +111,7 @@ abstract interface class TranslationCacheTransaction {
 }
 
 abstract interface class TranslationCacheBackend {
+  bool get supported;
   Future<bool> exists();
 
   /// Coordinates key creation and multi-step cleanup with other Web contexts.
@@ -87,6 +121,8 @@ abstract interface class TranslationCacheBackend {
   /// older schema read as empty and are never implicitly created.
   Future<bool> openExisting(String databaseKey, {bool migrate = false});
   Future<void> openOrCreate(String databaseKey);
+  Future<bool> needsUpgrade();
+  Future<void> finishUpgrade();
   Future<T> transaction<T>(
     Future<T> Function(TranslationCacheTransaction tx) action, {
     bool write = false,

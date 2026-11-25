@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Oh-My-FluffyChat Project
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:matrix/matrix.dart';
@@ -14,7 +15,9 @@ TranslationCacheBackend createTranslationCacheBackend() =>
     NativeTranslationCacheBackend();
 
 class NativeTranslationCacheBackend implements TranslationCacheBackend {
+  static final _coordination = <String, Future<void>>{};
   Database? _database;
+  int? _openedVersion;
   String? _path;
   final DatabaseFactory _factory;
   final Map<String, Set<String>> _columns = {};
@@ -29,13 +32,42 @@ class NativeTranslationCacheBackend implements TranslationCacheBackend {
     'fluffychat_translation_cache.db',
   );
   @override
+  bool get supported => true;
+  @override
   Stream<void> get externalChanges => const Stream.empty();
   @override
   void signalInvalidation() {}
   @override
-  Future<bool> exists() async => _factory.databaseExists(await _databasePath);
+  Future<bool> exists() async {
+    final databasePath = await _databasePath;
+    return await _factory.databaseExists(databasePath) ||
+        await File('$databasePath.pre-encryption').exists();
+  }
   @override
-  Future<T> coordinated<T>(Future<T> Function() action) => action();
+  Future<T> coordinated<T>(Future<T> Function() action) async {
+    final lockPath = File('${await _databasePath}.lock').absolute.path;
+    final previous = _coordination[lockPath];
+    final completed = Completer<void>();
+    _coordination[lockPath] = completed.future;
+    RandomAccessFile? lock;
+    try {
+      await previous;
+      await File(lockPath).parent.create(recursive: true);
+      lock = await File(lockPath).open(mode: FileMode.append);
+      await lock.lock(FileLock.blockingExclusive);
+      await _recoverEncryptionReplacement();
+      return await action();
+    } finally {
+      try {
+        if (lock != null) await lock.close();
+      } finally {
+        completed.complete();
+        if (identical(_coordination[lockPath], completed.future)) {
+          _coordination.remove(lockPath);
+        }
+      }
+    }
+  }
   @override
   Future<bool> openExisting(String databaseKey, {bool migrate = false}) async {
     if (!await exists()) {
@@ -43,7 +75,11 @@ class NativeTranslationCacheBackend implements TranslationCacheBackend {
       return false;
     }
     if (_database != null) {
-      if (!migrate || await _database!.getVersion() >= 3) return true;
+      final version = await _database!.getVersion();
+      if (version == _openedVersion &&
+          (!migrate || version >= cacheFormatVersion)) {
+        return true;
+      }
       await close();
     }
     try {
@@ -56,10 +92,9 @@ class NativeTranslationCacheBackend implements TranslationCacheBackend {
 
   @override
   Future<void> openOrCreate(String databaseKey) async {
-    if (_database != null &&
-        await exists() &&
-        await _database!.getVersion() >= 3) {
-      return;
+    if (_database != null && await exists()) {
+      final version = await _database!.getVersion();
+      if (version == _openedVersion && version >= cacheFormatVersion) return;
     }
     await close();
     await _open(databaseKey, create: true, migrate: true);
@@ -71,27 +106,33 @@ class NativeTranslationCacheBackend implements TranslationCacheBackend {
     required bool migrate,
   }) async {
     final databasePath = await _databasePath;
+    await _recoverEncryptionReplacement();
     if (!create && !await File(databasePath).exists()) {
       throw const _CacheAbsent();
+    }
+    var plaintext = await _isPlaintext(File(databasePath));
+    if (migrate && plaintext) {
+      await _encryptPlaintext(databaseKey);
+      plaintext = false;
     }
     final helper = SQfLiteEncryptionHelper(
       factory: _factory,
       path: databasePath,
       cipher: databaseKey,
     );
-    if (migrate && (create || await exists())) {
-      await helper.ensureDatabaseFileEncrypted();
-    }
     _database = await _factory.openDatabase(
       databasePath,
       options: OpenDatabaseOptions(
-        version: migrate ? 3 : null,
+        version: migrate ? cacheFormatVersion : null,
         singleInstance: false,
         onConfigure: (db) async {
-          await helper.applyPragmaKey(db);
+          // A safety probe must also read old plaintext archives without
+          // rewriting them. Applying a SQLCipher key makes SQLite headers
+          // unreadable, so encryption is deferred to the actual upgrade.
+          if (!plaintext) await helper.applyPragmaKey(db);
           if (!create && await db.getVersion() == 0) {
             final tables = await db.rawQuery(
-              "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'translations'",
+              "SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('translations', 'contents')",
             );
             if (tables.isNotEmpty) {
               // Older plaintext-to-SQLCipher exports can lose user_version.
@@ -102,7 +143,11 @@ class NativeTranslationCacheBackend implements TranslationCacheBackend {
                   'PRAGMA table_info(translations)',
                 );
                 await db.setVersion(
-                  columns.any((row) => row['name'] == 'source_binding') ? 2 : 1,
+                  tables.any((row) => row['name'] == 'contents')
+                      ? 3
+                      : columns.any((row) => row['name'] == 'source_binding')
+                      ? 2
+                      : 1,
                 );
               }
               return;
@@ -119,54 +164,265 @@ class NativeTranslationCacheBackend implements TranslationCacheBackend {
             : null,
       ),
     );
+    _openedVersion = await _database!.getVersion();
     final tables = (await _database!.rawQuery(
       "SELECT name FROM sqlite_master WHERE type = 'table'",
     )).map((row) => row['name']! as String).toSet();
     for (final store in CacheStore.values.where(
-      (store) => tables.contains(store.name),
+      (store) => tables.contains(store.tableName),
     )) {
-      _columns[store.name] = (await _database!.rawQuery(
-        'PRAGMA table_info(${store.name})',
+      _columns[store.tableName] = (await _database!.rawQuery(
+        'PRAGMA table_info(${store.tableName})',
       )).map((row) => row['name']! as String).toSet();
+    }
+    await _removeEncryptionBackup();
+  }
+
+  static Future<bool> _isPlaintext(File file) async {
+    if (!await file.exists()) return false;
+    final handle = await file.open();
+    try {
+      final header = await handle.read(16);
+      return String.fromCharCodes(header) == 'SQLite format 3\u0000';
+    } finally {
+      await handle.close();
+    }
+  }
+
+  Future<void> _recoverEncryptionReplacement() async {
+    final databasePath = await _databasePath;
+    final original = File(databasePath);
+    final backup = File('$databasePath.pre-encryption');
+    // Renaming the original aside and installing the verified encrypted file
+    // each preserve a complete database. Recover a crash between those moves.
+    if (!await original.exists() && await backup.exists()) {
+      await backup.rename(databasePath);
+    }
+  }
+
+  Future<void> _removeEncryptionBackup() async {
+    final backup = File('${await _databasePath}.pre-encryption');
+    if (!await backup.exists()) return;
+    try {
+      await backup.delete();
+    } catch (_) {
+      // The active database has already been verified. A stale backup can be
+      // retried on the next open without failing an otherwise safe upgrade.
+    }
+  }
+
+  Future<void> _encryptPlaintext(String databaseKey) async {
+    final databasePath = await _databasePath;
+    final original = File(databasePath);
+    final backup = File('$databasePath.pre-encryption');
+    final temporaryPath = '$databasePath.encrypting';
+    Database? plaintextDatabase;
+    Database? encryptedDatabase;
+    try {
+      // Failed exports never touch the original. Clear their private staging
+      // files before retrying, rather than exporting over partial old tables.
+      await _factory.deleteDatabase(temporaryPath);
+      plaintextDatabase = await _factory.openDatabase(
+        databasePath,
+        options: OpenDatabaseOptions(singleInstance: false),
+      );
+      if ((await plaintextDatabase.rawQuery('PRAGMA cipher_version')).isEmpty) {
+        throw StateError('SQLCipher library is not available');
+      }
+      final checkpoint = await plaintextDatabase.rawQuery(
+        'PRAGMA wal_checkpoint(TRUNCATE)',
+      );
+      if (checkpoint.any((row) => row['busy'] != 0)) {
+        throw StateError('Translation cache is busy during encryption');
+      }
+      final version = await plaintextDatabase.getVersion();
+      final escapedPath = temporaryPath.replaceAll("'", "''");
+      final escapedKey = databaseKey.replaceAll("'", "''");
+      await plaintextDatabase.execute(
+        "ATTACH DATABASE '$escapedPath' AS encrypted KEY '$escapedKey'",
+      );
+      await plaintextDatabase.execute("SELECT sqlcipher_export('encrypted')");
+      // sqlcipher_export omits user_version. Preserve it explicitly, including
+      // zero, so normal schema inference remains available for older exports.
+      await plaintextDatabase.execute(
+        'PRAGMA encrypted.user_version = $version',
+      );
+      await plaintextDatabase.execute('DETACH DATABASE encrypted');
+      await plaintextDatabase.close();
+      plaintextDatabase = null;
+      final helper = SQfLiteEncryptionHelper(
+        factory: _factory,
+        path: temporaryPath,
+        cipher: databaseKey,
+      );
+      encryptedDatabase = await _factory.openDatabase(
+        temporaryPath,
+        options: OpenDatabaseOptions(
+          singleInstance: false,
+          onConfigure: helper.applyPragmaKey,
+        ),
+      );
+      final integrity = await encryptedDatabase.rawQuery(
+        'PRAGMA integrity_check',
+      );
+      if (await encryptedDatabase.getVersion() != version ||
+          integrity.length != 1 ||
+          integrity.single.values.single != 'ok') {
+        throw StateError('Encrypted translation cache verification failed');
+      }
+      await encryptedDatabase.close();
+      encryptedDatabase = null;
+      if (await backup.exists()) await backup.delete();
+      await original.rename(backup.path);
+      try {
+        await File(temporaryPath).rename(databasePath);
+      } catch (_) {
+        // If restoration also fails, leave the complete backup in place for
+        // the next coordinated operation instead of deleting the only copy.
+        await _recoverEncryptionReplacement();
+        rethrow;
+      }
+    } finally {
+      await plaintextDatabase?.close();
+      await encryptedDatabase?.close();
+      try {
+        await _factory.deleteDatabase(temporaryPath);
+      } catch (_) {
+        // Cleanup failure cannot invalidate either the original or the
+        // verified replacement; a later export will clear these files.
+      }
     }
   }
 
   static Future<void> _schema(Database db, int oldVersion) async {
-    if (oldVersion == 0) {
+    for (final store in activeCacheStores) {
+      final fields = cacheColumns[store]!
+          .map(
+            (field) => field == 'cache_key'
+                ? '$field TEXT PRIMARY KEY'
+                : '$field TEXT NOT NULL',
+          )
+          .join(', ');
       await db.execute(
-        '''CREATE TABLE translations (
-cache_key TEXT PRIMARY KEY, room_id TEXT NOT NULL, event_id TEXT NOT NULL,
-nonce TEXT NOT NULL, ciphertext TEXT NOT NULL, source_binding TEXT NOT NULL, aad TEXT NOT NULL)''',
+        'CREATE TABLE IF NOT EXISTS ${store.tableName} ($fields)',
       );
-    } else if (oldVersion < 2) {
-      await db.execute(
-        "ALTER TABLE translations ADD COLUMN source_binding TEXT NOT NULL DEFAULT ''",
-      );
-      await db.execute(
-        "ALTER TABLE translations ADD COLUMN aad TEXT NOT NULL DEFAULT ''",
-      );
-    }
-    await db.execute('''CREATE TABLE IF NOT EXISTS contents (
-cache_key TEXT PRIMARY KEY, user_id TEXT NOT NULL, source_binding TEXT NOT NULL,
-nonce TEXT NOT NULL, ciphertext TEXT NOT NULL, aad TEXT NOT NULL,
-generation TEXT NOT NULL, legacy INTEGER NOT NULL, rank TEXT NOT NULL,
-room_id TEXT NOT NULL, event_id TEXT NOT NULL)''');
-    await db.execute('''CREATE TABLE IF NOT EXISTS refs (
-cache_key TEXT PRIMARY KEY, user_id TEXT NOT NULL, room_id TEXT NOT NULL,
-event_id TEXT NOT NULL, source_binding TEXT NOT NULL, content_key TEXT NOT NULL,
-original_event_id TEXT NOT NULL)''');
-    await db.execute(
-      'CREATE TABLE IF NOT EXISTS generations (cache_key TEXT PRIMARY KEY, value TEXT NOT NULL)',
-    );
-    await db.execute(
-      'CREATE TABLE IF NOT EXISTS metadata (cache_key TEXT PRIMARY KEY, value TEXT NOT NULL)',
-    );
-    for (final store in cacheIndexes.entries) {
-      for (final index in store.value.entries) {
+      for (final index
+          in (cacheIndexes[store] ?? const <String, List<String>>{}).entries) {
         await db.execute(
-          'CREATE INDEX IF NOT EXISTS ${store.key.name}_${index.key}_idx ON ${store.key.name}(${index.value.join(',')})',
+          'CREATE INDEX IF NOT EXISTS ${store.tableName}_${index.key}_idx ON ${store.tableName}(${index.value.join(',')})',
         );
       }
+    }
+    await db.insert('metadata', {
+      'cache_key': 'format',
+      'value': oldVersion == 0 ? '$cacheFormatVersion' : 'pending',
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  @override
+  Future<bool> needsUpgrade() async {
+    final database = _database;
+    if (database == null) throw StateError('Translation cache is not open');
+    final version = await database.getVersion();
+    if (version > cacheFormatVersion || version < 0) {
+      throw StateError('Unsupported translation cache version: $version');
+    }
+    if (version < cacheFormatVersion) {
+      final legacy = _columns[CacheStore.translations.tableName];
+      final contents = _columns[CacheStore.contents.tableName];
+      final references = _columns[CacheStore.refs.tableName];
+      final recognized = version < 3 && contents == null
+          ? legacy?.containsAll({
+            'cache_key',
+            'room_id',
+            'event_id',
+            'nonce',
+            'ciphertext',
+          }) == true
+          : contents?.containsAll({
+            'cache_key',
+            'user_id',
+            'source_binding',
+            'nonce',
+            'ciphertext',
+            'aad',
+            'generation',
+          }) == true &&
+              references?.containsAll({
+                'cache_key',
+                'user_id',
+                'room_id',
+                'event_id',
+                'content_key',
+                'original_event_id',
+              }) == true &&
+              _columns[CacheStore.generations.tableName]?.containsAll({
+                'cache_key',
+                'value',
+              }) == true &&
+              _columns[CacheStore.metadata.tableName]?.containsAll({
+                'cache_key',
+                'value',
+              }) == true;
+      if (recognized) return true;
+      throw StateError('Unrecognized translation cache schema');
+    }
+    for (final store in activeCacheStores) {
+      final columns = _columns[store.tableName];
+      final required = cacheColumns[store]!;
+      if (columns == null ||
+          columns.length != required.length ||
+          !columns.containsAll(required)) {
+        throw StateError('Invalid translation cache table: ${store.tableName}');
+      }
+      final definitions = await database.rawQuery(
+        'PRAGMA table_info(${store.tableName})',
+      );
+      if (definitions.any(
+        (column) =>
+            column['type'] != 'TEXT' ||
+            (column['name'] == 'cache_key'
+                ? column['pk'] != 1
+                : column['notnull'] != 1),
+      )) {
+        throw StateError('Invalid translation cache columns: ${store.tableName}');
+      }
+      for (final index
+          in (cacheIndexes[store] ?? const <String, List<String>>{}).entries) {
+        final name = '${store.tableName}_${index.key}_idx';
+        final fields = (await database.rawQuery('PRAGMA index_info($name)'))
+            .map((row) => row['name'])
+            .toList();
+        if (fields.length != index.value.length ||
+            !List.generate(
+              fields.length,
+              (i) => fields[i] == index.value[i],
+            ).every((equal) => equal)) {
+          throw StateError('Invalid translation cache index: $name');
+        }
+      }
+    }
+    final marker = await transaction(
+      (tx) => tx.get(CacheStore.metadata, 'format'),
+    );
+    if (marker?['value'] == '$cacheFormatVersion') return false;
+    if (marker?['value'] == 'pending') return true;
+    throw StateError('Invalid translation cache format marker');
+  }
+
+  @override
+  Future<void> finishUpgrade() async {
+    await _database!.transaction((tx) async {
+      for (final store in legacyCacheStores) {
+        await tx.execute('DROP TABLE IF EXISTS ${store.tableName}');
+      }
+      await tx.insert('metadata', {
+        'cache_key': 'format',
+        'value': '$cacheFormatVersion',
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
+    });
+    for (final store in legacyCacheStores) {
+      _columns.remove(store.tableName);
     }
   }
 
@@ -180,6 +436,8 @@ original_event_id TEXT NOT NULL)''');
   @override
   Future<void> deleteIfExists() async {
     await close();
+    final backup = File('${await _databasePath}.pre-encryption');
+    if (await backup.exists()) await backup.delete();
     if (await exists()) await _factory.deleteDatabase(await _databasePath);
   }
 
@@ -187,6 +445,7 @@ original_event_id TEXT NOT NULL)''');
   Future<void> close() async {
     await _database?.close();
     _database = null;
+    _openedVersion = null;
     _columns.clear();
   }
 
@@ -199,12 +458,12 @@ class _NativeTransaction implements TranslationCacheTransaction {
   final Map<String, Set<String>> columns;
   _NativeTransaction(this.db, this.columns);
   @override
-  bool hasStore(CacheStore store) => columns.containsKey(store.name);
+  bool hasStore(CacheStore store) => columns.containsKey(store.tableName);
   @override
   Future<CacheRow?> get(CacheStore store, String key) async {
     if (!hasStore(store)) return null;
     final rows = await db.query(
-      store.name,
+      store.tableName,
       where: 'cache_key = ?',
       whereArgs: [key],
       limit: 1,
@@ -215,7 +474,7 @@ class _NativeTransaction implements TranslationCacheTransaction {
   @override
   Future<void> put(CacheStore store, CacheRow row) async {
     await db.insert(
-      store.name,
+      store.tableName,
       Map.of(row)..remove('_cursor'),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -224,7 +483,7 @@ class _NativeTransaction implements TranslationCacheTransaction {
   @override
   Future<void> delete(CacheStore store, String key) async {
     if (!hasStore(store)) return;
-    await db.delete(store.name, where: 'cache_key = ?', whereArgs: [key]);
+    await db.delete(store.tableName, where: 'cache_key = ?', whereArgs: [key]);
   }
 
   @override
@@ -242,7 +501,7 @@ class _NativeTransaction implements TranslationCacheTransaction {
     if (index != null) {
       final fields = cacheIndexes[store]![index]!;
       // v1 may predate source bindings. Event/room cleanup still works.
-      if (!columns[store.name]!.containsAll(fields)) {
+      if (!columns[store.tableName]!.containsAll(fields)) {
         return [];
       }
       conditions.addAll(fields.map((field) => '$field = ?'));
@@ -253,7 +512,7 @@ class _NativeTransaction implements TranslationCacheTransaction {
       arguments.add(after);
     }
     return (await db.query(
-      store.name,
+      store.tableName,
       columns: ['*', '$order AS _cursor'],
       where: conditions.isEmpty ? null : conditions.join(' AND '),
       whereArgs: arguments,
@@ -266,7 +525,7 @@ class _NativeTransaction implements TranslationCacheTransaction {
   Future<int> count(CacheStore store) async {
     if (!hasStore(store)) return 0;
     return (await db.rawQuery(
-          'SELECT COUNT(*) AS n FROM ${store.name}',
+          'SELECT COUNT(*) AS n FROM ${store.tableName}',
         )).single['n']!
         as int;
   }

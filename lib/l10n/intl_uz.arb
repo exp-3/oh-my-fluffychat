@@ -1,4 +1,6 @@
 {
+    "translationCacheUpgrading": "Mahalliy arxiv yangilanmoqda. Iltimos, biroz kuting.",
+    "translationCacheUpgradeFailed": "Tarjima keshini yangilab bo‘lmadi",
     "translationRoaming": "Tarjimalarni qurilmalararo ulashish",
     "translationRoamingDescription": "Bir xil ulanish va oldindan ulashilgan kalitdan foydalanuvchi qurilmalar oʻrtasida shifrlangan xabar tarjimalarini ulashing. Kalit qurilmangizda qoladi. Tarjima oʻchirilganda ulashish toʻxtatiladi.",
     "translationRoamingConnectionType": "Ulanish turi",

@@ -1,6 +1,8 @@
 {
     "@@locale": "pl",
     "@@last_modified": "2021-08-14 12:41:09.943634",
+    "translationCacheUpgrading": "Trwa aktualizacja lokalnego archiwum. Poczekaj chwilę.",
+    "translationCacheUpgradeFailed": "Aktualizacja pamięci podręcznej tłumaczeń nie powiodła się",
     "translationRoaming": "Współdzielenie tłumaczeń",
     "translationRoamingDescription": "Udostępniaj zaszyfrowane tłumaczenia wiadomości między urządzeniami korzystającymi z tego samego połączenia i klucza współdzielonego. Klucz pozostaje na urządzeniu. Po wyłączeniu tłumaczenia udostępnianie jest wstrzymywane.",
     "translationRoamingConnectionType": "Typ połączenia",

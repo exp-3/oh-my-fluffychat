@@ -1,4 +1,6 @@
 {
+    "translationCacheUpgrading": "Yerli arxiv yenilənir. Zəhmət olmasa, bir az gözləyin.",
+    "translationCacheUpgradeFailed": "Tərcümə keşinin yenilənməsi uğursuz oldu",
     "translationRoaming": "Tərcümələrin cihazlararası paylaşılması",
     "translationRoamingDescription": "Eyni bağlantı və əvvəlcədən paylaşılmış açardan istifadə edən cihazlar arasında şifrələnmiş mesaj tərcümələrini paylaşın. Açar cihazınızda qalır. Tərcümə söndürüldükdə paylaşma dayandırılır.",
     "translationRoamingConnectionType": "Bağlantı növü",

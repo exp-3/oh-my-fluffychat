@@ -1,6 +1,8 @@
 {
     "@@locale": "zh",
     "@@last_modified": "2021-08-14 12:41:09.767805",
+    "translationCacheUpgrading": "数据存档升级中，请稍等片刻",
+    "translationCacheUpgradeFailed": "翻译缓存升级失败",
     "translationRoaming": "译文漫游",
     "translationRoamingDescription": "在使用相同连接和预共享密钥的设备之间共享加密的消息译文。密钥保留在您的设备上。关闭翻译时，漫游也会暂停。",
     "translationRoamingConnectionType": "连接类型",

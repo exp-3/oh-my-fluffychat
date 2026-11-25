@@ -1,6 +1,8 @@
 {
     "@@locale": "en",
     "@@last_modified": "2021-08-14 12:38:37.885451",
+    "translationCacheUpgrading": "Upgrading the local archive. Please wait a moment.",
+    "translationCacheUpgradeFailed": "Translation cache upgrade failed",
     "translationRoaming": "Translation roaming",
     "translationRoamingDescription": "Share encrypted message translations between devices using the same connection and pre-shared key. The key stays on your device. Roaming pauses when translation is off.",
     "translationRoamingConnectionType": "Connection type",

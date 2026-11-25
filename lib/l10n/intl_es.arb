@@ -1,6 +1,8 @@
 {
     "@@locale": "es",
     "@@last_modified": "2021-08-14 12:41:10.097243",
+    "translationCacheUpgrading": "Actualizando el archivo local. Espera un momento.",
+    "translationCacheUpgradeFailed": "No se pudo actualizar la caché de traducciones",
     "translationRoaming": "Itinerancia de traducciones",
     "translationRoamingDescription": "Comparte traducciones de mensajes cifradas entre dispositivos con la misma conexión y clave precompartida. La clave permanece en tu dispositivo. La itinerancia se pausa cuando la traducción está desactivada.",
     "translationRoamingConnectionType": "Tipo de conexión",

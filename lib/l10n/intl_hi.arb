@@ -1,4 +1,6 @@
 {
+    "translationCacheUpgrading": "स्थानीय संग्रह अपग्रेड किया जा रहा है। कृपया कुछ देर प्रतीक्षा करें।",
+    "translationCacheUpgradeFailed": "अनुवाद कैश अपग्रेड नहीं हो सका",
     "translationRoaming": "अनुवाद रोमिंग",
     "translationRoamingDescription": "एक ही कनेक्शन और पहले से साझा कुंजी का उपयोग करने वाले उपकरणों के बीच एन्क्रिप्ट किए गए संदेश अनुवाद साझा करें। कुंजी आपके उपकरण पर रहती है। अनुवाद बंद होने पर रोमिंग रुक जाती है।",
     "translationRoamingConnectionType": "कनेक्शन का प्रकार",

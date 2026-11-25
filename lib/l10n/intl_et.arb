@@ -1,6 +1,8 @@
 {
     "@@locale": "et",
     "@@last_modified": "2021-08-14 12:41:10.079944",
+    "translationCacheUpgrading": "Kohaliku arhiivi uuendamine. Palun oota hetk.",
+    "translationCacheUpgradeFailed": "Tõlkevahemälu uuendamine ebaõnnestus",
     "translationRoaming": "Tõlgete jagamine seadmete vahel",
     "translationRoamingDescription": "Jaga krüptitud sõnumitõlkeid seadmete vahel, mis kasutavad sama ühendust ja eeljagatud võtit. Võti jääb sinu seadmesse. Tõlkimise väljalülitamisel jagamine peatub.",
     "translationRoamingConnectionType": "Ühenduse tüüp",

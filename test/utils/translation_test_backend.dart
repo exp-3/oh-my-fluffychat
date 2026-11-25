@@ -17,7 +17,10 @@ class MemoryTranslationBackend implements TranslationCacheBackend {
   void Function()? afterPutAll;
   final deletedRoomIds = <String>[];
   final changes = StreamController<void>.broadcast();
-  List<CacheRow> get records => rows[CacheStore.contents]!.values.toList();
+  Future<void> _operationTail = Future.value();
+  List<CacheRow> get records => rows[CacheStore.sharedContents]!.values.toList();
+  @override
+  bool get supported => true;
   @override
   Stream<void> get externalChanges => changes.stream;
   @override
@@ -29,7 +32,17 @@ class MemoryTranslationBackend implements TranslationCacheBackend {
   }
 
   @override
-  Future<T> coordinated<T>(Future<T> Function() action) => action();
+  Future<T> coordinated<T>(Future<T> Function() action) async {
+    final previous = _operationTail;
+    final release = Completer<void>();
+    _operationTail = release.future;
+    await previous;
+    try {
+      return await action();
+    } finally {
+      release.complete();
+    }
+  }
 
   @override
   Future<bool> openExisting(String databaseKey, {bool migrate = false}) async {
@@ -44,6 +57,26 @@ class MemoryTranslationBackend implements TranslationCacheBackend {
     createCalls++;
     afterOpenOrCreate?.call();
     if (failOpenAfterCreate) throw StateError('creation failed');
+  }
+
+  @override
+  Future<bool> needsUpgrade() async =>
+      rows[CacheStore.metadata]!['format']?['value'] == 'pending';
+
+  @override
+  Future<void> finishUpgrade() async {
+    for (final store in [
+      CacheStore.translations,
+      CacheStore.contents,
+      CacheStore.refs,
+      CacheStore.generations,
+    ]) {
+      rows[store]!.clear();
+    }
+    rows[CacheStore.metadata]!['format'] = {
+      'cache_key': 'format',
+      'value': '4',
+    };
   }
 
   @override
@@ -91,10 +124,10 @@ class _MemoryTransaction implements TranslationCacheTransaction {
       rows[store]![key];
   @override
   Future<void> put(CacheStore store, CacheRow row) async {
-    if (store == CacheStore.contents) await backend.beforePutAll?.call();
+    if (store == CacheStore.sharedContents) await backend.beforePutAll?.call();
     rows[store]![cacheString(row, 'cache_key')] = Map.of(row)
       ..remove('_cursor');
-    if (store == CacheStore.contents) backend.afterPutAll?.call();
+    if (store == CacheStore.sharedContents) backend.afterPutAll?.call();
   }
 
   @override
@@ -113,7 +146,7 @@ class _MemoryTransaction implements TranslationCacheTransaction {
     int limit = 200,
   }) async {
     backend.queries++;
-    if (index == 'room' && store == CacheStore.refs && after == null) {
+    if (index == 'room' && store == CacheStore.messageRefs && after == null) {
       backend.deletedRoomIds.add(equals!.single);
     }
     final result =

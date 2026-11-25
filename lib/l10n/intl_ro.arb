@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.918296",
+    "translationCacheUpgrading": "Se actualizează arhiva locală. Te rugăm să aștepți un moment.",
+    "translationCacheUpgradeFailed": "Actualizarea memoriei cache pentru traduceri a eșuat",
     "translationRoaming": "Partajarea traducerilor",
     "translationRoamingDescription": "Partajați traduceri criptate ale mesajelor între dispozitive cu aceeași conexiune și cheie prepartajată. Cheia rămâne pe dispozitivul dvs. Partajarea se suspendă când traducerea este dezactivată.",
     "translationRoamingConnectionType": "Tipul conexiunii",

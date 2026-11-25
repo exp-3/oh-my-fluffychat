@@ -1,4 +1,6 @@
 {
+    "translationCacheUpgrading": "Notiek lokālā arhīva jaunināšana. Lūdzu, uzgaidiet mirkli.",
+    "translationCacheUpgradeFailed": "Tulkojumu kešatmiņas jaunināšana neizdevās",
     "translationRoaming": "Tulkojumu koplietošana",
     "translationRoamingDescription": "Kopīgojiet šifrētus ziņojumu tulkojumus starp ierīcēm ar vienādu savienojumu un iepriekš kopīgotu atslēgu. Atslēga paliek jūsu ierīcē. Izslēdzot tulkošanu, koplietošana tiek apturēta.",
     "translationRoamingConnectionType": "Savienojuma veids",

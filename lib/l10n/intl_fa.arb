@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:10.061080",
+    "translationCacheUpgrading": "در حال ارتقای بایگانی محلی. لطفاً کمی صبر کنید.",
+    "translationCacheUpgradeFailed": "ارتقای حافظهٔ نهان ترجمه ناموفق بود",
     "translationRoaming": "همگام‌سازی ترجمه‌ها",
     "translationRoamingDescription": "ترجمه‌های رمزگذاری‌شدهٔ پیام‌ها را بین دستگاه‌هایی با اتصال و کلید ازپیش‌اشتراک‌گذاشته‌شدهٔ یکسان به اشتراک بگذارید. کلید در دستگاه شما می‌ماند. با خاموش شدن ترجمه، همگام‌سازی متوقف می‌شود.",
     "translationRoamingConnectionType": "نوع اتصال",

@@ -43,6 +43,8 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
     web.document.addEventListener('visibilitychange', _reactivation);
   }
   @override
+  bool get supported => _locks != null && _indexedDb != null;
+  @override
   Stream<void> get externalChanges => _changes.stream;
   @override
   void signalInvalidation() => _channel?.postMessage('invalidated'.toJS);
@@ -72,7 +74,9 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
     final completer = Completer<web.IDBDatabase?>();
     var absent = false;
     // No version on safety probes: even an upgrade would create tables.
-    final request = migrate ? factory.open(_name, 3) : factory.open(_name);
+    final request = migrate
+        ? factory.open(_name, cacheFormatVersion)
+        : factory.open(_name);
     request.onupgradeneeded = ((web.IDBVersionChangeEvent event) {
       try {
         if (completer.isCompleted) {
@@ -85,11 +89,11 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
           return;
         }
         final db = request.result as web.IDBDatabase;
-        for (final store in CacheStore.values) {
-          final objectStore = db.objectStoreNames.contains(store.name)
-              ? request.transaction!.objectStore(store.name)
+        for (final store in activeCacheStores) {
+          final objectStore = db.objectStoreNames.contains(store.tableName)
+              ? request.transaction!.objectStore(store.tableName)
               : db.createObjectStore(
-                  store.name,
+                  store.tableName,
                   web.IDBObjectStoreParameters(keyPath: 'cache_key'.toJS),
                 );
           for (final index
@@ -104,6 +108,12 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
             );
           }
         }
+        request.transaction!
+            .objectStore(CacheStore.metadata.tableName)
+            .put({
+              'cache_key': 'format',
+              'value': event.oldVersion == 0 ? '$cacheFormatVersion' : 'pending',
+            }.jsify());
       } catch (error, stack) {
         request.transaction?.abort();
         if (!completer.isCompleted) completer.completeError(error, stack);
@@ -152,7 +162,7 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
   @override
   Future<bool> openExisting(String databaseKey, {bool migrate = false}) async {
     if (_database != null) {
-      if (!migrate || _database!.version >= 3) return true;
+      if (!migrate || _database!.version >= cacheFormatVersion) return true;
       await close();
     }
     _database = await _open(migrate: migrate);
@@ -161,11 +171,98 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
 
   @override
   Future<void> openOrCreate(String databaseKey) async {
-    if (_database != null && _database!.version >= 3) return;
+    if (_database != null && _database!.version >= cacheFormatVersion) return;
     await close();
     _database = await _open(create: true, migrate: true);
     web.window.localStorage.setItem(_marker, 'true');
   }
+
+  @override
+  Future<bool> needsUpgrade() async {
+    final db = _database;
+    if (db == null) throw StateError('Translation cache is not open');
+    if (db.version > cacheFormatVersion || db.version < 1) {
+      throw StateError('Unsupported translation cache version: ${db.version}');
+    }
+    if (db.version < cacheFormatVersion) {
+      final required = db.version < 3
+          ? {CacheStore.translations}
+          : {
+              CacheStore.contents,
+              CacheStore.refs,
+              CacheStore.generations,
+              CacheStore.metadata,
+            };
+      if (!required.every(
+        (store) => db.objectStoreNames.contains(store.tableName),
+      )) {
+        throw StateError('Unrecognized translation cache schema');
+      }
+      return transaction((tx) async {
+        final transaction = tx as _WebTransaction;
+        for (final store in required) {
+          if (transaction.tx.objectStore(store.tableName).keyPath?.dartify() !=
+              'cache_key') {
+            throw StateError('Invalid legacy translation cache key');
+          }
+        }
+        return true;
+      });
+    }
+    for (final store in activeCacheStores) {
+      if (!db.objectStoreNames.contains(store.tableName)) {
+        throw StateError('Missing translation cache store: ${store.tableName}');
+      }
+    }
+    return transaction((tx) async {
+      final transaction = tx as _WebTransaction;
+      for (final store in activeCacheStores) {
+        final objectStore = transaction.tx.objectStore(store.tableName);
+        if (objectStore.keyPath?.dartify() != 'cache_key') {
+          throw StateError('Invalid translation cache key: ${store.tableName}');
+        }
+        for (final index
+            in (cacheIndexes[store] ?? const <String, List<String>>{}).entries) {
+          if (!objectStore.indexNames.contains(index.key)) {
+            throw StateError('Missing translation cache index: ${index.key}');
+          }
+          final value = objectStore.index(index.key).keyPath?.dartify();
+          final fields = value is List ? value : [value];
+          if (fields.length != index.value.length ||
+              !List.generate(
+                fields.length,
+                (i) => fields[i] == index.value[i],
+              ).every((equal) => equal)) {
+            throw StateError('Invalid translation cache index: ${index.key}');
+          }
+        }
+      }
+      final marker = await tx.get(CacheStore.metadata, 'format');
+      if (marker?['value'] == '$cacheFormatVersion') return false;
+      if (marker?['value'] == 'pending') return true;
+      throw StateError('Invalid translation cache format marker');
+    });
+  }
+
+  @override
+  Future<void> finishUpgrade() => transaction(
+    (tx) async {
+      final transaction = tx as _WebTransaction;
+      for (final store in legacyCacheStores) {
+        if (tx.hasStore(store)) {
+          await _request(
+            transaction.tx.objectStore(store.tableName).clear(),
+          );
+        }
+      }
+      await tx.put(CacheStore.metadata, {
+        'cache_key': 'format',
+        'value': '$cacheFormatVersion',
+      });
+    },
+    write: true,
+    notify: true,
+  );
 
   @override
   Future<T> transaction<T>(
@@ -175,8 +272,8 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
   }) async {
     final db = _database!;
     final names = CacheStore.values
-        .where((store) => db.objectStoreNames.contains(store.name))
-        .map((store) => store.name.toJS)
+        .where((store) => db.objectStoreNames.contains(store.tableName))
+        .map((store) => store.tableName.toJS)
         .toList();
     final transaction = db.transaction(
       names.toJS,
@@ -238,12 +335,12 @@ class _WebTransaction implements TranslationCacheTransaction {
   final web.IDBDatabase db;
   _WebTransaction(this.tx, this.db);
   @override
-  bool hasStore(CacheStore store) => db.objectStoreNames.contains(store.name);
+  bool hasStore(CacheStore store) => db.objectStoreNames.contains(store.tableName);
   @override
   Future<CacheRow?> get(CacheStore store, String key) async {
     if (!hasStore(store)) return null;
     final value = (await _request(
-      tx.objectStore(store.name).get(key.toJS),
+      tx.objectStore(store.tableName).get(key.toJS),
     ))?.dartify();
     return value is Map ? value.cast<String, Object?>() : null;
   }
@@ -251,14 +348,16 @@ class _WebTransaction implements TranslationCacheTransaction {
   @override
   Future<void> put(CacheStore store, CacheRow row) async {
     await _request(
-      tx.objectStore(store.name).put((Map.of(row)..remove('_cursor')).jsify()),
+      tx
+          .objectStore(store.tableName)
+          .put((Map.of(row)..remove('_cursor')).jsify()),
     );
   }
 
   @override
   Future<void> delete(CacheStore store, String key) async {
     if (hasStore(store)) {
-      await _request(tx.objectStore(store.name).delete(key.toJS));
+      await _request(tx.objectStore(store.tableName).delete(key.toJS));
     }
   }
 
@@ -271,7 +370,7 @@ class _WebTransaction implements TranslationCacheTransaction {
     int limit = 200,
   }) async {
     if (!hasStore(store)) return [];
-    final objectStore = tx.objectStore(store.name);
+    final objectStore = tx.objectStore(store.tableName);
     web.IDBRequest request;
     List<String>? fallbackFields;
     JSAny? indexKey;
@@ -359,7 +458,7 @@ class _WebTransaction implements TranslationCacheTransaction {
   @override
   Future<int> count(CacheStore store) async => !hasStore(store)
       ? 0
-      : ((await _request(tx.objectStore(store.name).count()))!.dartify()!
+      : ((await _request(tx.objectStore(store.tableName).count()))!.dartify()!
                 as num)
             .toInt();
 }

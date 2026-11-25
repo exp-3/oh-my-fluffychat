@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.967351",
+    "translationCacheUpgrading": "Det lokale arkivet oppgraderes. Vent et øyeblikk.",
+    "translationCacheUpgradeFailed": "Oppgradering av oversettelsesbufferen mislyktes",
     "translationRoaming": "Deling av oversettelser",
     "translationRoamingDescription": "Del krypterte meldingsoversettelser mellom enheter med samme tilkobling og forhåndsdelte nøkkel. Nøkkelen blir på enheten din. Delingen settes på pause når oversettelse er slått av.",
     "translationRoamingConnectionType": "Tilkoblingstype",

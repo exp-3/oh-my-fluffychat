@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:10.107750",
+    "translationCacheUpgrading": "La loka arkivo estas ĝisdatigata. Bonvolu atendi momenton.",
+    "translationCacheUpgradeFailed": "Ĝisdatigo de la traduka kaŝmemoro malsukcesis",
     "translationRoaming": "Traduka vagado",
     "translationRoamingDescription": "Kunhavigu ĉifritajn mesaĝtradukojn inter aparatoj uzantaj la saman konekton kaj antaŭdividitan ŝlosilon. La ŝlosilo restas en via aparato. Vagado paŭzas kiam tradukado estas malŝaltita.",
     "translationRoamingConnectionType": "Tipo de konekto",

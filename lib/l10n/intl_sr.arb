@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.857024",
+    "translationCacheUpgrading": "Надоградња локалне архиве је у току. Сачекајте тренутак.",
+    "translationCacheUpgradeFailed": "Надоградња кеша превода није успела",
     "translationRoaming": "Дељење превода између уређаја",
     "translationRoamingDescription": "Делите шифроване преводе порука између уређаја са истом везом и унапред дељеним кључем. Кључ остаје на вашем уређају. Дељење се паузира када је превођење искључено.",
     "translationRoamingConnectionType": "Врста везе",

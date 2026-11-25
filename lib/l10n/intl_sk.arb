@@ -1,6 +1,8 @@
 {
     "@@locale": "sk",
     "@@last_modified": "2021-08-14 12:41:09.879987",
+    "translationCacheUpgrading": "Prebieha aktualizácia miestneho archívu. Chvíľu počkajte.",
+    "translationCacheUpgradeFailed": "Aktualizácia vyrovnávacej pamäte prekladov zlyhala",
     "translationRoaming": "Zdieľanie prekladov medzi zariadeniami",
     "translationRoamingDescription": "Zdieľajte šifrované preklady správ medzi zariadeniami s rovnakým pripojením a vopred zdieľaným kľúčom. Kľúč zostáva vo vašom zariadení. Po vypnutí prekladu sa zdieľanie pozastaví.",
     "translationRoamingConnectionType": "Typ pripojenia",

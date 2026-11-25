@@ -1,6 +1,8 @@
 {
     "@@locale": "de",
     "@@last_modified": "2021-08-14 12:41:10.119255",
+    "translationCacheUpgrading": "Das lokale Archiv wird aktualisiert. Bitte einen Moment warten.",
+    "translationCacheUpgradeFailed": "Der Übersetzungszwischenspeicher konnte nicht aktualisiert werden",
     "translationRoaming": "Geräteübergreifende Übersetzungen",
     "translationRoamingDescription": "Teile verschlüsselte Nachrichtenübersetzungen zwischen Geräten mit derselben Verbindung und demselben vorab geteilten Schlüssel. Der Schlüssel bleibt auf deinem Gerät. Bei ausgeschalteter Übersetzung wird die Freigabe pausiert.",
     "translationRoamingConnectionType": "Verbindungstyp",

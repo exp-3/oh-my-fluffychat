@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.781172",
+    "translationCacheUpgrading": "Đang nâng cấp kho lưu trữ cục bộ. Vui lòng đợi trong giây lát.",
+    "translationCacheUpgradeFailed": "Không thể nâng cấp bộ nhớ đệm bản dịch",
     "translationRoaming": "Chia sẻ bản dịch giữa các thiết bị",
     "translationRoamingDescription": "Chia sẻ bản dịch tin nhắn được mã hóa giữa các thiết bị dùng cùng kết nối và khóa chia sẻ trước. Khóa được giữ trên thiết bị của bạn. Việc chia sẻ tạm dừng khi tắt dịch.",
     "translationRoamingConnectionType": "Loại kết nối",

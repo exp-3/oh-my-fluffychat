@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.940318",
+    "translationCacheUpgrading": "A atualizar o arquivo local. Aguarde um momento.",
+    "translationCacheUpgradeFailed": "Não foi possível atualizar a cache de traduções",
     "translationRoaming": "Partilha de traduções",
     "translationRoamingDescription": "Partilhe traduções de mensagens cifradas entre dispositivos com a mesma ligação e chave pré-partilhada. A chave permanece no seu dispositivo. A partilha é suspensa quando a tradução está desativada.",
     "translationRoamingConnectionType": "Tipo de ligação",

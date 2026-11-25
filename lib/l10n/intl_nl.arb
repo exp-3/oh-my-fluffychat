@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.955292",
+    "translationCacheUpgrading": "Het lokale archief wordt bijgewerkt. Wacht even.",
+    "translationCacheUpgradeFailed": "De vertaalcache kon niet worden bijgewerkt",
     "translationRoaming": "Vertalingen delen tussen apparaten",
     "translationRoamingDescription": "Deel versleutelde berichtvertalingen tussen apparaten met dezelfde verbinding en vooraf gedeelde sleutel. De sleutel blijft op je apparaat. Het delen wordt gepauzeerd als vertalen uitstaat.",
     "translationRoamingConnectionType": "Verbindingstype",
