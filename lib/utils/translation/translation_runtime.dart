@@ -77,6 +77,8 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       TranslationRoamingService(config: config, secrets: secrets);
   void Function(VoidCallback)? _afterRoamingFrame;
   Future<void> _roamingSaveTail = Future.value();
+  Future<void> _inputLanguageSaveTail = Future.value();
+  Future<void> _batchSettingsSaveTail = Future.value();
   int _roamingRevision = 0;
   int _roamingPendingMutations = 0;
   bool _roamingMutationInProgress = false;
@@ -170,6 +172,12 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   TranslationPreferences get preferences =>
       _preferences ??
       (throw StateError('Translation runtime is not initialized'));
+
+  /// Waits for input language saves registered before this call.
+  Future<void> waitForInputLanguageSaves() => _inputLanguageSaveTail;
+
+  /// Waits for batch settings saves registered before this call.
+  Future<void> waitForBatchSettingsSaves() => _batchSettingsSaveTail;
 
   TranslationRoamingConfig get roamingConfig => _roamingConfig;
 
@@ -704,19 +712,29 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   Future<void> setInputLanguages({
     required String source,
     required String target,
-  }) async {
+  }) {
     final cleanSource = source.trim().isEmpty ? 'auto' : source.trim();
     final cleanTarget = target.trim();
-    if (cleanTarget.isEmpty) throw ArgumentError.value(target, 'target');
+    if (cleanTarget.isEmpty) {
+      return Future.error(ArgumentError.value(target, 'target'));
+    }
     if (cleanSource == _inputSourceLanguage &&
         cleanTarget == _inputTargetLanguage) {
-      return;
+      return Future.value();
     }
     _inputSourceLanguage = cleanSource;
     _inputTargetLanguage = cleanTarget;
+    final operation = _inputLanguageSaveTail.then((_) async {
+      await preferences.setInputSourceLanguage(cleanSource);
+      await preferences.setInputTargetLanguage(cleanTarget);
+    });
+    _inputLanguageSaveTail = operation.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {},
+    );
+    // Publish the save before listeners can open another settings page.
     _bumpRevision(clearPending: true, clearStates: true);
-    await preferences.setInputSourceLanguage(cleanSource);
-    await preferences.setInputTargetLanguage(cleanTarget);
+    return operation;
   }
 
   Future<void> setInputTranslationLanguages({
@@ -754,13 +772,26 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     notifyListeners();
   }
 
-  Future<void> saveBatchSettings(TranslationBatchSettings value) async {
-    if (!value.isValid) throw ArgumentError.value(value, 'value');
-    await preferences.saveBatchSettings(value);
-    _batchSettings = value;
-    _batcher?.settingsChanged();
-    _inputBatcher?.settingsChanged();
-    notifyListeners();
+  Future<void> saveBatchSettings(
+    TranslationBatchSettings value, {
+    bool Function()? isCurrent,
+  }) {
+    if (!value.isValid) {
+      return Future.error(ArgumentError.value(value, 'value'));
+    }
+    final operation = _batchSettingsSaveTail.then((_) async {
+      if (isCurrent != null && !isCurrent()) return;
+      await preferences.saveBatchSettings(value);
+      _batchSettings = value;
+      _batcher?.settingsChanged();
+      _inputBatcher?.settingsChanged();
+      notifyListeners();
+    });
+    _batchSettingsSaveTail = operation.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {},
+    );
+    return operation;
   }
 
   Future<void> saveProvider(
