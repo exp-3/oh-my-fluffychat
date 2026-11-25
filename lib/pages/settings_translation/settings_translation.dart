@@ -216,8 +216,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
             centerTitle: FluffyThemes.isColumnMode(context),
           ),
           body: MaxWidthBody(
-            withScrolling: false,
-            child: ListView(
+            child: Column(
               children: [
                 SwitchListTile.adaptive(
                   secondary: const Icon(Icons.translate_outlined),
@@ -718,10 +717,6 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                             ),
                           ],
                         ),
-                      ListTile(
-                        leading: const Icon(Icons.info_outline),
-                        title: Text(l10n.translationPrivacyDetails),
-                      ),
                       _SectionTitle(l10n.batchTranslation),
                       _ResponsiveSettingsLayout(
                         children: [
@@ -775,6 +770,11 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                   title: Text(l10n.clearTranslationCache),
                   onTap: _cacheBusy ? null : _clearCache,
                   enabled: !_cacheBusy,
+                ),
+                Divider(color: theme.dividerColor),
+                ListTile(
+                  leading: const Icon(Icons.info_outline),
+                  title: Text(l10n.translationPrivacyDetails),
                 ),
               ],
             ),
@@ -1226,20 +1226,23 @@ class _SettingsTranslationProviderState
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 16),
-                    child: CheckboxListTile.adaptive(
-                      contentPadding: EdgeInsets.zero,
-                      dense: true,
-                      visualDensity: const VisualDensity(vertical: -2),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      value: useFullEndpoint,
-                      title: Text(l10n.translationEndpointIsComplete),
-                      onChanged: busy
-                          ? null
-                          : (checked) {
-                              if (checked == null) return;
-                              useFullEndpoint = checked;
-                              formChanged();
-                            },
+                    child: ListTileTheme.merge(
+                      horizontalTitleGap: 0,
+                      child: CheckboxListTile.adaptive(
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                        visualDensity: const VisualDensity(vertical: -2),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        value: useFullEndpoint,
+                        title: Text(l10n.translationEndpointIsComplete),
+                        onChanged: busy
+                            ? null
+                            : (checked) {
+                                if (checked == null) return;
+                                useFullEndpoint = checked;
+                                formChanged();
+                              },
+                      ),
                     ),
                   ),
                   DropdownButtonFormField<TranslationProtocol>(

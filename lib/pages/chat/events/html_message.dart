@@ -3,6 +3,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+import 'dart:math' as math;
+
 import 'package:collection/collection.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:fluffychat/config/setting_keys.dart';
@@ -13,6 +15,7 @@ import 'package:fluffychat/utils/event_checkbox_extension.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/mxc_image.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:highlight/highlight.dart' show highlight;
 import 'package:html/dom.dart' as dom;
@@ -346,8 +349,16 @@ class HtmlMessage extends StatelessWidget {
             ),
           ),
         );
+      case 'pre':
+        if (node.children.length == 1 &&
+            node.children.first.localName == 'code') {
+          return _renderHtml(node.children.first, context, depth: depth + 1);
+        }
+        continue code;
+      code:
       case 'code':
-        final isInline = node.parent?.localName != 'pre';
+        final isInline =
+            node.localName == 'code' && node.parent?.localName != 'pre';
         final lang =
             node.className
                 .split(' ')
@@ -365,24 +376,23 @@ class HtmlMessage extends StatelessWidget {
           return const TextSpan(text: 'Unable to render code block!');
         }
 
-        return WidgetSpan(
-          child: Material(
-            color: atomOneBackgroundColor,
-            shape: RoundedRectangleBorder(
-              side: const BorderSide(color: hightlightTextColor),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Padding(
-              padding: isInline
-                  ? const EdgeInsets.symmetric(horizontal: 4.0)
-                  : const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              child: Text.rich(
-                TextSpan(children: [_renderCodeBlockNode(element)]),
-                selectionColor: hightlightTextColor.withAlpha(128),
-              ),
+        final codeBlock = Material(
+          color: atomOneBackgroundColor,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(color: hightlightTextColor),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Padding(
+            padding: isInline
+                ? const EdgeInsets.symmetric(horizontal: 4.0)
+                : const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+            child: Text.rich(
+              TextSpan(children: [_renderCodeBlockNode(element)]),
+              selectionColor: hightlightTextColor.withAlpha(128),
             ),
           ),
         );
+        return WidgetSpan(child: codeBlock);
       case 'img':
         final mxcUrl = Uri.tryParse(node.attributes['src'] ?? '');
         if (mxcUrl == null || mxcUrl.scheme != 'mxc') {
@@ -480,40 +490,33 @@ class HtmlMessage extends StatelessWidget {
       case 'hr':
         return const WidgetSpan(child: Divider());
       case 'details':
-        var obscure = true;
+        final obscure = ValueNotifier(true);
+        final summary = node.nodes
+            .where((node) => node is dom.Element && node.localName == 'summary')
+            .map((node) => _renderHtml(node, context, depth: depth))
+            .toList();
+        final details = _renderWithLineBreaks(
+          node.nodes,
+          context,
+          depth: depth,
+        );
         return WidgetSpan(
-          child: StatefulBuilder(
-            builder: (context, setState) => InkWell(
+          child: ValueListenableBuilder<bool>(
+            valueListenable: obscure,
+            builder: (context, hidden, _) => InkWell(
               splashColor: Colors.transparent,
-              onTap: () => setState(() {
-                obscure = !obscure;
-              }),
+              onTap: () => obscure.value = !obscure.value,
               child: Text.rich(
                 TextSpan(
                   children: [
                     WidgetSpan(
                       child: Icon(
-                        obscure ? Icons.arrow_right : Icons.arrow_drop_down,
+                        hidden ? Icons.arrow_right : Icons.arrow_drop_down,
                         size: fontSize * 1.2,
                         color: textColor,
                       ),
                     ),
-                    if (obscure)
-                      ...node.nodes
-                          .where(
-                            (node) =>
-                                node is dom.Element &&
-                                node.localName == 'summary',
-                          )
-                          .map(
-                            (node) => _renderHtml(node, context, depth: depth),
-                          )
-                    else
-                      ..._renderWithLineBreaks(
-                        node.nodes,
-                        context,
-                        depth: depth,
-                      ),
+                    if (hidden) ...summary else ...details,
                   ],
                 ),
                 style: TextStyle(fontSize: fontSize, color: textColor),
@@ -525,26 +528,24 @@ class HtmlMessage extends StatelessWidget {
         if (!node.attributes.containsKey('data-mx-spoiler')) {
           continue block;
         }
-        var obscure = true;
+        final obscure = ValueNotifier(true);
+        final spoiler = _renderWithLineBreaks(
+          node.nodes,
+          context,
+          depth: depth,
+        );
         return WidgetSpan(
-          child: StatefulBuilder(
-            builder: (context, setState) => InkWell(
+          child: ValueListenableBuilder<bool>(
+            valueListenable: obscure,
+            builder: (context, hidden, _) => InkWell(
               splashColor: Colors.transparent,
-              onTap: () => setState(() {
-                obscure = !obscure;
-              }),
+              onTap: () => obscure.value = !obscure.value,
               child: Text.rich(
-                TextSpan(
-                  children: _renderWithLineBreaks(
-                    node.nodes,
-                    context,
-                    depth: depth,
-                  ),
-                ),
+                TextSpan(children: spoiler),
                 style: TextStyle(
                   fontSize: fontSize,
                   color: textColor,
-                  backgroundColor: obscure ? textColor : null,
+                  backgroundColor: hidden ? textColor : null,
                 ),
               ),
             ),
@@ -589,6 +590,9 @@ class HtmlMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final element = parser.parse(html).body ?? dom.Element.html('');
+    for (final reply in element.querySelectorAll('mx-reply')) {
+      reply.remove();
+    }
     final configuredMaxLines = AppSettings.messagePreviewMaxLines.value;
     final maxLines = configuredMaxLines <= 0 ? null : configuredMaxLines;
     final span = _renderHtml(element, context);
@@ -606,46 +610,32 @@ class HtmlMessage extends StatelessWidget {
       );
     }
 
-    // Heuristic: if plain text has enough newlines or length, it will overflow.
-    final plainText = element.text;
-    final lineCount = '\n'.allMatches(plainText).length + 1;
-    final likelyOverflows =
-        lineCount > maxLines || plainText.length > maxLines * 50;
-
-    if (!likelyOverflows) {
-      return Text.rich(
-        span,
-        style: style,
-        selectionColor: textColor.withAlpha(128),
-      );
-    }
-
     return _CollapsibleText(
+      html: html,
       span: span,
       style: style,
       maxLines: maxLines,
       textColor: textColor,
       linkColor: linkStyle.color ?? textColor,
-      fontSize: fontSize,
     );
   }
 }
 
 class _CollapsibleText extends StatefulWidget {
+  final String html;
   final InlineSpan span;
   final TextStyle style;
   final int maxLines;
   final Color textColor;
   final Color linkColor;
-  final double fontSize;
 
   const _CollapsibleText({
+    required this.html,
     required this.span,
     required this.style,
     required this.maxLines,
     required this.textColor,
     required this.linkColor,
-    required this.fontSize,
   });
 
   @override
@@ -654,10 +644,33 @@ class _CollapsibleText extends StatefulWidget {
 
 class _CollapsibleTextState extends State<_CollapsibleText> {
   bool _expanded = false;
+  int? _cutoff;
+  bool _measured = false;
+
+  @override
+  void didUpdateWidget(_CollapsibleText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.html != widget.html ||
+        oldWidget.maxLines != widget.maxLines ||
+        oldWidget.style != widget.style) {
+      _cutoff = null;
+      _measured = false;
+    }
+  }
+
+  void _updateCutoff(int? cutoff) {
+    if (!mounted || (_measured && _cutoff == cutoff)) return;
+    setState(() {
+      _measured = true;
+      _cutoff = cutoff;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
+    final cutoff = _cutoff;
+    final collapsed = !_expanded && cutoff != null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -666,25 +679,332 @@ class _CollapsibleTextState extends State<_CollapsibleText> {
           duration: FluffyThemes.animationDuration,
           curve: FluffyThemes.animationCurve,
           alignment: AlignmentDirectional.topStart,
-          child: Text.rich(
-            widget.span,
-            style: widget.style,
-            maxLines: _expanded ? null : widget.maxLines,
-            overflow: _expanded ? TextOverflow.visible : TextOverflow.ellipsis,
-            selectionColor: widget.textColor.withAlpha(128),
+          child: Stack(
+            children: [
+              _MessageLayoutProbe(
+                maxLines: widget.maxLines,
+                onCutoffChanged: _updateCutoff,
+                measure: !collapsed,
+                child: Text.rich(
+                  !_expanded && cutoff != null
+                      ? _takeSpan(widget.span, cutoff)
+                      : widget.span,
+                  style: widget.style,
+                  selectionColor: widget.textColor.withAlpha(128),
+                ),
+              ),
+              if (collapsed)
+                // Measure the complete body without exposing hidden text to
+                // selection, focus, or accessibility in the visible subtree.
+                Offstage(
+                  child: TickerMode(
+                    enabled: false,
+                    child: ExcludeSemantics(
+                      child: ExcludeFocus(
+                        child: IgnorePointer(
+                          child: SelectionContainer.disabled(
+                            child: _MessageLayoutProbe(
+                              maxLines: widget.maxLines,
+                              onCutoffChanged: _updateCutoff,
+                              child: Text.rich(
+                                widget.span,
+                                style: widget.style,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
-        Center(
-          child: TextButton.icon(
-            onPressed: () => setState(() => _expanded = !_expanded),
-            style: TextButton.styleFrom(foregroundColor: widget.linkColor),
-            icon: Icon(_expanded ? Icons.arrow_drop_up : Icons.arrow_drop_down),
-            label: Text(_expanded ? l10n.showLess : l10n.showMore),
+        if (cutoff != null)
+          Center(
+            child: TextButton.icon(
+              onPressed: () => setState(() {
+                _expanded = !_expanded;
+              }),
+              style: TextButton.styleFrom(foregroundColor: widget.linkColor),
+              icon: Icon(
+                _expanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+              ),
+              label: Text(_expanded ? l10n.showLess : l10n.showMore),
+            ),
           ),
-        ),
       ],
     );
   }
+}
+
+InlineSpan _takeSpan(InlineSpan span, int length) {
+  if (length >= span.toPlainText(includeSemanticsLabels: false).length) {
+    return span;
+  }
+  if (span is! TextSpan) return length > 0 ? span : const TextSpan();
+  final text = span.text;
+  final textLength = text?.length ?? 0;
+  final visibleText = text?.substring(0, math.min(length, textLength));
+  var remaining = math.max(0, length - textLength);
+  final children = <InlineSpan>[];
+  for (final child in span.children ?? const <InlineSpan>[]) {
+    if (remaining == 0) break;
+    final childLength = child.toPlainText(includeSemanticsLabels: false).length;
+    children.add(_takeSpan(child, remaining));
+    remaining = math.max(0, remaining - childLength);
+  }
+  return TextSpan(
+    text: visibleText,
+    children: children,
+    style: span.style,
+    recognizer: span.recognizer,
+    mouseCursor: span.mouseCursor,
+    onEnter: span.onEnter,
+    onExit: span.onExit,
+    locale: span.locale,
+    spellOut: span.spellOut,
+  );
+}
+
+class _MessageLayoutProbe extends SingleChildRenderObjectWidget {
+  final int maxLines;
+  final ValueChanged<int?> onCutoffChanged;
+  final bool measure;
+
+  const _MessageLayoutProbe({
+    required this.maxLines,
+    required this.onCutoffChanged,
+    this.measure = true,
+    required super.child,
+  });
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenderMessageLayoutProbe(maxLines, onCutoffChanged, measure);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenderMessageLayoutProbe renderObject,
+  ) {
+    renderObject
+      ..maxLines = maxLines
+      ..onCutoffChanged = onCutoffChanged
+      ..measure = measure
+      ..markNeedsLayout();
+  }
+}
+
+class _RenderMessageLayoutProbe extends RenderProxyBox {
+  _RenderMessageLayoutProbe(
+    this._maxLines,
+    this.onCutoffChanged,
+    this._measure,
+  );
+
+  int _maxLines;
+  ValueChanged<int?> onCutoffChanged;
+  bool _measure;
+  bool _measurementPending = false;
+  int _measurementGeneration = 0;
+
+  set measure(bool value) {
+    if (_measure == value) return;
+    _measure = value;
+    markNeedsLayout();
+  }
+
+  set maxLines(int value) {
+    if (_maxLines == value) return;
+    _maxLines = value;
+    markNeedsLayout();
+  }
+
+  RenderParagraph? _findParagraph(RenderObject node) {
+    if (node is RenderParagraph) return node;
+    RenderParagraph? paragraph;
+    node.visitChildren((child) {
+      paragraph ??= _findParagraph(child);
+    });
+    return paragraph;
+  }
+
+  @override
+  void attach(PipelineOwner owner) {
+    super.attach(owner);
+    markNeedsLayout();
+  }
+
+  @override
+  void detach() {
+    _measurementGeneration++;
+    _measurementPending = false;
+    super.detach();
+  }
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    if (!_measure || _measurementPending) return;
+    _measurementPending = true;
+    final generation = _measurementGeneration;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (generation != _measurementGeneration) return;
+      _measurementPending = false;
+      if (!attached || !_measure || !hasSize) return;
+      // Inline widgets are descendants of the paragraph. Their sizes may only
+      // be inspected once the active layout pass has finished.
+      final paragraph = child == null ? null : _findParagraph(child!);
+      if (paragraph == null || !paragraph.hasSize) return;
+      onCutoffChanged(_calculateCutoff(paragraph));
+    });
+  }
+
+  int? _calculateCutoff(RenderParagraph paragraph) {
+    final layout = _layoutParagraph(paragraph);
+    try {
+      final lines = layout.painter.computeLineMetrics();
+      var remainingLines = _maxLines;
+      for (var index = 0; index < lines.length; index++) {
+        final line = lines[index];
+        final boundary = layout.painter.getLineBoundary(
+          layout.painter.getPositionForOffset(Offset(line.left, line.baseline)),
+        );
+        final placeholders = layout.placeholders.where(
+          (placeholder) =>
+              placeholder.offset >= boundary.start &&
+              placeholder.offset < boundary.end,
+        );
+        final lineCount = placeholders.fold(
+          1,
+          (count, placeholder) => math.max(count, placeholder.lines),
+        );
+        if (remainingLines < lineCount) {
+          final crossing = placeholders.where(
+            (placeholder) => placeholder.lines > remainingLines,
+          );
+          final offset = crossing.isNotEmpty
+              ? crossing.first.offset
+              : boundary.start;
+          return _nonemptyPrefix(paragraph.text, offset);
+        }
+        remainingLines -= lineCount;
+        if (remainingLines == 0 && index < lines.length - 1) {
+          return _nonemptyPrefix(paragraph.text, boundary.end);
+        }
+      }
+      return null;
+    } finally {
+      layout.painter.dispose();
+    }
+  }
+
+  _ParagraphLayout _layoutParagraph(RenderParagraph paragraph) {
+    final dimensions = <PlaceholderDimensions>[];
+    final placeholders = <({int offset, int lines})>[];
+    var textOffset = 0;
+    var placeholder = paragraph.firstChild;
+    paragraph.text.visitChildren((span) {
+      if (span is TextSpan) {
+        textOffset += span.text?.length ?? 0;
+      } else if (span is PlaceholderSpan) {
+        final box = placeholder;
+        if (box != null) {
+          dimensions.add(
+            PlaceholderDimensions(
+              size: box.size,
+              alignment: span.alignment,
+              baseline: span.baseline,
+              baselineOffset: span.alignment == PlaceholderAlignment.baseline
+                  ? box.getDryBaseline(box.constraints, span.baseline!)
+                  : null,
+            ),
+          );
+          placeholders.add((offset: textOffset, lines: _countLines(box)));
+          placeholder = paragraph.childAfter(box);
+        }
+        textOffset++;
+      }
+      return true;
+    });
+    final painter = TextPainter(
+      text: paragraph.text,
+      textAlign: paragraph.textAlign,
+      textDirection: paragraph.textDirection,
+      textScaler: paragraph.textScaler,
+      locale: paragraph.locale,
+      strutStyle: paragraph.strutStyle,
+      textWidthBasis: paragraph.textWidthBasis,
+      textHeightBehavior: paragraph.textHeightBehavior,
+    );
+    painter
+      ..setPlaceholderDimensions(dimensions)
+      ..layout(
+        minWidth: paragraph.constraints.minWidth,
+        maxWidth: paragraph.constraints.maxWidth,
+      );
+    return _ParagraphLayout(painter, placeholders);
+  }
+
+  int _countLines(RenderObject node) {
+    if (node is RenderTable) {
+      var count = 0;
+      for (var row = 0; row < node.rows; row++) {
+        count += node
+            .row(row)
+            .fold(1, (lines, cell) => math.max(lines, _countLines(cell)));
+      }
+      return count;
+    }
+    if (node is RenderParagraph) {
+      final layout = _layoutParagraph(node);
+      try {
+        return layout.painter.computeLineMetrics().fold(0, (count, line) {
+          final boundary = layout.painter.getLineBoundary(
+            layout.painter.getPositionForOffset(
+              Offset(line.left, line.baseline),
+            ),
+          );
+          return count +
+              layout.placeholders
+                  .where(
+                    (placeholder) =>
+                        placeholder.offset >= boundary.start &&
+                        placeholder.offset < boundary.end,
+                  )
+                  .fold(
+                    1,
+                    (lines, placeholder) => math.max(lines, placeholder.lines),
+                  );
+        });
+      } finally {
+        layout.painter.dispose();
+      }
+    }
+    var count = 1;
+    node.visitChildren((child) {
+      count = math.max(count, _countLines(child));
+    });
+    return count;
+  }
+
+  int? _nonemptyPrefix(InlineSpan span, int offset) {
+    final text = span.toPlainText(includeSemanticsLabels: false);
+    if (offset >= text.length || text.substring(offset).trim().isEmpty) {
+      return null;
+    }
+    final prefix = text.substring(0, offset).trimRight();
+    if (prefix.trim().isEmpty) return null;
+    return prefix.length;
+  }
+}
+
+class _ParagraphLayout {
+  final TextPainter painter;
+  final List<({int offset, int lines})> placeholders;
+
+  const _ParagraphLayout(this.painter, this.placeholders);
 }
 
 class MatrixPill extends StatelessWidget {
