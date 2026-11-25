@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.708353",
+    "translationCacheUpgrading": "資料存檔升級中，請稍候片刻",
+    "translationCacheUpgradeFailed": "翻譯快取升級失敗",
     "translationRoaming": "譯文漫遊",
     "translationRoamingDescription": "在使用相同連線和預先共用金鑰的裝置之間共用加密的訊息譯文。金鑰保留在您的裝置上。關閉翻譯時，漫遊也會暫停。",
     "translationRoamingConnectionType": "連線類型",

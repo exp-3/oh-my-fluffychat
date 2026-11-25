@@ -21,8 +21,6 @@ class TranslationCacheKey {
       sourceLanguage,
       targetLanguage,
       messageType;
-
-  /// Encrypted provenance only. Never contributes to identity or AAD.
   final String? model;
   final String? originalEventId;
   const TranslationCacheKey({
@@ -36,31 +34,38 @@ class TranslationCacheKey {
     this.model,
     this.originalEventId,
   });
+
   List<String> identity(String binding) => [
-    userId,
     binding,
     sourceLanguage,
     targetLanguage,
     messageType,
   ];
-  String aad(String binding) => jsonEncode([2, ...identity(binding)]);
+  String aad(String binding) => jsonEncode([3, ...identity(binding)]);
+  String get referenceKey => jsonEncode([
+    userId,
+    roomId,
+    eventId,
+    sourceLanguage,
+    targetLanguage,
+    messageType,
+  ]);
 }
 
 enum TranslationCacheLookupStatus { hit, miss, unavailable }
 
-/// A safety check rejected a late write, rather than an ordinary I/O failure.
 class TranslationCacheWriteInvalidated extends StateError {
   TranslationCacheWriteInvalidated()
     : super('Translation cache write invalidated');
 }
 
 class TranslationCacheTicket {
-  final String sourceDigest;
+  final String referenceKey;
   final int epoch;
   final String generation;
   final String storeId;
   const TranslationCacheTicket(
-    this.sourceDigest,
+    this.referenceKey,
     this.epoch,
     this.generation, [
     this.storeId = '',
@@ -121,175 +126,117 @@ class TranslationCacheCleanupResult {
   );
 }
 
-/// Content is addressed independently of its envelope format and provenance.
-/// All mutations, reference changes and tombstones use backend transactions.
 class TranslationCache {
   static const _masterKeyName = 'chat.fluffy.translation.cache_master_key';
   final TranslationSecretStore secrets;
   final TranslationCacheBackend backend;
   TranslationPreferences? safetyPreferences;
-  TranslationSourceResolver? localSourceResolver;
   Uint8List? _masterKey;
   Future<void> _operationTail = Future.value();
   final _epochs = <String, int>{};
   List<CacheRow> _pending = [];
   bool _pendingLoaded = false;
+  bool _formatChecked = false;
   int _safetyEpoch = 0;
   TranslationCache(this.secrets, [TranslationCacheBackend? backend])
     : backend = backend ?? createTranslationCacheBackend();
 
   Stream<void> get externalChanges => backend.externalChanges;
+
   Future<void> refreshSafetyState() => _serialized(() async {
-    // Another context may have cleared the cache and created a new master.
     _masterKey = null;
+    _formatChecked = false;
     await backend.close();
     await _loadPending(refresh: true);
   });
-  String _digest(String source) =>
-      sha256.convert(utf8.encode(source)).toString();
-  String? bindingIfLoaded(String source) =>
-      _masterKey == null ? null : _sourceBinding(_masterKey!, source);
-  Future<bool> exists() async {
-    try {
-      return await backend.exists();
-    } catch (_) {
-      return false;
-    }
-  }
+
+  Future<bool> needsUpgrade() => _serialized(() async {
+    if (!backend.supported) return false;
+    if (!await _openExisting(checkFormat: false)) return false;
+    final needed = await backend.needsUpgrade();
+    _formatChecked = !needed;
+    return needed;
+  });
 
   Future<String?> read(TranslationCacheKey key) async =>
       (await lookup(key)).translation;
+
   Future<TranslationCacheLookup> lookup(TranslationCacheKey key) => _serialized(
     () async {
-      final digest = _digest(key.source);
-      final epoch = _epochs[digest] ?? 0;
+      final epoch = _epoch(key);
       final safetyEpoch = _safetyEpoch;
       try {
-        if (!await _openExisting(migrate: true)) {
+        if (!await _openExisting()) {
           return TranslationCacheLookup(
             TranslationCacheLookupStatus.miss,
-            ticket: TranslationCacheTicket(digest, epoch, ''),
+            ticket: TranslationCacheTicket(key.referenceKey, epoch, ''),
           );
         }
-        if (!await _replayPending()) return TranslationCacheLookup.unavailable;
+        await _replayPending();
         final master = _masterKey!;
-        final binding = _sourceBinding(master, key.source);
-        final storageKey = _storageKey(master, key.identity(binding));
-        final candidate = await backend.transaction(
-          (tx) => tx.get(CacheStore.contents, storageKey),
-        );
-        TranslationCacheKey? validatedOrigin;
-        if (candidate?['legacy'] == 1 && localSourceResolver != null) {
-          final source = await localSourceResolver!(
-            key.userId,
-            cacheString(candidate!, 'room_id'),
-            cacheString(candidate, 'event_id'),
-          );
-          if (source.status == TranslationLocalSourceStatus.unavailable) {
-            return TranslationCacheLookup.unavailable;
-          }
-          if (source.status == TranslationLocalSourceStatus.obsolete ||
-              source.source != key.source) {
-            await backend.transaction(
-              (tx) => _deleteBindings(tx, {binding}),
-              write: true,
-              notify: true,
-            );
-            return TranslationCacheLookup.unavailable;
-          }
-          validatedOrigin = TranslationCacheKey(
-            userId: key.userId,
-            roomId: cacheString(candidate, 'room_id'),
-            eventId: cacheString(candidate, 'event_id'),
-            originalEventId: source.originalEventId,
-            source: key.source,
-            sourceLanguage: key.sourceLanguage,
-            targetLanguage: key.targetLanguage,
-            messageType: key.messageType,
-          );
-        }
         return await backend.transaction((tx) async {
-          final generation = await _generation(tx, binding);
           final ticket = TranslationCacheTicket(
-            digest,
+            key.referenceKey,
             epoch,
-            generation,
+            await _generation(tx, key),
             await _storeId(tx),
           );
-          final row = await tx.get(CacheStore.contents, storageKey);
-          // References also cover corrupt/missing content and requests that
-          // join an existing translation operation.
-          await _attachReferences(tx, master, key, binding, storageKey);
-          if (row == null) {
-            // Persist a reference for an in-flight miss too, so another tab can
-            // invalidate the source before a late network result is committed.
-            return TranslationCacheLookup(
-              TranslationCacheLookupStatus.miss,
-              ticket: ticket,
+          final reference = await tx.get(
+            CacheStore.messageRefs,
+            key.referenceKey,
+          );
+          if (reference != null) {
+            final content = await tx.get(
+              CacheStore.sharedContents,
+              cacheString(reference, 'content_key'),
             );
-          }
-          if (cacheString(row, 'generation') != generation) {
-            await tx.delete(CacheStore.contents, storageKey);
-            return TranslationCacheLookup(
-              TranslationCacheLookupStatus.miss,
-              ticket: ticket,
-            );
-          }
-          String text;
-          try {
-            if (cacheString(row, 'user_id') != key.userId ||
-                cacheString(row, 'source_binding') != binding) {
-              throw const FormatException();
+            if (content != null) {
+              String? text;
+              try {
+                text = _readContent(master, key, content);
+              } catch (_) {
+                // Detach only this message after an edit or failed authentication.
+              }
+              if (text != null) {
+                if (_epoch(key) != epoch || safetyEpoch != _safetyEpoch) {
+                  return TranslationCacheLookup.unavailable;
+                }
+                if (key.originalEventId != null &&
+                    reference['original_event_id'] != key.originalEventId) {
+                  await _attachReference(
+                    tx,
+                    key,
+                    cacheString(reference, 'content_key'),
+                  );
+                }
+                return TranslationCacheLookup(
+                  TranslationCacheLookupStatus.hit,
+                  translation: text,
+                  ticket: ticket,
+                );
+              }
             }
-            if (row['legacy'] == 1) {
-              if (!_legacyMatches(master, key.source, row) ||
-                  !_legacyLanguagesMatch(key, row)) {
-                throw const FormatException();
-              }
-              text = _decrypt(master, key.source, row);
-              final converted = _encrypt(
-                master,
-                key,
-                text,
-                generation,
-                legacyModel: _legacyModel(row),
-              )..['rank'] = cacheString(row, 'rank');
-              // Converted backfills remain lower priority than actual writes.
-              converted['legacy'] = 2;
-              await tx.put(CacheStore.contents, converted);
-            } else {
-              if (cacheString(row, 'aad') != key.aad(binding)) {
-                throw const FormatException();
-              }
-              final payload =
-                  jsonDecode(_decrypt(master, key.source, row))
-                      as Map<String, Object?>;
-              if (payload['v'] != 2 || payload['text'] is! String) {
-                throw const FormatException();
-              }
-              text = payload['text']! as String;
-            }
-          } catch (_) {
-            await tx.delete(CacheStore.contents, storageKey);
-            return TranslationCacheLookup(
-              TranslationCacheLookupStatus.miss,
-              ticket: ticket,
-            );
+            await _detachReference(tx, reference);
           }
-          if ((_epochs[digest] ?? 0) != epoch || safetyEpoch != _safetyEpoch) {
+          final binding = _sourceBinding(master, key.source);
+          final storageKey = _storageKey(master, key.identity(binding));
+          final content = await tx.get(CacheStore.sharedContents, storageKey);
+          String? text;
+          if (content != null) {
+            try {
+              text = _readContent(master, key, content);
+            } catch (_) {
+              // Other messages retain their references until checked.
+            }
+          }
+          await _attachReference(tx, key, storageKey);
+          if (_epoch(key) != epoch || safetyEpoch != _safetyEpoch) {
             return TranslationCacheLookup.unavailable;
           }
-          if (validatedOrigin != null) {
-            await _attachReferences(
-              tx,
-              master,
-              validatedOrigin,
-              binding,
-              storageKey,
-            );
-          }
           return TranslationCacheLookup(
-            TranslationCacheLookupStatus.hit,
+            text == null
+                ? TranslationCacheLookupStatus.miss
+                : TranslationCacheLookupStatus.hit,
             translation: text,
             ticket: ticket,
           );
@@ -317,17 +264,7 @@ class TranslationCache {
     Map<TranslationCacheKey, TranslationCacheTicket>? tickets,
   }) {
     if (translations.isEmpty) return Future.value();
-    // Capture the local generation before waiting for the serialization queue.
-    final captured = {
-      for (final key in translations.keys)
-        key:
-            tickets?[key] ??
-            TranslationCacheTicket(
-              _digest(key.source),
-              _epochs[_digest(key.source)] ?? 0,
-              '',
-            ),
-    };
+    final epochs = {for (final key in translations.keys) key: _epoch(key)};
     final safetyEpoch = _safetyEpoch;
     return _serialized(() async {
       var createdKey = false;
@@ -335,8 +272,14 @@ class TranslationCache {
       void ensureValid() {
         if (isValid?.call() == false ||
             safetyEpoch != _safetyEpoch ||
-            captured.values.any(
-              (ticket) => (_epochs[ticket.sourceDigest] ?? 0) != ticket.epoch,
+            translations.keys.any(
+              (key) {
+                final ticket = tickets?[key];
+                return _epoch(key) != epochs[key] ||
+                    (ticket != null &&
+                        (ticket.referenceKey != key.referenceKey ||
+                            ticket.epoch != _epoch(key)));
+              },
             )) {
           throw TranslationCacheWriteInvalidated();
         }
@@ -345,12 +288,14 @@ class TranslationCache {
       try {
         ensureValid();
         final existed = await backend.exists();
-        if (!existed) _masterKey = null;
+        if (!existed) {
+          _masterKey = null;
+          _formatChecked = false;
+        }
         final existingMaster = await _loadExistingMasterKey();
         if (existed && existingMaster == null) {
           throw StateError('Translation cache key unavailable');
         }
-        ensureValid();
         final master =
             existingMaster ??
             await (() {
@@ -359,69 +304,50 @@ class TranslationCache {
             })();
         ensureValid();
         if (existed) {
-          if (!await backend.openExisting(
-            _databaseKey(master),
-            migrate: true,
-          )) {
+          if (!await _openExisting()) {
             throw StateError('Translation cache disappeared');
           }
         } else {
           createdDatabase = true;
           await backend.openOrCreate(_databaseKey(master));
+          _formatChecked = true;
         }
         ensureValid();
-        if (!await _replayPending()) {
-          throw TranslationCacheWriteInvalidated();
-        }
-        await backend.transaction(
-          (tx) async {
-            final storeId = await _storeId(tx);
-            for (final entry in translations.entries) {
-              final key = entry.key;
-              if (key.userId.isEmpty) {
-                throw StateError('Translation cache owner missing');
-              }
-              final binding = _sourceBinding(master, key.source);
-              final generation = await _generation(tx, binding);
-              // Explicit tickets always guard disk generations. Direct writes
-              // (maintenance/tests) start a new request at the current generation.
-              if (tickets?[key] != null &&
-                  (captured[key]!.generation != generation ||
-                      (captured[key]!.storeId.isNotEmpty &&
-                          captured[key]!.storeId != storeId))) {
-                throw TranslationCacheWriteInvalidated();
-              }
-              ensureValid();
-              final row = _encrypt(master, key, entry.value, generation);
-              await tx.put(CacheStore.contents, row);
-              await _attachReferences(
-                tx,
-                master,
-                key,
-                binding,
-                cacheString(row, 'cache_key'),
-              );
+        await _replayPending();
+        await backend.transaction((tx) async {
+          final storeId = await _storeId(tx);
+          for (final entry in translations.entries) {
+            final key = entry.key;
+            if (key.userId.isEmpty) {
+              throw StateError('Translation cache reference owner missing');
             }
-            // Throwing here aborts the entire transaction. Never restore a prior
-            // snapshot after commit: that could resurrect content from another tab.
+            final ticket = tickets?[key];
+            if (ticket != null &&
+                (ticket.generation != await _generation(tx, key) ||
+                    (ticket.storeId.isNotEmpty && ticket.storeId != storeId))) {
+              throw TranslationCacheWriteInvalidated();
+            }
             ensureValid();
-          },
-          write: true,
-          notify: true,
-        );
+            final binding = _sourceBinding(master, key.source);
+            final row = _encrypt(master, key, entry.value, binding);
+            await tx.put(CacheStore.sharedContents, row);
+            await _attachReference(tx, key, cacheString(row, 'cache_key'));
+          }
+          ensureValid();
+        }, write: true, notify: true);
       } catch (_) {
-        // Only remove a newly created, empty store. A concurrent valid write
-        // must survive cancellation or secure-storage failures.
         if (createdDatabase) {
           try {
             final empty = await backend.transaction(
               (tx) async =>
-                  await tx.count(CacheStore.contents) == 0 &&
-                  await tx.count(CacheStore.translations) == 0 &&
-                  await tx.count(CacheStore.refs) == 0 &&
-                  await tx.count(CacheStore.generations) == 0,
+                  await tx.count(CacheStore.sharedContents) == 0 &&
+                  await tx.count(CacheStore.messageRefs) == 0 &&
+                  await tx.count(CacheStore.revisions) == 0,
             );
-            if (empty) await backend.deleteIfExists();
+            if (empty) {
+              await backend.deleteIfExists();
+              _formatChecked = false;
+            }
           } catch (_) {}
         }
         if (createdKey && !await backend.exists()) {
@@ -433,51 +359,35 @@ class TranslationCache {
     });
   }
 
-  /// Destructive by source, including every user/language/type variant and
-  /// all shared references. No reference-count retention on edits/deletions.
   Future<void> invalidateEventIfExists(
     String roomId,
-    String eventId, {
-    Iterable<String> sources = const [],
-  }) {
-    _safetyEpoch++;
-    backend.signalInvalidation();
-    final sourceList = sources.toSet();
-    for (final source in sourceList) {
-      final digest = _digest(source);
-      _epochs[digest] = (_epochs[digest] ?? 0) + 1;
-    }
+    String eventId,
+  ) {
+    _bumpEpoch(_scope('event', [roomId, eventId]));
     return _serialized(
-      () => _safeCleanup({
-        'room_id': roomId,
-        'event_id': eventId,
-        'bindings': sourceList
-            .map(bindingIfLoaded)
-            .whereType<String>()
-            .toList(),
-      }, sources: sourceList),
+      () => _safeCleanup({'room_id': roomId, 'event_id': eventId}),
     );
   }
 
   Future<void> invalidateRoomIfExists(String roomId, {String? userId}) {
-    _safetyEpoch++;
-    backend.signalInvalidation();
+    _bumpEpoch(
+      userId == null
+          ? _scope('room', [roomId])
+          : _scope('user_room', [userId, roomId]),
+    );
     return _serialized(
       () => _safeCleanup({'room_id': roomId, 'user_id': ?userId}),
     );
   }
 
   Future<void> invalidateUserIfExists(String userId) {
-    _safetyEpoch++;
-    backend.signalInvalidation();
+    _bumpEpoch(_scope('user', [userId]));
     return _serialized(() => _safeCleanup({'user_id': userId}));
   }
 
   Future<void> _loadPending({bool refresh = false}) async {
     if (_pendingLoaded && !refresh) return;
     if (refresh) await safetyPreferences?.store.reload();
-    // Preserve in-memory identifiers even when a previous settings write
-    // failed, and merge queue entries created by another context.
     final merged = {
       for (final row in [
         ..._pending,
@@ -490,22 +400,12 @@ class TranslationCache {
   }
 
   Future<void> _savePending() =>
-      safetyPreferences?.setPendingCacheCleanup(_pending) ??
-      Future<void>.value();
-  Future<void> _safeCleanup(
-    CacheRow identifier, {
-    Set<String> sources = const {},
-  }) async {
-    identifier = {
-      ...identifier,
-      // Distinct occurrences must not be removed by a tab acknowledging an
-      // earlier cleanup of the same event.
-      'id': base64UrlEncode(_randomBytes(12)),
-    };
+      safetyPreferences?.setPendingCacheCleanup(_pending) ?? Future<void>.value();
+
+  Future<void> _safeCleanup(CacheRow identifier) async {
+    identifier = {...identifier, 'id': base64UrlEncode(_randomBytes(12))};
     try {
-      if (!await backend.exists()) {
-        return; // No key, tables, settings or migration.
-      }
+      if (!await backend.exists()) return;
     } catch (_) {
       _pending.add(identifier);
       try {
@@ -515,305 +415,448 @@ class TranslationCache {
       } catch (_) {}
       return;
     }
-    // Derive bindings only after confirming the store exists. Source snapshots
-    // stay in memory; only keyed digests enter the retry queue.
-    try {
-      final master = await _loadExistingMasterKey();
-      if (master != null && sources.isNotEmpty) {
-        identifier = {
-          ...identifier,
-          'bindings': {
-            ...(identifier['bindings'] as List<Object?>? ?? [])
-                .whereType<String>(),
-            ...sources.map((source) => _sourceBinding(master, source)),
-          }.toList(),
-        };
-      }
-    } catch (_) {}
     _pending.add(identifier);
     try {
       await _loadPending(refresh: true);
       await _savePending();
       backend.signalInvalidation();
-      if (!await _openExisting()) {
-        _pending.removeWhere(
-          (row) => jsonEncode(row) == jsonEncode(identifier),
-        );
-        await _savePending();
-        return;
-      }
+      if (!await _openExisting()) return;
       await _replayPending();
     } catch (_) {
-      /* Retry before serving another cache hit. Normal chat proceeds. */
+      // Retry persistent cleanup before serving another cache hit.
     }
   }
 
-  Future<bool> _replayPending() async {
-    try {
-      await _loadPending(refresh: true);
-      if (_pending.isEmpty) return true;
-      for (final item in List<CacheRow>.of(_pending)) {
-        if (item['suspended'] == true) return false;
-        if (cacheString(item, 'room_id').isEmpty &&
-            cacheString(item, 'user_id').isEmpty &&
-            (item['bindings'] is! List ||
-                (item['bindings']! as List).isEmpty)) {
-          return false;
-        }
-        await backend.transaction(
-          (tx) => _cleanup(tx, item),
-          write: true,
-          notify: true,
-        );
-        _pending.remove(item);
-        await _savePending();
-      }
-      return true;
-    } catch (_) {
-      return false;
+  Future<void> _replayPending() async {
+    await _loadPending(refresh: true);
+    for (final item in List<CacheRow>.of(_pending)) {
+      await backend.transaction(
+        (tx) => _cleanup(tx, item),
+        write: true,
+        notify: true,
+      );
+      _pending.remove(item);
+      await _savePending();
     }
   }
 
-  Future<void> _cleanup(
-    TranslationCacheTransaction tx,
-    CacheRow item, {
-    Set<String>? visited,
-  }) async {
+  Future<void> _cleanup(TranslationCacheTransaction tx, CacheRow item) async {
     final room = cacheString(item, 'room_id');
     final event = cacheString(item, 'event_id');
     final user = cacheString(item, 'user_id');
-    visited ??= {};
-    if (event.isNotEmpty && !visited.add(jsonEncode([room, event]))) return;
-    final bindings = (item['bindings'] as List<Object?>? ?? [])
-        .whereType<String>()
-        .toSet();
-    final index = event.isNotEmpty
-        ? 'event'
-        : room.isNotEmpty
-        ? 'room'
-        : 'user';
-    final equals = event.isNotEmpty
-        ? [room, event]
-        : room.isNotEmpty
-        ? [room]
-        : [user];
+    if (item['suspended'] == true ||
+        (room.isEmpty && user.isEmpty && event.isEmpty)) {
+      throw StateError('Translation cleanup identifiers unavailable');
+    }
     if (event.isNotEmpty) {
-      // An edit reference records its original event, including after the SDK
-      // has redacted away the edit relationship itself.
-      final roots = <String>{};
+      final roots = <String>{event};
       Object? cursor;
       while (true) {
-        final refs = await tx.query(
-          CacheStore.refs,
+        final direct = await tx.query(
+          CacheStore.messageRefs,
           index: 'event',
-          equals: equals,
+          equals: [room, event],
           after: cursor,
         );
-        if (refs.isEmpty) break;
-        for (final ref in refs) {
-          final root = cacheString(ref, 'original_event_id');
-          if (root.isNotEmpty && root != event) roots.add(root);
+        if (direct.isEmpty) break;
+        for (final reference in direct) {
+          final root = cacheString(reference, 'original_event_id');
+          if (root.isNotEmpty) roots.add(root);
         }
-        cursor = refs.last['_cursor'];
+        cursor = direct.last['_cursor'];
       }
       for (final root in roots) {
-        await _cleanup(tx, {
-          'room_id': room,
-          'event_id': root,
-        }, visited: visited);
+        await _revise(tx, _scope('event', [room, root]));
+        await _detachMatching(tx, 'event', [room, root], reviseEvents: true);
+        await _detachMatching(tx, 'root', [room, root], reviseEvents: true);
       }
+      return;
     }
-    for (final store in [CacheStore.refs, CacheStore.translations]) {
-      if (store == CacheStore.translations && index == 'user') continue;
-      Object? cursor;
-      while (true) {
-        final rows = await tx.query(
-          store,
-          index: index,
-          equals: equals,
-          after: cursor,
-        );
-        if (rows.isEmpty) break;
-        for (final row in rows) {
-          if (user.isNotEmpty &&
-              store == CacheStore.refs &&
-              row['user_id'] != user) {
-            continue;
-          }
-          final binding = cacheString(row, 'source_binding');
-          if (event.isNotEmpty) {
-            if (binding.isNotEmpty) bindings.add(binding);
-          } else if (store == CacheStore.refs) {
-            final contentKey = cacheString(row, 'content_key');
-            await tx.delete(store, cacheString(row, 'cache_key'));
-            if ((await tx.query(
-              CacheStore.refs,
-              index: 'content',
-              equals: [contentKey],
-              limit: 1,
-            )).isEmpty) {
-              await tx.delete(CacheStore.contents, contentKey);
-            }
-          }
-          await tx.delete(store, cacheString(row, 'cache_key'));
-        }
-        cursor = rows.last['_cursor'];
+    if (room.isNotEmpty) {
+      if (user.isEmpty) {
+        await _revise(tx, _scope('room', [room]));
+        await _detachMatching(tx, 'room', [room]);
+      } else {
+        await _revise(tx, _scope('user_room', [user, room]));
+        await _detachMatching(tx, 'user_room', [user, room]);
       }
+      return;
     }
-    await _deleteBindings(tx, bindings);
-    if (index == 'user') {
-      await _deleteMatching(tx, CacheStore.contents, 'user', [user]);
-    }
+    await _revise(tx, _scope('user', [user]));
+    await _detachMatching(tx, 'user', [user]);
   }
 
-  Future<void> _deleteBindings(
-    TranslationCacheTransaction tx,
-    Set<String> bindings,
-  ) async {
-    for (final binding in bindings) {
-      if (tx.hasStore(CacheStore.generations)) {
-        await tx.put(CacheStore.generations, {
-          'cache_key': binding,
-          'value': base64UrlEncode(_randomBytes(18)),
-        });
-      }
-      for (final store in [
-        CacheStore.contents,
-        CacheStore.refs,
-        CacheStore.translations,
-      ]) {
-        await _deleteMatching(tx, store, 'binding', [binding]);
-      }
-    }
-  }
+  static Future<void> _revise(TranslationCacheTransaction tx, String scope) =>
+      tx.put(CacheStore.revisions, {
+        'cache_key': scope,
+        'value': base64UrlEncode(_randomBytes(18)),
+      });
 
-  Future<void> _deleteMatching(
+  static Future<void> _detachMatching(
     TranslationCacheTransaction tx,
-    CacheStore store,
     String index,
-    List<String> equals,
-  ) async {
+    List<String> equals, {
+    bool reviseEvents = false,
+  }) async {
     Object? cursor;
     while (true) {
       final rows = await tx.query(
-        store,
+        CacheStore.messageRefs,
         index: index,
         equals: equals,
         after: cursor,
       );
       if (rows.isEmpty) return;
       for (final row in rows) {
-        await tx.delete(store, cacheString(row, 'cache_key'));
+        if (reviseEvents) {
+          await _revise(tx, _scope('event', [
+            cacheString(row, 'room_id'),
+            cacheString(row, 'event_id'),
+          ]));
+        }
+        await _detachReference(tx, row);
       }
       cursor = rows.last['_cursor'];
     }
+  }
+
+  static Future<void> _detachReference(
+    TranslationCacheTransaction tx,
+    CacheRow reference,
+  ) async {
+    await tx.delete(CacheStore.messageRefs, cacheString(reference, 'cache_key'));
+    final contentKey = cacheString(reference, 'content_key');
+    if ((await tx.query(
+      CacheStore.messageRefs,
+      index: 'content',
+      equals: [contentKey],
+      limit: 1,
+    )).isEmpty) {
+      await tx.delete(CacheStore.sharedContents, contentKey);
+    }
+  }
+
+  static Future<void> _attachReference(
+    TranslationCacheTransaction tx,
+    TranslationCacheKey key,
+    String contentKey,
+  ) async {
+    final existing = await tx.get(CacheStore.messageRefs, key.referenceKey);
+    if (existing != null && existing['content_key'] != contentKey) {
+      await _detachReference(tx, existing);
+    }
+    final original = cacheString(existing ?? {}, 'original_event_id');
+    await tx.put(CacheStore.messageRefs, {
+      'cache_key': key.referenceKey,
+      'user_id': key.userId,
+      'room_id': key.roomId,
+      'event_id': key.eventId,
+      'source_language': key.sourceLanguage,
+      'target_language': key.targetLanguage,
+      'message_type': key.messageType,
+      'content_key': contentKey,
+      'original_event_id':
+          key.originalEventId ?? (original.isEmpty ? key.eventId : original),
+    });
   }
 
   Future<TranslationCacheCleanupResult> cleanInvalid(
     TranslationSourceResolver localSource, {
     int pageSize = 200,
   }) => _serialized(() async {
-    try {
-      if (!await _openExisting() || !await _replayPending()) {
-        return TranslationCacheCleanupResult.notFound;
-      }
-      var checked = 0, retained = 0, deleted = 0;
-      for (final store in [CacheStore.refs, CacheStore.translations]) {
-        Object? cursor;
-        while (true) {
-          final rows = await backend.transaction(
-            (tx) =>
-                tx.query(store, after: cursor, limit: pageSize.clamp(1, 200)),
+    if (!await _openExisting()) return TranslationCacheCleanupResult.notFound;
+    await _replayPending();
+    var checked = 0, retained = 0, deleted = 0;
+    Object? cursor;
+    while (true) {
+      final rows = await backend.transaction(
+        (tx) => tx.query(
+          CacheStore.messageRefs,
+          after: cursor,
+          limit: pageSize.clamp(1, 200),
+        ),
+      );
+      if (rows.isEmpty) break;
+      for (final row in rows) {
+        checked++;
+        TranslationLocalSource source;
+        try {
+          source = await localSource(
+            cacheString(row, 'user_id'),
+            cacheString(row, 'room_id'),
+            cacheString(row, 'event_id'),
           );
-          if (rows.isEmpty) break;
-          for (final row in rows) {
-            checked++;
-            TranslationLocalSource source;
-            try {
-              source = await localSource(
-                cacheString(row, 'user_id'),
+        } catch (_) {
+          source = TranslationLocalSource.unavailable;
+        }
+        if (source.status == TranslationLocalSourceStatus.unavailable) {
+          retained++;
+          continue;
+        }
+        var valid = source.status == TranslationLocalSourceStatus.valid;
+        if (valid) {
+          final content = await backend.transaction(
+            (tx) => tx.get(
+              CacheStore.sharedContents,
+              cacheString(row, 'content_key'),
+            ),
+          );
+          try {
+            if (content == null) throw const FormatException();
+            _readContent(_masterKey!, _keyFromReference(row, source), content);
+          } catch (_) {
+            valid = false;
+          }
+        }
+        if (valid) {
+          retained++;
+        } else {
+          await backend.transaction((tx) async {
+            await _revise(
+              tx,
+              _scope('event', [
                 cacheString(row, 'room_id'),
                 cacheString(row, 'event_id'),
-              );
-            } catch (_) {
-              source = TranslationLocalSource.unavailable;
-            }
-            if (source.status == TranslationLocalSourceStatus.unavailable) {
-              retained++;
-              continue;
-            }
-            var valid =
-                source.status == TranslationLocalSourceStatus.valid &&
-                cacheString(row, 'source_binding') ==
-                    _sourceBinding(_masterKey!, source.source!);
-            if (valid) {
-              final content = store == CacheStore.translations
-                  ? row
-                  : await backend.transaction(
-                      (tx) => tx.get(
-                        CacheStore.contents,
-                        cacheString(row, 'content_key'),
-                      ),
-                    );
-              try {
-                if (content == null) throw const FormatException();
-                _decrypt(_masterKey!, source.source!, content);
-              } catch (_) {
-                valid = false;
-              }
-            }
-            if (valid) {
-              retained++;
-            } else {
-              try {
-                await backend.transaction(
-                  (tx) async {
-                    final binding = cacheString(row, 'source_binding');
-                    if (binding.isNotEmpty) {
-                      await _deleteBindings(tx, {binding});
-                    }
-                    await tx.delete(store, cacheString(row, 'cache_key'));
-                  },
-                  write: true,
-                  notify: true,
-                );
-              } catch (_) {
-                await _safeCleanup({
-                  'room_id': row['room_id'],
-                  'event_id': row['event_id'],
-                  'bindings': [
-                    if (cacheString(row, 'source_binding').isNotEmpty)
-                      row['source_binding'],
-                  ],
-                });
-                return TranslationCacheCleanupResult(
-                  checked: checked,
-                  retained: retained,
-                  deleted: deleted,
-                  cacheExisted: true,
-                );
-              }
-              deleted++;
-            }
-          }
-          cursor = rows.last['_cursor'];
+              ]),
+            );
+            await _detachReference(tx, row);
+          }, write: true, notify: true);
+          deleted++;
         }
       }
-      return TranslationCacheCleanupResult(
-        checked: checked,
-        retained: retained,
-        deleted: deleted,
-        cacheExisted: true,
+      cursor = rows.last['_cursor'];
+    }
+    return TranslationCacheCleanupResult(
+      checked: checked,
+      retained: retained,
+      deleted: deleted,
+      cacheExisted: true,
+    );
+  });
+
+  Future<void> upgrade(
+    TranslationSourceResolver localSource, {
+    Iterable<String> userIds = const [],
+    int pageSize = 200,
+  }) => _serialized(() async {
+    if (!await _openExisting(checkFormat: false)) return;
+    if (!await backend.needsUpgrade()) {
+      _formatChecked = true;
+      return;
+    }
+    _safetyEpoch++;
+    _formatChecked = false;
+    if (!await backend.openExisting(_databaseKey(_masterKey!), migrate: true)) {
+      throw StateError('Translation cache disappeared during upgrade');
+    }
+    await _loadPending(refresh: true);
+    if (_pending.any((row) => row['suspended'] == true)) {
+      throw StateError('Translation cleanup must be recovered before upgrade');
+    }
+    for (final store in [
+      CacheStore.sharedContents,
+      CacheStore.messageRefs,
+      CacheStore.revisions,
+    ]) {
+      await _clearStore(store);
+    }
+    await _clearUpgradeRanks();
+    final master = _masterKey!;
+    for (final store in [CacheStore.refs, CacheStore.translations]) {
+      Object? cursor;
+      while (true) {
+        final rows = await backend.transaction(
+          (tx) => tx.query(store, after: cursor, limit: pageSize.clamp(1, 200)),
+        );
+        if (rows.isEmpty) break;
+        for (final reference in rows) {
+          final owners = store == CacheStore.refs
+              ? [cacheString(reference, 'user_id')]
+              : userIds.toSet();
+          for (final owner in owners) {
+            if (owner.isEmpty) continue;
+            final source = await localSource(
+              owner,
+              cacheString(reference, 'room_id'),
+              cacheString(reference, 'event_id'),
+            );
+            if (source.status != TranslationLocalSourceStatus.valid ||
+                source.source == null) {
+              continue;
+            }
+            final old = store == CacheStore.translations
+                ? reference
+                : await backend.transaction(
+                    (tx) => tx.get(
+                      CacheStore.contents,
+                      cacheString(reference, 'content_key'),
+                    ),
+                  );
+            if (old == null) continue;
+            final converted = _decodeOld(master, owner, reference, source, old);
+            if (converted == null) continue;
+            final key = converted.key;
+            final binding = _sourceBinding(master, key.source);
+            final storageKey = _storageKey(master, key.identity(binding));
+            await backend.transaction((tx) async {
+              if (store == CacheStore.refs) {
+                final generation = cacheString(
+                  await tx.get(CacheStore.generations, binding) ?? {},
+                  'value',
+                );
+                if (cacheString(old, 'generation') != generation) return;
+              }
+              final rankKey = jsonEncode(['upgrade_rank', storageKey]);
+              final previous = cacheString(
+                await tx.get(CacheStore.metadata, rankKey) ?? {},
+                'value',
+              );
+              if (previous.isEmpty || converted.rank.compareTo(previous) > 0) {
+                await tx.put(
+                  CacheStore.sharedContents,
+                  _encrypt(
+                    master,
+                    key,
+                    converted.text,
+                    binding,
+                    writtenAt: converted.writtenAt,
+                  ),
+                );
+                await tx.put(CacheStore.metadata, {
+                  'cache_key': rankKey,
+                  'value': converted.rank,
+                });
+              }
+              await _attachReference(tx, key, storageKey);
+            }, write: true);
+          }
+        }
+        cursor = rows.last['_cursor'];
+        await Future<void>.delayed(Duration.zero);
+      }
+    }
+    await _loadPending(refresh: true);
+    for (final item in _pending) {
+      await backend.transaction((tx) => _cleanup(tx, item), write: true);
+    }
+    await _clearUpgradeRanks();
+    await backend.transaction((tx) => tx.put(CacheStore.metadata, {
+      'cache_key': 'store_id',
+      'value': base64UrlEncode(_randomBytes(18)),
+    }), write: true);
+    await backend.finishUpgrade();
+    _formatChecked = true;
+    _pending.clear();
+    await _savePending();
+  });
+
+  static _ConvertedTranslation? _decodeOld(
+    Uint8List master,
+    String owner,
+    CacheRow reference,
+    TranslationLocalSource source,
+    CacheRow row,
+  ) {
+    try {
+      final binding = _sourceBinding(master, source.source!);
+      final aad = jsonDecode(cacheString(row, 'aad')) as List<Object?>;
+      final String sourceLanguage, targetLanguage, messageType;
+      Map<String, Object?> payload;
+      var priority = 0;
+      if (aad.first == 2 && aad.length == 6) {
+        if (aad[1] != owner ||
+            row['user_id'] != owner ||
+            row['source_binding'] != binding ||
+            aad[2] != binding ||
+            row['cache_key'] != _storageKey(master, aad.sublist(1))) {
+          return null;
+        }
+        sourceLanguage = aad[3]! as String;
+        targetLanguage = aad[4]! as String;
+        messageType = aad[5]! as String;
+        payload = jsonDecode(_decrypt(master, source.source!, row))
+            as Map<String, Object?>;
+        if (payload['v'] != 2 || payload['text'] is! String) return null;
+        priority = row['legacy'] == 2 ? 0 : 1;
+      } else if (aad.first == 1 && aad.length == 7) {
+        if ((cacheString(row, 'source_binding').isNotEmpty &&
+                row['source_binding'] != binding) ||
+            aad[1] != reference['room_id'] ||
+            aad[2] != reference['event_id']) {
+          return null;
+        }
+        sourceLanguage = aad[3]! as String;
+        targetLanguage = aad[4]! as String;
+        messageType = aad[6]! as String;
+        payload = {'text': _decrypt(master, source.source!, row)};
+      } else {
+        return null;
+      }
+      final writtenAt = payload['written_at'] is String
+          ? DateTime.tryParse(payload['written_at']! as String)?.toUtc()
+          : null;
+      final timestamp = (writtenAt?.microsecondsSinceEpoch ?? 0)
+          .toString()
+          .padLeft(20, '0');
+      return _ConvertedTranslation(
+        key: TranslationCacheKey(
+          userId: owner,
+          roomId: cacheString(reference, 'room_id'),
+          eventId: cacheString(reference, 'event_id'),
+          originalEventId: source.originalEventId ??
+              (cacheString(reference, 'original_event_id').isEmpty
+                  ? null
+                  : cacheString(reference, 'original_event_id')),
+          source: source.source!,
+          sourceLanguage: sourceLanguage,
+          targetLanguage: targetLanguage,
+          messageType: messageType,
+          model: payload['model'] is String ? payload['model']! as String : null,
+        ),
+        text: payload['text']! as String,
+        writtenAt: writtenAt?.toIso8601String(),
+        rank: '$priority:$timestamp:${cacheString(row, 'cache_key')}',
       );
     } catch (_) {
-      return TranslationCacheCleanupResult.notFound;
+      return null;
     }
-  });
+  }
+
+  Future<void> _clearStore(CacheStore store) async {
+    while (true) {
+      final removed = await backend.transaction((tx) async {
+        final rows = await tx.query(store);
+        for (final row in rows) {
+          await tx.delete(store, cacheString(row, 'cache_key'));
+        }
+        return rows.length;
+      }, write: true);
+      if (removed == 0) return;
+    }
+  }
+
+  Future<void> _clearUpgradeRanks() async {
+    Object? cursor;
+    while (true) {
+      final rows = await backend.transaction((tx) async {
+        final rows = await tx.query(CacheStore.metadata, after: cursor);
+        for (final row in rows) {
+          if (cacheString(row, 'cache_key').startsWith('["upgrade_rank",')) {
+            await tx.delete(CacheStore.metadata, cacheString(row, 'cache_key'));
+          }
+        }
+        return rows;
+      }, write: true);
+      if (rows.isEmpty) return;
+      cursor = rows.last['_cursor'];
+    }
+  }
 
   Future<void> deleteIfExists() => _serialized(() async {
     _safetyEpoch++;
     await _loadPending(refresh: true);
     await backend.deleteIfExists();
+    _formatChecked = false;
     _masterKey = null;
     await secrets.delete(_masterKeyName);
     _pending.clear();
@@ -822,11 +865,18 @@ class TranslationCache {
 
   Future<void> dispose() => _serialized(backend.dispose);
 
-  Future<bool> _openExisting({bool migrate = false}) async {
+  Future<bool> _openExisting({bool checkFormat = true}) async {
     if (!await backend.exists()) return false;
     final master = await _loadExistingMasterKey();
     if (master == null) throw StateError('Translation cache key unavailable');
-    return backend.openExisting(_databaseKey(master), migrate: migrate);
+    if (!await backend.openExisting(_databaseKey(master))) return false;
+    if (checkFormat && !_formatChecked) {
+      if (await backend.needsUpgrade()) {
+        throw StateError('Translation cache archive upgrade required');
+      }
+      _formatChecked = true;
+    }
+    return true;
   }
 
   Future<Uint8List?> _loadExistingMasterKey() async {
@@ -860,11 +910,39 @@ class TranslationCache {
     })();
   }
 
+  static String _scope(String kind, List<String> values) =>
+      jsonEncode([kind, ...values]);
+
+  static List<String> _scopes(TranslationCacheKey key) => [
+    _scope('user', [key.userId]),
+    _scope('room', [key.roomId]),
+    _scope('user_room', [key.userId, key.roomId]),
+    _scope('event', [key.roomId, key.eventId]),
+    if (key.originalEventId != null && key.originalEventId != key.eventId)
+      _scope('event', [key.roomId, key.originalEventId!]),
+  ];
+
+  int _epoch(TranslationCacheKey key) =>
+      _scopes(key).fold(0, (value, scope) => value + (_epochs[scope] ?? 0));
+
+  void _bumpEpoch(String scope) {
+    _epochs[scope] = (_epochs[scope] ?? 0) + 1;
+    backend.signalInvalidation();
+  }
+
   static Future<String> _generation(
     TranslationCacheTransaction tx,
-    String binding,
-  ) async =>
-      cacheString(await tx.get(CacheStore.generations, binding) ?? {}, 'value');
+    TranslationCacheKey key,
+  ) async {
+    final revisions = <String>[];
+    for (final scope in _scopes(key)) {
+      revisions.add(
+        cacheString(await tx.get(CacheStore.revisions, scope) ?? {}, 'value'),
+      );
+    }
+    return revisions.every((value) => value.isEmpty) ? '' : jsonEncode(revisions);
+  }
+
   static Future<String> _storeId(TranslationCacheTransaction tx) async {
     var id = cacheString(
       await tx.get(CacheStore.metadata, 'store_id') ?? {},
@@ -877,66 +955,46 @@ class TranslationCache {
     return id;
   }
 
-  static CacheRow _reference(
+  static TranslationCacheKey _keyFromReference(
+    CacheRow reference,
+    TranslationLocalSource source,
+  ) => TranslationCacheKey(
+    userId: cacheString(reference, 'user_id'),
+    roomId: cacheString(reference, 'room_id'),
+    eventId: cacheString(reference, 'event_id'),
+    originalEventId: source.originalEventId,
+    source: source.source!,
+    sourceLanguage: cacheString(reference, 'source_language'),
+    targetLanguage: cacheString(reference, 'target_language'),
+    messageType: cacheString(reference, 'message_type'),
+  );
+
+  static String _readContent(
     Uint8List master,
     TranslationCacheKey key,
-    String binding,
-    String storageKey,
-  ) => {
-    'cache_key': _storageKey(master, [
-      key.userId,
-      key.roomId,
-      key.eventId,
-      storageKey,
-    ]),
-    'user_id': key.userId,
-    'room_id': key.roomId,
-    'event_id': key.eventId,
-    'source_binding': binding,
-    'content_key': storageKey,
-    'original_event_id': key.originalEventId ?? key.eventId,
-  };
-  static Future<void> _attachReferences(
-    TranslationCacheTransaction tx,
-    Uint8List master,
-    TranslationCacheKey key,
-    String binding,
-    String storageKey,
-  ) async {
-    final reference = _reference(master, key, binding, storageKey);
-    // A display event may no longer carry its edit relationship. Do not erase
-    // a previously established original-event reference in that case.
-    final existing = await tx.get(
-      CacheStore.refs,
-      cacheString(reference, 'cache_key'),
-    );
-    final original = cacheString(existing ?? {}, 'original_event_id');
-    final root =
-        key.originalEventId ?? (original.isEmpty ? key.eventId : original);
-    reference['original_event_id'] = root;
-    await tx.put(CacheStore.refs, reference);
-    if (root != key.eventId) {
-      await tx.put(CacheStore.refs, {
-        ...reference,
-        'event_id': root,
-        'cache_key': _storageKey(master, [
-          key.userId,
-          key.roomId,
-          root,
-          storageKey,
-        ]),
-      });
+    CacheRow row,
+  ) {
+    if (row['source_language'] != key.sourceLanguage ||
+        row['target_language'] != key.targetLanguage ||
+        row['message_type'] != key.messageType ||
+        row['aad'] != key.aad(cacheString(row, 'source_binding'))) {
+      throw const FormatException('Translation identity mismatch');
     }
+    final payload =
+        jsonDecode(_decrypt(master, key.source, row)) as Map<String, Object?>;
+    if (payload['v'] != 3 || payload['text'] is! String) {
+      throw const FormatException('Translation envelope is invalid');
+    }
+    return payload['text']! as String;
   }
 
   static CacheRow _encrypt(
     Uint8List master,
     TranslationCacheKey key,
     String text,
-    String generation, {
-    String? legacyModel,
+    String binding, {
+    String? writtenAt,
   }) {
-    final binding = _sourceBinding(master, key.source);
     final aad = key.aad(binding);
     final nonce = _randomBytes(12);
     final cipher = GCMBlockCipher(AESEngine())
@@ -950,25 +1008,22 @@ class TranslationCache {
         ),
       );
     final payload = jsonEncode({
-      'v': 2,
+      'v': 3,
       'text': text,
-      'model': ?key.model ?? legacyModel,
-      'written_at': DateTime.now().toUtc().toIso8601String(),
+      'model': ?key.model,
+      'written_at': writtenAt ?? DateTime.now().toUtc().toIso8601String(),
     });
     return {
       'cache_key': _storageKey(master, key.identity(binding)),
-      'user_id': key.userId,
       'source_binding': binding,
+      'source_language': key.sourceLanguage,
+      'target_language': key.targetLanguage,
+      'message_type': key.messageType,
       'nonce': base64UrlEncode(nonce),
       'ciphertext': base64UrlEncode(
         cipher.process(Uint8List.fromList(utf8.encode(payload))),
       ),
       'aad': aad,
-      'generation': generation,
-      'legacy': 0,
-      'rank': '',
-      'room_id': '',
-      'event_id': '',
     };
   }
 
@@ -990,40 +1045,6 @@ class TranslationCache {
     );
   }
 
-  static bool _legacyMatches(Uint8List master, String source, CacheRow row) {
-    try {
-      final aad = jsonDecode(cacheString(row, 'aad')) as List;
-      // The old cache key is no longer the content key; authenticate its AAD
-      // and source binding instead. No legacy envelope is served directly.
-      return aad.length == 7 &&
-          aad.first == 1 &&
-          aad[1] == row['room_id'] &&
-          aad[2] == row['event_id'] &&
-          row['source_binding'] == _sourceBinding(master, source);
-    } catch (_) {
-      return false;
-    }
-  }
-
-  static bool _legacyLanguagesMatch(TranslationCacheKey key, CacheRow row) {
-    final aad = jsonDecode(cacheString(row, 'aad')) as List;
-    return aad[3] == key.sourceLanguage &&
-        aad[4] == key.targetLanguage &&
-        aad[6] == key.messageType;
-  }
-
-  static String? _legacyModel(CacheRow row) {
-    try {
-      final aad = jsonDecode(cacheString(row, 'aad')) as List;
-      final revision = jsonDecode(aad[5]! as String) as List;
-      return revision.length > 2 && revision[2] is String
-          ? revision[2]! as String
-          : null;
-    } catch (_) {
-      return null;
-    }
-  }
-
   static Uint8List _derivedKeyForSource(Uint8List master, String source) {
     final derivator = HKDFKeyDerivator(SHA256Digest())
       ..init(
@@ -1041,21 +1062,32 @@ class TranslationCache {
 
   static String _sourceBinding(Uint8List master, String source) =>
       base64UrlEncode(
-        Hmac(
-          sha256,
-          master,
-        ).convert(utf8.encode('source-binding:$source')).bytes,
+        Hmac(sha256, master).convert(utf8.encode('source-binding:$source')).bytes,
       );
+
   static String _storageKey(Uint8List master, List<Object?> identity) =>
       base64UrlEncode(
         Hmac(sha256, master).convert(utf8.encode(jsonEncode(identity))).bytes,
       );
+
   static String _databaseKey(Uint8List master) =>
       sha256.convert(master + utf8.encode('database')).toString();
+
   static Uint8List _randomBytes(int length) {
     final random = Random.secure();
-    return Uint8List.fromList(
-      List.generate(length, (_) => random.nextInt(256)),
-    );
+    return Uint8List.fromList(List.generate(length, (_) => random.nextInt(256)));
   }
+}
+
+class _ConvertedTranslation {
+  final TranslationCacheKey key;
+  final String text;
+  final String? writtenAt;
+  final String rank;
+  const _ConvertedTranslation({
+    required this.key,
+    required this.text,
+    required this.writtenAt,
+    required this.rank,
+  });
 }

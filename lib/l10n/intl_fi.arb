@@ -1,4 +1,6 @@
 {
+    "translationCacheUpgrading": "Paikallista arkistoa päivitetään. Odota hetki.",
+    "translationCacheUpgradeFailed": "Käännösvälimuistin päivitys epäonnistui",
     "translationRoaming": "Käännösten jakaminen",
     "translationRoamingDescription": "Jaa salattuja viestikäännöksiä samalla yhteydellä ja ennalta jaetulla avaimella toimivien laitteiden välillä. Avain pysyy laitteellasi. Jakaminen keskeytyy, kun kääntäminen on pois käytöstä.",
     "translationRoamingConnectionType": "Yhteystyyppi",

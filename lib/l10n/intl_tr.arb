@@ -1,6 +1,8 @@
 {
     "@@locale": "tr",
     "@@last_modified": "2021-08-14 12:41:09.803728",
+    "translationCacheUpgrading": "Yerel arşiv yükseltiliyor. Lütfen biraz bekleyin.",
+    "translationCacheUpgradeFailed": "Çeviri önbelleği yükseltilemedi",
     "translationRoaming": "Çeviri dolaşımı",
     "translationRoamingDescription": "Aynı bağlantıyı ve önceden paylaşılan anahtarı kullanan cihazlar arasında şifrelenmiş ileti çevirilerini paylaşın. Anahtar cihazınızda kalır. Çeviri kapalıyken dolaşım duraklatılır.",
     "translationRoamingConnectionType": "Bağlantı türü",

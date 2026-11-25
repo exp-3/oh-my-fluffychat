@@ -1,4 +1,6 @@
 {
+    "translationCacheUpgrading": "Det lokale arkiv opgraderes. Vent et øjeblik.",
+    "translationCacheUpgradeFailed": "Opgradering af oversættelsescachen mislykkedes",
     "translationRoaming": "Deling af oversættelser",
     "translationRoamingDescription": "Del krypterede beskedoversættelser mellem enheder med samme forbindelse og forhåndsdelte nøgle. Nøglen bliver på din enhed. Deling sættes på pause, når oversættelse er slået fra.",
     "translationRoamingConnectionType": "Forbindelsestype",

@@ -1,4 +1,6 @@
 {
+    "translationCacheUpgrading": "Nadgrajevanje lokalnega arhiva. Počakajte trenutek.",
+    "translationCacheUpgradeFailed": "Nadgradnja predpomnilnika prevodov ni uspela",
     "translationRoaming": "Deljenje prevodov med napravami",
     "translationRoamingDescription": "Delite šifrirane prevode sporočil med napravami z isto povezavo in vnaprej deljenim ključem. Ključ ostane v vaši napravi. Deljenje se začasno ustavi, ko je prevajanje izklopljeno.",
     "translationRoamingConnectionType": "Vrsta povezave",

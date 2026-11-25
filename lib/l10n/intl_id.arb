@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:10.002360",
+    "translationCacheUpgrading": "Memutakhirkan arsip lokal. Mohon tunggu sebentar.",
+    "translationCacheUpgradeFailed": "Pemutakhiran cache terjemahan gagal",
     "translationRoaming": "Berbagi terjemahan antarperangkat",
     "translationRoamingDescription": "Bagikan terjemahan pesan terenkripsi antarperangkat dengan koneksi dan kunci praberbagi yang sama. Kunci tetap berada di perangkat Anda. Berbagi dijeda saat penerjemahan dimatikan.",
     "translationRoamingConnectionType": "Jenis koneksi",

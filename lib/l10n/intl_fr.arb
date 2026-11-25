@@ -1,6 +1,8 @@
 {
     "@@locale": "fr",
     "@@last_modified": "2021-08-14 12:41:10.051787",
+    "translationCacheUpgrading": "Mise à niveau de l’archive locale. Veuillez patienter un instant.",
+    "translationCacheUpgradeFailed": "Échec de la mise à niveau du cache de traduction",
     "translationRoaming": "Itinérance des traductions",
     "translationRoamingDescription": "Partagez des traductions de messages chiffrées entre appareils utilisant la même connexion et la même clé prépartagée. La clé reste sur votre appareil. L'itinérance est suspendue lorsque la traduction est désactivée.",
     "translationRoamingConnectionType": "Type de connexion",

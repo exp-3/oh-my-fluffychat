@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:10.154280",
+    "translationCacheUpgrading": "স্থানীয় সংরক্ষণাগার আপগ্রেড করা হচ্ছে। অনুগ্রহ করে কিছুক্ষণ অপেক্ষা করুন।",
+    "translationCacheUpgradeFailed": "অনুবাদ ক্যাশে আপগ্রেড করা যায়নি",
     "translationRoaming": "অনুবাদ রোমিং",
     "translationRoamingDescription": "একই সংযোগ এবং আগে থেকে ভাগ করা কী ব্যবহার করে ডিভাইসগুলোর মধ্যে এনক্রিপ্ট করা বার্তার অনুবাদ ভাগ করুন। কী আপনার ডিভাইসেই থাকে। অনুবাদ বন্ধ থাকলে রোমিং থেমে থাকে।",
     "translationRoamingConnectionType": "সংযোগের ধরন",

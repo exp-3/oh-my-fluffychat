@@ -1,5 +1,7 @@
 {
     "@@locale": "kab",
+    "translationCacheUpgrading": "Aḥraz adigan yettwasnifel. Ttxil-k, rǧu kra.",
+    "translationCacheUpgradeFailed": "Ur yeddi ara usnifel n tuffra n tsuqilt",
     "translationRoaming": "Abḍu n tsuqilin",
     "translationRoamingDescription": "Bḍu tisuqilin n yiznan yettwawgelhen gar yibenkan s yiwet n tuqqna akked tsarut yettwabḍan yakan. Tasarut teqqim deg yibenk-ik. Abḍu yeḥbes mi ara tettwasens tsuqilt.",
     "translationRoamingConnectionType": "Anaw n tuqqna",

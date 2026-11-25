@@ -1,4 +1,6 @@
 {
+    "translationCacheUpgrading": "Ina-upgrade ang lokal na archive. Mangyaring maghintay sandali.",
+    "translationCacheUpgradeFailed": "Hindi na-upgrade ang cache ng pagsasalin",
     "translationRoaming": "Pagbabahagi ng mga salin",
     "translationRoamingDescription": "Ibahagi ang naka-encrypt na mga salin ng mensahe sa mga device na gumagamit ng parehong koneksyon at paunang ibinahaging susi. Nananatili sa iyong device ang susi. Humihinto ang pagbabahagi kapag naka-off ang pagsasalin.",
     "translationRoamingConnectionType": "Uri ng koneksyon",

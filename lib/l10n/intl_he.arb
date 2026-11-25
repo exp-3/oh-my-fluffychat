@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:10.036931",
+    "translationCacheUpgrading": "הארכיון המקומי משודרג. נא להמתין רגע.",
+    "translationCacheUpgradeFailed": "שדרוג מטמון התרגומים נכשל",
     "translationRoaming": "נדידת תרגומים",
     "translationRoamingDescription": "שיתוף תרגומי הודעות מוצפנים בין מכשירים המשתמשים באותו חיבור ובאותו מפתח משותף מראש. המפתח נשאר במכשיר שלך. הנדידה מושהית כאשר התרגום כבוי.",
     "translationRoamingConnectionType": "סוג חיבור",

@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.975135",
+    "translationCacheUpgrading": "로컬 보관함을 업그레이드하는 중입니다. 잠시 기다려 주세요.",
+    "translationCacheUpgradeFailed": "번역 캐시 업그레이드에 실패했습니다",
     "translationRoaming": "번역 로밍",
     "translationRoamingDescription": "같은 연결과 사전 공유 키를 사용하는 기기 간에 암호화된 메시지 번역을 공유합니다. 키는 기기에 보관됩니다. 번역을 끄면 로밍도 일시 중지됩니다.",
     "translationRoamingConnectionType": "연결 유형",

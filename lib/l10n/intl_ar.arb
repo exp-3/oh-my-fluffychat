@@ -1,6 +1,8 @@
 {
     "@@locale": "ar",
     "@@last_modified": "2021-08-14 12:41:10.156221",
+    "translationCacheUpgrading": "جارٍ ترقية الأرشيف المحلي. يُرجى الانتظار قليلًا.",
+    "translationCacheUpgradeFailed": "فشلت ترقية ذاكرة التخزين المؤقت للترجمة",
     "translationRoaming": "تجوال الترجمات",
     "translationRoamingDescription": "شارك ترجمات الرسائل المشفرة بين الأجهزة باستخدام الاتصال نفسه والمفتاح المشترك مسبقًا نفسه. يبقى المفتاح على جهازك. يتوقف التجوال مؤقتًا عند إيقاف الترجمة.",
     "translationRoamingConnectionType": "نوع الاتصال",

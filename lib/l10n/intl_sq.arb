@@ -1,4 +1,6 @@
 {
+    "translationCacheUpgrading": "Po përmirësohet arkivi vendor. Ju lutemi, prisni pak.",
+    "translationCacheUpgradeFailed": "Përmirësimi i memories së përkohshme të përkthimeve dështoi",
     "translationRoaming": "Ndarja e përkthimeve mes pajisjeve",
     "translationRoamingDescription": "Ndani përkthime të fshehtëzuara mesazhesh mes pajisjeve me të njëjtën lidhje dhe kyç të parandarë. Kyçi mbetet në pajisjen tuaj. Ndarja pezullohet kur përkthimi është i çaktivizuar.",
     "translationRoamingConnectionType": "Lloji i lidhjes",

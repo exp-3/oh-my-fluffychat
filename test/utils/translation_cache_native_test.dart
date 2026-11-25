@@ -47,7 +47,7 @@ void main() {
     await directory.delete(recursive: true);
   });
 
-  Future<void> seedV2(List<CacheRow> rows) async {
+  Future<void> seedV2(List<CacheRow> rows, {bool encrypt = true}) async {
     final db = await factory.openDatabase(
       dbPath,
       options: OpenDatabaseOptions(
@@ -63,11 +63,13 @@ nonce TEXT NOT NULL, ciphertext TEXT NOT NULL, source_binding TEXT NOT NULL, aad
       await db.insert('translations', row);
     }
     await db.close();
-    await SQfLiteEncryptionHelper(
-      factory: factory,
-      path: dbPath,
-      cipher: databaseKey,
-    ).ensureDatabaseFileEncrypted();
+    if (encrypt) {
+      await SQfLiteEncryptionHelper(
+        factory: factory,
+        path: dbPath,
+        cipher: databaseKey,
+      ).ensureDatabaseFileEncrypted();
+    }
   }
 
   test('native missing-store probes never create a file', () async {
@@ -77,26 +79,47 @@ nonce TEXT NOT NULL, ciphertext TEXT NOT NULL, source_binding TEXT NOT NULL, aad
     expect(secrets.readCalls, 0);
   });
 
-  test('native safety cleanup opens v2 without schema migration', () async {
-    await seedV2([legacyEnvelope(master)]);
-    expect(await backend.openExisting(databaseKey), isTrue);
-    expect(
-      await backend.transaction((tx) async => tx.hasStore(CacheStore.contents)),
-      isFalse,
+  for (final encrypted in [false, true]) {
+    test(
+      'native startup upgrade preserves v2 translation (encrypted: $encrypted)',
+      () async {
+        await seedV2([legacyEnvelope(master)], encrypt: encrypted);
+        expect(await backend.openExisting(databaseKey), isTrue);
+        expect(
+          await backend.transaction(
+            (tx) async => tx.hasStore(CacheStore.sharedContents),
+          ),
+          isFalse,
+        );
+        expect(await cache.needsUpgrade(), isTrue);
+        if (!encrypted) {
+          expect(
+            (await File(dbPath).readAsBytes()).take(16),
+            utf8.encode('SQLite format 3\u0000'),
+          );
+        }
+        await cache.upgrade(
+          (_, _, _) async => const TranslationLocalSource.valid('private source'),
+          userIds: ['@alice:test'],
+        );
+        expect(await cache.needsUpgrade(), isFalse);
+        expect(await cache.read(key()), 'legacy');
+        expect(
+          await backend.transaction((tx) => tx.count(CacheStore.sharedContents)),
+          1,
+        );
+        expect(
+          await backend.transaction(
+            (tx) async => tx.hasStore(CacheStore.translations),
+          ),
+          isFalse,
+        );
+      },
     );
-    await cache.invalidateEventIfExists('!room:test', r'$event');
-    expect(
-      await backend.transaction((tx) => tx.count(CacheStore.translations)),
-      0,
-    );
-    expect(
-      await backend.transaction((tx) async => tx.hasStore(CacheStore.contents)),
-      isFalse,
-    );
-  });
+  }
 
   test(
-    'native transaction rollback and generation protect deleted source',
+    'native transaction rollback and revision protect deleted message',
     () async {
       await cache.write(key(), 'old');
       final ticket = (await cache.lookup(key())).ticket!;
@@ -106,7 +129,7 @@ nonce TEXT NOT NULL, ciphertext TEXT NOT NULL, source_binding TEXT NOT NULL, aad
         throwsStateError,
       );
       expect(
-        await backend.transaction((tx) => tx.count(CacheStore.contents)),
+        await backend.transaction((tx) => tx.count(CacheStore.sharedContents)),
         0,
       );
     },

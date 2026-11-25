@@ -1,4 +1,6 @@
 {
+    "translationCacheUpgrading": "Atnaujinamas vietinis archyvas. Šiek tiek palaukite.",
+    "translationCacheUpgradeFailed": "Nepavyko atnaujinti vertimų podėlio",
     "translationRoaming": "Vertimų bendrinimas",
     "translationRoamingDescription": "Bendrinkite užšifruotus žinučių vertimus tarp įrenginių, naudojančių tą patį ryšį ir iš anksto bendrinamą raktą. Raktas lieka jūsų įrenginyje. Išjungus vertimą, bendrinimas pristabdomas.",
     "translationRoamingConnectionType": "Ryšio tipas",

@@ -1,4 +1,6 @@
 {
+    "translationCacheUpgrading": "An chartlann áitiúil á huasghrádú. Fan nóiméad, le do thoil.",
+    "translationCacheUpgradeFailed": "Theip ar uasghrádú thaisce an aistriúcháin",
     "translationRoaming": "Comhroinnt aistriúchán",
     "translationRoamingDescription": "Comhroinn aistriúcháin chriptithe teachtaireachtaí idir gléasanna leis an nasc agus an eochair réamhroinnte chéanna. Fanann an eochair ar do ghléas. Cuirtear an chomhroinnt ar sos nuair atá an t-aistriúchán múchta.",
     "translationRoamingConnectionType": "Cineál naisc",

@@ -1,5 +1,7 @@
 {
     "@@locale": "yue",
+    "translationCacheUpgrading": "資料存檔升級緊，請等一陣。",
+    "translationCacheUpgradeFailed": "譯文快取升級失敗",
     "translationRoaming": "譯文漫遊",
     "translationRoamingDescription": "喺使用相同連線同預先共用金鑰嘅裝置之間，分享已加密嘅訊息譯文。金鑰會留喺你嘅裝置。關閉翻譯時，漫遊亦會暫停。",
     "translationRoamingConnectionType": "連線類型",

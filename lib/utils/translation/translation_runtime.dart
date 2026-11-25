@@ -98,6 +98,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   final Map<Client, List<StreamSubscription<Object?>>> _clientSubscriptions =
       {};
   final Map<Client, Set<String>> _knownClientRoomIds = {};
+  final Set<Future<void>> _safetyFutures = {};
   List<Client> _clients = const [];
   List<TranslationProviderConfig> _providers = const [];
   TranslationProviderConfig? _activeProvider;
@@ -373,7 +374,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       await preferences.setEnabled(false);
     }
     _cache!.safetyPreferences = preferences;
-    _cache!.localSourceResolver = _localSource;
     _cacheSubscription = _cache!.externalChanges.listen(
       (_) => _recheckExternalCache(),
     );
@@ -387,6 +387,87 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       settings: () => _batchSettings,
     );
     _initialized = true;
+  }
+
+  Future<void> prepareCacheForStartup(
+    List<Client> clients, {
+    required Future<void> Function() onUpgrade,
+  }) async {
+    if (!_initialized) throw StateError('Translation runtime not initialized');
+    _clients = List<Client>.from(clients);
+    final startupUserIds = <Client, String>{};
+    for (final client in clients) {
+      final userId = _clientUserIds[client] ?? client.userID;
+      if (userId == null) continue;
+      startupUserIds[client] = userId;
+      _clientUserIds[client] = userId;
+      _knownClientRoomIds
+          .putIfAbsent(client, () => {})
+          .addAll(client.rooms.map((room) => room.id));
+    }
+    _safetyOperations++;
+    _bumpRevision(clearPending: true, clearStates: true);
+    try {
+      for (final client in clients.where((client) => client.isLogged())) {
+        await client.roomsLoading;
+        await client.accountDataLoading;
+      }
+      // SDK clients can keep syncing while the router is gated. Subscribe
+      // before reading the archive so edits and redactions queue cleanup.
+      attachClients(clients);
+      if (await cache.needsUpgrade()) {
+        await onUpgrade();
+        await cache.upgrade(
+          (userId, roomId, eventId) =>
+              _localSource(userId, roomId, eventId, strict: true),
+          userIds: startupUserIds.values.toSet(),
+        );
+      }
+    } finally {
+      try {
+        // Do not drain inside upgrade: its serial cache operation must finish
+        // before the event-driven cleanup queued behind it can run.
+        while (true) {
+          final loggedOut = startupUserIds.entries
+              .where(
+                (entry) =>
+                    !entry.key.isLogged() || entry.key.userID != entry.value,
+              )
+              .toList();
+          for (final entry in loggedOut) {
+            startupUserIds.remove(entry.key);
+            _clientUserIds[entry.key] = entry.value;
+            await detachLoggedOutClient(entry.key);
+          }
+          await _drainSafetyFutures();
+          if (!startupUserIds.entries.any(
+            (entry) =>
+                !entry.key.isLogged() || entry.key.userID != entry.value,
+          )) {
+            break;
+          }
+        }
+      } finally {
+        _localHistories.clear();
+        _safetyOperations--;
+        _bumpRevision(clearPending: true, clearStates: true);
+      }
+    }
+  }
+
+  void _trackSafetyFuture(Future<void> operation) {
+    late final Future<void> tracked;
+    tracked = operation.catchError((Object _) {}).whenComplete(() {
+      _safetyFutures.remove(tracked);
+    });
+    _safetyFutures.add(tracked);
+    unawaited(tracked);
+  }
+
+  Future<void> _drainSafetyFutures() async {
+    while (_safetyFutures.isNotEmpty) {
+      await Future.wait(_safetyFutures.toList(growable: false));
+    }
   }
 
   void attachClients(List<Client> clients) {
@@ -409,11 +490,11 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     // ignore: cancel_subscriptions
     final timeline = client.onTimelineEvent.stream.listen((event) {
       _knownClientRoomIds[client]?.add(event.room.id);
-      unawaited(_handleTimelineEvent(event).catchError((_) {}));
+      _trackSafetyFuture(_handleTimelineEvent(event));
     });
     // ignore: cancel_subscriptions
     final history = client.onHistoryEvent.stream.listen((event) {
-      unawaited(_handleTimelineEvent(event).catchError((_) {}));
+      _trackSafetyFuture(_handleTimelineEvent(event));
     });
     // The SDK currently exposes delayed decryption updates only on onEvent.
     // ignore: deprecated_member_use, cancel_subscriptions
@@ -421,10 +502,8 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       if (update.type != EventUpdateType.decryptedTimelineQueue) return;
       final room = client.getRoomById(update.roomID);
       if (room == null) return;
-      unawaited(
-        _handleTimelineEvent(
-          Event.fromJson(update.content, room),
-        ).catchError((_) {}),
+      _trackSafetyFuture(
+        _handleTimelineEvent(Event.fromJson(update.content, room)),
       );
     });
     // ignore: cancel_subscriptions
@@ -436,14 +515,14 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       if (leftRoomIds == null) return;
       for (final roomId in leftRoomIds) {
         knownRoomIds.remove(roomId);
-        scheduleMicrotask(() {
-          unawaited(
-            invalidateRoomUnlessLocallyReferenced(
+        _trackSafetyFuture(
+          Future<void>.microtask(
+            () => invalidateRoomUnlessLocallyReferenced(
               roomId,
               excludingClient: client,
-            ).catchError((_) {}),
-          );
-        });
+            ),
+          ),
+        );
       }
     });
     // ignore: cancel_subscriptions
@@ -992,7 +1071,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   String _contentKey(TranslationCacheKey key) =>
-      jsonEncode(key.identity(key.source));
+      jsonEncode([key.userId, ...key.identity(key.source)]);
 
   bool _displayTaskValid(Event event, TranslationCacheKey key) =>
       canTranslateEvent(event) &&
@@ -1246,7 +1325,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
         ticket: ticket,
         isValid: isValid,
       );
-      if (isValid()) _forgetCacheReads(contentKey);
+      if (isValid()) _forgetCacheReads(key);
     } on TranslationCacheWriteInvalidated {
       // Runtime changes already decide whether visible results should remain.
       // A superseded save must not undo that decision (e.g. auto mode off).
@@ -1268,11 +1347,14 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     }
   }
 
-  void _forgetCacheReads(String contentKey) {
+  void _forgetCacheReads(TranslationCacheKey key) {
+    final identity = jsonEncode(key.identity(key.source));
     _cacheReads.removeWhere(
       (stateKey, _) =>
           _observed[stateKey] != null &&
-          _contentKey(_observed[stateKey]!) == contentKey,
+          jsonEncode(
+            _observed[stateKey]!.identity(_observed[stateKey]!.source),
+          ) == identity,
     );
   }
 
@@ -1354,7 +1436,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       final writeKey = _cacheKey(event, key.source, model: provider.model);
       await cache.write(writeKey, result, ticket: ticket, isValid: valid);
       if (!valid()) throw StateError('Translation task expired');
-      _forgetCacheReads(contentKey);
+      _forgetCacheReads(writeKey);
       _publish(contentKey, TranslationResultState.translated(result));
       unawaited(_uploadRoaming(writeKey, result, roamingRevision, valid));
       return result;
@@ -1403,9 +1485,8 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<void> invalidateEventIfExists(
     String roomId,
-    String eventId, {
-    Iterable<String> sources = const [],
-  }) async {
+    String eventId,
+  ) async {
     final affected = _observed.entries
         .where(
           (entry) =>
@@ -1414,17 +1495,13 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
                   entry.value.originalEventId == eventId),
         )
         .toList();
-    final oldSources = {
-      ...sources,
-      ...affected.map((entry) => entry.value.source),
-    };
     for (final entry in affected) {
       _observed.remove(entry.key);
     }
     // Discard obsolete snapshots, every displayed result and queued request
     // before awaiting any database operation.
     _bumpRevision(clearPending: true, clearStates: true);
-    await cache.invalidateEventIfExists(roomId, eventId, sources: oldSources);
+    await cache.invalidateEventIfExists(roomId, eventId);
   }
 
   Future<void> invalidateRoomUnlessLocallyReferenced(
@@ -1442,6 +1519,24 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       final room = client.getRoomById(roomId);
       return room != null && room.membership == Membership.join;
     });
+    final userIds = {
+      if (excludingClient != null && excludingClient.userID != null)
+        excludingClient.userID!,
+      for (final client in _clients)
+        if (client.userID != null) client.userID!,
+    };
+    for (final userId in userIds) {
+      final userHasRoom = _clients.any((client) {
+        if (identical(client, excludingClient) ||
+            !client.isLogged() || client.userID != userId) {
+          return false;
+        }
+        return client.getRoomById(roomId)?.membership == Membership.join;
+      });
+      if (!userHasRoom) {
+        await cache.invalidateRoomIfExists(roomId, userId: userId);
+      }
+    }
     if (referenced) return;
     await cache.invalidateRoomIfExists(roomId);
   }
@@ -1468,8 +1563,9 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   Future<TranslationLocalSource> _localSource(
     String userId,
     String roomId,
-    String eventId,
-  ) async {
+    String eventId, {
+    bool strict = false,
+  }) async {
     for (final client in _clients) {
       if (!client.isLogged() ||
           (userId.isNotEmpty && client.userID != userId)) {
@@ -1519,6 +1615,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
         }
         return _localSourceForEvent(edits.isEmpty ? event : edits.last);
       } catch (_) {
+        if (strict) rethrow;
         return TranslationLocalSource.unavailable;
       }
     }
@@ -1572,8 +1669,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
         /* Queue safety cleanup below. */
       }
     }
-    // Keep the whole edit chain closed to lookups and generation until all
-    // of its historical bindings have been removed.
+    // Block translation while mappings for the edit chain are detached.
     _safetyOperations++;
     _bumpRevision(clearPending: true, clearStates: true);
     try {
@@ -1589,7 +1685,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
         await invalidateEventIfExists(
           event.room.id,
           targetId,
-          sources: await _locallyStoredSources(event.room, targetId),
         );
         try {
           final target = await event.room.client.database.getEventById(
@@ -1601,7 +1696,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
             await invalidateEventIfExists(
               event.room.id,
               originalId,
-              sources: [_sourceForCachedEvent(target)],
             );
           }
         } catch (_) {
@@ -1616,7 +1710,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
           await invalidateEventIfExists(
             event.room.id,
             editId,
-            sources: await _locallyStoredSources(event.room, editId),
           );
         }
         for (final edits in _knownEditChains.values) {
@@ -1629,7 +1722,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
           await invalidateEventIfExists(
             event.room.id,
             originalId,
-            sources: await _locallyStoredSources(event.room, originalId),
           );
           final chainKey = '${event.room.id}\u0000$originalId';
           final knownEdits = _knownEditChains.putIfAbsent(chainKey, () => {});
@@ -1639,7 +1731,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
             await invalidateEventIfExists(
               event.room.id,
               editId,
-              sources: await _locallyStoredSources(event.room, editId),
             );
           }
           knownEdits.add(event.eventId);
@@ -1684,24 +1775,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       source,
       originalEventId: originalEventId,
     );
-  }
-
-  Future<Set<String>> _locallyStoredSources(Room room, String eventId) async {
-    try {
-      final stored = await room.client.database.getEventById(eventId, room);
-      if (stored == null ||
-          stored.redacted ||
-          (stored.type != EventTypes.Message &&
-              stored.type != EventTypes.Sticker)) {
-        return {};
-      }
-      // Include both SDK display content and raw edit content, as old callers
-      // could have translated either representation of an edit event.
-      return {_sourceForCachedEvent(stored), sourceForEvent(stored)}
-        ..removeWhere((source) => source.trim().isEmpty);
-    } catch (_) {
-      return {};
-    }
   }
 
   bool _inputTaskValid(

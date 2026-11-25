@@ -1,6 +1,8 @@
 {
     "@@locale": "hu",
     "@@last_modified": "2021-08-14 12:41:10.016566",
+    "translationCacheUpgrading": "A helyi archívum frissítése folyamatban. Kérjük, várjon egy pillanatot.",
+    "translationCacheUpgradeFailed": "A fordítási gyorsítótár frissítése sikertelen",
     "translationRoaming": "Fordítások megosztása",
     "translationRoamingDescription": "Ossza meg a titkosított üzenetfordításokat azonos kapcsolatot és előre megosztott kulcsot használó eszközök között. A kulcs az eszközén marad. A megosztás szünetel, ha a fordítás ki van kapcsolva.",
     "translationRoamingConnectionType": "Kapcsolat típusa",

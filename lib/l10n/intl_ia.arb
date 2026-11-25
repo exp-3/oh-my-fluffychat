@@ -1,4 +1,6 @@
 {
+    "translationCacheUpgrading": "Actualisation del archivo local. Attende un momento, per favor.",
+    "translationCacheUpgradeFailed": "Le actualisation del cache de traduction ha fallite",
     "translationRoaming": "Itinerantia de traductiones",
     "translationRoamingDescription": "Comparti traductiones cifrate de messages inter dispositivos que usa le mesme connexion e clave precompartite. Le clave resta sur tu dispositivo. Le itinerantia es suspendite quando le traduction es disactivate.",
     "translationRoamingConnectionType": "Typo de connexion",

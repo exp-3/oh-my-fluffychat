@@ -1,4 +1,6 @@
 {
+    "translationCacheUpgrading": "Li local archive es actualisat. Ples atender un moment.",
+    "translationCacheUpgradeFailed": "Li actualisation del cache de traduction ne successat",
     "translationRoaming": "Partir traductiones",
     "translationRoamingDescription": "Parte traductiones ciffrat de missages inter aparates usant li sam conexion e clave prepartit. Li clave resta sur vor aparate. Li partitura pausa quande traduction es desactivat.",
     "translationRoamingConnectionType": "Tip de conexion",

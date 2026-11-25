@@ -1,6 +1,8 @@
 {
     "@@locale": "eu",
     "@@last_modified": "2021-08-14 12:41:10.062383",
+    "translationCacheUpgrading": "Tokiko artxiboa eguneratzen. Itxaron une batez.",
+    "translationCacheUpgradeFailed": "Ezin izan da itzulpenen cachea eguneratu",
     "translationRoaming": "Itzulpenen ibiltaritza",
     "translationRoamingDescription": "Partekatu mezuen itzulpen zifratuak konexio eta aurrez partekatutako gako bera darabilten gailuen artean. Gakoa zure gailuan geratzen da. Itzulpena desgaituta dagoenean, ibiltaritza eten egiten da.",
     "translationRoamingConnectionType": "Konexio mota",

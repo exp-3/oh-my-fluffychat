@@ -46,7 +46,7 @@ void main() {
     },
   );
 
-  test('Web v2 safety cleanup does not upgrade the schema', () async {
+  test('Web startup upgrade converts v2 and clears its legacy records', () async {
     final master = Uint8List.fromList(List.generate(32, (i) => i));
     secrets.values[masterKeyName] = base64UrlEncode(master);
     final row = legacyEnvelope(master);
@@ -65,20 +65,25 @@ void main() {
     db.close();
     expect(await backend.openExisting('unused'), isTrue);
     expect(
-      await backend.transaction((tx) async => tx.hasStore(CacheStore.contents)),
+      await backend.transaction(
+        (tx) async => tx.hasStore(CacheStore.sharedContents),
+      ),
       isFalse,
     );
-    final result = await cache.cleanInvalid(
-      (_, _, _) async => TranslationLocalSource.obsolete,
+    expect(await cache.needsUpgrade(), isTrue);
+    await cache.upgrade(
+      (_, _, _) async => const TranslationLocalSource.valid('private source'),
+      userIds: ['@alice:test'],
     );
-    expect(result.deleted, 1);
+    expect(await cache.needsUpgrade(), isFalse);
+    expect(await cache.read(key()), 'legacy');
     expect(
       await backend.transaction((tx) => tx.count(CacheStore.translations)),
       0,
     );
     expect(
-      await backend.transaction((tx) async => tx.hasStore(CacheStore.contents)),
-      isFalse,
+      await backend.transaction((tx) => tx.count(CacheStore.sharedContents)),
+      1,
     );
   });
 

@@ -1,6 +1,8 @@
 {
     "@@locale": "cs",
     "@@last_modified": "2021-08-14 12:41:10.131133",
+    "translationCacheUpgrading": "Probíhá aktualizace místního archivu. Chvíli prosím počkejte.",
+    "translationCacheUpgradeFailed": "Aktualizace mezipaměti překladů se nezdařila",
     "translationRoaming": "Sdílení překladů mezi zařízeními",
     "translationRoamingDescription": "Sdílejte šifrované překlady zpráv mezi zařízeními se stejným připojením a předsdíleným klíčem. Klíč zůstává ve vašem zařízení. Při vypnutí překladu se sdílení pozastaví.",
     "translationRoamingConnectionType": "Typ připojení",

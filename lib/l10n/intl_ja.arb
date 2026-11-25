@@ -1,6 +1,8 @@
 {
     "@@locale": "ja",
     "@@last_modified": "2021-08-14 12:41:09.978060",
+    "translationCacheUpgrading": "ローカルアーカイブをアップグレードしています。しばらくお待ちください。",
+    "translationCacheUpgradeFailed": "翻訳キャッシュのアップグレードに失敗しました",
     "translationRoaming": "訳文のローミング",
     "translationRoamingDescription": "同じ接続先と事前共有鍵を使う端末間で、暗号化したメッセージの訳文を共有します。鍵は端末内に保存されます。翻訳をオフにするとローミングも一時停止します。",
     "translationRoamingConnectionType": "接続の種類",

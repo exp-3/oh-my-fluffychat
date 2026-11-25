@@ -1,4 +1,6 @@
 {
+    "translationCacheUpgrading": "Archivum locale renovatur. Quaeso paulisper exspecta.",
+    "translationCacheUpgradeFailed": "Renovatio memoriae translationum defecit",
     "translationRoaming": "Translationes inter machinas",
     "translationRoamingDescription": "Translationes nuntiorum cryptatas inter machinas eadem conexione et clave ante communicata utentes communica. Clavis in machina tua manet. Communicatio sistitur cum translatio exstincta est.",
     "translationRoamingConnectionType": "Genus conexionis",

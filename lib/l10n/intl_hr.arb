@@ -1,6 +1,8 @@
 {
     "@@locale": "hr",
     "@@last_modified": "2021-08-14 12:41:10.025984",
+    "translationCacheUpgrading": "Lokalna arhiva se nadograđuje. Pričekajte trenutak.",
+    "translationCacheUpgradeFailed": "Nadogradnja predmemorije prijevoda nije uspjela",
     "translationRoaming": "Dijeljenje prijevoda između uređaja",
     "translationRoamingDescription": "Dijelite šifrirane prijevode poruka između uređaja s istom vezom i unaprijed podijeljenim ključem. Ključ ostaje na vašem uređaju. Dijeljenje se pauzira kada je prevođenje isključeno.",
     "translationRoamingConnectionType": "Vrsta veze",

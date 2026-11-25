@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:fluffychat/utils/file_description.dart';
 import 'package:fluffychat/utils/translation/translation_api_client.dart';
 import 'package:fluffychat/utils/translation/translation_cache.dart';
+import 'package:fluffychat/utils/translation/translation_cache_backend_interface.dart';
 import 'package:fluffychat/utils/translation/translation_languages.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
 import 'package:fluffychat/utils/translation/translation_preferences.dart';
@@ -520,6 +521,51 @@ void main() {
   });
 
   test(
+    'leaving a shared room removes only the leaving account references',
+    () async {
+      final fixture = await _RuntimeFixture.create();
+      final secondClient = await prepareTestClient(loggedIn: true);
+      secondClient.setUserId('@bob:example.invalid');
+      const roomId = '!shared:example.invalid';
+      fixture.client.rooms = [Room(id: roomId, client: fixture.client)];
+      secondClient.rooms = [Room(id: roomId, client: secondClient)];
+      fixture.runtime.attachClients([fixture.client, secondClient]);
+      final first = TranslationCacheKey(
+        userId: fixture.client.userID!,
+        roomId: roomId,
+        eventId: r'$event',
+        source: 'source',
+        sourceLanguage: 'auto',
+        targetLanguage: 'en',
+        messageType: MessageTypes.Text,
+      );
+      final second = TranslationCacheKey(
+        userId: secondClient.userID!,
+        roomId: roomId,
+        eventId: r'$event',
+        source: 'source',
+        sourceLanguage: 'auto',
+        targetLanguage: 'en',
+        messageType: MessageTypes.Text,
+      );
+      await fixture.runtime.cache.write(first, 'shared');
+      expect(await fixture.runtime.cache.read(second), 'shared');
+
+      fixture.client.rooms = [];
+      await fixture.runtime.invalidateRoomUnlessLocallyReferenced(
+        roomId,
+        excludingClient: fixture.client,
+      );
+      final references = fixture.backend.rows[CacheStore.messageRefs]!.values;
+      expect(references, hasLength(1));
+      expect(references.single['user_id'], secondClient.userID);
+      expect(await fixture.runtime.cache.read(second), 'shared');
+      expect(fixture.backend.records, hasLength(1));
+      fixture.runtime.dispose();
+    },
+  );
+
+  test(
     'logout uses recorded rooms and a reattached client preserves local references',
     () async {
       final fixture = await _RuntimeFixture.create();
@@ -943,6 +989,44 @@ void main() {
       );
       expect(api.calls, 1);
       restarted.dispose();
+    },
+  );
+
+  test(
+    'a shared write clears another account cached miss without a second request',
+    () async {
+      final api = _RecordingApiClient();
+      final fixture = await _RuntimeFixture.create(
+        apiClient: api,
+        mergeWindowMs: 0,
+      );
+      final secondClient = await prepareTestClient(loggedIn: true);
+      secondClient.setUserId('@bob:example.invalid');
+      final first = _event(fixture);
+      final second = Event(
+        content: {'msgtype': MessageTypes.Text, 'body': 'hello'},
+        type: EventTypes.Message,
+        eventId: r'$other-account',
+        senderId: secondClient.userID!,
+        originServerTs: DateTime.utc(2026),
+        room: Room(id: '!other-account:test', client: secondClient),
+      );
+
+      expect(fixture.runtime.shouldAutoTranslate(second), isFalse);
+      expect(await fixture.runtime.restoreEvent(second), isNull);
+      expect(api.calls, 0);
+      expect(
+        await fixture.runtime.translateEvent(first, manual: true),
+        'translated',
+      );
+      expect(await fixture.runtime.restoreEvent(second), 'translated');
+      expect(
+        fixture.runtime.stateForEvent(second).value.translation,
+        'translated',
+      );
+      expect(api.calls, 1);
+      expect(fixture.backend.records, hasLength(1));
+      fixture.runtime.dispose();
     },
   );
 
