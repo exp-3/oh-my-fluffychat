@@ -128,7 +128,7 @@
     "inputTranslationTriggerButton": "Oversettelsesknapp",
     "inputTranslationTriggerLongPress": "Langt trykk på inntastingsfeltet",
     "inputTranslationTriggerDoubleTap": "Rask dobbelttrykk på inndatafeltet",
-    "translationPrivacyDetails": "Oversettelse av meldinger og inndatatekst sender teksten som skal oversettes, som klartekst til den eksterne modellleverandøren du velger, også i ende-til-ende-krypterte chatter. Inndatatekst kan sendes til leverandøren før du sender meldingen. Leverandøren kan lese dette innholdet og lagre eller bruke det i henhold til sin personvernerklæring.\n\nVurder behovene dine og risikoene for sikkerhet og personvern før bruk. Unngå å oversette fortrolig innhold eller bruke leverandører du ikke stoler på. Du kan også bruke en modell som du drifter selv, der du kontrollerer databehandlingen og lagringen.",
+    "translationPrivacyDetails": "Oversettelse av meldinger og inndatatekst sender teksten som skal oversettes, som klartekst til den eksterne modellleverandøren du velger, også i ende-til-ende-krypterte chatter. Inndatatekst kan sendes til leverandøren før du sender meldingen. Leverandøren kan lese dette innholdet og lagre eller bruke det i henhold til sin personvernerklæring.\nVurder behovene dine og risikoene for sikkerhet og personvern før bruk. Unngå å oversette fortrolig innhold eller bruke leverandører du ikke stoler på. Du kan også bruke en modell som du drifter selv, der du kontrollerer databehandlingen og lagringen.",
     "translateInput": "Oversett innspill",
     "messageBubbleGradient": "Fargeovergang for meldingsboble",
     "compressImagesWhenSending": "Komprimer bilder ved sending",

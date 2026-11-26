@@ -127,7 +127,7 @@
     "inputTranslationTriggerButton": "Tõlke nupp",
     "inputTranslationTriggerLongPress": "Vajutage pikalt sisestusvälja",
     "inputTranslationTriggerDoubleTap": "Kiire topeltpuudutusega sisestusväli",
-    "translationPrivacyDetails": "Sõnumite ja sisestatava teksti tõlkimisel saadetakse tõlgitav tekst lihttekstina sinu valitud välisele mudelipakkujale, ka läbivalt krüptitud vestlustes. Sisestatavat teksti võidakse pakkujale saata enne, kui sa sõnumi saadad. Pakkuja saab seda sisu lugeda ning oma privaatsuspõhimõtete kohaselt salvestada või kasutada.\n\nEnne kasutamist kaalu oma vajadusi ning hinda turvalisuse ja privaatsusega seotud riske. Väldi konfidentsiaalse sisu tõlkimist ja selliste pakkujate kasutamist, keda sa ei usalda. Võid kasutada ka enda majutatud mudelit, mille andmetöötlust ja andmete salvestamist saad ise juhtida.",
+    "translationPrivacyDetails": "Sõnumite ja sisestatava teksti tõlkimisel saadetakse tõlgitav tekst lihttekstina sinu valitud välisele mudelipakkujale, ka läbivalt krüptitud vestlustes. Sisestatavat teksti võidakse pakkujale saata enne, kui sa sõnumi saadad. Pakkuja saab seda sisu lugeda ning oma privaatsuspõhimõtete kohaselt salvestada või kasutada.\nEnne kasutamist kaalu oma vajadusi ning hinda turvalisuse ja privaatsusega seotud riske. Väldi konfidentsiaalse sisu tõlkimist ja selliste pakkujate kasutamist, keda sa ei usalda. Võid kasutada ka enda majutatud mudelit, mille andmetöötlust ja andmete salvestamist saad ise juhtida.",
     "translateInput": "Tõlgi sisend",
     "messageBubbleGradient": "Sõnumimulli värviüleminek",
     "compressImagesWhenSending": "Piltide tihendamine saatmisel",

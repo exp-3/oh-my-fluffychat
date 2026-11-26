@@ -128,7 +128,7 @@
     "inputTranslationTriggerButton": "Tombol terjemahan",
     "inputTranslationTriggerLongPress": "Tekan lama kolom masukan",
     "inputTranslationTriggerDoubleTap": "Ketuk dua kali bidang masukan dengan cepat",
-    "translationPrivacyDetails": "Penerjemahan pesan dan teks masukan mengirimkan teks yang diterjemahkan tanpa enkripsi ke penyedia model eksternal pilihan Anda, bahkan dalam percakapan yang dienkripsi dari ujung ke ujung. Teks masukan dapat dikirim ke penyedia sebelum Anda mengirim pesan. Penyedia dapat membaca konten ini serta menyimpan atau menggunakannya sesuai kebijakan privasinya.\n\nPertimbangkan kebutuhan Anda dan nilai risiko keamanan serta privasi sebelum menggunakannya. Hindari menerjemahkan konten rahasia atau menggunakan penyedia yang tidak Anda percayai. Anda juga dapat menjalankan model di server sendiri, dengan kendali atas pemrosesan dan penyimpanan datanya.",
+    "translationPrivacyDetails": "Penerjemahan pesan dan teks masukan mengirimkan teks yang diterjemahkan tanpa enkripsi ke penyedia model eksternal pilihan Anda, bahkan dalam percakapan yang dienkripsi dari ujung ke ujung. Teks masukan dapat dikirim ke penyedia sebelum Anda mengirim pesan. Penyedia dapat membaca konten ini serta menyimpan atau menggunakannya sesuai kebijakan privasinya.\nPertimbangkan kebutuhan Anda dan nilai risiko keamanan serta privasi sebelum menggunakannya. Hindari menerjemahkan konten rahasia atau menggunakan penyedia yang tidak Anda percayai. Anda juga dapat menjalankan model di server sendiri, dengan kendali atas pemrosesan dan penyimpanan datanya.",
     "translateInput": "Terjemahkan masukan",
     "messageBubbleGradient": "Gradien gelembung pesan",
     "compressImagesWhenSending": "Kompres gambar saat mengirim",

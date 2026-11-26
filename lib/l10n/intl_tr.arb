@@ -129,7 +129,7 @@
     "inputTranslationTriggerButton": "Çeviri düğmesi",
     "inputTranslationTriggerLongPress": "Giriş alanına uzun basın",
     "inputTranslationTriggerDoubleTap": "Hızlı çift dokunuşla giriş alanı",
-    "translationPrivacyDetails": "İleti ve giriş çevirisi, çevrilecek metni seçtiğiniz dış model sağlayıcısına düz metin olarak gönderir. Uçtan uca şifrelenmiş sohbetlerde de bu geçerlidir. Yazdığınız metin, iletiyi göndermeden önce sağlayıcıya gönderilebilir. Sağlayıcı bu içeriği okuyabilir ve kendi gizlilik ilkesine göre saklayabilir veya kullanabilir.\n\nKullanmadan önce gereksinimlerinizi göz önünde bulundurun ve güvenlik ile gizlilik risklerini değerlendirin. Gizli içerikleri çevirmekten veya güvenmediğiniz sağlayıcıları kullanmaktan kaçının. Veri işleme ve depolama üzerinde denetiminizin olduğu, kendi barındırdığınız bir modeli de kullanabilirsiniz.",
+    "translationPrivacyDetails": "İleti ve giriş çevirisi, çevrilecek metni seçtiğiniz dış model sağlayıcısına düz metin olarak gönderir. Uçtan uca şifrelenmiş sohbetlerde de bu geçerlidir. Yazdığınız metin, iletiyi göndermeden önce sağlayıcıya gönderilebilir. Sağlayıcı bu içeriği okuyabilir ve kendi gizlilik ilkesine göre saklayabilir veya kullanabilir.\nKullanmadan önce gereksinimlerinizi göz önünde bulundurun ve güvenlik ile gizlilik risklerini değerlendirin. Gizli içerikleri çevirmekten veya güvenmediğiniz sağlayıcıları kullanmaktan kaçının. Veri işleme ve depolama üzerinde denetiminizin olduğu, kendi barındırdığınız bir modeli de kullanabilirsiniz.",
     "translateInput": "Çeviri girişi",
     "messageBubbleGradient": "Mesaj balonu gradyanı",
     "compressImagesWhenSending": "Gönderirken resimleri sıkıştır",

@@ -197,7 +197,7 @@
     "inputTranslationTriggerButton": "Translation button",
     "inputTranslationTriggerLongPress": "Long press input field",
     "inputTranslationTriggerDoubleTap": "Quick double-tap input field",
-    "translationPrivacyDetails": "Message and input translation send the text being translated in plaintext to your chosen external model provider, even in end-to-end encrypted chats. Input text may be sent to the provider before you send the message. The provider can read this content and store or use it according to its privacy policy.\n\nConsider your needs and assess the security and privacy risks before use. Avoid translating confidential content or using providers you do not trust. You can also use a self-hosted model whose data processing and storage you control.",
+    "translationPrivacyDetails": "Message and input translation send the text being translated in plaintext to your chosen external model provider, even in end-to-end encrypted chats. Input text may be sent to the provider before you send the message. The provider can read this content and store or use it according to its privacy policy.\nConsider your needs and assess the security and privacy risks before use. Avoid translating confidential content or using providers you do not trust. You can also use a self-hosted model whose data processing and storage you control.",
     "translateInput": "Translate input",
     "messageBubbleGradient": "Message bubble gradient",
     "compressImagesWhenSending": "Compress images when sending",

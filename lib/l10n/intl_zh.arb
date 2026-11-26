@@ -129,7 +129,7 @@
     "inputTranslationTriggerButton": "翻译按钮",
     "inputTranslationTriggerLongPress": "长按输入框",
     "inputTranslationTriggerDoubleTap": "快速双击输入框",
-    "translationPrivacyDetails": "消息翻译和输入翻译会将待翻译的文本以明文发送给您选择的外部模型供应商，即使聊天已端到端加密。输入文本可能在发送消息前交给供应商处理。供应商可读取这些内容，并按其隐私政策存储和使用数据。\n\n请根据自身需求，评估安全和隐私风险后再使用。涉及机密内容或不信任供应商时，请勿使用；也可选择自行部署、由您控制数据处理和存储的模型。",
+    "translationPrivacyDetails": "消息翻译和输入翻译会将待翻译的文本以明文发送给您选择的外部模型供应商，即使聊天已端到端加密。输入文本可能在发送消息前交给供应商处理。供应商可读取这些内容，并按其隐私政策存储和使用数据。\n请根据自身需求，评估安全和隐私风险后再使用。涉及机密内容或不信任供应商时，请勿使用；也可选择自行部署、由您控制数据处理和存储的模型。",
     "translateInput": "翻译输入内容",
     "messageBubbleGradient": "消息气泡渐变",
     "compressImagesWhenSending": "发送图片时压缩",

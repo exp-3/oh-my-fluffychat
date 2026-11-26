@@ -127,7 +127,7 @@
     "inputTranslationTriggerButton": "Botón de tradución",
     "inputTranslationTriggerLongPress": "Prema longamente o campo de entrada",
     "inputTranslationTriggerDoubleTap": "Toca dúas veces o campo de entrada rápido",
-    "translationPrivacyDetails": "A tradución de mensaxes e de texto de entrada envía o texto que se vai traducir en texto sen cifrar ao provedor externo de modelos que escollas, mesmo nas conversas cifradas de extremo a extremo. O texto introducido pode enviarse ao provedor antes de que envíes a mensaxe. O provedor pode ler este contido e gardalo ou utilizalo conforme á súa política de privacidade.\n\nValora as túas necesidades e avalía os riscos de seguridade e privacidade antes de usala. Evita traducir contido confidencial ou utilizar provedores nos que non confíes. Tamén podes utilizar un modelo aloxado por ti, no que controles o procesamento e o almacenamento dos datos.",
+    "translationPrivacyDetails": "A tradución de mensaxes e de texto de entrada envía o texto que se vai traducir en texto sen cifrar ao provedor externo de modelos que escollas, mesmo nas conversas cifradas de extremo a extremo. O texto introducido pode enviarse ao provedor antes de que envíes a mensaxe. O provedor pode ler este contido e gardalo ou utilizalo conforme á súa política de privacidade.\nValora as túas necesidades e avalía os riscos de seguridade e privacidade antes de usala. Evita traducir contido confidencial ou utilizar provedores nos que non confíes. Tamén podes utilizar un modelo aloxado por ti, no que controles o procesamento e o almacenamento dos datos.",
     "translateInput": "Traducir entrada",
     "messageBubbleGradient": "Degradado da burbulla da mensaxe",
     "compressImagesWhenSending": "Comprimir imaxes ao envialas",

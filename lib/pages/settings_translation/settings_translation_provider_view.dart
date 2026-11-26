@@ -5,6 +5,8 @@
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
+import 'package:fluffychat/widgets/settings_checkbox_list_tile.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'settings_translation.dart';
@@ -23,7 +25,12 @@ class SettingsTranslationProviderView extends StatelessWidget {
     if (controller.providerMissing) {
       return Scaffold(
         appBar: AppBar(title: Text(l10n.editTranslationProvider)),
-        body: Center(child: Text(l10n.oopsSomethingWentWrong)),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(SettingsSpacing.inset),
+            child: Text(l10n.oopsSomethingWentWrong),
+          ),
+        ),
       );
     }
     return PopScope<Object?>(
@@ -39,7 +46,9 @@ class SettingsTranslationProviderView extends StatelessWidget {
           ),
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right: 16),
+              padding: const EdgeInsetsDirectional.only(
+                end: SettingsSpacing.inset,
+              ),
               child: FilledButton(
                 onPressed: controller.canSave ? controller.save : null,
                 child: controller.saving
@@ -53,14 +62,18 @@ class SettingsTranslationProviderView extends StatelessWidget {
           ],
         ),
         body: MaxWidthBody(
+          contentPadding: EdgeInsets.zero,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const SizedBox(height: SettingsSpacing.inset),
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: SettingsSpacing.inset,
+                ),
                 child: Column(
-                  spacing: 12,
+                  spacing: SettingsSpacing.field,
                   children: [
                     TextField(
                       controller: controller.name,
@@ -68,45 +81,46 @@ class SettingsTranslationProviderView extends StatelessWidget {
                       decoration: InputDecoration(labelText: l10n.providerName),
                       onChanged: (_) => controller.formChanged(),
                     ),
-                    TextField(
-                      controller: controller.endpoint,
-                      enabled: !busy,
-                      decoration: InputDecoration(
-                        labelText: 'URL',
-                        hintText: controller.useFullEndpoint
-                            ? switch (controller.protocol) {
-                                TranslationProtocol.chatCompletions =>
-                                  'https://api.example/v1/chat/completions',
-                                TranslationProtocol.responses =>
-                                  'https://api.example/v1/responses',
-                                TranslationProtocol.anthropicMessages =>
-                                  'https://api.anthropic.com/v1/messages',
-                              }
-                            : 'https://api.example/v1',
-                        helperText: previewEndpoint == null
-                            ? null
-                            : '${l10n.translationEndpoint}: $previewEndpoint',
-                        helperMaxLines: 3,
-                      ),
-                      keyboardType: TextInputType.url,
-                      onChanged: (_) => controller.formChanged(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16),
-                      child: ListTileTheme.merge(
-                        horizontalTitleGap: 0,
-                        child: CheckboxListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          dense: true,
-                          visualDensity: const VisualDensity(vertical: -2),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          value: controller.useFullEndpoint,
-                          title: Text(l10n.translationEndpointIsComplete),
-                          onChanged: busy
-                              ? null
-                              : controller.changeUseFullEndpoint,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: SettingsSpacing.related,
+                      children: [
+                        TextField(
+                          controller: controller.endpoint,
+                          enabled: !busy,
+                          decoration: InputDecoration(
+                            labelText: 'URL',
+                            hintText: controller.useFullEndpoint
+                                ? switch (controller.protocol) {
+                                    TranslationProtocol.chatCompletions =>
+                                      'https://api.example/v1/chat/completions',
+                                    TranslationProtocol.responses =>
+                                      'https://api.example/v1/responses',
+                                    TranslationProtocol.anthropicMessages =>
+                                      'https://api.anthropic.com/v1/messages',
+                                  }
+                                : 'https://api.example/v1',
+                            helperText: previewEndpoint == null
+                                ? null
+                                : '${l10n.translationEndpoint}: $previewEndpoint',
+                            helperMaxLines: 3,
+                          ),
+                          keyboardType: TextInputType.url,
+                          onChanged: (_) => controller.formChanged(),
                         ),
-                      ),
+                        Padding(
+                          padding: const EdgeInsetsDirectional.only(
+                            start: SettingsSpacing.inset,
+                          ),
+                          child: SettingsCheckboxListTile(
+                            value: controller.useFullEndpoint,
+                            title: Text(l10n.translationEndpointIsComplete),
+                            onChanged: busy
+                                ? null
+                                : controller.changeUseFullEndpoint,
+                          ),
+                        ),
+                      ],
                     ),
                     DropdownButtonFormField<TranslationProtocol>(
                       initialValue: controller.protocol,
@@ -182,30 +196,38 @@ class SettingsTranslationProviderView extends StatelessWidget {
                       ),
                       onChanged: (_) => controller.formChanged(),
                     ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton.tonalIcon(
-                        onPressed: busy || controller.loadingApiKey
-                            ? null
-                            : controller.test,
-                        icon: controller.testing
-                            ? const SizedBox.square(
-                                dimension: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(Icons.science_outlined),
-                        label: Text(l10n.test),
-                      ),
-                    ),
                   ],
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  SettingsSpacing.inset,
+                  SettingsSpacing.section,
+                  SettingsSpacing.inset,
+                  0,
+                ),
+                child: FilledButton.tonalIcon(
+                  onPressed: busy || controller.loadingApiKey
+                      ? null
+                      : controller.test,
+                  icon: controller.testing
+                      ? const SizedBox.square(
+                          dimension: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.science_outlined),
+                  label: Text(l10n.test),
+                ),
+              ),
               if (controller.existing != null) ...[
-                Divider(color: theme.dividerColor),
+                Divider(
+                  height: SettingsSpacing.section,
+                  color: theme.dividerColor,
+                ),
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: SettingsSpacing.inset,
+                  ),
                   child: OutlinedButton.icon(
                     onPressed: busy ? null : controller.delete,
                     style: OutlinedButton.styleFrom(
@@ -222,6 +244,7 @@ class SettingsTranslationProviderView extends StatelessWidget {
                   ),
                 ),
               ],
+              const SizedBox(height: SettingsSpacing.inset),
             ],
           ),
         ),

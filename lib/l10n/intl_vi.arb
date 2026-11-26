@@ -128,7 +128,7 @@
     "inputTranslationTriggerButton": "Nút dịch",
     "inputTranslationTriggerLongPress": "Nhấn và giữ trường nhập",
     "inputTranslationTriggerDoubleTap": "Nhấn đúp vào trường nhập nhanh",
-    "translationPrivacyDetails": "Tính năng dịch tin nhắn và văn bản nhập gửi văn bản cần dịch dưới dạng văn bản thuần đến nhà cung cấp mô hình bên ngoài mà bạn chọn, kể cả trong các cuộc trò chuyện được mã hóa đầu cuối. Văn bản nhập có thể được gửi đến nhà cung cấp trước khi bạn gửi tin nhắn. Nhà cung cấp có thể đọc nội dung này, lưu trữ hoặc sử dụng nội dung theo chính sách quyền riêng tư của họ.\n\nHãy cân nhắc nhu cầu và đánh giá các rủi ro về bảo mật và quyền riêng tư trước khi sử dụng. Tránh dịch nội dung bí mật hoặc sử dụng nhà cung cấp mà bạn không tin tưởng. Bạn cũng có thể dùng mô hình tự lưu trữ mà bạn kiểm soát việc xử lý và lưu trữ dữ liệu.",
+    "translationPrivacyDetails": "Tính năng dịch tin nhắn và văn bản nhập gửi văn bản cần dịch dưới dạng văn bản thuần đến nhà cung cấp mô hình bên ngoài mà bạn chọn, kể cả trong các cuộc trò chuyện được mã hóa đầu cuối. Văn bản nhập có thể được gửi đến nhà cung cấp trước khi bạn gửi tin nhắn. Nhà cung cấp có thể đọc nội dung này, lưu trữ hoặc sử dụng nội dung theo chính sách quyền riêng tư của họ.\nHãy cân nhắc nhu cầu và đánh giá các rủi ro về bảo mật và quyền riêng tư trước khi sử dụng. Tránh dịch nội dung bí mật hoặc sử dụng nhà cung cấp mà bạn không tin tưởng. Bạn cũng có thể dùng mô hình tự lưu trữ mà bạn kiểm soát việc xử lý và lưu trữ dữ liệu.",
     "translateInput": "Dịch đầu vào",
     "messageBubbleGradient": "Màu chuyển tiếp bong bóng tin nhắn",
     "compressImagesWhenSending": "Nén ảnh khi gửi",

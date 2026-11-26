@@ -127,7 +127,7 @@
     "inputTranslationTriggerButton": "Oversættelsesknap",
     "inputTranslationTriggerLongPress": "Langt tryk på indtastningsfeltet",
     "inputTranslationTriggerDoubleTap": "Hurtigt dobbelttryk indtastningsfelt",
-    "translationPrivacyDetails": "Oversættelse af beskeder og indtastet tekst sender den tekst, der oversættes, i klartekst til den eksterne modeludbyder, du vælger, også i chats med ende-til-ende-kryptering. Indtastet tekst kan blive sendt til udbyderen, før du sender beskeden. Udbyderen kan læse indholdet og gemme eller bruge det i henhold til sin privatlivspolitik.\n\nOvervej dine behov, og vurder risikoen for sikkerhed og privatliv, før du bruger funktionen. Undgå at oversætte fortroligt indhold eller bruge udbydere, du ikke stoler på. Du kan også bruge en model på din egen server, hvor du har kontrol over databehandling og lagring.",
+    "translationPrivacyDetails": "Oversættelse af beskeder og indtastet tekst sender den tekst, der oversættes, i klartekst til den eksterne modeludbyder, du vælger, også i chats med ende-til-ende-kryptering. Indtastet tekst kan blive sendt til udbyderen, før du sender beskeden. Udbyderen kan læse indholdet og gemme eller bruge det i henhold til sin privatlivspolitik.\nOvervej dine behov, og vurder risikoen for sikkerhed og privatliv, før du bruger funktionen. Undgå at oversætte fortroligt indhold eller bruge udbydere, du ikke stoler på. Du kan også bruge en model på din egen server, hvor du har kontrol over databehandling og lagring.",
     "translateInput": "Oversæt input",
     "messageBubbleGradient": "Beskedboblens farveforløb",
     "compressImagesWhenSending": "Komprimer billeder ved afsendelse",

@@ -127,7 +127,7 @@
     "inputTranslationTriggerButton": "Käännöspainike",
     "inputTranslationTriggerLongPress": "Paina syöttökenttää pitkään",
     "inputTranslationTriggerDoubleTap": "Nopea kaksoisnapautussyöttökenttä",
-    "translationPrivacyDetails": "Viestien ja kirjoitettavan tekstin kääntäminen lähettää käännettävän tekstin selväkielisenä valitsemallesi ulkoiselle mallin tarjoajalle myös päästä päähän salatuissa keskusteluissa. Kirjoittamaasi tekstiä voidaan lähettää tarjoajalle ennen kuin lähetät viestin. Tarjoaja voi lukea tämän sisällön sekä tallentaa tai käyttää sitä tietosuojakäytäntönsä mukaisesti.\n\nHarkitse tarpeitasi ja arvioi turvallisuuteen ja yksityisyyteen liittyvät riskit ennen käyttöä. Vältä luottamuksellisen sisällön kääntämistä tai sellaisten tarjoajien käyttöä, joihin et luota. Voit myös käyttää itse ylläpitämääsi mallia, jonka tietojen käsittely ja tallennus ovat hallinnassasi.",
+    "translationPrivacyDetails": "Viestien ja kirjoitettavan tekstin kääntäminen lähettää käännettävän tekstin selväkielisenä valitsemallesi ulkoiselle mallin tarjoajalle myös päästä päähän salatuissa keskusteluissa. Kirjoittamaasi tekstiä voidaan lähettää tarjoajalle ennen kuin lähetät viestin. Tarjoaja voi lukea tämän sisällön sekä tallentaa tai käyttää sitä tietosuojakäytäntönsä mukaisesti.\nHarkitse tarpeitasi ja arvioi turvallisuuteen ja yksityisyyteen liittyvät riskit ennen käyttöä. Vältä luottamuksellisen sisällön kääntämistä tai sellaisten tarjoajien käyttöä, joihin et luota. Voit myös käyttää itse ylläpitämääsi mallia, jonka tietojen käsittely ja tallennus ovat hallinnassasi.",
     "translateInput": "Käännä syöttö",
     "messageBubbleGradient": "Viestikuplan liukuväri",
     "compressImagesWhenSending": "Pakkaa kuvat lähetettäessä",

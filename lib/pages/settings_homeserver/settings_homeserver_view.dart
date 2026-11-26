@@ -10,6 +10,7 @@ import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:matrix/matrix.dart';
@@ -41,210 +42,138 @@ class SettingsHomeserverView extends StatelessWidget {
       ),
       body: MaxWidthBody(
         withScrolling: true,
-        child: SelectionArea(
-          child: Column(
-            mainAxisSize: .min,
-            children: [
-              ListTile(
-                title: Text(
-                  L10n.of(context).serverInformation,
-                  style: TextStyle(
-                    color: theme.colorScheme.secondary,
-                    fontWeight: FontWeight.bold,
+        contentPadding: EdgeInsets.zero,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: SettingsSpacing.inset),
+          child: SelectionArea(
+            child: Column(
+              mainAxisSize: .min,
+              children: [
+                ListTile(
+                  title: Text(
+                    L10n.of(context).serverInformation,
+                    style: TextStyle(
+                      color: theme.colorScheme.secondary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-              FutureBuilder(
-                future: client.getWellknownSupport(),
-                builder: (context, snapshot) {
-                  final error = snapshot.error;
-                  final data = snapshot.data;
-                  if (error != null) {
-                    return ListTile(
-                      leading: const Icon(Icons.error_outlined),
-                      title: Text(
-                        error.toLocalizedString(
-                          context,
-                          ExceptionContext.checkServerSupportInfo,
-                        ),
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                    );
-                  }
-                  if (data == null) {
-                    return const Center(
-                      child: CircularProgressIndicator.adaptive(strokeWidth: 2),
-                    );
-                  }
-                  final supportPage = data.supportPage;
-                  final contacts = data.contacts;
-                  if (supportPage == null && contacts == null) {
-                    return ListTile(
-                      leading: const Icon(Icons.error_outlined),
-                      title: Text(
-                        L10n.of(context).noContactInformationProvided,
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                    );
-                  }
-                  return Column(
-                    mainAxisSize: .min,
-                    children: [
-                      if (supportPage != null)
-                        ListTile(
-                          title: Text(L10n.of(context).supportPage),
-                          subtitle: Text(supportPage.toString()),
-                        ),
-                      if (contacts != null)
-                        ...contacts.map((contact) {
-                          return ListTile(
-                            title: Text(
-                              contact.role.localizedString(L10n.of(context)),
-                            ),
-                            subtitle: Column(
-                              mainAxisSize: .min,
-                              children: [
-                                if (contact.emailAddress != null)
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: Text(contact.emailAddress!),
-                                  ),
-                                if (contact.matrixId != null)
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: Text(contact.matrixId!),
-                                  ),
-                              ],
-                            ),
-                          );
-                        }),
-                    ],
-                  );
-                },
-              ),
-              FutureBuilder(
-                future: controller.fetchServerInfo(),
-                builder: (context, snapshot) {
-                  final error = snapshot.error;
-                  if (error != null) {
-                    return Column(
-                      mainAxisAlignment: .center,
-                      children: [
-                        Icon(
-                          Icons.error_outlined,
-                          color: theme.colorScheme.error,
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          error.toLocalizedString(context),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: theme.colorScheme.error),
-                        ),
-                      ],
-                    );
-                  }
-                  final data = snapshot.data;
-                  if (data == null) {
-                    return const Center(
-                      child: CircularProgressIndicator.adaptive(strokeWidth: 2),
-                    );
-                  }
-                  return Column(
-                    mainAxisSize: .min,
-                    children: [
-                      ListTile(
-                        title: Text(L10n.of(context).name),
-                        subtitle: Text(data.name),
-                      ),
-                      ListTile(
-                        title: Text(L10n.of(context).version),
-                        subtitle: Text(data.version),
-                      ),
-                      ListTile(
-                        title: Text(L10n.of(context).federationBaseUrl),
-                        subtitle: Linkify(
-                          text: data.federationBaseUrl.toString(),
-                          style: TextStyle(color: theme.colorScheme.onSurface),
-                          textScaleFactor: MediaQuery.textScalerOf(
-                            context,
-                          ).scale(1),
-                          options: const LinkifyOptions(humanize: false),
-                          linkStyle: TextStyle(
-                            color: theme.colorScheme.primary,
-                            decorationColor: theme.colorScheme.primary,
-                          ),
-                          onOpen: (link) => launchUrlString(link.url),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              Divider(color: theme.dividerColor),
-              FutureBuilder(
-                future: client.getWellknown(),
-                builder: (context, snapshot) {
-                  final error = snapshot.error;
-                  if (error != null) {
-                    return Column(
-                      mainAxisAlignment: .center,
-                      children: [
-                        Icon(
-                          Icons.error_outlined,
-                          color: theme.colorScheme.error,
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          error.toLocalizedString(context),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: theme.colorScheme.error),
-                        ),
-                      ],
-                    );
-                  }
-                  final wellKnown = snapshot.data;
-                  if (wellKnown == null) {
-                    return const Center(
-                      child: CircularProgressIndicator.adaptive(strokeWidth: 2),
-                    );
-                  }
-                  final identityServer = wellKnown.mIdentityServer;
-                  return Column(
-                    mainAxisSize: .min,
-                    children: [
-                      ListTile(
+                FutureBuilder(
+                  future: client.getWellknownSupport(),
+                  builder: (context, snapshot) {
+                    final error = snapshot.error;
+                    final data = snapshot.data;
+                    if (error != null) {
+                      return ListTile(
+                        leading: const Icon(Icons.error_outlined),
                         title: Text(
-                          L10n.of(context).clientWellKnownInformation,
-                          style: TextStyle(
-                            color: theme.colorScheme.secondary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      ListTile(
-                        title: Text(L10n.of(context).baseUrl),
-                        subtitle: Linkify(
-                          text: wellKnown.mHomeserver.baseUrl.toString(),
-                          style: TextStyle(color: theme.colorScheme.onSurface),
-                          textScaleFactor: MediaQuery.textScalerOf(
+                          error.toLocalizedString(
                             context,
-                          ).scale(1),
-                          options: const LinkifyOptions(humanize: false),
-                          linkStyle: TextStyle(
-                            color: theme.colorScheme.primary,
-                            decorationColor: theme.colorScheme.primary,
+                            ExceptionContext.checkServerSupportInfo,
                           ),
-                          onOpen: (link) => launchUrlString(link.url),
+                          style: const TextStyle(fontSize: 14),
                         ),
-                      ),
-                      if (identityServer != null)
-                        ListTile(
-                          title: Text(L10n.of(context).identityServer),
-                          subtitle: Linkify(
-                            text: identityServer.baseUrl.toString(),
-                            style: TextStyle(
-                              color: theme.colorScheme.onSurface,
+                      );
+                    }
+                    if (data == null) {
+                      return const Center(
+                        child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+                      );
+                    }
+                    final supportPage = data.supportPage;
+                    final contacts = data.contacts;
+                    if (supportPage == null && contacts == null) {
+                      return ListTile(
+                        leading: const Icon(Icons.error_outlined),
+                        title: Text(
+                          L10n.of(context).noContactInformationProvided,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      );
+                    }
+                    return Column(
+                      mainAxisSize: .min,
+                      children: [
+                        if (supportPage != null)
+                          ListTile(
+                            title: Text(L10n.of(context).supportPage),
+                            subtitle: Text(supportPage.toString()),
+                          ),
+                        if (contacts != null)
+                          ...contacts.map((contact) {
+                            return ListTile(
+                              title: Text(
+                                contact.role.localizedString(L10n.of(context)),
+                              ),
+                              subtitle: Column(
+                                mainAxisSize: .min,
+                                children: [
+                                  if (contact.emailAddress != null)
+                                    TextButton(
+                                      onPressed: () {},
+                                      child: Text(contact.emailAddress!),
+                                    ),
+                                  if (contact.matrixId != null)
+                                    TextButton(
+                                      onPressed: () {},
+                                      child: Text(contact.matrixId!),
+                                    ),
+                                ],
+                              ),
+                            );
+                          }),
+                      ],
+                    );
+                  },
+                ),
+                FutureBuilder(
+                  future: controller.fetchServerInfo(),
+                  builder: (context, snapshot) {
+                    final error = snapshot.error;
+                    if (error != null) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: SettingsSpacing.inset,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: .center,
+                          children: [
+                            Icon(
+                              Icons.error_outlined,
+                              color: theme.colorScheme.error,
                             ),
+                            const SizedBox(height: SettingsSpacing.field),
+                            Text(
+                              error.toLocalizedString(context),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: theme.colorScheme.error),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    final data = snapshot.data;
+                    if (data == null) {
+                      return const Center(
+                        child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+                      );
+                    }
+                    return Column(
+                      mainAxisSize: .min,
+                      children: [
+                        ListTile(
+                          title: Text(L10n.of(context).name),
+                          subtitle: Text(data.name),
+                        ),
+                        ListTile(
+                          title: Text(L10n.of(context).version),
+                          subtitle: Text(data.version),
+                        ),
+                        ListTile(
+                          title: Text(L10n.of(context).federationBaseUrl),
+                          subtitle: Linkify(
+                            text: data.federationBaseUrl.toString(),
+                            style: TextStyle(color: theme.colorScheme.onSurface),
                             textScaleFactor: MediaQuery.textScalerOf(
                               context,
                             ).scale(1),
@@ -256,34 +185,123 @@ class SettingsHomeserverView extends StatelessWidget {
                             onOpen: (link) => launchUrlString(link.url),
                           ),
                         ),
-                      ...wellKnown.additionalProperties.entries.map(
-                        (entry) => ListTile(
-                          title: Text(entry.key),
-                          subtitle: Material(
-                            borderRadius: BorderRadius.circular(
-                              AppConfig.borderRadius,
+                      ],
+                    );
+                  },
+                ),
+                Divider(
+                  height: SettingsSpacing.section,
+                  color: theme.dividerColor,
+                ),
+                FutureBuilder(
+                  future: client.getWellknown(),
+                  builder: (context, snapshot) {
+                    final error = snapshot.error;
+                    if (error != null) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: SettingsSpacing.inset,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: .center,
+                          children: [
+                            Icon(
+                              Icons.error_outlined,
+                              color: theme.colorScheme.error,
                             ),
-                            color: theme.colorScheme.surfaceContainer,
-                            child: SingleChildScrollView(
-                              padding: const EdgeInsets.all(16),
-                              scrollDirection: Axis.horizontal,
-                              child: Text(
-                                const JsonEncoder.withIndent(
-                                  '    ',
-                                ).convert(entry.value),
-                                style: TextStyle(
-                                  color: theme.colorScheme.onSurface,
+                            const SizedBox(height: SettingsSpacing.field),
+                            Text(
+                              error.toLocalizedString(context),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: theme.colorScheme.error),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    final wellKnown = snapshot.data;
+                    if (wellKnown == null) {
+                      return const Center(
+                        child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+                      );
+                    }
+                    final identityServer = wellKnown.mIdentityServer;
+                    return Column(
+                      mainAxisSize: .min,
+                      children: [
+                        ListTile(
+                          title: Text(
+                            L10n.of(context).clientWellKnownInformation,
+                            style: TextStyle(
+                              color: theme.colorScheme.secondary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        ListTile(
+                          title: Text(L10n.of(context).baseUrl),
+                          subtitle: Linkify(
+                            text: wellKnown.mHomeserver.baseUrl.toString(),
+                            style: TextStyle(color: theme.colorScheme.onSurface),
+                            textScaleFactor: MediaQuery.textScalerOf(
+                              context,
+                            ).scale(1),
+                            options: const LinkifyOptions(humanize: false),
+                            linkStyle: TextStyle(
+                              color: theme.colorScheme.primary,
+                              decorationColor: theme.colorScheme.primary,
+                            ),
+                            onOpen: (link) => launchUrlString(link.url),
+                          ),
+                        ),
+                        if (identityServer != null)
+                          ListTile(
+                            title: Text(L10n.of(context).identityServer),
+                            subtitle: Linkify(
+                              text: identityServer.baseUrl.toString(),
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
+                              ),
+                              textScaleFactor: MediaQuery.textScalerOf(
+                                context,
+                              ).scale(1),
+                              options: const LinkifyOptions(humanize: false),
+                              linkStyle: TextStyle(
+                                color: theme.colorScheme.primary,
+                                decorationColor: theme.colorScheme.primary,
+                              ),
+                              onOpen: (link) => launchUrlString(link.url),
+                            ),
+                          ),
+                        ...wellKnown.additionalProperties.entries.map(
+                          (entry) => ListTile(
+                            title: Text(entry.key),
+                            subtitle: Material(
+                              borderRadius: BorderRadius.circular(
+                                AppConfig.borderRadius,
+                              ),
+                              color: theme.colorScheme.surfaceContainer,
+                              child: SingleChildScrollView(
+                                padding: const EdgeInsets.all(16),
+                                scrollDirection: Axis.horizontal,
+                                child: Text(
+                                  const JsonEncoder.withIndent(
+                                    '    ',
+                                  ).convert(entry.value),
+                                  style: TextStyle(
+                                    color: theme.colorScheme.onSurface,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ],
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

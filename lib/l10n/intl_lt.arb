@@ -125,7 +125,7 @@
     "inputTranslationTriggerButton": "Vertimo mygtukas",
     "inputTranslationTriggerLongPress": "Ilgai paspauskite įvesties lauką",
     "inputTranslationTriggerDoubleTap": "Greitai dukart bakstelėkite įvesties lauką",
-    "translationPrivacyDetails": "Verčiant žinutes ir įvedamą tekstą, verčiamas tekstas siunčiamas nešifruotas jūsų pasirinktam išoriniam modelio tiekėjui, net ir ištisai užšifruotuose pokalbiuose. Įvedamas tekstas gali būti išsiųstas tiekėjui dar prieš išsiunčiant žinutę. Tiekėjas gali skaityti šį turinį ir jį saugoti ar naudoti pagal savo privatumo politiką.\n\nPrieš naudodami įvertinkite savo poreikius ir saugumo bei privatumo riziką. Venkite versti konfidencialų turinį ar naudotis tiekėjais, kuriais nepasitikite. Taip pat galite naudoti savo serveryje veikiantį modelį, kurio duomenų apdorojimą ir saugojimą kontroliuojate.",
+    "translationPrivacyDetails": "Verčiant žinutes ir įvedamą tekstą, verčiamas tekstas siunčiamas nešifruotas jūsų pasirinktam išoriniam modelio tiekėjui, net ir ištisai užšifruotuose pokalbiuose. Įvedamas tekstas gali būti išsiųstas tiekėjui dar prieš išsiunčiant žinutę. Tiekėjas gali skaityti šį turinį ir jį saugoti ar naudoti pagal savo privatumo politiką.\nPrieš naudodami įvertinkite savo poreikius ir saugumo bei privatumo riziką. Venkite versti konfidencialų turinį ar naudotis tiekėjais, kuriais nepasitikite. Taip pat galite naudoti savo serveryje veikiantį modelį, kurio duomenų apdorojimą ir saugojimą kontroliuojate.",
     "translateInput": "Išversti įvestį",
     "messageBubbleGradient": "Žinutės debesėlio gradientas",
     "compressImagesWhenSending": "Glaudinti siunčiamus paveikslus",

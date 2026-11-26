@@ -7,6 +7,8 @@ import 'dart:async';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/translation/translation_roaming_models.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
+import 'package:fluffychat/widgets/settings_checkbox_list_tile.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'translation_roaming_settings.dart';
@@ -42,7 +44,9 @@ class TranslationRoamingSettingsView extends StatelessWidget {
           title: Text(l10n.translationRoaming),
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right: 16),
+              padding: const EdgeInsetsDirectional.only(
+                end: SettingsSpacing.inset,
+              ),
               child: FilledButton(
                 onPressed: controller.busy || controller.loadFailed
                     ? null
@@ -58,9 +62,11 @@ class TranslationRoamingSettingsView extends StatelessWidget {
           ],
         ),
         body: MaxWidthBody(
+          contentPadding: EdgeInsets.zero,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const SizedBox(height: SettingsSpacing.inset),
               SwitchListTile.adaptive(
                 secondary: const Icon(Icons.cloud_sync_outlined),
                 title: Text(
@@ -78,12 +84,17 @@ class TranslationRoamingSettingsView extends StatelessWidget {
               ),
               if (controller.loading)
                 const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SettingsSpacing.inset,
+                    vertical: SettingsSpacing.actions,
+                  ),
                   child: LinearProgressIndicator(),
                 ),
               if (controller.loadFailed)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: SettingsSpacing.inset,
+                  ),
                   child: TextButton.icon(
                     onPressed: controller.loading
                         ? null
@@ -94,7 +105,9 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                 ),
               if (controller.saveFailed)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: SettingsSpacing.inset,
+                  ),
                   child: Row(
                     children: [
                       Expanded(
@@ -114,88 +127,184 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                   ),
                 ),
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.only(
+                  left: SettingsSpacing.inset,
+                  top: SettingsSpacing.section,
+                  right: SettingsSpacing.inset,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  spacing: 12,
                   children: [
-                    DropdownButtonFormField<TranslationRoamingType>(
-                      initialValue: controller.type,
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText: l10n.translationRoamingConnectionType,
-                      ),
-                      items: [
-                        DropdownMenuItem(
-                          value: TranslationRoamingType.redis,
-                          child: Text(l10n.translationRoamingNative),
-                        ),
-                        DropdownMenuItem(
-                          value: TranslationRoamingType.upstash,
-                          child: Text(l10n.translationRoamingUpstash),
-                        ),
-                      ],
-                      onChanged: controller.fieldsDisabled
-                          ? null
-                          : controller.changeType,
-                    ),
-                    if (controller.enabled && controller.unsupported)
-                      Text(
-                        l10n.translationRoamingWebUnsupported,
-                        style: TextStyle(color: theme.colorScheme.error),
-                      ),
-                    ...switch (controller.type) {
-                      TranslationRoamingType.redis => [
-                        TranslationSettingsLayout(
-                          padding: EdgeInsets.zero,
-                          runSpacing: 12,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: SettingsSpacing.field,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          spacing: SettingsSpacing.related,
                           children: [
+                            DropdownButtonFormField<TranslationRoamingType>(
+                              initialValue: controller.type,
+                              isExpanded: true,
+                              decoration: InputDecoration(
+                                labelText:
+                                    l10n.translationRoamingConnectionType,
+                              ),
+                              items: [
+                                DropdownMenuItem(
+                                  value: TranslationRoamingType.redis,
+                                  child: Text(l10n.translationRoamingNative),
+                                ),
+                                DropdownMenuItem(
+                                  value: TranslationRoamingType.upstash,
+                                  child: Text(l10n.translationRoamingUpstash),
+                                ),
+                              ],
+                              onChanged: controller.fieldsDisabled
+                                  ? null
+                                  : controller.changeType,
+                            ),
+                            if (controller.enabled && controller.unsupported)
+                              Text(
+                                l10n.translationRoamingWebUnsupported,
+                                style: TextStyle(
+                                  color: theme.colorScheme.error,
+                                ),
+                              ),
+                          ],
+                        ),
+                        ...switch (controller.type) {
+                          TranslationRoamingType.redis => [
+                            TranslationSettingsLayout(
+                              padding: EdgeInsets.zero,
+                              runSpacing: SettingsSpacing.field,
+                              children: [
+                                TextField(
+                                  controller: controller.host,
+                                  enabled: !controller.fieldsDisabled,
+                                  autocorrect: false,
+                                  keyboardType: TextInputType.url,
+                                  decoration: InputDecoration(
+                                    labelText: l10n.translationRoamingHost,
+                                  ),
+                                  onChanged: (_) =>
+                                      controller.settingsChanged(),
+                                ),
+                                TextField(
+                                  controller: controller.port,
+                                  enabled: !controller.fieldsDisabled,
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    labelText: l10n.translationRoamingPort,
+                                  ),
+                                  onChanged: (_) =>
+                                      controller.settingsChanged(),
+                                ),
+                                TextField(
+                                  controller: controller.username,
+                                  enabled: !controller.fieldsDisabled,
+                                  autocorrect: false,
+                                  decoration: InputDecoration(
+                                    labelText: l10n.translationRoamingUsername,
+                                  ),
+                                  onChanged: (_) =>
+                                      controller.settingsChanged(),
+                                ),
+                                TextField(
+                                  controller: controller.password,
+                                  enabled: !controller.fieldsDisabled,
+                                  obscureText: !controller.passwordVisible,
+                                  autocorrect: false,
+                                  enableSuggestions: false,
+                                  enableIMEPersonalizedLearning: false,
+                                  decoration: InputDecoration(
+                                    labelText: l10n.password,
+                                    suffixIcon: IconButton(
+                                      tooltip: controller.passwordVisible
+                                          ? l10n.showLess
+                                          : l10n.showMore,
+                                      onPressed: controller.fieldsDisabled
+                                          ? null
+                                          : controller.togglePasswordVisibility,
+                                      icon: Icon(
+                                        controller.passwordVisible
+                                            ? Icons.visibility_off_outlined
+                                            : Icons.visibility_outlined,
+                                      ),
+                                    ),
+                                  ),
+                                  onChanged: (_) =>
+                                      controller.settingsChanged(),
+                                ),
+                                TextField(
+                                  controller: controller.database,
+                                  enabled: !controller.fieldsDisabled,
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    labelText: l10n.translationRoamingDatabase,
+                                  ),
+                                  onChanged: (_) =>
+                                      controller.settingsChanged(),
+                                ),
+                                DropdownButtonFormField<bool>(
+                                  initialValue: controller.tls,
+                                  isExpanded: true,
+                                  decoration: const InputDecoration(
+                                    labelText: 'TLS',
+                                  ),
+                                  items: [
+                                    DropdownMenuItem(
+                                      value: true,
+                                      child: Text(
+                                        l10n.open,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: false,
+                                      child: Text(
+                                        l10n.close,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                  onChanged: controller.fieldsDisabled
+                                      ? null
+                                      : controller.changeTls,
+                                ),
+                              ],
+                            ),
+                          ],
+                          TranslationRoamingType.upstash => [
                             TextField(
-                              controller: controller.host,
+                              controller: controller.endpoint,
                               enabled: !controller.fieldsDisabled,
                               autocorrect: false,
                               keyboardType: TextInputType.url,
                               decoration: InputDecoration(
-                                labelText: l10n.translationRoamingHost,
+                                labelText: l10n.translationEndpoint,
+                                hintText: 'https://example.upstash.io',
                               ),
                               onChanged: (_) => controller.settingsChanged(),
                             ),
                             TextField(
-                              controller: controller.port,
+                              controller: controller.token,
                               enabled: !controller.fieldsDisabled,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                labelText: l10n.translationRoamingPort,
-                              ),
-                              onChanged: (_) => controller.settingsChanged(),
-                            ),
-                            TextField(
-                              controller: controller.username,
-                              enabled: !controller.fieldsDisabled,
-                              autocorrect: false,
-                              decoration: InputDecoration(
-                                labelText: l10n.translationRoamingUsername,
-                              ),
-                              onChanged: (_) => controller.settingsChanged(),
-                            ),
-                            TextField(
-                              controller: controller.password,
-                              enabled: !controller.fieldsDisabled,
-                              obscureText: !controller.passwordVisible,
+                              obscureText: !controller.tokenVisible,
                               autocorrect: false,
                               enableSuggestions: false,
                               enableIMEPersonalizedLearning: false,
                               decoration: InputDecoration(
-                                labelText: l10n.password,
+                                labelText: l10n.translationRoamingToken,
                                 suffixIcon: IconButton(
-                                  tooltip: controller.passwordVisible
+                                  tooltip: controller.tokenVisible
                                       ? l10n.showLess
                                       : l10n.showMore,
                                   onPressed: controller.fieldsDisabled
                                       ? null
-                                      : controller.togglePasswordVisibility,
+                                      : controller.toggleTokenVisibility,
                                   icon: Icon(
-                                    controller.passwordVisible
+                                    controller.tokenVisible
                                         ? Icons.visibility_off_outlined
                                         : Icons.visibility_outlined,
                                   ),
@@ -203,86 +312,14 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                               ),
                               onChanged: (_) => controller.settingsChanged(),
                             ),
-                            TextField(
-                              controller: controller.database,
-                              enabled: !controller.fieldsDisabled,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                labelText: l10n.translationRoamingDatabase,
-                              ),
-                              onChanged: (_) => controller.settingsChanged(),
-                            ),
-                            DropdownButtonFormField<bool>(
-                              initialValue: controller.tls,
-                              isExpanded: true,
-                              decoration: const InputDecoration(
-                                labelText: 'TLS',
-                              ),
-                              items: [
-                                DropdownMenuItem(
-                                  value: true,
-                                  child: Text(
-                                    l10n.open,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                DropdownMenuItem(
-                                  value: false,
-                                  child: Text(
-                                    l10n.close,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                              onChanged: controller.fieldsDisabled
-                                  ? null
-                                  : controller.changeTls,
-                            ),
                           ],
-                        ),
+                        },
                       ],
-                      TranslationRoamingType.upstash => [
-                        TextField(
-                          controller: controller.endpoint,
-                          enabled: !controller.fieldsDisabled,
-                          autocorrect: false,
-                          keyboardType: TextInputType.url,
-                          decoration: InputDecoration(
-                            labelText: l10n.translationEndpoint,
-                            hintText: 'https://example.upstash.io',
-                          ),
-                          onChanged: (_) => controller.settingsChanged(),
-                        ),
-                        TextField(
-                          controller: controller.token,
-                          enabled: !controller.fieldsDisabled,
-                          obscureText: !controller.tokenVisible,
-                          autocorrect: false,
-                          enableSuggestions: false,
-                          enableIMEPersonalizedLearning: false,
-                          decoration: InputDecoration(
-                            labelText: l10n.translationRoamingToken,
-                            suffixIcon: IconButton(
-                              tooltip: controller.tokenVisible
-                                  ? l10n.showLess
-                                  : l10n.showMore,
-                              onPressed: controller.fieldsDisabled
-                                  ? null
-                                  : controller.toggleTokenVisibility,
-                              icon: Icon(
-                                controller.tokenVisible
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined,
-                              ),
-                            ),
-                          ),
-                          onChanged: (_) => controller.settingsChanged(),
-                        ),
-                      ],
-                    },
+                    ),
+                    const SizedBox(height: SettingsSpacing.section),
                     TranslationSettingsLayout(
                       padding: EdgeInsets.zero,
-                      runSpacing: 12,
+                      runSpacing: SettingsSpacing.field,
                       children: [
                         TextField(
                           controller: controller.prefix,
@@ -304,6 +341,7 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                         ),
                       ],
                     ),
+                    const SizedBox(height: SettingsSpacing.section),
                     TextField(
                       controller: controller.psk,
                       enabled: !controller.fieldsDisabled,
@@ -329,14 +367,19 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                       ),
                       onChanged: (_) => controller.settingsChanged(),
                     ),
-                    if (controller.invalidInput)
+                    if (controller.invalidInput) ...[
+                      const SizedBox(
+                        height: SettingsSpacing.related,
+                      ),
                       Text(
                         l10n.invalidInput,
                         style: TextStyle(color: theme.colorScheme.error),
                       ),
+                    ],
+                    const SizedBox(height: SettingsSpacing.actions),
                     Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
+                      spacing: SettingsSpacing.actions,
+                      runSpacing: SettingsSpacing.actions,
                       children: [
                         FilledButton.tonalIcon(
                           onPressed: controller.fieldsDisabled
@@ -344,8 +387,8 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                               : controller.generateKey,
                           style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
+                              horizontal: SettingsSpacing.field,
+                              vertical: SettingsSpacing.actions,
                             ),
                           ),
                           icon: const Icon(Icons.key_outlined, size: 18),
@@ -357,8 +400,8 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                               : controller.copyKey,
                           style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
+                              horizontal: SettingsSpacing.field,
+                              vertical: SettingsSpacing.actions,
                             ),
                           ),
                           icon: const Icon(Icons.copy_outlined, size: 18),
@@ -366,24 +409,22 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    ListTileTheme.merge(
-                      horizontalTitleGap: 0,
-                      child: CheckboxListTile.adaptive(
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
-                        visualDensity: const VisualDensity(vertical: -2),
-                        controlAffinity: ListTileControlAffinity.leading,
-                        title: Text(l10n.translationRoamingReadOnly),
-                        value: controller.readOnly,
-                        onChanged: controller.fieldsDisabled
-                            ? null
-                            : controller.changeReadOnly,
-                      ),
+                    const SizedBox(height: SettingsSpacing.section),
+                    SettingsCheckboxListTile(
+                      title: Text(l10n.translationRoamingReadOnly),
+                      value: controller.readOnly,
+                      onChanged: controller.fieldsDisabled
+                          ? null
+                          : controller.changeReadOnly,
                     ),
-                    Divider(height: 16, color: theme.dividerColor),
+                    Divider(
+                      height: SettingsSpacing.section,
+                      color: theme.dividerColor,
+                    ),
                     TranslationSettingsLayout(
                       padding: EdgeInsets.zero,
-                      runSpacing: 8,
+                      spacing: SettingsSpacing.actions,
+                      runSpacing: SettingsSpacing.actions,
                       children: [
                         OutlinedButton.icon(
                           onPressed:
@@ -425,6 +466,7 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(height: SettingsSpacing.inset),
             ],
           ),
         ),

@@ -5,6 +5,7 @@ import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/image_send_options.dart';
 import 'package:fluffychat/utils/image_send_preparation.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:fluffychat/widgets/settings_switch_list_tile.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -83,71 +84,78 @@ class _SettingsImageSendingState extends State<SettingsImageSending> {
           setting: AppSettings.compressImagesByDefault,
           defaultValue: AppSettings.compressImagesByDefault.defaultValue,
         ),
+        const SizedBox(height: SettingsSpacing.field),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: DropdownButtonFormField<ImageFormatPolicy>(
-            initialValue: _options.formatPolicy,
-            isExpanded: true,
-            decoration: InputDecoration(labelText: l10n.imageFormatPolicy),
-            items: [
-              DropdownMenuItem(
-                value: ImageFormatPolicy.preserve,
-                child: Text(l10n.preserveImageFormat),
+          padding: const EdgeInsets.symmetric(
+            horizontal: SettingsSpacing.inset,
+          ),
+          child: Column(
+            spacing: SettingsSpacing.field,
+            children: [
+              DropdownButtonFormField<ImageFormatPolicy>(
+                initialValue: _options.formatPolicy,
+                isExpanded: true,
+                decoration: InputDecoration(labelText: l10n.imageFormatPolicy),
+                items: [
+                  DropdownMenuItem(
+                    value: ImageFormatPolicy.preserve,
+                    child: Text(l10n.preserveImageFormat),
+                  ),
+                  DropdownMenuItem(
+                    value: ImageFormatPolicy.legacyOnly,
+                    child: Text(l10n.convertLegacyImageFormats),
+                  ),
+                  DropdownMenuItem(
+                    value: ImageFormatPolicy.preferred,
+                    child: Text(l10n.alwaysUsePreferredImageFormat),
+                  ),
+                ],
+                onChanged: (value) async {
+                  if (value == null) return;
+                  await AppSettings.imageFormatPolicy.setItem(value.name);
+                  if (mounted) {
+                    setState(() => _options = ImageSendOptions.fromSettings());
+                  }
+                },
               ),
-              DropdownMenuItem(
-                value: ImageFormatPolicy.legacyOnly,
-                child: Text(l10n.convertLegacyImageFormats),
-              ),
-              DropdownMenuItem(
-                value: ImageFormatPolicy.preferred,
-                child: Text(l10n.alwaysUsePreferredImageFormat),
+              if (_options.formatPolicy != ImageFormatPolicy.preserve)
+                DropdownButtonFormField<ImageOutputFormat>(
+                  key: ValueKey(preferred),
+                  initialValue: preferred,
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    labelText: l10n.preferredImageFormat,
+                  ),
+                  items: [
+                    for (final format in ImageOutputFormat.values)
+                      if (_formats.contains(format))
+                        DropdownMenuItem(
+                          value: format,
+                          child: Text(format.label),
+                        ),
+                  ],
+                  onChanged: (value) async {
+                    if (value == null) return;
+                    await AppSettings.preferredImageFormat.setItem(value.name);
+                    if (mounted) {
+                      setState(() => _options = ImageSendOptions.fromSettings());
+                    }
+                  },
+                ),
+              TextField(
+                controller: _dimension,
+                focusNode: _dimensionFocus,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: l10n.imageMaxDimension,
+                  helperText: l10n.imageMaxDimensionDescription,
+                  helperMaxLines: 2,
+                  suffixText: l10n.imageDimensionPixels,
+                  errorText: _invalidDimension ? l10n.invalidInput : null,
+                ),
+                onSubmitted: (_) => _saveDimension(),
               ),
             ],
-            onChanged: (value) async {
-              if (value == null) return;
-              await AppSettings.imageFormatPolicy.setItem(value.name);
-              if (mounted) {
-                setState(() => _options = ImageSendOptions.fromSettings());
-              }
-            },
-          ),
-        ),
-        if (_options.formatPolicy != ImageFormatPolicy.preserve)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: DropdownButtonFormField<ImageOutputFormat>(
-              key: ValueKey(preferred),
-              initialValue: preferred,
-              isExpanded: true,
-              decoration: InputDecoration(labelText: l10n.preferredImageFormat),
-              items: [
-                for (final format in ImageOutputFormat.values)
-                  if (_formats.contains(format))
-                    DropdownMenuItem(value: format, child: Text(format.label)),
-              ],
-              onChanged: (value) async {
-                if (value == null) return;
-                await AppSettings.preferredImageFormat.setItem(value.name);
-                if (mounted) {
-                  setState(() => _options = ImageSendOptions.fromSettings());
-                }
-              },
-            ),
-          ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: TextField(
-            controller: _dimension,
-            focusNode: _dimensionFocus,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: l10n.imageMaxDimension,
-              helperText: l10n.imageMaxDimensionDescription,
-              helperMaxLines: 2,
-              suffixText: l10n.imageDimensionPixels,
-              errorText: _invalidDimension ? l10n.invalidInput : null,
-            ),
-            onSubmitted: (_) => _saveDimension(),
           ),
         ),
       ],

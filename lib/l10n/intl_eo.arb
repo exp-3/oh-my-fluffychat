@@ -126,7 +126,7 @@
     "inputTranslationTriggerButton": "Butono de tradukado",
     "inputTranslationTriggerLongPress": "Longe premu enigkampon",
     "inputTranslationTriggerDoubleTap": "Rapida duoble-frapa enigokampo",
-    "translationPrivacyDetails": "Tradukado de mesaĝoj kaj eniga teksto sendas la tradukatan tekston kiel klartekston al via elektita ekstera provizanto de modelo, eĉ en tutvoje ĉifritaj babilejoj. Eniga teksto povas esti sendita al la provizanto antaŭ ol vi sendas la mesaĝon. La provizanto povas legi ĉi tiun enhavon kaj konservi aŭ uzi ĝin laŭ sia privateca politiko.\n\nAntaŭ uzo, konsideru viajn bezonojn kaj taksu la riskojn por sekureco kaj privateco. Evitu traduki konfidencan enhavon aŭ uzi provizantojn, kiujn vi ne fidas. Vi ankaŭ povas uzi memgastigatan modelon, kies datumtraktadon kaj konservadon vi regas.",
+    "translationPrivacyDetails": "Tradukado de mesaĝoj kaj eniga teksto sendas la tradukatan tekston kiel klartekston al via elektita ekstera provizanto de modelo, eĉ en tutvoje ĉifritaj babilejoj. Eniga teksto povas esti sendita al la provizanto antaŭ ol vi sendas la mesaĝon. La provizanto povas legi ĉi tiun enhavon kaj konservi aŭ uzi ĝin laŭ sia privateca politiko.\nAntaŭ uzo, konsideru viajn bezonojn kaj taksu la riskojn por sekureco kaj privateco. Evitu traduki konfidencan enhavon aŭ uzi provizantojn, kiujn vi ne fidas. Vi ankaŭ povas uzi memgastigatan modelon, kies datumtraktadon kaj konservadon vi regas.",
     "translateInput": "Traduki enigo",
     "messageBubbleGradient": "Kolortransiro de mesaĝa veziko",
     "compressImagesWhenSending": "Kunpremi bildojn dum sendado",

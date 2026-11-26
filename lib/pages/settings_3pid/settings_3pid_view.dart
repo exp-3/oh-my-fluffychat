@@ -6,6 +6,7 @@
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/settings_3pid/settings_3pid.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:matrix/matrix.dart';
@@ -34,73 +35,83 @@ class Settings3PidView extends StatelessWidget {
       ),
       body: MaxWidthBody(
         withScrolling: false,
-        child: FutureBuilder<List<ThirdPartyIdentifier>?>(
-          future: controller.request,
-          builder:
-              (
-                BuildContext context,
-                AsyncSnapshot<List<ThirdPartyIdentifier>?> snapshot,
-              ) {
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      snapshot.error.toString(),
-                      textAlign: TextAlign.center,
-                    ),
-                  );
-                }
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator.adaptive(strokeWidth: 2),
-                  );
-                }
-                final identifier = snapshot.data!;
-                return Column(
-                  children: [
-                    ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: theme.scaffoldBackgroundColor,
-                        foregroundColor: identifier.isEmpty
-                            ? Colors.orange
-                            : Colors.grey,
-                        child: Icon(
+        contentPadding: EdgeInsets.zero,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: SettingsSpacing.inset),
+          child: FutureBuilder<List<ThirdPartyIdentifier>?>(
+            future: controller.request,
+            builder:
+                (
+                  BuildContext context,
+                  AsyncSnapshot<List<ThirdPartyIdentifier>?> snapshot,
+                ) {
+                  if (snapshot.hasError) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: SettingsSpacing.inset,
+                      ),
+                      child: Center(
+                        child: Text(
+                          snapshot.error.toString(),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  }
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+                    );
+                  }
+                  final identifier = snapshot.data!;
+                  return Column(
+                    children: [
+                      ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: theme.scaffoldBackgroundColor,
+                          foregroundColor: identifier.isEmpty
+                              ? Colors.orange
+                              : Colors.grey,
+                          child: Icon(
+                            identifier.isEmpty
+                                ? Icons.warning_outlined
+                                : Icons.info_outlined,
+                          ),
+                        ),
+                        title: Text(
                           identifier.isEmpty
-                              ? Icons.warning_outlined
-                              : Icons.info_outlined,
+                              ? L10n.of(context).noPasswordRecoveryDescription
+                              : L10n.of(
+                                  context,
+                                ).withTheseAddressesRecoveryDescription,
                         ),
                       ),
-                      title: Text(
-                        identifier.isEmpty
-                            ? L10n.of(context).noPasswordRecoveryDescription
-                            : L10n.of(
-                                context,
-                              ).withTheseAddressesRecoveryDescription,
-                      ),
-                    ),
-                    const Divider(),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: identifier.length,
-                        itemBuilder: (BuildContext context, int i) => ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: theme.scaffoldBackgroundColor,
-                            foregroundColor: Colors.grey,
-                            child: Icon(identifier[i].iconData),
-                          ),
-                          title: Text(identifier[i].address),
-                          trailing: IconButton(
-                            tooltip: L10n.of(context).delete,
-                            icon: const Icon(Icons.delete_forever_outlined),
-                            color: Colors.red,
-                            onPressed: () =>
-                                controller.delete3Pid(identifier[i]),
+                      const Divider(height: SettingsSpacing.section),
+                      Expanded(
+                        child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          itemCount: identifier.length,
+                          itemBuilder: (BuildContext context, int i) => ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: theme.scaffoldBackgroundColor,
+                              foregroundColor: Colors.grey,
+                              child: Icon(identifier[i].iconData),
+                            ),
+                            title: Text(identifier[i].address),
+                            trailing: IconButton(
+                              tooltip: L10n.of(context).delete,
+                              icon: const Icon(Icons.delete_forever_outlined),
+                              color: Colors.red,
+                              onPressed: () =>
+                                  controller.delete3Pid(identifier[i]),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              },
+                    ],
+                  );
+                },
+          ),
         ),
       ),
     );

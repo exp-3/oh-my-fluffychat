@@ -128,7 +128,7 @@
     "inputTranslationTriggerButton": "翻譯按鈕",
     "inputTranslationTriggerLongPress": "長按輸入框",
     "inputTranslationTriggerDoubleTap": "快速雙擊輸入框",
-    "translationPrivacyDetails": "訊息翻譯和輸入翻譯會將待翻譯的文字以明文傳送給您選擇的外部模型供應商，即使聊天已端對端加密。輸入文字可能在傳送訊息前交給供應商處理。供應商可讀取這些內容，並依其隱私政策儲存和使用資料。\n\n請依自身需求，評估安全與隱私風險後再使用。涉及機密內容或不信任供應商時，請勿使用；也可選擇自行架設、由您控制資料處理和儲存的模型。",
+    "translationPrivacyDetails": "訊息翻譯和輸入翻譯會將待翻譯的文字以明文傳送給您選擇的外部模型供應商，即使聊天已端對端加密。輸入文字可能在傳送訊息前交給供應商處理。供應商可讀取這些內容，並依其隱私政策儲存和使用資料。\n請依自身需求，評估安全與隱私風險後再使用。涉及機密內容或不信任供應商時，請勿使用；也可選擇自行架設、由您控制資料處理和儲存的模型。",
     "translateInput": "翻譯輸入內容",
     "messageBubbleGradient": "訊息氣泡漸變",
     "compressImagesWhenSending": "傳送圖片時壓縮",

@@ -129,7 +129,7 @@
     "inputTranslationTriggerButton": "Tlačidlo prekladu",
     "inputTranslationTriggerLongPress": "Dlho stlačte vstupné pole",
     "inputTranslationTriggerDoubleTap": "Rýchle dvojité ťuknutie na vstupné pole",
-    "translationPrivacyDetails": "Pri preklade správ aj zadávaného textu sa prekladaný text odosiela v nezašifrovanej podobe vybranému externému poskytovateľovi modelu, a to aj v četoch so šifrovaním od konca ku koncu. Zadávaný text sa môže odoslať poskytovateľovi ešte pred odoslaním správy. Poskytovateľ môže tento obsah čítať a ukladať alebo používať podľa svojich zásad ochrany súkromia.\n\nPred použitím zvážte svoje potreby a posúďte riziká pre bezpečnosť a súkromie. Vyhnite sa prekladu dôverného obsahu a používaniu poskytovateľov, ktorým nedôverujete. Môžete použiť aj model na vlastnom serveri, pri ktorom máte pod kontrolou spracúvanie a ukladanie údajov.",
+    "translationPrivacyDetails": "Pri preklade správ aj zadávaného textu sa prekladaný text odosiela v nezašifrovanej podobe vybranému externému poskytovateľovi modelu, a to aj v četoch so šifrovaním od konca ku koncu. Zadávaný text sa môže odoslať poskytovateľovi ešte pred odoslaním správy. Poskytovateľ môže tento obsah čítať a ukladať alebo používať podľa svojich zásad ochrany súkromia.\nPred použitím zvážte svoje potreby a posúďte riziká pre bezpečnosť a súkromie. Vyhnite sa prekladu dôverného obsahu a používaniu poskytovateľov, ktorým nedôverujete. Môžete použiť aj model na vlastnom serveri, pri ktorom máte pod kontrolou spracúvanie a ukladanie údajov.",
     "translateInput": "Preložiť vstup",
     "messageBubbleGradient": "Farebný prechod bubliny správy",
     "compressImagesWhenSending": "Komprimovať obrázky pri odosielaní",

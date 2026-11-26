@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import 'package:fluffychat/l10n/l10n.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'settings_translation_details.dart';
@@ -30,7 +31,9 @@ class SettingsTranslationBatchView extends StatelessWidget {
           ],
           (true, true) => [
             const Padding(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.symmetric(
+                horizontal: SettingsSpacing.inset,
+              ),
               child: LinearProgressIndicator(),
             ),
           ],
@@ -136,37 +139,34 @@ class _NumberSetting extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 6),
-    child: TextField(
-      controller: controller,
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-        labelText: label,
-        helperText: '$min-$max',
-        suffixText: suffix,
-        errorText: valid ? null : L10n.of(context).invalidInput,
-        suffixIconConstraints: const BoxConstraints(
-          minWidth: 96,
-          minHeight: 48,
-        ),
-        suffixIcon: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.remove),
-              tooltip: L10n.of(context).decrease,
-              onPressed: () => onStep(-step),
-            ),
-            IconButton(
-              icon: const Icon(Icons.add),
-              tooltip: L10n.of(context).increase,
-              onPressed: () => onStep(step),
-            ),
-          ],
-        ),
+  Widget build(BuildContext context) => TextField(
+    controller: controller,
+    keyboardType: TextInputType.number,
+    decoration: InputDecoration(
+      labelText: label,
+      helperText: '$min-$max',
+      suffixText: suffix,
+      errorText: valid ? null : L10n.of(context).invalidInput,
+      suffixIconConstraints: const BoxConstraints(
+        minWidth: 96,
+        minHeight: 48,
       ),
-      onChanged: (_) => onChanged(),
+      suffixIcon: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.remove),
+            tooltip: L10n.of(context).decrease,
+            onPressed: () => onStep(-step),
+          ),
+          IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: L10n.of(context).increase,
+            onPressed: () => onStep(step),
+          ),
+        ],
+      ),
     ),
+    onChanged: (_) => onChanged(),
   );
 }
