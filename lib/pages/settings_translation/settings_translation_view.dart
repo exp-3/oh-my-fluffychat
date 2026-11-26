@@ -8,6 +8,7 @@ import 'package:fluffychat/utils/translation/translation_languages.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
 import 'package:fluffychat/utils/translation/translation_roaming_models.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/settings_checkbox_list_tile.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'settings_translation.dart';
@@ -189,10 +190,13 @@ class SettingsTranslationView extends StatelessWidget {
                           ],
                         ),
                       ),
-                      CheckboxListTile.adaptive(
-                        title: Text(l10n.preferRoomLanguageForSource),
-                        value: runtime.preferRoomLanguageForSource,
-                        onChanged: controller.changePreferRoomLanguage,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: SettingsCheckboxListTile(
+                          title: Text(l10n.preferRoomLanguageForSource),
+                          value: runtime.preferRoomLanguageForSource,
+                          onChanged: controller.changePreferRoomLanguage,
+                        ),
                       ),
                       SwitchListTile.adaptive(
                         secondary: const Icon(Icons.view_agenda_outlined),

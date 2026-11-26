@@ -128,7 +128,7 @@
     "inputTranslationTriggerButton": "Botó de traducció",
     "inputTranslationTriggerLongPress": "Premeu llargament el camp d'entrada",
     "inputTranslationTriggerDoubleTap": "Camp d'entrada ràpid de doble toc",
-    "translationPrivacyDetails": "La traducció de missatges i del text introduït envia el text que es tradueix en text pla al proveïdor extern del model que trieu, fins i tot en xats xifrats d'extrem a extrem. El text introduït es pot enviar al proveïdor abans que envieu el missatge. El proveïdor pot llegir aquest contingut i emmagatzemar-lo o utilitzar-lo segons la seva política de privadesa.\n\nAbans d'utilitzar-la, valoreu les vostres necessitats i els riscos per a la seguretat i la privadesa. Eviteu traduir contingut confidencial o utilitzar proveïdors en els quals no confieu. També podeu fer servir un model allotjat al vostre propi servidor, del qual controleu el tractament i l'emmagatzematge de dades.",
+    "translationPrivacyDetails": "La traducció de missatges i del text introduït envia el text que es tradueix en text pla al proveïdor extern del model que trieu, fins i tot en xats xifrats d'extrem a extrem. El text introduït es pot enviar al proveïdor abans que envieu el missatge. El proveïdor pot llegir aquest contingut i emmagatzemar-lo o utilitzar-lo segons la seva política de privadesa.\nAbans d'utilitzar-la, valoreu les vostres necessitats i els riscos per a la seguretat i la privadesa. Eviteu traduir contingut confidencial o utilitzar proveïdors en els quals no confieu. També podeu fer servir un model allotjat al vostre propi servidor, del qual controleu el tractament i l'emmagatzematge de dades.",
     "translateInput": "Tradueix l'entrada",
     "messageBubbleGradient": "Degradat de la bombolla de missatge",
     "compressImagesWhenSending": "Comprimeix les imatges en enviar-les",
@@ -396,7 +396,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "changeTheme": "Canvia l’estil",
+    "changeTheme": "Aparença",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2128,7 +2128,7 @@
             }
         }
     },
-    "formattedMessages": "Missatges amb format",
+    "formattedMessages": "Mostra els missatges amb format",
     "formattedMessagesDescription": "Mostra contingut amb format enriquit com text en cursiva, fent servir markdown.",
     "verifyOtherUser": "🔐 Verifica uni altri usuàrïi",
     "verifyOtherDevice": "🔐 Verifica un altre dispositiu",

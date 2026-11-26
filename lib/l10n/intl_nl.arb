@@ -128,7 +128,7 @@
     "inputTranslationTriggerButton": "Vertaalknop",
     "inputTranslationTriggerLongPress": "Druk lang op het invoerveld",
     "inputTranslationTriggerDoubleTap": "Snel dubbeltikinvoerveld",
-    "translationPrivacyDetails": "Bij het vertalen van berichten en invoertekst wordt de te vertalen tekst als leesbare tekst naar de door jou gekozen externe modelaanbieder gestuurd, ook in end-to-end versleutelde chats. Invoertekst kan al naar de aanbieder worden gestuurd voordat je het bericht verstuurt. De aanbieder kan deze inhoud lezen en volgens zijn privacybeleid opslaan of gebruiken.\n\nBedenk voor gebruik wat je nodig hebt en beoordeel de veiligheids- en privacyrisico’s. Vertaal geen vertrouwelijke inhoud en gebruik geen aanbieders die je niet vertrouwt. Je kunt ook een zelfgehost model gebruiken waarvan je de gegevensverwerking en opslag zelf beheert.",
+    "translationPrivacyDetails": "Bij het vertalen van berichten en invoertekst wordt de te vertalen tekst als leesbare tekst naar de door jou gekozen externe modelaanbieder gestuurd, ook in end-to-end versleutelde chats. Invoertekst kan al naar de aanbieder worden gestuurd voordat je het bericht verstuurt. De aanbieder kan deze inhoud lezen en volgens zijn privacybeleid opslaan of gebruiken.\nBedenk voor gebruik wat je nodig hebt en beoordeel de veiligheids- en privacyrisico’s. Vertaal geen vertrouwelijke inhoud en gebruik geen aanbieders die je niet vertrouwt. Je kunt ook een zelfgehost model gebruiken waarvan je de gegevensverwerking en opslag zelf beheert.",
     "translateInput": "Vertaal invoer",
     "messageBubbleGradient": "Kleurverloop van de tekstballon",
     "compressImagesWhenSending": "Afbeeldingen comprimeren bij het verzenden",
@@ -446,7 +446,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "changeTheme": "Je stijl veranderen",
+    "changeTheme": "Uiterlijk",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2397,7 +2397,7 @@
         }
     },
     "sendReadReceipts": "Leesbevestigingen versturen",
-    "formattedMessages": "Opgemaakte berichten",
+    "formattedMessages": "Opgemaakte berichten weergeven",
     "chatPermissionsDescription": "Stel het gewenste rechten-niveau in voor bepaalde acties in deze chat. Het rechten-niveau 0, 50 en 100 zijn gebruikelijk voor deelnemer, moderator en beheerder, maar elke verdeling is mogelijk.",
     "changeTheDescriptionOfTheGroup": "Onderwerp wijzigen",
     "sendReadReceiptsDescription": "Andere deelnemers van de chat kunnen zien of je een bericht hebt gelezen.",

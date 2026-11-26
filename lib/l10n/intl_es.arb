@@ -129,7 +129,7 @@
     "inputTranslationTriggerButton": "Botón de traducción",
     "inputTranslationTriggerLongPress": "Mantenga presionado el campo de entrada",
     "inputTranslationTriggerDoubleTap": "Campo de entrada rápida de doble toque",
-    "translationPrivacyDetails": "La traducción de mensajes y del texto introducido envía el texto que se traduce sin cifrar al proveedor externo del modelo que elijas, incluso en chats cifrados de extremo a extremo. El texto introducido puede enviarse al proveedor antes de que envíes el mensaje. El proveedor puede leer este contenido y almacenarlo o utilizarlo según su política de privacidad.\n\nAntes de usarla, considera tus necesidades y evalúa los riesgos para la seguridad y la privacidad. Evita traducir contenido confidencial o utilizar proveedores en los que no confíes. También puedes usar un modelo alojado en tu propio servidor, cuyo procesamiento y almacenamiento de datos controles.",
+    "translationPrivacyDetails": "La traducción de mensajes y del texto introducido envía el texto que se traduce sin cifrar al proveedor externo del modelo que elijas, incluso en chats cifrados de extremo a extremo. El texto introducido puede enviarse al proveedor antes de que envíes el mensaje. El proveedor puede leer este contenido y almacenarlo o utilizarlo según su política de privacidad.\nAntes de usarla, considera tus necesidades y evalúa los riesgos para la seguridad y la privacidad. Evita traducir contenido confidencial o utilizar proveedores en los que no confíes. También puedes usar un modelo alojado en tu propio servidor, cuyo procesamiento y almacenamiento de datos controles.",
     "translateInput": "Traducir entrada",
     "messageBubbleGradient": "Degradado de la burbuja de mensaje",
     "compressImagesWhenSending": "Comprimir imágenes al enviarlas",
@@ -422,7 +422,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "changeTheme": "Cambia tu estilo",
+    "changeTheme": "Apariencia",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2215,7 +2215,7 @@
     "jumpToLastReadMessage": "Saltar al último mensaje leído",
     "report": "informe",
     "readUpToHere": "Leer hasta aquí",
-    "formattedMessages": "Mensajes con formato",
+    "formattedMessages": "Mostrar mensajes con formato",
     "publicSpaces": "Espacios públicos",
     "formattedMessagesDescription": "Mostrar contenido de mensaje enriquecido, como texto en negrita, usando markdown.",
     "userLevel": "{level} - Usuario",

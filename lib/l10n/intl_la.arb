@@ -35,7 +35,7 @@
     "translationReasoningEffort": "Gradus ratiocinationis",
     "translationReasoningUnspecified": "Praedefinitum (non specificatum)",
     "enableTranslation": "Translationem AI activare",
-    "translationPrivacyDetails": "Translatio nuntiorum et textus inscripti textum vertendum sine cryptographia ad externum provisorem exemplaris quem eligis mittit, etiam in colloquiis ab extremo ad extremum cryptatis. Textus inscriptus ad provisorem mitti potest antequam nuntium mittas. Provisor haec contenta legere atque secundum sua de rebus privatis praescripta servare vel adhibere potest.\n\nAnte usum, necessitates tuas considera atque pericula securitatis et rerum privatarum tutelae aestima. Noli res secretas vertere neque provisoribus uti quibus non confidis. Etiam exemplari a te ipso hospitato uti potes, cuius datorum tractationem et conservationem ipse regis.",
+    "translationPrivacyDetails": "Translatio nuntiorum et textus inscripti textum vertendum sine cryptographia ad externum provisorem exemplaris quem eligis mittit, etiam in colloquiis ab extremo ad extremum cryptatis. Textus inscriptus ad provisorem mitti potest antequam nuntium mittas. Provisor haec contenta legere atque secundum sua de rebus privatis praescripta servare vel adhibere potest.\nAnte usum, necessitates tuas considera atque pericula securitatis et rerum privatarum tutelae aestima. Noli res secretas vertere neque provisoribus uti quibus non confidis. Etiam exemplari a te ipso hospitato uti potes, cuius datorum tractationem et conservationem ipse regis.",
     "translationPrivacyNotice": "Translatio ope intellegentiae artificialis contenta colloquii aperto textu ad provisorem exemplaris quem eligis mittit. Ante usum, necessitates tuas considera atque pericula securitatis et rerum privatarum tutelae aestima.",
     "clearTranslationCacheWarning": "Hoc omnem memoriam translationum servatam delebit nec revocari potest. Hos nuntios iterum vertere sumptus API efficere potest. Pergere vis?",
     "translationStyleBackground": "Arca fundi",
@@ -206,5 +206,7 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "formattedMessages": "Monstra nuntios formatos",
+    "changeTheme": "Aspectus"
 }

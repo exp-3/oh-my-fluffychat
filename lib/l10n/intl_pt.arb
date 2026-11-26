@@ -128,7 +128,7 @@
     "inputTranslationTriggerButton": "Botão de tradução",
     "inputTranslationTriggerLongPress": "Campo de entrada de toque longo",
     "inputTranslationTriggerDoubleTap": "Campo de entrada rápido de toque duplo",
-    "translationPrivacyDetails": "A tradução de mensagens e de texto introduzido envia o texto a traduzir em texto simples para o fornecedor externo do modelo que escolher, mesmo em conversas cifradas de ponta a ponta. O texto introduzido pode ser enviado ao fornecedor antes de enviar a mensagem. O fornecedor pode ler este conteúdo e armazená-lo ou utilizá-lo de acordo com a sua política de privacidade.\n\nAntes de utilizar, pondere as suas necessidades e avalie os riscos de segurança e privacidade. Evite traduzir conteúdos confidenciais ou recorrer a fornecedores em quem não confia. Também pode utilizar um modelo alojado por si, cujo processamento e armazenamento de dados controla.",
+    "translationPrivacyDetails": "A tradução de mensagens e de texto introduzido envia o texto a traduzir em texto simples para o fornecedor externo do modelo que escolher, mesmo em conversas cifradas de ponta a ponta. O texto introduzido pode ser enviado ao fornecedor antes de enviar a mensagem. O fornecedor pode ler este conteúdo e armazená-lo ou utilizá-lo de acordo com a sua política de privacidade.\nAntes de utilizar, pondere as suas necessidades e avalie os riscos de segurança e privacidade. Evite traduzir conteúdos confidenciais ou recorrer a fornecedores em quem não confia. Também pode utilizar um modelo alojado por si, cujo processamento e armazenamento de dados controla.",
     "translateInput": "Traduzir entrada",
     "messageBubbleGradient": "Gradiente do balão de mensagem",
     "compressImagesWhenSending": "Comprimir imagens ao enviar",
@@ -2152,5 +2152,7 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "formattedMessages": "Mostrar mensagens formatadas",
+    "changeTheme": "Aparência"
 }

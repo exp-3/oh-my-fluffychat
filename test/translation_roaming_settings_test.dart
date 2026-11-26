@@ -34,16 +34,16 @@ void main() {
       );
       final l10n = _l10n(tester);
       final generate = tester.getRect(
-        _outlinedButton(l10n.translationRoamingGenerateKey),
+        _textButton(l10n.translationRoamingGenerateKey),
       );
-      final copy = tester.getRect(_outlinedButton(l10n.copyToClipboard));
+      final copy = tester.getRect(_textButton(l10n.copyToClipboard));
       final readOnly = tester.getRect(find.byType(CheckboxListTile));
       final checkbox = tester.getRect(find.byType(Checkbox));
       final label = tester.getRect(find.text(l10n.translationRoamingReadOnly));
       final divider = tester.getRect(find.byType(Divider));
-      final test = tester.getRect(_outlinedButton(l10n.test));
+      final test = tester.getRect(_filledButton(l10n.test));
       final upload = tester.getRect(
-        _outlinedButton(l10n.translationRoamingUploadLocal),
+        _elevatedButton(l10n.translationRoamingUploadLocal),
       );
       expect(readOnly.top, greaterThanOrEqualTo(generate.bottom));
       expect(readOnly.top, greaterThanOrEqualTo(copy.bottom));
@@ -78,9 +78,9 @@ void main() {
         );
         final l10n = _l10n(tester);
         final divider = tester.getRect(find.byType(Divider));
-        final test = tester.getRect(_outlinedButton(l10n.test));
+        final test = tester.getRect(_filledButton(l10n.test));
         final upload = tester.getRect(
-          _outlinedButton(l10n.translationRoamingUploadLocal),
+          _elevatedButton(l10n.translationRoamingUploadLocal),
         );
         final checkbox = tester.getRect(find.byType(Checkbox));
         final label = tester.getRect(
@@ -108,7 +108,7 @@ void main() {
     final fixture = await _Fixture.create();
     await _showRoaming(tester, fixture.runtime, width: 500, textScale: 2);
     final l10n = _l10n(tester);
-    final testFinder = _outlinedButton(l10n.test);
+    final testFinder = _filledButton(l10n.test);
     final actions = tester.getRect(
       find.ancestor(
         of: testFinder,
@@ -117,7 +117,7 @@ void main() {
     );
     final test = tester.getRect(testFinder);
     final upload = tester.getRect(
-      _outlinedButton(l10n.translationRoamingUploadLocal),
+      _elevatedButton(l10n.translationRoamingUploadLocal),
     );
     expect(upload.top, greaterThan(test.bottom));
     expect(test.width, actions.width);
@@ -126,8 +126,8 @@ void main() {
 
     await _showRoaming(tester, fixture.runtime, width: 500);
     expect(
-      tester.getRect(_outlinedButton(l10n.test)).top,
-      tester.getRect(_outlinedButton(l10n.translationRoamingUploadLocal)).top,
+      tester.getRect(_filledButton(l10n.test)).top,
+      tester.getRect(_elevatedButton(l10n.translationRoamingUploadLocal)).top,
     );
     expect(tester.takeException(), isNull);
   });
@@ -191,11 +191,11 @@ void main() {
     final fixture = await _Fixture.create(configured: true);
     await _showRoaming(tester, fixture.runtime);
     final l10n = _l10n(tester);
-    final upload = _outlinedButton(l10n.translationRoamingUploadLocal);
+    final upload = _elevatedButton(l10n.translationRoamingUploadLocal);
 
     await _toggleReadOnly(tester);
     expect(fixture.runtime.roamingConfig.readOnly, isFalse);
-    expect(tester.widget<OutlinedButton>(upload).onPressed, isNull);
+    expect(tester.widget<ElevatedButton>(upload).onPressed, isNull);
     await tester.ensureVisible(upload);
     await tester.tap(upload);
     await tester.pumpAndSettle();
@@ -217,7 +217,7 @@ void main() {
       tester.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value,
       isTrue,
     );
-    expect(tester.widget<OutlinedButton>(upload).onPressed, isNull);
+    expect(tester.widget<ElevatedButton>(upload).onPressed, isNull);
   });
 
   testWidgets('read-only changes can dismiss the exit prompt or be discarded', (
@@ -260,8 +260,8 @@ void main() {
 
     expect(
       tester
-          .widget<OutlinedButton>(
-            _outlinedButton(l10n.translationRoamingUploadLocal),
+          .widget<ElevatedButton>(
+            _elevatedButton(l10n.translationRoamingUploadLocal),
           )
           .onPressed,
       isNotNull,
@@ -373,7 +373,7 @@ void main() {
         expect(field.enabled, isFalse);
       }
       expect(
-        tester.widget<OutlinedButton>(_outlinedButton(l10n.test)).onPressed,
+        tester.widget<FilledButton>(_filledButton(l10n.test)).onPressed,
         isNull,
       );
 
@@ -449,8 +449,8 @@ void main() {
       final fixture = await _Fixture.create(configured: true);
       await _showRoaming(tester, fixture.runtime);
       final l10n = _l10n(tester);
-      final upload = _outlinedButton(l10n.translationRoamingUploadLocal);
-      expect(tester.widget<OutlinedButton>(upload).onPressed, isNotNull);
+      final upload = _elevatedButton(l10n.translationRoamingUploadLocal);
+      expect(tester.widget<ElevatedButton>(upload).onPressed, isNotNull);
       await tester.ensureVisible(upload);
       final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
       addTearDown(mouse.removePointer);
@@ -465,7 +465,7 @@ void main() {
         l10n.translationRoamingHost,
         'changed.example.invalid',
       );
-      expect(tester.widget<OutlinedButton>(upload).onPressed, isNull);
+      expect(tester.widget<ElevatedButton>(upload).onPressed, isNull);
       await tester.ensureVisible(upload);
       await tester.tap(upload);
       await tester.pumpAndSettle();
@@ -481,8 +481,8 @@ void main() {
     final fixture = await _Fixture.create(configured: true, savedKey: false);
     await _showRoaming(tester, fixture.runtime);
     final l10n = _l10n(tester);
-    final upload = _outlinedButton(l10n.translationRoamingUploadLocal);
-    expect(tester.widget<OutlinedButton>(upload).onPressed, isNull);
+    final upload = _elevatedButton(l10n.translationRoamingUploadLocal);
+    expect(tester.widget<ElevatedButton>(upload).onPressed, isNull);
     await tester.ensureVisible(upload);
     await tester.tap(upload);
     await tester.pumpAndSettle();
@@ -505,7 +505,7 @@ void main() {
     await _toggle(tester);
     await _enter(tester, l10n.translationRoamingHost, 'draft.example.invalid');
     await _toggleReadOnly(tester);
-    final button = _outlinedButton(l10n.test);
+    final button = _filledButton(l10n.test);
     await tester.ensureVisible(button);
     await tester.tap(button);
     await tester.pump();
@@ -523,7 +523,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(tester.widget<OutlinedButton>(button).onPressed, isNull);
+    expect(tester.widget<FilledButton>(button).onPressed, isNull);
     runtime.completed.complete();
     await tester.pumpAndSettle();
     expect(find.byIcon(Icons.science_outlined), findsOneWidget);
@@ -598,9 +598,19 @@ Finder _field(String label) => find.byWidgetPredicate(
 String _text(WidgetTester tester, String label) =>
     tester.widget<TextField>(_field(label)).controller!.text;
 
-Finder _outlinedButton(String label) => find.ancestor(
+Finder _filledButton(String label) => find.ancestor(
   of: find.text(label),
-  matching: find.byWidgetPredicate((widget) => widget is OutlinedButton),
+  matching: find.byWidgetPredicate((widget) => widget is FilledButton),
+);
+
+Finder _elevatedButton(String label) => find.ancestor(
+  of: find.text(label),
+  matching: find.byWidgetPredicate((widget) => widget is ElevatedButton),
+);
+
+Finder _textButton(String label) => find.ancestor(
+  of: find.text(label),
+  matching: find.byWidgetPredicate((widget) => widget is TextButton),
 );
 
 Future<void> _toggle(WidgetTester tester) async {

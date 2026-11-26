@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/translation/translation_roaming_models.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/settings_checkbox_list_tile.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'translation_roaming_settings.dart';
@@ -84,7 +85,7 @@ class TranslationRoamingSettingsView extends StatelessWidget {
               if (controller.loadFailed)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: TextButton.icon(
+                  child: ElevatedButton.icon(
                     onPressed: controller.loading
                         ? null
                         : controller.loadSecrets,
@@ -103,7 +104,7 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                           style: TextStyle(color: theme.colorScheme.error),
                         ),
                       ),
-                      TextButton.icon(
+                      ElevatedButton.icon(
                         onPressed: controller.busy || controller.loadFailed
                             ? null
                             : controller.save,
@@ -338,42 +339,47 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        OutlinedButton.icon(
+                        TextButton.icon(
                           onPressed: controller.fieldsDisabled
                               ? null
                               : controller.generateKey,
-                          icon: const Icon(Icons.key_outlined),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                          ),
+                          icon: const Icon(Icons.key_outlined, size: 18),
                           label: Text(l10n.translationRoamingGenerateKey),
                         ),
-                        OutlinedButton.icon(
+                        TextButton.icon(
                           onPressed: controller.fieldsDisabled
                               ? null
                               : controller.copyKey,
-                          icon: const Icon(Icons.copy_outlined),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                          ),
+                          icon: const Icon(Icons.copy_outlined, size: 18),
                           label: Text(l10n.copyToClipboard),
                         ),
                       ],
                     ),
-                    ListTileTheme.merge(
-                      horizontalTitleGap: 0,
-                      child: CheckboxListTile.adaptive(
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
-                        visualDensity: const VisualDensity(vertical: -2),
-                        controlAffinity: ListTileControlAffinity.leading,
-                        title: Text(l10n.translationRoamingReadOnly),
-                        value: controller.readOnly,
-                        onChanged: controller.fieldsDisabled
-                            ? null
-                            : controller.changeReadOnly,
-                      ),
+                    SettingsCheckboxListTile(
+                      title: Text(l10n.translationRoamingReadOnly),
+                      value: controller.readOnly,
+                      onChanged: controller.fieldsDisabled
+                          ? null
+                          : controller.changeReadOnly,
                     ),
                     Divider(height: 16, color: theme.dividerColor),
                     TranslationSettingsLayout(
                       padding: EdgeInsets.zero,
                       runSpacing: 8,
                       children: [
-                        OutlinedButton.icon(
+                        FilledButton.tonalIcon(
                           onPressed:
                               controller.fieldsDisabled ||
                                   controller.unsupported
@@ -399,7 +405,7 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                             onTap: uploadHint.isNotEmpty
                                 ? controller.showUploadHint
                                 : null,
-                            child: OutlinedButton.icon(
+                            child: ElevatedButton.icon(
                               onPressed: controller.canUpload
                                   ? controller.openUpload
                                   : null,

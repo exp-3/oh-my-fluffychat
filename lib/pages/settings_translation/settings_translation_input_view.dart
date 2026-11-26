@@ -5,6 +5,7 @@
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/translation/translation_languages.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
+import 'package:fluffychat/widgets/settings_checkbox_list_tile.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'settings_translation_details.dart';
@@ -181,10 +182,13 @@ class SettingsTranslationInputView extends StatelessWidget {
                   ],
                 ),
               ),
-              CheckboxListTile.adaptive(
-                title: Text(l10n.preferRoomLanguageForInputTarget),
-                value: runtime.preferRoomLanguageForInputTarget,
-                onChanged: controller.changePreferRoomLanguage,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SettingsCheckboxListTile(
+                  title: Text(l10n.preferRoomLanguageForInputTarget),
+                  value: runtime.preferRoomLanguageForInputTarget,
+                  onChanged: controller.changePreferRoomLanguage,
+                ),
               ),
             ],
           ],

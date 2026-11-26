@@ -65,7 +65,7 @@ class TranslationRoamingUploadView extends StatelessWidget {
                       children: [
                         Text(message),
                         const SizedBox(height: 16),
-                        OutlinedButton.icon(
+                        ElevatedButton.icon(
                           onPressed: controller.load,
                           icon: const Icon(Icons.refresh),
                           label: Text(l10n.tryAgain),
@@ -121,7 +121,7 @@ class TranslationRoamingUploadView extends StatelessWidget {
                             child: Text(l10n.cancel),
                           ),
                         if (!uploading)
-                          OutlinedButton.icon(
+                          ElevatedButton.icon(
                             onPressed: controller.load,
                             icon: const Icon(Icons.refresh),
                             label: Text(l10n.tryAgain),

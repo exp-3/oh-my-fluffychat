@@ -125,7 +125,7 @@
     "inputTranslationTriggerButton": "Button de traduction",
     "inputTranslationTriggerLongPress": "Pression longe del campo de entrata",
     "inputTranslationTriggerDoubleTap": "Duo pression rapide del campo de entrata",
-    "translationPrivacyDetails": "Le traduction de messages e de texto de entrata invia le texto a traducer in forma non cryptate al fornitor externe de modellos que tu selige, mesmo in conversationes cryptate de extremo a extremo. Le texto de entrata pote esser inviate al fornitor ante que tu invia le message. Le fornitor pote leger iste contento e immagazinar o usar lo secundo su politica de confidentialitate.\n\nConsidera tu necessitates e evalua le riscos de securitate e confidentialitate ante usar lo. Evita traducer contento confidential o usar fornitores in le quales tu non confide. Tu pote anque usar un modello albergate per te mesme, cuje processamento e immagazinage de datos tu controla.",
+    "translationPrivacyDetails": "Le traduction de messages e de texto de entrata invia le texto a traducer in forma non cryptate al fornitor externe de modellos que tu selige, mesmo in conversationes cryptate de extremo a extremo. Le texto de entrata pote esser inviate al fornitor ante que tu invia le message. Le fornitor pote leger iste contento e immagazinar o usar lo secundo su politica de confidentialitate.\nConsidera tu necessitates e evalua le riscos de securitate e confidentialitate ante usar lo. Evita traducer contento confidential o usar fornitores in le quales tu non confide. Tu pote anque usar un modello albergate per te mesme, cuje processamento e immagazinage de datos tu controla.",
     "translateInput": "Traducer texto inserite",
     "messageBubbleGradient": "Gradiente del bulla del message",
     "compressImagesWhenSending": "Comprimer imagines al inviar",
@@ -2141,5 +2141,7 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "formattedMessages": "Monstrar messages formatate",
+    "changeTheme": "Apparentia"
 }

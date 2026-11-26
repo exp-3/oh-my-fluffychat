@@ -127,7 +127,7 @@
     "inputTranslationTriggerButton": "Gumb za prijevod",
     "inputTranslationTriggerLongPress": "Dugo pritisnite polje za unos",
     "inputTranslationTriggerDoubleTap": "Brzi dvostruki dodir na polje za unos",
-    "translationPrivacyDetails": "Prevođenje poruka i unesenog teksta šalje tekst koji se prevodi u nešifriranom obliku odabranom vanjskom pružatelju modela, čak i u razgovorima šifriranima s kraja na kraj. Uneseni tekst može se poslati pružatelju prije nego što pošaljete poruku. Pružatelj može čitati taj sadržaj te ga pohranjivati ili upotrebljavati u skladu sa svojim pravilima privatnosti.\n\nPrije uporabe razmotrite svoje potrebe i procijenite rizike za sigurnost i privatnost. Izbjegavajte prevođenje povjerljivog sadržaja i korištenje pružatelja kojima ne vjerujete. Možete upotrijebiti i model koji sami udomljujete, pri čemu sami upravljate obradom i pohranom podataka.",
+    "translationPrivacyDetails": "Prevođenje poruka i unesenog teksta šalje tekst koji se prevodi u nešifriranom obliku odabranom vanjskom pružatelju modela, čak i u razgovorima šifriranima s kraja na kraj. Uneseni tekst može se poslati pružatelju prije nego što pošaljete poruku. Pružatelj može čitati taj sadržaj te ga pohranjivati ili upotrebljavati u skladu sa svojim pravilima privatnosti.\nPrije uporabe razmotrite svoje potrebe i procijenite rizike za sigurnost i privatnost. Izbjegavajte prevođenje povjerljivog sadržaja i korištenje pružatelja kojima ne vjerujete. Možete upotrijebiti i model koji sami udomljujete, pri čemu sami upravljate obradom i pohranom podataka.",
     "translateInput": "Prevedi unos",
     "messageBubbleGradient": "Gradijent oblačića poruke",
     "compressImagesWhenSending": "Sažmi slike pri slanju",
@@ -439,7 +439,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "changeTheme": "Promijeni tvoj stil",
+    "changeTheme": "Izgled",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2101,7 +2101,7 @@
     "databaseMigrationTitle": "Baza podataka je optimirana",
     "searchChatsRooms": "Traži #chats, @users …",
     "databaseMigrationBody": "Pričekaj. Ovo može potrajati.",
-    "formattedMessages": "Formatirane poruke",
+    "formattedMessages": "Prikaži formatirane poruke",
     "incomingMessages": "Dolazne poruke",
     "passwordsDoNotMatch": "Lozinke se ne poklapaju",
     "accessAndVisibility": "Pristup i vidljivost",

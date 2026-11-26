@@ -125,7 +125,7 @@
     "inputTranslationTriggerButton": "Butoni i përkthimit",
     "inputTranslationTriggerLongPress": "Fusha e hyrjes me shtypje të gjatë",
     "inputTranslationTriggerDoubleTap": "Fusha e hyrjes me prekje të shpejtë dy herë",
-    "translationPrivacyDetails": "Përkthimi i mesazheve dhe i tekstit që shkruani e dërgon tekstin për përkthim në formë të paenkriptuar te ofruesi i jashtëm i modelit që zgjidhni, edhe në biseda të enkriptuara skaj më skaj. Teksti që shkruani mund t\u0027i dërgohet ofruesit para se të dërgoni mesazhin. Ofruesi mund ta lexojë këtë përmbajtje dhe ta ruajë ose ta përdorë sipas politikës së tij të privatësisë.\n\nPara përdorimit, merrni parasysh nevojat tuaja dhe vlerësoni rreziqet për sigurinë dhe privatësinë. Shmangni përkthimin e përmbajtjeve konfidenciale ose përdorimin e ofruesve të cilëve nuk u besoni. Mund të përdorni edhe një model të strehuar nga ju, ku kontrolloni përpunimin dhe ruajtjen e të dhënave.",
+    "translationPrivacyDetails": "Përkthimi i mesazheve dhe i tekstit që shkruani e dërgon tekstin për përkthim në formë të paenkriptuar te ofruesi i jashtëm i modelit që zgjidhni, edhe në biseda të enkriptuara skaj më skaj. Teksti që shkruani mund t\u0027i dërgohet ofruesit para se të dërgoni mesazhin. Ofruesi mund ta lexojë këtë përmbajtje dhe ta ruajë ose ta përdorë sipas politikës së tij të privatësisë.\nPara përdorimit, merrni parasysh nevojat tuaja dhe vlerësoni rreziqet për sigurinë dhe privatësinë. Shmangni përkthimin e përmbajtjeve konfidenciale ose përdorimin e ofruesve të cilëve nuk u besoni. Mund të përdorni edhe një model të strehuar nga ju, ku kontrolloni përpunimin dhe ruajtjen e të dhënave.",
     "translateInput": "Përkthe hyrjen",
     "messageBubbleGradient": "Gradienti i flluskës së mesazhit",
     "compressImagesWhenSending": "Ngjesh figurat gjatë dërgimit",
@@ -2123,5 +2123,7 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "formattedMessages": "Shfaq mesazhet e formatuara",
+    "changeTheme": "Pamja"
 }

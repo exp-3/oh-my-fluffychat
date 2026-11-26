@@ -74,14 +74,14 @@ class DevicesSettingsView extends StatelessWidget {
                             horizontal: 16.0,
                             vertical: 8.0,
                           ),
-                          alignment: Alignment.centerLeft,
+                          alignment: AlignmentDirectional.centerStart,
                           child: Text(
                             L10n.of(context).thisDevice,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: theme.colorScheme.primary,
                             ),
-                            textAlign: TextAlign.left,
+                            textAlign: TextAlign.start,
                           ),
                         ),
                         UserDeviceListItem(

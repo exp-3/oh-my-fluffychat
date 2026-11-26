@@ -127,7 +127,7 @@
     "inputTranslationTriggerButton": "Käännöspainike",
     "inputTranslationTriggerLongPress": "Paina syöttökenttää pitkään",
     "inputTranslationTriggerDoubleTap": "Nopea kaksoisnapautussyöttökenttä",
-    "translationPrivacyDetails": "Viestien ja kirjoitettavan tekstin kääntäminen lähettää käännettävän tekstin selväkielisenä valitsemallesi ulkoiselle mallin tarjoajalle myös päästä päähän salatuissa keskusteluissa. Kirjoittamaasi tekstiä voidaan lähettää tarjoajalle ennen kuin lähetät viestin. Tarjoaja voi lukea tämän sisällön sekä tallentaa tai käyttää sitä tietosuojakäytäntönsä mukaisesti.\n\nHarkitse tarpeitasi ja arvioi turvallisuuteen ja yksityisyyteen liittyvät riskit ennen käyttöä. Vältä luottamuksellisen sisällön kääntämistä tai sellaisten tarjoajien käyttöä, joihin et luota. Voit myös käyttää itse ylläpitämääsi mallia, jonka tietojen käsittely ja tallennus ovat hallinnassasi.",
+    "translationPrivacyDetails": "Viestien ja kirjoitettavan tekstin kääntäminen lähettää käännettävän tekstin selväkielisenä valitsemallesi ulkoiselle mallin tarjoajalle myös päästä päähän salatuissa keskusteluissa. Kirjoittamaasi tekstiä voidaan lähettää tarjoajalle ennen kuin lähetät viestin. Tarjoaja voi lukea tämän sisällön sekä tallentaa tai käyttää sitä tietosuojakäytäntönsä mukaisesti.\nHarkitse tarpeitasi ja arvioi turvallisuuteen ja yksityisyyteen liittyvät riskit ennen käyttöä. Vältä luottamuksellisen sisällön kääntämistä tai sellaisten tarjoajien käyttöä, joihin et luota. Voit myös käyttää itse ylläpitämääsi mallia, jonka tietojen käsittely ja tallennus ovat hallinnassasi.",
     "translateInput": "Käännä syöttö",
     "messageBubbleGradient": "Viestikuplan liukuväri",
     "compressImagesWhenSending": "Pakkaa kuvat lähetettäessä",
@@ -442,7 +442,7 @@
             }
         }
     },
-    "changeTheme": "Vaihda tyyliäsi",
+    "changeTheme": "Ulkoasu",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2256,7 +2256,7 @@
     "sendReadReceipts": "Lähetä lukukuittaukset",
     "sendTypingNotificationsDescription": "Muut keskustelun osallistujat näkevät, milloin olet kirjoittamassa uutta viestiä.",
     "sendReadReceiptsDescription": "Muut keskustelun osallistujat näkevät, milloin olet lukenut viestin.",
-    "formattedMessages": "Muotoillut viestit",
+    "formattedMessages": "Näytä muotoillut viestit",
     "formattedMessagesDescription": "Näytä rikasta viestisisältöä, kuten lihavoitua tekstiä, käyttämällä Markdownia.",
     "verifyOtherUser": "🔐 Vahvista toinen käyttäjä",
     "verifyOtherUserDescription": "Jos vahvistat toisen käyttäjän, voit olla varma, että tiedät kenelle todella kirjoitat. 💪\n\nKun aloitat vahvistuksen, sinä ja toinen käyttäjä näette sovelluksessa ponnahdusikkunan. Siellä näette sitten sarjan emojeja tai numeroita, joita teidän on verrattava toisiinsa.\n\nParas tapa tehdä tämä on tavata heidät tai aloittaa videopuhelu. 👭",

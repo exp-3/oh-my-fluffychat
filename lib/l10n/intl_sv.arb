@@ -128,7 +128,7 @@
     "inputTranslationTriggerButton": "Översättningsknapp",
     "inputTranslationTriggerLongPress": "Långt tryck på inmatningsfältet",
     "inputTranslationTriggerDoubleTap": "Snabbt dubbeltryck inmatningsfält",
-    "translationPrivacyDetails": "Vid översättning av meddelanden och inmatad text skickas texten som ska översättas i klartext till den externa modellleverantör du väljer, även i chattar som är krypterade från ände till ände. Inmatad text kan skickas till leverantören innan du skickar meddelandet. Leverantören kan läsa innehållet och lagra eller använda det enligt sin integritetspolicy.\n\nFundera över dina behov och bedöm säkerhets- och integritetsriskerna före användning. Undvik att översätta konfidentiellt innehåll eller använda leverantörer som du inte litar på. Du kan också använda en modell på en egen server där du själv kontrollerar hur data behandlas och lagras.",
+    "translationPrivacyDetails": "Vid översättning av meddelanden och inmatad text skickas texten som ska översättas i klartext till den externa modellleverantör du väljer, även i chattar som är krypterade från ände till ände. Inmatad text kan skickas till leverantören innan du skickar meddelandet. Leverantören kan läsa innehållet och lagra eller använda det enligt sin integritetspolicy.\nFundera över dina behov och bedöm säkerhets- och integritetsriskerna före användning. Undvik att översätta konfidentiellt innehåll eller använda leverantörer som du inte litar på. Du kan också använda en modell på en egen server där du själv kontrollerar hur data behandlas och lagras.",
     "translateInput": "Översätt input",
     "messageBubbleGradient": "Meddelandebubblans färgövergång",
     "compressImagesWhenSending": "Komprimera bilder vid sändning",
@@ -409,7 +409,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "changeTheme": "Ändra din stil",
+    "changeTheme": "Utseende",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2165,7 +2165,7 @@
     "sendTypingNotificationsDescription": "Andra deltagare i en diskussion kan se när du skriver.",
     "formattedMessagesDescription": "Visa formaterat meddelandeinnehåll som fet stil med markdown.",
     "verifyOtherUser": "🔐 Verifiera användaren",
-    "formattedMessages": "Formaterade meddelanden",
+    "formattedMessages": "Visa formaterade meddelanden",
     "canceledKeyVerification": "{sender} avbröt nyckelverifieringen",
     "@canceledKeyVerification": {
         "type": "String",

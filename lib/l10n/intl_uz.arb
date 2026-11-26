@@ -125,7 +125,7 @@
     "inputTranslationTriggerButton": "Tarjima tugmasi",
     "inputTranslationTriggerLongPress": "Kirish maydonini uzoq bosib turing",
     "inputTranslationTriggerDoubleTap": "Tezkor kiritish maydoniga ikki marta teging",
-    "translationPrivacyDetails": "Xabarlar va kiritilayotgan matnni tarjima qilishda tarjima qilinadigan matn siz tanlagan tashqi model provayderiga ochiq ko‘rinishda yuboriladi. Bu uchdan uchgacha shifrlangan chatlarda ham sodir bo‘ladi. Kiritilayotgan matn xabarni yuborishingizdan oldin provayderga yuborilishi mumkin. Provayder bu mazmunni o‘qishi va o‘z maxfiylik siyosatiga muvofiq saqlashi yoki ishlatishi mumkin.\n\nIshlatishdan oldin ehtiyojlaringizni hisobga oling va xavfsizlik hamda maxfiylik xavflarini baholang. Maxfiy mazmunni tarjima qilishdan yoki ishonmaydigan provayderlardan foydalanishdan saqlaning. Ma’lumotlarni qayta ishlash va saqlashni o‘zingiz nazorat qiladigan, o‘z serveringizda joylashtirilgan modeldan ham foydalanishingiz mumkin.",
+    "translationPrivacyDetails": "Xabarlar va kiritilayotgan matnni tarjima qilishda tarjima qilinadigan matn siz tanlagan tashqi model provayderiga ochiq ko‘rinishda yuboriladi. Bu uchdan uchgacha shifrlangan chatlarda ham sodir bo‘ladi. Kiritilayotgan matn xabarni yuborishingizdan oldin provayderga yuborilishi mumkin. Provayder bu mazmunni o‘qishi va o‘z maxfiylik siyosatiga muvofiq saqlashi yoki ishlatishi mumkin.\nIshlatishdan oldin ehtiyojlaringizni hisobga oling va xavfsizlik hamda maxfiylik xavflarini baholang. Maxfiy mazmunni tarjima qilishdan yoki ishonmaydigan provayderlardan foydalanishdan saqlaning. Ma’lumotlarni qayta ishlash va saqlashni o‘zingiz nazorat qiladigan, o‘z serveringizda joylashtirilgan modeldan ham foydalanishingiz mumkin.",
     "translateInput": "Tarjima kiritish",
     "messageBubbleGradient": "Xabar pufagining gradienti",
     "compressImagesWhenSending": "Yuborishda rasmlarni siqish",
@@ -500,7 +500,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "changeTheme": "Uslubingizni o‘zgartiring",
+    "changeTheme": "Tashqi ko‘rinish",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2195,7 +2195,7 @@
         }
     },
     "sendReadReceipts": "Oʻqilganlik haqida xabarnomalarni yuborish",
-    "formattedMessages": "Formatlangan xabarlar",
+    "formattedMessages": "Formatlangan xabarlarni ko‘rsatish",
     "formattedMessagesDescription": "Markdown yordamida qalin matn kabi boy xabar mazmunini koʻrsating.",
     "verifyOtherUser": "🔐 Boshqa foydalanuvchini tasdiqlang",
     "verifyOtherUserDescription": "Agar siz boshqa foydalanuvchini tasdiqlasangiz, aslida kimga yozayotganingizni bilishingizga amin boʻlishingiz mumkin. 💪\n\nTekshiruvni boshlaganingizda, siz va boshqa foydalanuvchi ilovada qalqib chiquvchi oynani koʻrasiz. Keyin u yerda siz bir-biringiz bilan taqqoslashingiz kerak boʻlgan bir qator emojilar yoki raqamlarni koʻrasiz.\n\nBuning eng yaxshi usuli - uchrashish yoki video qoʻngʻiroqni boshlash. 👭",

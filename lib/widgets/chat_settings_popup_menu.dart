@@ -20,8 +20,14 @@ enum ChatPopupMenuActions { details, encryption, leave, search }
 class ChatSettingsPopupMenu extends StatefulWidget {
   final Room room;
   final bool displayChatDetails;
+  final bool displaySearch;
 
-  const ChatSettingsPopupMenu(this.room, this.displayChatDetails, {super.key});
+  const ChatSettingsPopupMenu(
+    this.room,
+    this.displayChatDetails, {
+    super.key,
+    this.displaySearch = true,
+  });
 
   @override
   ChatSettingsPopupMenuState createState() => ChatSettingsPopupMenuState();
@@ -105,7 +111,9 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
                   ],
                 ),
               ),
-            if (widget.room.membership case .join || .leave)
+            if (widget.displaySearch &&
+                (widget.room.membership == Membership.join ||
+                    widget.room.membership == Membership.leave))
               PopupMenuItem<ChatPopupMenuActions>(
                 value: ChatPopupMenuActions.search,
                 child: Row(
