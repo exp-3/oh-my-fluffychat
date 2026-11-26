@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "Nepavyko atnaujinti vertimų podėlio",
     "translationRoaming": "Vertimų bendrinimas",
     "translationRoamingDescription": "Naudokite išorinę podėlio paslaugą vertimams bendrinti tarp įrenginių, kad sumažinę pakartotinių vertimų skaičių sutaupytumėte DI paslaugų išlaidų. Vertimai jūsų įrenginiuose šifruojami nuo vieno galo iki kito naudojant iš anksto bendrinamą raktą, kuris niekada neįkeliamas į serverį. Kiekviename įrenginyje naudokite tuos pačius ryšio nustatymus ir tą patį raktą.",
+    "translationRoamingReadOnly": "Tik skaitymo režimas (neįkelti vertimų)",
+    "translationRoamingReadOnlyUploadUnavailable": "Tik skaitymo režimu negalima įkelti vertimų.",
     "translationRoamingConnectionType": "Ryšio tipas",
     "translationRoamingNative": "Tiesioginis Redis",
     "translationRoamingUpstash": "Upstash stilius",

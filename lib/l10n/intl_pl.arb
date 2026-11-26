@@ -8,6 +8,8 @@
     "translationCacheUpgradeFailed": "Aktualizacja pamięci podręcznej tłumaczeń nie powiodła się",
     "translationRoaming": "Współdzielenie tłumaczeń",
     "translationRoamingDescription": "Udostępniaj tłumaczenia między urządzeniami za pomocą zewnętrznej usługi buforowania, ograniczając ponowne tłumaczenia, aby obniżyć koszty usługi AI. Tłumaczenia są szyfrowane na Twoich urządzeniach metodą od końca do końca przy użyciu wcześniej współdzielonego klucza, który nigdy nie jest przesyłany na serwer. Na każdym urządzeniu używaj tych samych ustawień połączenia i klucza.",
+    "translationRoamingReadOnly": "Tryb tylko do odczytu (nie przesyłaj tłumaczeń)",
+    "translationRoamingReadOnlyUploadUnavailable": "W trybie tylko do odczytu nie można przesyłać tłumaczeń.",
     "translationRoamingConnectionType": "Typ połączenia",
     "translationRoamingNative": "Natywny Redis",
     "translationRoamingUpstash": "Styl Upstash",

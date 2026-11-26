@@ -7,6 +7,8 @@
     "translationCacheUpgradeFailed": "Ur yeddi ara usnifel n tuffra n tsuqilt",
     "translationRoaming": "Abḍu n tsuqilin",
     "translationRoamingDescription": "Seqdec ameẓlu n tuffra n berra i ubḍu n tsuqilin gar yibenkan, s usenqes n ules n tsuqilt akken ad tesneqseḍ idrimen ara txellṣeḍ i yimeẓla n AI. Tisuqilin ttawgelhent seg yixef ɣer yixef deg yibenkan-ik s tsarut yettwabḍan yakan. Tasarut-a ur tettwazen ara ǧǧin ɣer uqeddac. Seqdec iɣewwaren n tuqqna akked tsarut kifkif deg yal ibenk.",
+    "translationRoamingReadOnly": "Askar n tɣuri kan (ur ssali ara tisuqilin)",
+    "translationRoamingReadOnlyUploadUnavailable": "Ur tezmireḍ ara ad tessaliḍ tisuqilin deg uskar n tɣuri kan.",
     "translationRoamingConnectionType": "Anaw n tuqqna",
     "translationRoamingNative": "Redis usrid",
     "translationRoamingUpstash": "Aɣanib Upstash",

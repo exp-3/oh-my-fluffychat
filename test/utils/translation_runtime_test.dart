@@ -75,6 +75,38 @@ void main() {
   );
 
   test(
+    'read-only roaming stops existing imports and rejects new sessions',
+    () async {
+      final fixture = await _RuntimeFixture.create(
+        roamingFactory: _ImmediateRoaming.new,
+      );
+      addTearDown(fixture.runtime.dispose);
+      await _enableRoaming(fixture.runtime);
+      final session = await fixture.runtime.createRoamingUploadSession();
+      addTearDown(session.dispose);
+      final settings = await fixture.runtime.readRoamingSettings();
+      await fixture.runtime.saveRoaming(
+        settings.config.copyWith(readOnly: true),
+        settings.secrets,
+      );
+
+      expect(session.phase, TranslationRoamingUploadPhase.stopped);
+      expect(fixture.runtime.canUploadLocalTranslations, isFalse);
+      await expectLater(
+        fixture.runtime.createRoamingUploadSession(),
+        throwsA(isA<TranslationRoamingException>()),
+      );
+      await fixture.runtime.setRoamingEnabled(false);
+      await fixture.runtime.setRoamingEnabled(true);
+      expect(fixture.runtime.roamingConfig.readOnly, isTrue);
+      expect(fixture.runtime.canUploadLocalTranslations, isFalse);
+
+      await fixture.runtime.saveRoaming(settings.config, settings.secrets);
+      expect(fixture.runtime.canUploadLocalTranslations, isTrue);
+    },
+  );
+
+  test(
     'manual import snapshots stop on configuration and cache safety changes',
     () async {
       final fixture = await _RuntimeFixture.create(
@@ -1674,6 +1706,87 @@ void main() {
     expect(fixture.backend.present, isFalse);
     expect(fixture.backend.createCalls, 0);
   });
+
+  test('read-only roaming still restores remote translations', () async {
+    final services = <_ImmediateRoaming>[];
+    final api = _RecordingApiClient();
+    final fixture = await _RuntimeFixture.create(
+      apiClient: api,
+      roamingFactory: (config, secrets) {
+        final service = _ImmediateRoaming(config, secrets);
+        services.add(service);
+        return service;
+      },
+    );
+    addTearDown(fixture.runtime.dispose);
+    await _enableRoaming(fixture.runtime);
+    final settings = await fixture.runtime.readRoamingSettings();
+    await fixture.runtime.saveRoaming(
+      settings.config.copyWith(readOnly: true),
+      settings.secrets,
+    );
+
+    expect(
+      await fixture.runtime.restoreEvent(_event(fixture)),
+      'cloud translation',
+    );
+    expect(services.single.reads, 1);
+    expect(services.single.uploads, isEmpty);
+    expect(api.calls, 0);
+  });
+
+  test(
+    'read-only translations remain local until uploading is allowed',
+    () async {
+      final services = <_ImmediateRoaming>[];
+      final api = _RecordingApiClient();
+      final fixture = await _RuntimeFixture.create(
+        apiClient: api,
+        roamingFactory: (config, secrets) {
+          final service = _ImmediateRoaming(config, secrets);
+          services.add(service);
+          return service;
+        },
+        mergeWindowMs: 0,
+      );
+      addTearDown(fixture.runtime.dispose);
+      await _enableRoaming(fixture.runtime);
+      final settings = await fixture.runtime.readRoamingSettings();
+      await fixture.runtime.saveRoaming(
+        settings.config.copyWith(readOnly: true),
+        settings.secrets,
+      );
+      final event = _event(fixture);
+      expect(
+        await fixture.runtime.translateEvent(
+          event,
+          manual: true,
+          forceRefresh: true,
+        ),
+        'translated',
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(api.calls, 1);
+      expect(services, isEmpty);
+      expect(
+        await fixture.runtime.cache.read(_eventCacheKey(event)),
+        'translated',
+      );
+
+      await fixture.runtime.saveRoaming(settings.config, settings.secrets);
+      expect(
+        await fixture.runtime.translateEvent(
+          event,
+          manual: true,
+          forceRefresh: true,
+        ),
+        'translated',
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(api.calls, 2);
+      expect(services.single.uploads, ['translated']);
+    },
+  );
 
   test('local hit stays offline and forced refresh replaces roaming', () async {
     final api = _RecordingApiClient();

@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "Tulkojumu kešatmiņas jaunināšana neizdevās",
     "translationRoaming": "Tulkojumu koplietošana",
     "translationRoamingDescription": "Izmantojiet ārēju kešatmiņas pakalpojumu, lai kopīgotu tulkojumus starp ierīcēm un, samazinot atkārtotu tulkošanu, ietaupītu uz MI pakalpojumu izmaksām. Tulkojumi jūsu ierīcēs tiek šifrēti no gala līdz galam ar iepriekš kopīgotu atslēgu, kas nekad netiek augšupielādēta. Katrā ierīcē izmantojiet vienādus savienojuma iestatījumus un vienu un to pašu atslēgu.",
+    "translationRoamingReadOnly": "Tikai lasīšanas režīms (neaugšupielādēt tulkojumus)",
+    "translationRoamingReadOnlyUploadUnavailable": "Tikai lasīšanas režīmā nevar augšupielādēt tulkojumus.",
     "translationRoamingConnectionType": "Savienojuma veids",
     "translationRoamingNative": "Tiešais Redis",
     "translationRoamingUpstash": "Upstash stils",

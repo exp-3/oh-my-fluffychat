@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "Përmirësimi i memories së përkohshme të përkthimeve dështoi",
     "translationRoaming": "Ndarja e përkthimeve mes pajisjeve",
     "translationRoamingDescription": "Përdorni një shërbim të jashtëm cache për të ndarë përkthimet mes pajisjeve, duke pakësuar përkthimet e përsëritura dhe duke ulur kështu kostot e shërbimit të inteligjencës artificiale. Përkthimet enkriptohen skaj më skaj në pajisjet tuaja me një çelës të ndarë paraprakisht, i cili nuk ngarkohet kurrë në server. Përdorni të njëjtat cilësime lidhjeje dhe të njëjtin çelës në çdo pajisje.",
+    "translationRoamingReadOnly": "Modaliteti vetëm për lexim (mos ngarko përkthime)",
+    "translationRoamingReadOnlyUploadUnavailable": "Përkthimet nuk mund të ngarkohen në modalitetin vetëm për lexim.",
     "translationRoamingConnectionType": "Lloji i lidhjes",
     "translationRoamingNative": "Redis i drejtpërdrejtë",
     "translationRoamingUpstash": "Stil Upstash",

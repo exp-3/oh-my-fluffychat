@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "Tarjima keshini yangilab bo‘lmadi",
     "translationRoaming": "Tarjimalarni qurilmalararo ulashish",
     "translationRoamingDescription": "Takroriy tarjimalarni kamaytirib, AI xizmati xarajatlarini tejash uchun tashqi keshlash xizmati orqali qurilmalar o‘rtasida tarjimalarni ulashing. Tarjimalar qurilmalaringizda oldindan ulashilgan kalit bilan uchdan uchgacha shifrlanadi. Kalit hech qachon serverga yuklanmaydi. Har bir qurilmada bir xil ulanish sozlamalari va kalitdan foydalaning.",
+    "translationRoamingReadOnly": "Faqat o‘qish rejimi (tarjimalarni serverga yuklamaslik)",
+    "translationRoamingReadOnlyUploadUnavailable": "Faqat o‘qish rejimida tarjimalarni serverga yuklab bo‘lmaydi.",
     "translationRoamingConnectionType": "Ulanish turi",
     "translationRoamingNative": "Bevosita Redis",
     "translationRoamingUpstash": "Upstash uslubi",

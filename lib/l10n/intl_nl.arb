@@ -7,6 +7,8 @@
     "translationCacheUpgradeFailed": "De vertaalcache kon niet worden bijgewerkt",
     "translationRoaming": "Vertalingen delen tussen apparaten",
     "translationRoamingDescription": "Deel vertalingen tussen apparaten via een externe cachedienst om herhaalde vertalingen te verminderen en zo te besparen op de kosten van de AI-dienst. De vertalingen worden op je apparaten end-to-end versleuteld met een vooraf gedeelde sleutel die nooit wordt geüpload. Gebruik op elk apparaat dezelfde verbindingsinstellingen en sleutel.",
+    "translationRoamingReadOnly": "Alleen-lezenmodus (geen vertalingen uploaden)",
+    "translationRoamingReadOnlyUploadUnavailable": "Vertalingen kunnen niet worden geüpload in de alleen-lezenmodus.",
     "translationRoamingConnectionType": "Verbindingstype",
     "translationRoamingNative": "Native Redis",
     "translationRoamingUpstash": "Upstash-stijl",

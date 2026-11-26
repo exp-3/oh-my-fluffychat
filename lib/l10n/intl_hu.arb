@@ -8,6 +8,8 @@
     "translationCacheUpgradeFailed": "A fordítási gyorsítótár frissítése sikertelen",
     "translationRoaming": "Fordítások megosztása",
     "translationRoamingDescription": "A fordítások eszközök közötti megosztásához használjon külső gyorsítótárazási szolgáltatást, így a kevesebb ismételt fordítással csökkentheti az MI-szolgáltatások költségeit. A fordítások az eszközein végpontok közötti titkosítást kapnak egy előre megosztott kulccsal, amely soha nem kerül feltöltésre. Minden eszközön ugyanazokat a kapcsolati beállításokat és ugyanazt a kulcsot használja.",
+    "translationRoamingReadOnly": "Csak olvasható mód (ne töltsön fel fordításokat)",
+    "translationRoamingReadOnlyUploadUnavailable": "Csak olvasható módban nem tölthetők fel fordítások.",
     "translationRoamingConnectionType": "Kapcsolat típusa",
     "translationRoamingNative": "Natív Redis",
     "translationRoamingUpstash": "Upstash-stílus",

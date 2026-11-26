@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "Hindi na-upgrade ang cache ng pagsasalin",
     "translationRoaming": "Pagbabahagi ng mga salin",
     "translationRoamingDescription": "Gumamit ng panlabas na serbisyo ng cache para ibahagi ang mga salin sa iba't ibang device at bawasan ang paulit-ulit na pagsasalin upang makatipid sa mga serbisyong AI. Naka-encrypt nang end-to-end ang mga salin sa iyong mga device gamit ang isang paunang ibinahaging susi na hindi kailanman ina-upload. Gamitin ang parehong mga setting ng koneksyon at susi sa bawat device.",
+    "translationRoamingReadOnly": "Mode na pagbasa lamang (huwag mag-upload ng mga salin)",
+    "translationRoamingReadOnlyUploadUnavailable": "Hindi maaaring mag-upload ng mga salin sa mode na pagbasa lamang.",
     "translationRoamingConnectionType": "Uri ng koneksyon",
     "translationRoamingNative": "Direktang Redis",
     "translationRoamingUpstash": "Estilong Upstash",

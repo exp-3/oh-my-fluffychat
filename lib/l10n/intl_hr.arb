@@ -8,6 +8,8 @@
     "translationCacheUpgradeFailed": "Nadogradnja predmemorije prijevoda nije uspjela",
     "translationRoaming": "Dijeljenje prijevoda između uređaja",
     "translationRoamingDescription": "Upotrijebite vanjsku uslugu predmemoriranja za dijeljenje prijevoda među uređajima i smanjite ponovljene prijevode kako biste uštedjeli na troškovima usluga umjetne inteligencije. Prijevodi se na vašim uređajima šifriraju s kraja na kraj unaprijed podijeljenim ključem koji se nikada ne prenosi na poslužitelj. Na svakom uređaju upotrijebite iste postavke veze i isti ključ.",
+    "translationRoamingReadOnly": "Način samo za čitanje (bez slanja prijevoda)",
+    "translationRoamingReadOnlyUploadUnavailable": "U načinu samo za čitanje nije moguće slati prijevode.",
     "translationRoamingConnectionType": "Vrsta veze",
     "translationRoamingNative": "Izravni Redis",
     "translationRoamingUpstash": "Upstash stil",

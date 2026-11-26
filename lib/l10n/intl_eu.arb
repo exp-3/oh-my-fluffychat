@@ -8,6 +8,8 @@
     "translationCacheUpgradeFailed": "Ezin izan da itzulpenen cachea eguneratu",
     "translationRoaming": "Itzulpenen ibiltaritza",
     "translationRoamingDescription": "Erabili kanpoko cache-zerbitzu bat itzulpenak gailuen artean partekatzeko eta errepikatutako itzulpenak murriztuz adimen artifizialeko zerbitzuetan aurrezteko. Itzulpenak muturretik muturrera zifratzen dira zure gailuetan, aurrez partekatutako gako batekin; gako hori ez da inoiz zerbitzarira igotzen. Erabili konexio-ezarpen eta gako berak gailu guztietan.",
+    "translationRoamingReadOnly": "Irakurtzeko soilik modua (ez igo itzulpenik)",
+    "translationRoamingReadOnlyUploadUnavailable": "Ezin dira itzulpenak igo irakurtzeko soilik moduan.",
     "translationRoamingConnectionType": "Konexio mota",
     "translationRoamingNative": "Redis jatorrizkoa",
     "translationRoamingUpstash": "Upstash estiloa",

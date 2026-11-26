@@ -5,6 +5,8 @@
 /// Transports only receive Redis keys, encrypted values and authentication
 /// credentials. Plaintext sources and the PSK never cross this interface.
 abstract interface class TranslationRoamingStore {
+  Future<String?> get(String key);
+
   Future<String?> getEx(String key, int ttlSeconds);
 
   Future<void> set(String key, String value, int ttlSeconds);

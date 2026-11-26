@@ -7,6 +7,8 @@
     "translationCacheUpgradeFailed": "Oppgradering av oversettelsesbufferen mislyktes",
     "translationRoaming": "Deling av oversettelser",
     "translationRoamingDescription": "Bruk en ekstern mellomlagringstjeneste til å dele oversettelser mellom enheter og redusere gjentatte oversettelser for å spare kostnader til KI-tjenester. Oversettelsene ende-til-ende-krypteres på enhetene dine med en forhåndsdelt nøkkel som aldri lastes opp. Bruk de samme tilkoblingsinnstillingene og den samme nøkkelen på hver enhet.",
+    "translationRoamingReadOnly": "Skrivebeskyttet modus (ikke last opp oversettelser)",
+    "translationRoamingReadOnlyUploadUnavailable": "Oversettelser kan ikke lastes opp i skrivebeskyttet modus.",
     "translationRoamingConnectionType": "Tilkoblingstype",
     "translationRoamingNative": "Direkte Redis",
     "translationRoamingUpstash": "Upstash-stil",

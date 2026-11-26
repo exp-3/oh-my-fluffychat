@@ -74,8 +74,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   TranslationRoamingConfig _roamingConfig = const TranslationRoamingConfig();
   TranslationRoamingService? _roamingService;
   Future<TranslationRoamingService?>? _roamingLoading;
-  TranslationRoamingServiceFactory _roamingFactory = (config, secrets) =>
-      TranslationRoamingService(config: config, secrets: secrets);
+  late TranslationRoamingServiceFactory _roamingFactory;
   void Function(VoidCallback)? _afterRoamingFrame;
   Future<void> _roamingSaveTail = Future.value();
   Future<void> _inputLanguageSaveTail = Future.value();
@@ -180,6 +179,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       !_roamingMutationInProgress &&
       _safetyOperations == 0 &&
       _roamingConfig.enabled &&
+      !_roamingConfig.readOnly &&
       _roamingConfig.isValid &&
       _roamingConfig.supportedOnPlatform;
 
@@ -384,9 +384,16 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   }) async {
     if (_initialized) return;
     final preferences = _preferences = TranslationPreferences(store, secrets);
-    _roamingPreferences = TranslationRoamingPreferences(store, secrets);
-    _roamingConfig = _roamingPreferences!.config;
-    if (roamingFactory != null) _roamingFactory = roamingFactory;
+    final roamingPreferences = _roamingPreferences =
+        TranslationRoamingPreferences(store, secrets);
+    _roamingConfig = roamingPreferences.config;
+    _roamingFactory =
+        roamingFactory ??
+        ((config, roamingSecrets) => TranslationRoamingService(
+          config: config,
+          secrets: roamingSecrets,
+          readState: roamingPreferences.readState,
+        ));
     _afterRoamingFrame = afterRoamingFrame;
     _cache = cache ?? TranslationCache(secrets);
     _apiClient = apiClient ?? TranslationApiClient();
@@ -1433,7 +1440,11 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     bool Function() isValid,
   ) async {
     try {
-      if (!isValid() || roamingRevision != _roamingRevision) return;
+      if (!isValid() ||
+          roamingRevision != _roamingRevision ||
+          _roamingConfig.readOnly) {
+        return;
+      }
       final roaming = await _getRoaming();
       if (roaming == null ||
           !isValid() ||

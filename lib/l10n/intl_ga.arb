@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "Theip ar uasghrádú thaisce an aistriúcháin",
     "translationRoaming": "Comhroinnt aistriúchán",
     "translationRoamingDescription": "Úsáid seirbhís taisce sheachtrach chun aistriúcháin a chomhroinnt idir gléasanna, agus airgead a shábháil ar sheirbhísí AI trí aistriúcháin athdhéanta a laghdú. Criptítear na haistriúcháin ó cheann go ceann ar do ghléasanna le heochair réamhroinnte nach n-uaslódáiltear riamh. Úsáid na socruithe naisc céanna agus an eochair chéanna ar gach gléas.",
+    "translationRoamingReadOnly": "Mód inléite amháin (ná huaslódáil aistriúcháin)",
+    "translationRoamingReadOnlyUploadUnavailable": "Ní féidir aistriúcháin a uaslódáil sa mhód inléite amháin.",
     "translationRoamingConnectionType": "Cineál naisc",
     "translationRoamingNative": "Redis dúchasach",
     "translationRoamingUpstash": "Stíl Upstash",

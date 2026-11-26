@@ -8,6 +8,8 @@
     "translationCacheUpgradeFailed": "翻訳キャッシュのアップグレードに失敗しました",
     "translationRoaming": "訳文のローミング",
     "translationRoamingDescription": "外部キャッシュサービスを使ってデバイス間で翻訳を共有し、重複した翻訳を減らすことで AI サービスの費用を節約できます。翻訳は、アップロードされることのない事前共有鍵を使い、お使いのデバイス上でエンドツーエンド暗号化されます。各デバイスで同じ接続設定と鍵を使ってください。",
+    "translationRoamingReadOnly": "読み取り専用モード（訳文をアップロードしない）",
+    "translationRoamingReadOnlyUploadUnavailable": "読み取り専用モードでは訳文をアップロードできません。",
     "translationRoamingConnectionType": "接続の種類",
     "translationRoamingNative": "Redis ネイティブ",
     "translationRoamingUpstash": "Upstash 形式",

@@ -7,6 +7,8 @@
     "translationCacheUpgradeFailed": "Không thể nâng cấp bộ nhớ đệm bản dịch",
     "translationRoaming": "Chia sẻ bản dịch giữa các thiết bị",
     "translationRoamingDescription": "Dùng dịch vụ lưu đệm bên ngoài để chia sẻ bản dịch giữa các thiết bị, giảm việc dịch lặp lại để tiết kiệm chi phí dịch vụ AI. Các bản dịch được mã hóa đầu cuối ngay trên thiết bị bằng khóa chia sẻ trước, và khóa này không bao giờ được tải lên. Dùng cùng cài đặt kết nối và khóa trên mỗi thiết bị.",
+    "translationRoamingReadOnly": "Chế độ chỉ đọc (không tải bản dịch lên)",
+    "translationRoamingReadOnlyUploadUnavailable": "Không thể tải bản dịch lên trong chế độ chỉ đọc.",
     "translationRoamingConnectionType": "Loại kết nối",
     "translationRoamingNative": "Redis trực tiếp",
     "translationRoamingUpstash": "Kiểu Upstash",

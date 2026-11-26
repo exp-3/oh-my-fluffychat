@@ -21,7 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'utils/translation_test_backend.dart';
 
 void main() {
-  testWidgets('actions share a row after the key controls and divider', (
+  testWidgets('read-only checkbox leads its label above the action divider', (
     tester,
   ) async {
     final fixture = await _Fixture.create();
@@ -36,12 +36,23 @@ void main() {
       final generate = tester.getRect(
         _outlinedButton(l10n.translationRoamingGenerateKey),
       );
+      final copy = tester.getRect(_outlinedButton(l10n.copyToClipboard));
+      final readOnly = tester.getRect(find.byType(CheckboxListTile));
+      final checkbox = tester.getRect(find.byType(Checkbox));
+      final label = tester.getRect(find.text(l10n.translationRoamingReadOnly));
       final divider = tester.getRect(find.byType(Divider));
       final test = tester.getRect(_outlinedButton(l10n.test));
       final upload = tester.getRect(
         _outlinedButton(l10n.translationRoamingUploadLocal),
       );
-      expect(divider.top, greaterThanOrEqualTo(generate.bottom));
+      expect(readOnly.top, greaterThanOrEqualTo(generate.bottom));
+      expect(readOnly.top, greaterThanOrEqualTo(copy.bottom));
+      expect(divider.top, greaterThanOrEqualTo(readOnly.bottom));
+      final labelGap = switch (direction) {
+        TextDirection.ltr => label.left - checkbox.right,
+        TextDirection.rtl => checkbox.left - label.right,
+      };
+      expect(labelGap, inInclusiveRange(0.0, 8.0));
       expect(test.top, greaterThanOrEqualTo(divider.bottom));
       expect(test.top, upload.top);
       expect(test.width, upload.width);
@@ -71,6 +82,15 @@ void main() {
         final upload = tester.getRect(
           _outlinedButton(l10n.translationRoamingUploadLocal),
         );
+        final checkbox = tester.getRect(find.byType(Checkbox));
+        final label = tester.getRect(
+          find.text(l10n.translationRoamingReadOnly),
+        );
+        final labelGap = switch (direction) {
+          TextDirection.ltr => label.left - checkbox.right,
+          TextDirection.rtl => checkbox.left - label.right,
+        };
+        expect(labelGap, inInclusiveRange(0.0, 8.0));
         expect(test.left, divider.left);
         expect(test.right, divider.right);
         expect(test.top, greaterThanOrEqualTo(divider.bottom));
@@ -126,6 +146,10 @@ void main() {
     expect(find.byIcon(Icons.science_outlined), findsOneWidget);
     expect(find.byIcon(Icons.cloud_upload_outlined), findsOneWidget);
     expect(find.byType(Divider), findsOneWidget);
+    expect(
+      tester.widget<CheckboxListTile>(find.byType(CheckboxListTile)).onChanged,
+      isNull,
+    );
     expect(find.text(l10n.invalidInput), findsNothing);
     expect(fixture.secrets.roamingWrites, 0);
 
@@ -159,6 +183,94 @@ void main() {
       (await fixture.runtime.readRoamingSecrets()).preSharedKey,
       isNotEmpty,
     );
+  });
+
+  testWidgets('read-only draft blocks upload before saving and persists', (
+    tester,
+  ) async {
+    final fixture = await _Fixture.create(configured: true);
+    await _showRoaming(tester, fixture.runtime);
+    final l10n = _l10n(tester);
+    final upload = _outlinedButton(l10n.translationRoamingUploadLocal);
+
+    await _toggleReadOnly(tester);
+    expect(fixture.runtime.roamingConfig.readOnly, isFalse);
+    expect(tester.widget<OutlinedButton>(upload).onPressed, isNull);
+    await tester.ensureVisible(upload);
+    await tester.tap(upload);
+    await tester.pumpAndSettle();
+    expect(
+      find.text(l10n.translationRoamingReadOnlyUploadUnavailable),
+      findsOneWidget,
+    );
+    expect(find.text(l10n.translationSaveBeforeUse), findsNothing);
+    expect(find.text('Upload page'), findsNothing);
+
+    await tester.tap(find.widgetWithText(FilledButton, l10n.save));
+    await tester.pumpAndSettle();
+    expect(fixture.runtime.roamingConfig.readOnly, isTrue);
+    expect(fixture.runtime.canUploadLocalTranslations, isFalse);
+    expect(find.text('Translation settings'), findsOneWidget);
+
+    await _showRoaming(tester, fixture.runtime);
+    expect(
+      tester.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value,
+      isTrue,
+    );
+    expect(tester.widget<OutlinedButton>(upload).onPressed, isNull);
+  });
+
+  testWidgets('read-only changes can dismiss the exit prompt or be discarded', (
+    tester,
+  ) async {
+    final fixture = await _Fixture.create(configured: true);
+    await _showRoaming(tester, fixture.runtime);
+    final l10n = _l10n(tester);
+    await _toggleReadOnly(tester);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.translationUnsavedChanges), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.translationUnsavedChanges), findsNothing);
+    expect(
+      tester.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value,
+      isTrue,
+    );
+
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('translation_unsaved_discard')));
+    await tester.pumpAndSettle();
+    expect(find.text('Translation settings'), findsOneWidget);
+    expect(fixture.runtime.roamingConfig.readOnly, isFalse);
+    expect(fixture.runtime.canUploadLocalTranslations, isTrue);
+    expect(fixture.secrets.roamingWrites, 0);
+  });
+
+  testWidgets('restoring the read-only value avoids an exit prompt', (
+    tester,
+  ) async {
+    final fixture = await _Fixture.create(configured: true);
+    await _showRoaming(tester, fixture.runtime);
+    final l10n = _l10n(tester);
+    await _toggleReadOnly(tester);
+    await _toggleReadOnly(tester);
+
+    expect(
+      tester
+          .widget<OutlinedButton>(
+            _outlinedButton(l10n.translationRoamingUploadLocal),
+          )
+          .onPressed,
+      isNotNull,
+    );
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('Translation settings'), findsOneWidget);
+    expect(find.text(l10n.translationUnsavedChanges), findsNothing);
+    expect(fixture.secrets.roamingWrites, 0);
   });
 
   testWidgets('dirty back can dismiss the prompt or discard without writing', (
@@ -392,6 +504,7 @@ void main() {
     final l10n = _l10n(tester);
     await _toggle(tester);
     await _enter(tester, l10n.translationRoamingHost, 'draft.example.invalid');
+    await _toggleReadOnly(tester);
     final button = _outlinedButton(l10n.test);
     await tester.ensureVisible(button);
     await tester.tap(button);
@@ -399,7 +512,9 @@ void main() {
     expect(find.text(l10n.test), findsOneWidget);
     expect(find.byIcon(Icons.science_outlined), findsNothing);
     expect(runtime.testedConfig!.host, 'draft.example.invalid');
+    expect(runtime.testedConfig!.readOnly, isTrue);
     expect(runtime.roamingConfig.enabled, isFalse);
+    expect(runtime.roamingConfig.readOnly, isFalse);
     expect(fixture.secrets.roamingWrites, 0);
     expect(
       find.descendant(
@@ -491,6 +606,13 @@ Finder _outlinedButton(String label) => find.ancestor(
 Future<void> _toggle(WidgetTester tester) async {
   await tester.ensureVisible(find.byType(SwitchListTile));
   await tester.tap(find.byType(SwitchListTile));
+  await tester.pumpAndSettle();
+}
+
+Future<void> _toggleReadOnly(WidgetTester tester) async {
+  final label = find.text(_l10n(tester).translationRoamingReadOnly);
+  await tester.ensureVisible(label);
+  await tester.tap(label);
   await tester.pumpAndSettle();
 }
 

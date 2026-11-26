@@ -8,6 +8,8 @@
     "translationCacheUpgradeFailed": "Aktualizácia vyrovnávacej pamäte prekladov zlyhala",
     "translationRoaming": "Zdieľanie prekladov medzi zariadeniami",
     "translationRoamingDescription": "Použite externú službu vyrovnávacej pamäte na zdieľanie prekladov medzi zariadeniami, aby ste obmedzením opakovaných prekladov ušetrili na nákladoch na službu AI. Preklady sa na vašich zariadeniach šifrujú od konca ku koncu pomocou vopred zdieľaného kľúča, ktorý sa nikdy neodosiela na server. Na každom zariadení použite rovnaké nastavenia pripojenia a kľúč.",
+    "translationRoamingReadOnly": "Režim iba na čítanie (nenahrávať preklady)",
+    "translationRoamingReadOnlyUploadUnavailable": "V režime iba na čítanie nie je možné nahrávať preklady.",
     "translationRoamingConnectionType": "Typ pripojenia",
     "translationRoamingNative": "Natívny Redis",
     "translationRoamingUpstash": "Štýl Upstash",

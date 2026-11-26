@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "Le actualisation del cache de traduction ha fallite",
     "translationRoaming": "Itinerantia de traductiones",
     "translationRoamingDescription": "Usa un servicio externe de cache pro compartir traductiones inter dispositivos, reducente traductiones repetite pro economisar sur le costos del servicios de IA. Le traductiones es cryptate de extremo a extremo sur tu dispositivos con un clave precompartite que nunquam es cargate al servitor. Usa le mesme configuration de connexion e le mesme clave sur cata dispositivo.",
+    "translationRoamingReadOnly": "Modo de sol lectura (non incargar traductiones)",
+    "translationRoamingReadOnlyUploadUnavailable": "Le traductiones non pote esser incargate in modo de sol lectura.",
     "translationRoamingConnectionType": "Typo de connexion",
     "translationRoamingNative": "Redis native",
     "translationRoamingUpstash": "Stilo Upstash",

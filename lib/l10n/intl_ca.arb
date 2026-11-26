@@ -7,6 +7,8 @@
     "translationCacheUpgradeFailed": "No s'ha pogut actualitzar la memòria cau de traduccions",
     "translationRoaming": "Itinerància de traduccions",
     "translationRoamingDescription": "Feu servir un servei extern de memòria cau per compartir traduccions entre dispositius i reduir les traduccions repetides per estalviar en serveis d'IA. Les traduccions es xifren d'extrem a extrem als vostres dispositius amb una clau precompartida que no es puja mai al servidor. Feu servir la mateixa configuració de connexió i la mateixa clau a cada dispositiu.",
+    "translationRoamingReadOnly": "Mode de només lectura (no pugis traduccions)",
+    "translationRoamingReadOnlyUploadUnavailable": "No es poden pujar traduccions en mode de només lectura.",
     "translationRoamingConnectionType": "Tipus de connexió",
     "translationRoamingNative": "Redis natiu",
     "translationRoamingUpstash": "Estil Upstash",

@@ -8,6 +8,7 @@ import 'translation_diagnostics.dart';
 import 'translation_languages.dart';
 import 'translation_roaming_crypto.dart';
 import 'translation_roaming_models.dart';
+import 'translation_roaming_preferences.dart';
 import 'translation_roaming_store.dart';
 import 'translation_roaming_store_factory.dart';
 
@@ -25,6 +26,7 @@ class TranslationRoamingService {
   final TranslationRoamingSecrets _secrets;
   final TranslationRoamingCrypto? _crypto;
   final Future<void> Function(Duration) _delay;
+  final TranslationRoamingReadState _readState;
   final Map<String, Future<TranslationRoamingLookup>> _lookups = {};
   TranslationRoamingStore? _store;
   bool _disposed = false;
@@ -34,11 +36,13 @@ class TranslationRoamingService {
     required TranslationRoamingSecrets secrets,
     TranslationRoamingStore? store,
     Future<void> Function(Duration)? delay,
+    TranslationRoamingReadState? readState,
   }) : _secrets = secrets,
        _crypto = secrets.decodedPreSharedKey == null
            ? null
            : TranslationRoamingCrypto(secrets.preSharedKey),
        _store = store,
+       _readState = readState ?? TranslationRoamingReadState(),
        _delay = delay ?? Future<void>.delayed;
 
   bool get available =>
@@ -85,10 +89,7 @@ class TranslationRoamingService {
     String key,
   ) async {
     try {
-      final envelope = await _timed(
-        _transport.getEx(key, config.ttlSeconds),
-        readTimeout,
-      );
+      final envelope = await _read(key, config.ttlSeconds);
       if (_disposed) return TranslationRoamingLookup.unavailable;
       if (envelope == null) return TranslationRoamingLookup.miss;
       final translation = _crypto!.decrypt(
@@ -106,6 +107,36 @@ class TranslationRoamingService {
     }
   }
 
+  void _ensureActive() {
+    if (!_disposed) return;
+    throw const TranslationRoamingException(TranslationRoamingError.disposed);
+  }
+
+  Future<String?> _read(String key, int ttlSeconds) async {
+    _ensureActive();
+    if (_readState.getExDisabled) {
+      final result = await _timed(_transport.get(key), readTimeout);
+      _ensureActive();
+      return result;
+    }
+    final generation = _readState.generation;
+    try {
+      final result = await _timed(
+        _transport.getEx(key, ttlSeconds),
+        readTimeout,
+      );
+      _ensureActive();
+      return result;
+    } catch (_) {
+      _ensureActive();
+    }
+    final result = await _timed(_transport.get(key), readTimeout);
+    _ensureActive();
+    await _readState.recordFallback(generation);
+    _ensureActive();
+    return result;
+  }
+
   Future<void> upload({
     required String source,
     required String targetLanguage,
@@ -114,6 +145,7 @@ class TranslationRoamingService {
   }) async {
     final crypto = _crypto;
     if (!available ||
+        config.readOnly ||
         crypto == null ||
         !isValid() ||
         source.isEmpty ||
@@ -139,7 +171,7 @@ class TranslationRoamingService {
       return;
     }
     for (var attempt = 0; attempt < 2; attempt++) {
-      if (!available || !isValid()) return;
+      if (!available || config.readOnly || !isValid()) return;
       try {
         await _timed(
           _transport.set(key, envelope, config.ttlSeconds),
@@ -166,6 +198,7 @@ class TranslationRoamingService {
     );
     final crypto = _crypto;
     if (!available ||
+        config.readOnly ||
         crypto == null ||
         !isValid() ||
         source.isEmpty ||
@@ -190,7 +223,7 @@ class TranslationRoamingService {
       return skipped;
     }
     for (var attempt = 0; attempt < 2; attempt++) {
-      if (!available || !isValid()) return skipped;
+      if (!available || config.readOnly || !isValid()) return skipped;
       final remaining = ttlSeconds();
       if (remaining <= 0) return skipped;
       // Redis command integers must also remain exact on Dart Web.
@@ -269,12 +302,19 @@ class TranslationRoamingService {
       );
     }
     final source = TranslationRoamingCrypto.generatePreSharedKey();
-    final translation = TranslationRoamingCrypto.generatePreSharedKey();
     final key = crypto.storageKey(
       source: source,
       targetLanguage: 'en',
-      keyPrefix: '${config.keyPrefix}:test',
+      keyPrefix: config.readOnly
+          ? config.keyPrefix
+          : '${config.keyPrefix}:test',
     );
+    if (config.readOnly) {
+      await _timed(_transport.get(key), readTimeout);
+      _ensureActive();
+      return;
+    }
+    final translation = TranslationRoamingCrypto.generatePreSharedKey();
     final envelope = crypto.encrypt(
       source: source,
       targetLanguage: 'en',
@@ -283,7 +323,7 @@ class TranslationRoamingService {
     );
     try {
       await _timed(_transport.set(key, envelope, 60), writeTimeout);
-      final restored = await _timed(_transport.getEx(key, 60), readTimeout);
+      final restored = await _read(key, 60);
       if (restored == null ||
           crypto.decrypt(
                 source: source,

@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "Nadgradnja predpomnilnika prevodov ni uspela",
     "translationRoaming": "Deljenje prevodov med napravami",
     "translationRoamingDescription": "Za skupno rabo prevodov med napravami uporabite zunanjo storitev predpomnjenja, ki zmanjša potrebo po ponovnih prevodih in s tem stroške storitve umetne inteligence. Prevodi so v vaših napravah šifrirani od konca do konca z vnaprej deljenim ključem, ki se nikoli ne naloži na strežnik. V vseh napravah uporabite enake nastavitve povezave in isti ključ.",
+    "translationRoamingReadOnly": "Način samo za branje (brez nalaganja prevodov)",
+    "translationRoamingReadOnlyUploadUnavailable": "V načinu samo za branje ni mogoče nalagati prevodov.",
     "translationRoamingConnectionType": "Vrsta povezave",
     "translationRoamingNative": "Neposredni Redis",
     "translationRoamingUpstash": "Slog Upstash",

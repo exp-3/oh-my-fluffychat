@@ -302,6 +302,9 @@ class _Store implements TranslationRoamingStore {
   }
 
   @override
+  Future<String?> get(String key) async => null;
+
+  @override
   Future<String?> getEx(String key, int ttlSeconds) async => null;
 
   @override

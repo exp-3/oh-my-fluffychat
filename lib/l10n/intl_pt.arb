@@ -7,6 +7,8 @@
     "translationCacheUpgradeFailed": "Não foi possível atualizar a cache de traduções",
     "translationRoaming": "Partilha de traduções",
     "translationRoamingDescription": "Utilize um serviço externo de cache para partilhar traduções entre dispositivos, reduzindo traduções repetidas para poupar nos custos do serviço de IA. As traduções são cifradas de ponta a ponta nos seus dispositivos com uma chave pré-partilhada que nunca é enviada para o servidor. Utilize as mesmas definições de ligação e a mesma chave em cada dispositivo.",
+    "translationRoamingReadOnly": "Modo só de leitura (não enviar traduções)",
+    "translationRoamingReadOnlyUploadUnavailable": "Não é possível enviar traduções no modo só de leitura.",
     "translationRoamingConnectionType": "Tipo de ligação",
     "translationRoamingNative": "Redis nativo",
     "translationRoamingUpstash": "Estilo Upstash",
