@@ -19,6 +19,7 @@ import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/chat_settings_popup_menu.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
@@ -108,9 +109,13 @@ class ChatDetailsView extends StatelessWidget {
             backgroundColor: theme.appBarTheme.backgroundColor,
           ),
           body: MaxWidthBody(
+            contentPadding: EdgeInsets.zero,
             child: ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
+              padding: const EdgeInsets.symmetric(
+                vertical: SettingsSpacing.inset,
+              ),
               itemCount: members.length + 1 + (canRequestMoreMembers ? 1 : 0),
               itemBuilder: (BuildContext context, int i) => i == 0
                   ? Column(
@@ -269,8 +274,8 @@ class ChatDetailsView extends StatelessWidget {
                           ),
                           builder: (context, _) => Wrap(
                             alignment: .center,
-                            spacing: 16,
-                            runSpacing: 16,
+                            spacing: SettingsSpacing.actions,
+                            runSpacing: SettingsSpacing.actions,
                             children: [
                               _MainChatDetailsButton(
                                 onPressed: () =>
@@ -303,9 +308,9 @@ class ChatDetailsView extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 16),
                         if (room.canChangeStateEvent(EventTypes.RoomTopic) ||
                             room.topic.isNotEmpty) ...[
+                          const SizedBox(height: SettingsSpacing.section),
                           ListTile(
                             title: Text(
                               L10n.of(context).chatDescription,
@@ -354,10 +359,12 @@ class ChatDetailsView extends StatelessWidget {
                                   UrlLauncher(context, url.url).launchUrl(),
                             ),
                           ),
-                          const SizedBox(height: 16),
                         ],
                         if (!room.isDirectChat) ...[
-                          Divider(color: theme.dividerColor),
+                          Divider(
+                            height: SettingsSpacing.section,
+                            color: theme.dividerColor,
+                          ),
                           ListTile(
                             leading: CircleAvatar(
                               backgroundColor:
@@ -393,7 +400,10 @@ class ChatDetailsView extends StatelessWidget {
                             ),
                           ),
                         ],
-                        Divider(color: theme.dividerColor),
+                        Divider(
+                          height: SettingsSpacing.section,
+                          color: theme.dividerColor,
+                        ),
                         ListTile(
                           title: Text(
                             L10n.of(
@@ -484,13 +494,13 @@ class _RoomTranslationSettingsSheet extends StatelessWidget {
         return SafeArea(
           child: ListView(
             shrinkWrap: true,
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+            padding: const EdgeInsets.all(SettingsSpacing.inset),
             children: [
               Text(
                 l10n.automaticTranslationForThisRoom,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: SettingsSpacing.field),
               DropdownButtonFormField<String>(
                 key: ValueKey(('translation', control.overrideValue)),
                 initialValue: control.overrideValue == null
@@ -523,14 +533,14 @@ class _RoomTranslationSettingsSheet extends StatelessWidget {
                       )
                     : null,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: SettingsSpacing.related),
               Text(
                 control.reason == RoomTranslationLockReason.globallyDisabled
                     ? l10n.translationDisabledGlobally
                     : l10n.translationDefaultForRoom(defaultLabel),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: SettingsSpacing.field),
               DropdownButtonFormField<String>(
                 key: ValueKey(('language', language)),
                 initialValue: language ?? '',

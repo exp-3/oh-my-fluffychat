@@ -5,6 +5,7 @@
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/translation/translation_roaming_upload.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'translation_roaming_upload_page.dart';
@@ -28,19 +29,20 @@ class TranslationRoamingUploadView extends StatelessWidget {
         ),
         body: MaxWidthBody(
           withScrolling: false,
+          contentPadding: EdgeInsets.zero,
           child: Builder(
             builder: (context) {
               if (scanning) {
                 return Center(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(SettingsSpacing.inset),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const CircularProgressIndicator(),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: SettingsSpacing.field),
                         Text(l10n.translationRoamingUploadScanning),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: SettingsSpacing.actions),
                         TextButton(
                           onPressed: controller.back,
                           child: Text(l10n.cancel),
@@ -59,12 +61,12 @@ class TranslationRoamingUploadView extends StatelessWidget {
                     : l10n.translationRoamingUploadEmpty;
                 return Center(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(SettingsSpacing.inset),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(message),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: SettingsSpacing.actions),
                         OutlinedButton.icon(
                           onPressed: controller.load,
                           icon: const Icon(Icons.refresh),
@@ -84,7 +86,7 @@ class TranslationRoamingUploadView extends StatelessWidget {
                     session.phase == TranslationRoamingUploadPhase.stopped;
                 return Center(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(SettingsSpacing.inset),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -95,7 +97,7 @@ class TranslationRoamingUploadView extends StatelessWidget {
                                 ? null
                                 : session.processed / session.total,
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: SettingsSpacing.field),
                           Text(
                             l10n.translationRoamingUploadProgress(
                               session.processed,
@@ -105,7 +107,8 @@ class TranslationRoamingUploadView extends StatelessWidget {
                         ],
                         if (failed) Text(l10n.oopsSomethingWentWrong),
                         if (stopped) Text(l10n.translationRoamingUploadStopped),
-                        const SizedBox(height: 12),
+                        if (uploading || failed || stopped)
+                          const SizedBox(height: SettingsSpacing.field),
                         Text(
                           l10n.translationRoamingUploadResult(
                             session.uploaded,
@@ -114,7 +117,7 @@ class TranslationRoamingUploadView extends StatelessWidget {
                             session.failed,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: SettingsSpacing.actions),
                         if (uploading)
                           OutlinedButton(
                             onPressed: controller.cancelUpload,
@@ -143,14 +146,19 @@ class TranslationRoamingUploadView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.all(16),
+                                padding: const EdgeInsets.fromLTRB(
+                                  SettingsSpacing.inset,
+                                  SettingsSpacing.inset,
+                                  SettingsSpacing.inset,
+                                  SettingsSpacing.field,
+                                ),
                                 child: Text(
                                   l10n.translationRoamingUploadDescription,
                                 ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
+                                  horizontal: SettingsSpacing.inset,
                                 ),
                                 child: TextField(
                                   controller: controller.search,
@@ -163,6 +171,7 @@ class TranslationRoamingUploadView extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                              const SizedBox(height: SettingsSpacing.field),
                               CheckboxListTile.adaptive(
                                 title: Text(
                                   l10n.translationRoamingUploadSelectAll,
@@ -200,7 +209,7 @@ class TranslationRoamingUploadView extends StatelessWidget {
                   ),
                   Divider(height: 1, color: Theme.of(context).dividerColor),
                   Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(SettingsSpacing.inset),
                     child: FilledButton.icon(
                       onPressed: controller.canUpload
                           ? controller.upload

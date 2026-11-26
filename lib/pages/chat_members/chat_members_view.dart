@@ -10,6 +10,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../widgets/layouts/max_width_body.dart';
+import '../../widgets/layouts/settings_spacing.dart';
 import '../../widgets/matrix.dart';
 import '../chat_details/participant_list_item.dart';
 import 'chat_members.dart';
@@ -56,135 +57,149 @@ class ChatMembersView extends StatelessWidget {
       ),
       body: MaxWidthBody(
         withScrolling: false,
-        innerPadding: const EdgeInsets.symmetric(vertical: 8),
-        child: error != null
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: .min,
-                    children: [
-                      const Icon(Icons.error_outline),
-                      Text(error.toLocalizedString(context)),
-                      const SizedBox(height: 8),
-                      OutlinedButton.icon(
-                        onPressed: controller.refreshMembers,
-                        icon: const Icon(Icons.refresh_outlined),
-                        label: Text(L10n.of(context).tryAgain),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            : members == null
-            ? const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: CircularProgressIndicator.adaptive(),
-                ),
-              )
-            : ListView.builder(
-                shrinkWrap: true,
-                itemCount: members.length + 1,
-                itemBuilder: (context, i) {
-                  if (i == 0) {
-                    final availableFilters = Membership.values
-                        .where(
-                          (membership) =>
-                              controller.members?.any(
-                                (member) => member.membership == membership,
-                              ) ??
-                              false,
-                        )
-                        .toList();
-                    availableFilters.sort(
-                      (a, b) => a == Membership.join ? -1 : 1,
-                    );
-                    return Column(
+        contentPadding: EdgeInsets.zero,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: SettingsSpacing.inset),
+          child: error != null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: SettingsSpacing.inset,
+                    ),
+                    child: Column(
                       mainAxisSize: .min,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: TextField(
-                            controller: controller.filterController,
-                            onChanged: controller.setFilter,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: theme.colorScheme.secondaryContainer,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(99),
-                              ),
-                              hintStyle: TextStyle(
-                                color: theme.colorScheme.onPrimaryContainer,
-                                fontWeight: FontWeight.normal,
-                              ),
-                              prefixIcon: const Icon(Icons.search_outlined),
-                              hintText: L10n.of(context).search,
-                            ),
-                          ),
+                        const Icon(Icons.error_outline),
+                        Text(error.toLocalizedString(context)),
+                        const SizedBox(height: SettingsSpacing.actions),
+                        OutlinedButton.icon(
+                          onPressed: controller.refreshMembers,
+                          icon: const Icon(Icons.refresh_outlined),
+                          label: Text(L10n.of(context).tryAgain),
                         ),
-                        if (availableFilters.length > 1)
-                          SizedBox(
-                            height: 64,
-                            child: ListView.builder(
-                              padding: const EdgeInsets.all(12.0),
-                              scrollDirection: Axis.horizontal,
-                              itemCount: availableFilters.length,
-                              itemBuilder: (context, i) => Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 4.0,
+                      ],
+                    ),
+                  ),
+                )
+              : members == null
+              ? const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: SettingsSpacing.inset,
+                    ),
+                    child: CircularProgressIndicator.adaptive(),
+                  ),
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  itemCount: members.length + 1,
+                  itemBuilder: (context, i) {
+                    if (i == 0) {
+                      final availableFilters = Membership.values
+                          .where(
+                            (membership) =>
+                                controller.members?.any(
+                                  (member) => member.membership == membership,
+                                ) ??
+                                false,
+                          )
+                          .toList();
+                      availableFilters.sort(
+                        (a, b) => a == Membership.join ? -1 : 1,
+                      );
+                      return Column(
+                        mainAxisSize: .min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: SettingsSpacing.inset,
+                              right: SettingsSpacing.inset,
+                              bottom: SettingsSpacing.field,
+                            ),
+                            child: TextField(
+                              controller: controller.filterController,
+                              onChanged: controller.setFilter,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: theme.colorScheme.secondaryContainer,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.circular(99),
                                 ),
-                                child: FilterChip(
-                                  label: Text(switch (availableFilters[i]) {
-                                    Membership.ban => L10n.of(context).banned,
-                                    Membership.invite =>
-                                      L10n.of(context).countInvited(
-                                        room.summary.mInvitedMemberCount ??
-                                            controller.members
-                                                ?.where(
-                                                  (member) =>
-                                                      member.membership ==
-                                                      Membership.invite,
-                                                )
-                                                .length ??
-                                            0,
-                                      ),
-                                    Membership.join =>
-                                      L10n.of(context).countParticipants(
-                                        room.summary.mJoinedMemberCount ??
-                                            controller.members
-                                                ?.where(
-                                                  (member) =>
-                                                      member.membership ==
-                                                      Membership.join,
-                                                )
-                                                .length ??
-                                            0,
-                                      ),
-                                    Membership.knock => L10n.of(
-                                      context,
-                                    ).knocking,
-                                    Membership.leave => L10n.of(
-                                      context,
-                                    ).leftTheChat,
-                                  }),
-                                  selected:
-                                      controller.membershipFilter ==
-                                      availableFilters[i],
-                                  onSelected: (_) => controller
-                                      .setMembershipFilter(availableFilters[i]),
+                                hintStyle: TextStyle(
+                                  color: theme.colorScheme.onPrimaryContainer,
+                                  fontWeight: FontWeight.normal,
                                 ),
+                                prefixIcon: const Icon(Icons.search_outlined),
+                                hintText: L10n.of(context).search,
                               ),
                             ),
                           ),
-                      ],
-                    );
-                  }
-                  i--;
-                  return ParticipantListItem(members[i]);
-                },
-              ),
+                          if (availableFilters.length > 1)
+                            SizedBox(
+                              height: 64,
+                              child: ListView.builder(
+                                padding: const EdgeInsets.all(12.0),
+                                scrollDirection: Axis.horizontal,
+                                itemCount: availableFilters.length,
+                                itemBuilder: (context, i) => Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4.0,
+                                  ),
+                                  child: FilterChip(
+                                    label: Text(switch (availableFilters[i]) {
+                                      Membership.ban => L10n.of(context).banned,
+                                      Membership.invite =>
+                                        L10n.of(context).countInvited(
+                                          room.summary.mInvitedMemberCount ??
+                                              controller.members
+                                                  ?.where(
+                                                    (member) =>
+                                                        member.membership ==
+                                                        Membership.invite,
+                                                  )
+                                                  .length ??
+                                              0,
+                                        ),
+                                      Membership.join =>
+                                        L10n.of(context).countParticipants(
+                                          room.summary.mJoinedMemberCount ??
+                                              controller.members
+                                                  ?.where(
+                                                    (member) =>
+                                                        member.membership ==
+                                                        Membership.join,
+                                                  )
+                                                  .length ??
+                                              0,
+                                        ),
+                                      Membership.knock => L10n.of(
+                                        context,
+                                      ).knocking,
+                                      Membership.leave => L10n.of(
+                                        context,
+                                      ).leftTheChat,
+                                    }),
+                                    selected:
+                                        controller.membershipFilter ==
+                                        availableFilters[i],
+                                    onSelected: (_) =>
+                                        controller.setMembershipFilter(
+                                          availableFilters[i],
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    }
+                    i--;
+                    return ParticipantListItem(members[i]);
+                  },
+                ),
+        ),
       ),
     );
   }

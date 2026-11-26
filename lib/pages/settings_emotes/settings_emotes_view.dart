@@ -7,6 +7,7 @@ import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/utils/url_launcher.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:fluffychat/widgets/mxc_image.dart';
 import 'package:fluffychat/widgets/mxc_image_viewer.dart';
 import 'package:flutter/services.dart';
@@ -29,7 +30,10 @@ class EmotesSettingsView extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(title: Text(L10n.of(context).oopsSomethingWentWrong)),
         body: Center(
-          child: Text(L10n.of(context).youAreNoLongerParticipatingInThisChat),
+          child: Padding(
+            padding: const EdgeInsets.all(SettingsSpacing.inset),
+            child: Text(L10n.of(context).youAreNoLongerParticipatingInThisChat),
+          ),
         ),
       );
     }
@@ -155,200 +159,219 @@ class EmotesSettingsView extends StatelessWidget {
               ),
       ),
       body: MaxWidthBody(
-        child: Column(
-          mainAxisSize: .min,
-          crossAxisAlignment: .stretch,
-          children: <Widget>[
-            if (controller.room != null) ...[
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: TextField(
-                  maxLength: 256,
-                  controller: controller.packDisplayNameController,
-                  readOnly: controller.readonly,
-                  onSubmitted: (_) => controller.submitDisplaynameAction(),
-                  decoration: InputDecoration(
-                    counter: const SizedBox.shrink(),
-                    hintText: controller.stateKey,
-                    labelText: L10n.of(context).stickerPackName,
+        contentPadding: EdgeInsets.zero,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: SettingsSpacing.inset),
+          child: Column(
+            mainAxisSize: .min,
+            crossAxisAlignment: .stretch,
+            children: <Widget>[
+              if (controller.room != null) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: SettingsSpacing.inset,
                   ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: TextField(
-                  maxLength: 256,
-                  controller: controller.packAttributionController,
-                  readOnly: controller.readonly,
-                  keyboardType: TextInputType.url,
-                  onSubmitted: (_) => controller.submitAttributionAction(),
-                  decoration: InputDecoration(
-                    counter: const SizedBox.shrink(),
-                    labelText: L10n.of(context).attribution,
-                    suffixIcon: attributionUrl == null
-                        ? null
-                        : IconButton(
-                            icon: const Icon(Icons.link_outlined),
-                            onPressed: () => UrlLauncher(
-                              context,
-                              attributionUrl.toString(),
-                            ).launchUrl(),
-                          ),
-                  ),
-                ),
-              ),
-            ],
-            if (!controller.readonly) ...[
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton.icon(
-                  onPressed: controller.createStickers,
-                  icon: const Icon(Icons.upload_outlined),
-                  label: Text(L10n.of(context).createSticker),
-                ),
-              ),
-              const Divider(),
-            ],
-            if (controller.room != null && imageKeys.isNotEmpty)
-              SwitchListTile.adaptive(
-                title: Text(L10n.of(context).enableEmotesGlobally),
-                value: controller.isGloballyActive(client),
-                onChanged: controller.setIsGloballyActive,
-              ),
-            imageKeys.isEmpty
-                ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        L10n.of(context).noEmotesFound,
-                        style: const TextStyle(fontSize: 20),
-                      ),
+                  child: TextField(
+                    maxLength: 256,
+                    controller: controller.packDisplayNameController,
+                    readOnly: controller.readonly,
+                    onSubmitted: (_) => controller.submitDisplaynameAction(),
+                    decoration: InputDecoration(
+                      counter: const SizedBox.shrink(),
+                      hintText: controller.stateKey,
+                      labelText: L10n.of(context).stickerPackName,
                     ),
-                  )
-                : ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    separatorBuilder: (BuildContext context, int i) =>
-                        const SizedBox.shrink(),
-                    itemCount: imageKeys.length,
-                    itemBuilder: (BuildContext context, int i) {
-                      final imageCode = imageKeys[i];
-                      final image = controller.pack!.images[imageCode]!;
-                      // TODO: Dispose this
-                      final textEditingController = TextEditingController();
-                      textEditingController.text = imageCode;
-                      final useShortCuts =
-                          (PlatformInfos.isWeb || PlatformInfos.isDesktop);
-                      return ListTile(
-                        title: Row(
-                          children: [
-                            Expanded(
-                              child: Shortcuts(
-                                shortcuts: !useShortCuts
-                                    ? {}
-                                    : {
-                                        LogicalKeySet(LogicalKeyboardKey.enter):
-                                            SubmitLineIntent(),
-                                      },
-                                child: Actions(
-                                  actions: !useShortCuts
+                  ),
+                ),
+                const SizedBox(height: SettingsSpacing.field),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: SettingsSpacing.inset,
+                  ),
+                  child: TextField(
+                    maxLength: 256,
+                    controller: controller.packAttributionController,
+                    readOnly: controller.readonly,
+                    keyboardType: TextInputType.url,
+                    onSubmitted: (_) => controller.submitAttributionAction(),
+                    decoration: InputDecoration(
+                      counter: const SizedBox.shrink(),
+                      labelText: L10n.of(context).attribution,
+                      suffixIcon: attributionUrl == null
+                          ? null
+                          : IconButton(
+                              icon: const Icon(Icons.link_outlined),
+                              onPressed: () => UrlLauncher(
+                                context,
+                                attributionUrl.toString(),
+                              ).launchUrl(),
+                            ),
+                    ),
+                  ),
+                ),
+              ],
+              if (!controller.readonly) ...[
+                if (controller.room != null)
+                  const SizedBox(height: SettingsSpacing.section),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: SettingsSpacing.inset,
+                  ),
+                  child: ElevatedButton.icon(
+                    onPressed: controller.createStickers,
+                    icon: const Icon(Icons.upload_outlined),
+                    label: Text(L10n.of(context).createSticker),
+                  ),
+                ),
+                const Divider(height: SettingsSpacing.section),
+              ],
+              if (controller.readonly && controller.room != null)
+                const SizedBox(height: SettingsSpacing.section),
+              if (controller.room != null && imageKeys.isNotEmpty)
+                SwitchListTile.adaptive(
+                  title: Text(L10n.of(context).enableEmotesGlobally),
+                  value: controller.isGloballyActive(client),
+                  onChanged: controller.setIsGloballyActive,
+                ),
+              imageKeys.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: SettingsSpacing.inset,
+                        ),
+                        child: Text(
+                          L10n.of(context).noEmotesFound,
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    )
+                  : ListView.separated(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      separatorBuilder: (BuildContext context, int i) =>
+                          const SizedBox.shrink(),
+                      itemCount: imageKeys.length,
+                      itemBuilder: (BuildContext context, int i) {
+                        final imageCode = imageKeys[i];
+                        final image = controller.pack!.images[imageCode]!;
+                        // TODO: Dispose this
+                        final textEditingController = TextEditingController();
+                        textEditingController.text = imageCode;
+                        final useShortCuts =
+                            (PlatformInfos.isWeb || PlatformInfos.isDesktop);
+                        return ListTile(
+                          title: Row(
+                            children: [
+                              Expanded(
+                                child: Shortcuts(
+                                  shortcuts: !useShortCuts
                                       ? {}
                                       : {
-                                          SubmitLineIntent: CallbackAction(
-                                            onInvoke: (i) {
-                                              controller.submitImageAction(
-                                                imageCode,
-                                                image,
-                                                textEditingController,
-                                              );
-                                              return null;
-                                            },
-                                          ),
+                                          LogicalKeySet(
+                                            LogicalKeyboardKey.enter,
+                                          ): SubmitLineIntent(),
                                         },
-                                  child: TextField(
-                                    readOnly: controller.readonly,
-                                    controller: textEditingController,
-                                    autocorrect: false,
-                                    minLines: 1,
-                                    maxLines: 1,
-                                    maxLength: 128,
-                                    decoration: InputDecoration(
-                                      hintText: L10n.of(context).emoteShortcode,
-                                      prefixText: ': ',
-                                      suffixText: ':',
-                                      counter: const SizedBox.shrink(),
-                                      filled: false,
-                                      enabledBorder: const OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.transparent,
+                                  child: Actions(
+                                    actions: !useShortCuts
+                                        ? {}
+                                        : {
+                                            SubmitLineIntent: CallbackAction(
+                                              onInvoke: (i) {
+                                                controller.submitImageAction(
+                                                  imageCode,
+                                                  image,
+                                                  textEditingController,
+                                                );
+                                                return null;
+                                              },
+                                            ),
+                                          },
+                                    child: TextField(
+                                      readOnly: controller.readonly,
+                                      controller: textEditingController,
+                                      autocorrect: false,
+                                      minLines: 1,
+                                      maxLines: 1,
+                                      maxLength: 128,
+                                      decoration: InputDecoration(
+                                        hintText: L10n.of(
+                                          context,
+                                        ).emoteShortcode,
+                                        prefixText: ': ',
+                                        suffixText: ':',
+                                        counter: const SizedBox.shrink(),
+                                        filled: false,
+                                        enabledBorder: const OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Colors.transparent,
+                                          ),
                                         ),
                                       ),
+                                      onSubmitted: (s) =>
+                                          controller.submitImageAction(
+                                            imageCode,
+                                            image,
+                                            textEditingController,
+                                          ),
                                     ),
-                                    onSubmitted: (s) =>
-                                        controller.submitImageAction(
-                                          imageCode,
-                                          image,
-                                          textEditingController,
-                                        ),
                                   ),
                                 ),
                               ),
-                            ),
-                            if (!controller.readonly)
-                              PopupMenuButton<ImagePackUsage>(
-                                onSelected: (usage) =>
-                                    controller.toggleUsage(imageCode, usage),
-                                itemBuilder: (context) => [
-                                  PopupMenuItem(
-                                    value: ImagePackUsage.sticker,
-                                    child: Row(
-                                      mainAxisSize: .min,
-                                      children: [
-                                        if (image.usage?.contains(
-                                              ImagePackUsage.sticker,
-                                            ) ??
-                                            true)
-                                          const Icon(Icons.check_outlined),
-                                        const SizedBox(width: 12),
-                                        Text(L10n.of(context).useAsSticker),
-                                      ],
+                              if (!controller.readonly)
+                                PopupMenuButton<ImagePackUsage>(
+                                  onSelected: (usage) =>
+                                      controller.toggleUsage(imageCode, usage),
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      value: ImagePackUsage.sticker,
+                                      child: Row(
+                                        mainAxisSize: .min,
+                                        children: [
+                                          if (image.usage?.contains(
+                                                ImagePackUsage.sticker,
+                                              ) ??
+                                              true)
+                                            const Icon(Icons.check_outlined),
+                                          const SizedBox(width: 12),
+                                          Text(L10n.of(context).useAsSticker),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  PopupMenuItem(
-                                    value: ImagePackUsage.emoticon,
-                                    child: Row(
-                                      mainAxisSize: .min,
-                                      children: [
-                                        if (image.usage?.contains(
-                                              ImagePackUsage.emoticon,
-                                            ) ??
-                                            true)
-                                          const Icon(Icons.check_outlined),
-                                        const SizedBox(width: 12),
-                                        Text(L10n.of(context).useAsEmoji),
-                                      ],
+                                    PopupMenuItem(
+                                      value: ImagePackUsage.emoticon,
+                                      child: Row(
+                                        mainAxisSize: .min,
+                                        children: [
+                                          if (image.usage?.contains(
+                                                ImagePackUsage.emoticon,
+                                              ) ??
+                                              true)
+                                            const Icon(Icons.check_outlined),
+                                          const SizedBox(width: 12),
+                                          Text(L10n.of(context).useAsEmoji),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
-                                icon: const Icon(Icons.edit_outlined),
-                              ),
-                          ],
-                        ),
-                        leading: _EmoteImage(image.url),
-                        trailing: controller.readonly
-                            ? null
-                            : IconButton(
-                                tooltip: L10n.of(context).delete,
-                                onPressed: () =>
-                                    controller.removeImageAction(imageCode),
-                                icon: const Icon(Icons.delete_outlined),
-                              ),
-                      );
-                    },
-                  ),
-          ],
+                                  ],
+                                  icon: const Icon(Icons.edit_outlined),
+                                ),
+                            ],
+                          ),
+                          leading: _EmoteImage(image.url),
+                          trailing: controller.readonly
+                              ? null
+                              : IconButton(
+                                  tooltip: L10n.of(context).delete,
+                                  onPressed: () =>
+                                      controller.removeImageAction(imageCode),
+                                  icon: const Icon(Icons.delete_outlined),
+                                ),
+                        );
+                      },
+                    ),
+            ],
+          ),
         ),
       ),
     );

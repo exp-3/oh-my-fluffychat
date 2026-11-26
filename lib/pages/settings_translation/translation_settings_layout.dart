@@ -3,19 +3,24 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:material_ui/material_ui.dart';
 
 class TranslationSettingsLayout extends StatelessWidget {
   final List<Widget> children;
   final EdgeInsetsGeometry padding;
+  final double spacing;
   final double runSpacing;
   final double minimumColumnWidth;
 
   const TranslationSettingsLayout({
     super.key,
     required this.children,
-    this.padding = const EdgeInsets.symmetric(horizontal: 16),
-    this.runSpacing = 0,
+    this.padding = const EdgeInsets.symmetric(
+      horizontal: SettingsSpacing.inset,
+    ),
+    this.spacing = SettingsSpacing.field,
+    this.runSpacing = SettingsSpacing.field,
     this.minimumColumnWidth = 188,
   });
 
@@ -24,7 +29,6 @@ class TranslationSettingsLayout extends StatelessWidget {
     padding: padding,
     child: LayoutBuilder(
       builder: (context, constraints) {
-        const spacing = 12.0;
         final scaledColumnWidth = MediaQuery.textScalerOf(
           context,
         ).scale(minimumColumnWidth);
@@ -65,9 +69,13 @@ class TranslationSettingsScaffold extends StatelessWidget {
       title: Text(title),
     ),
     body: MaxWidthBody(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: children,
+      contentPadding: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: SettingsSpacing.inset),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: children,
+        ),
       ),
     ),
   );
