@@ -532,9 +532,9 @@ void main() {
         delay: (_) async {
           if (expire) {
             remaining = 0;
-          } else {
-            valid = false;
+            return;
           }
+          valid = false;
         },
       );
       addTearDown(service.dispose);

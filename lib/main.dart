@@ -225,7 +225,6 @@ class AppStarter with WidgetsBindingObserver {
   }
 }
 
-/// Starts the recovery UI once a background-only Android process gains a UI.
 class DatabaseRecoveryAppStarter with WidgetsBindingObserver {
   final MatrixDatabaseInitializationFailure failure;
   final SharedPreferences store;

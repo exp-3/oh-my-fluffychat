@@ -7,6 +7,7 @@ import 'dart:convert';
 
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/settings_translation/translation_roaming_settings.dart';
+import 'package:fluffychat/pages/settings_translation/translation_settings_layout.dart';
 import 'package:fluffychat/utils/translation/translation_cache.dart';
 import 'package:fluffychat/utils/translation/translation_preferences.dart';
 import 'package:fluffychat/utils/translation/translation_roaming.dart';
@@ -20,6 +21,97 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'utils/translation_test_backend.dart';
 
 void main() {
+  testWidgets('actions share a row after the key controls and divider', (
+    tester,
+  ) async {
+    final fixture = await _Fixture.create();
+    for (final direction in TextDirection.values) {
+      await _showRoaming(
+        tester,
+        fixture.runtime,
+        width: 500,
+        direction: direction,
+      );
+      final l10n = _l10n(tester);
+      final generate = tester.getRect(
+        _outlinedButton(l10n.translationRoamingGenerateKey),
+      );
+      final divider = tester.getRect(find.byType(Divider));
+      final test = tester.getRect(_outlinedButton(l10n.test));
+      final upload = tester.getRect(
+        _outlinedButton(l10n.translationRoamingUploadLocal),
+      );
+      expect(divider.top, greaterThanOrEqualTo(generate.bottom));
+      expect(test.top, greaterThanOrEqualTo(divider.bottom));
+      expect(test.top, upload.top);
+      expect(test.width, upload.width);
+      final (left, right) = switch (direction) {
+        TextDirection.ltr => (test, upload),
+        TextDirection.rtl => (upload, test),
+      };
+      expect(left.left, divider.left);
+      expect(right.right, divider.right);
+      expect(tester.takeException(), isNull);
+    }
+  });
+
+  testWidgets('narrow pages stack full-width action buttons', (tester) async {
+    final fixture = await _Fixture.create();
+    for (final direction in TextDirection.values) {
+      for (final width in [300.0, 250.0]) {
+        await _showRoaming(
+          tester,
+          fixture.runtime,
+          width: width,
+          direction: direction,
+        );
+        final l10n = _l10n(tester);
+        final divider = tester.getRect(find.byType(Divider));
+        final test = tester.getRect(_outlinedButton(l10n.test));
+        final upload = tester.getRect(
+          _outlinedButton(l10n.translationRoamingUploadLocal),
+        );
+        expect(test.left, divider.left);
+        expect(test.right, divider.right);
+        expect(test.top, greaterThanOrEqualTo(divider.bottom));
+        expect(upload.left, divider.left);
+        expect(upload.right, divider.right);
+        expect(upload.top, greaterThan(test.bottom));
+        expect(tester.takeException(), isNull);
+      }
+    }
+  });
+
+  testWidgets('large text stacks actions without layout mutations', (
+    tester,
+  ) async {
+    final fixture = await _Fixture.create();
+    await _showRoaming(tester, fixture.runtime, width: 500, textScale: 2);
+    final l10n = _l10n(tester);
+    final testFinder = _outlinedButton(l10n.test);
+    final actions = tester.getRect(
+      find.ancestor(
+        of: testFinder,
+        matching: find.byType(TranslationSettingsLayout),
+      ),
+    );
+    final test = tester.getRect(testFinder);
+    final upload = tester.getRect(
+      _outlinedButton(l10n.translationRoamingUploadLocal),
+    );
+    expect(upload.top, greaterThan(test.bottom));
+    expect(test.width, actions.width);
+    expect(upload.width, actions.width);
+    expect(tester.takeException(), isNull);
+
+    await _showRoaming(tester, fixture.runtime, width: 500);
+    expect(
+      tester.getRect(_outlinedButton(l10n.test)).top,
+      tester.getRect(_outlinedButton(l10n.translationRoamingUploadLocal)).top,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('initial disabled form stays visible without saving a key', (
     tester,
   ) async {
@@ -328,8 +420,11 @@ void main() {
 
 Future<void> _showRoaming(
   WidgetTester tester,
-  TranslationRuntime runtime,
-) async {
+  TranslationRuntime runtime, {
+  double? width,
+  TextDirection direction = TextDirection.ltr,
+  double textScale = 1,
+}) async {
   final router = GoRouter(
     initialLocation: '/rooms/settings/translation/roaming',
     routes: [
@@ -362,6 +457,17 @@ Future<void> _showRoaming(
       locale: const Locale('en'),
       localizationsDelegates: L10n.localizationsDelegates,
       supportedLocales: L10n.supportedLocales,
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(
+          context,
+        ).copyWith(textScaler: TextScaler.linear(textScale)),
+        child: Directionality(
+          textDirection: direction,
+          child: Center(
+            child: SizedBox(width: width, child: child),
+          ),
+        ),
+      ),
     ),
   );
   await tester.pumpAndSettle();

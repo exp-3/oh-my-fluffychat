@@ -8,7 +8,6 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
-/// Diagnostic text is separate from the safe default exception description.
 abstract interface class TranslationDiagnosticException implements Exception {
   String? get diagnosticDetails;
 }
@@ -105,13 +104,14 @@ String translationHttpResponseDetails(
       final decoded = jsonDecode(utf8.decode(response.bodyBytes));
       if (decoded is Map<String, Object?>) {
         final error = decoded['error'];
-        if (error is String) {
-          lines.add(error);
-        } else if (error is Map<String, Object?>) {
-          for (final field in ['message', 'code', 'type']) {
-            final value = error[field];
-            if (value is String || value is num) lines.add('$field: $value');
-          }
+        switch (error) {
+          case String():
+            lines.add(error);
+          case Map<String, Object?>():
+            for (final field in ['message', 'code', 'type']) {
+              final value = error[field];
+              if (value is String || value is num) lines.add('$field: $value');
+            }
         }
         for (final field in ['message', 'code', 'type']) {
           final value = decoded[field];

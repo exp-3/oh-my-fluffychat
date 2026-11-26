@@ -516,7 +516,7 @@ class HtmlMessage extends StatelessWidget {
                         color: textColor,
                       ),
                     ),
-                    if (hidden) ...summary else ...details,
+                    ...(hidden ? summary : details),
                   ],
                 ),
                 style: TextStyle(fontSize: fontSize, color: textColor),
@@ -908,7 +908,9 @@ class _RenderMessageLayoutProbe extends RenderProxyBox {
     paragraph.text.visitChildren((span) {
       if (span is TextSpan) {
         textOffset += span.text?.length ?? 0;
-      } else if (span is PlaceholderSpan) {
+        return true;
+      }
+      if (span is PlaceholderSpan) {
         final box = placeholder;
         if (box != null) {
           dimensions.add(

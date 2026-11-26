@@ -211,71 +211,34 @@ void main() {
     expect(individualAttempts, 2);
   });
 
-  test(
-    'sender validity callback prevents an expired task from persisting',
-    () async {
-      var valid = true;
-      var persisterCalls = 0;
-      late bool Function() isStillValid;
-      final senderEntered = Completer<void>();
-      final releaseSender = Completer<void>();
-      final batcher = TranslationBatcher(
-        settings: () => const TranslationBatchSettings(mergeWindowMs: 0),
-        sender: (_, messages, validity) async {
-          isStillValid = validity;
-          senderEntered.complete();
-          await releaseSender.future;
-          return {messages.keys.single: 'translated'};
-        },
-        persister: (_) {
-          persisterCalls++;
-          return Future<void>.value();
-        },
-      );
-      final result = batcher.add(
-        key,
-        TranslationBatchTask(source: 'one', isValid: () => valid),
-      );
-      final expectation = expectLater(result, throwsA(isA<StateError>()));
+  test('sender validity callback rejects an expired response', () async {
+    var valid = true;
+    late bool Function() isStillValid;
+    final senderEntered = Completer<void>();
+    final releaseSender = Completer<void>();
+    final batcher = TranslationBatcher(
+      settings: () => const TranslationBatchSettings(mergeWindowMs: 0),
+      sender: (_, messages, validity) async {
+        isStillValid = validity;
+        senderEntered.complete();
+        await releaseSender.future;
+        return {messages.keys.single: 'translated'};
+      },
+    );
+    final result = batcher.add(
+      key,
+      TranslationBatchTask(source: 'one', isValid: () => valid),
+    );
+    final expectation = expectLater(result, throwsA(isA<StateError>()));
 
-      await senderEntered.future;
-      expect(isStillValid(), isTrue);
-      valid = false;
-      expect(isStillValid(), isFalse);
-      releaseSender.complete();
+    await senderEntered.future;
+    expect(isStillValid(), isTrue);
+    valid = false;
+    expect(isStillValid(), isFalse);
+    releaseSender.complete();
 
-      await expectation;
-      expect(persisterCalls, 0);
-    },
-  );
-
-  test(
-    'task expiring while persisting is not completed successfully',
-    () async {
-      var valid = true;
-      final persisterEntered = Completer<void>();
-      final releasePersister = Completer<void>();
-      final batcher = TranslationBatcher(
-        settings: () => const TranslationBatchSettings(mergeWindowMs: 0),
-        sender: (_, messages, _) async => {messages.keys.single: 'translated'},
-        persister: (_) async {
-          persisterEntered.complete();
-          await releasePersister.future;
-        },
-      );
-      final result = batcher.add(
-        key,
-        TranslationBatchTask(source: 'one', isValid: () => valid),
-      );
-      final expectation = expectLater(result, throwsA(isA<StateError>()));
-
-      await persisterEntered.future;
-      valid = false;
-      releasePersister.complete();
-
-      await expectation;
-    },
-  );
+    await expectation;
+  });
 
   test(
     'a revised task still sends after pending tasks are cancelled',

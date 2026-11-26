@@ -9,7 +9,6 @@ import 'package:flutter/painting.dart';
 
 import 'image_avif_codec.dart';
 
-/// Native AVIF uses its intrinsic resolution; widget layout applies scaling.
 class CompatibleMemoryImage extends MemoryImage {
   const CompatibleMemoryImage(super.bytes, {super.scale});
 

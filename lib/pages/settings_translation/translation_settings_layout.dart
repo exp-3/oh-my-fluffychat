@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+import 'package:fluffychat/widgets/layouts/max_width_body.dart';
 import 'package:material_ui/material_ui.dart';
 
 class TranslationSettingsLayout extends StatelessWidget {
@@ -41,6 +42,33 @@ class TranslationSettingsLayout extends StatelessWidget {
           ],
         );
       },
+    ),
+  );
+}
+
+class TranslationSettingsScaffold extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+  final VoidCallback onBack;
+
+  const TranslationSettingsScaffold({
+    super.key,
+    required this.title,
+    required this.children,
+    required this.onBack,
+  });
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      leading: BackButton(onPressed: onBack),
+      title: Text(title),
+    ),
+    body: MaxWidthBody(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: children,
+      ),
     ),
   );
 }

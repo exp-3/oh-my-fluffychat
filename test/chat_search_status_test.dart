@@ -64,7 +64,6 @@ void main() {
     status.collapse();
     await tester.pumpAndSettle();
 
-    // This point is inside the hidden full bar, to the left of its handle.
     final listPoint = Offset(
       panel.left + 24,
       panel.bottom - status.bottomInset / 2,
@@ -116,7 +115,6 @@ void main() {
       expect(status.collapsed, tick < 2);
     }
 
-    // A user returning to the top expands even before crossing the threshold.
     scroll.jumpTo(8);
     status.collapse();
     await tester.pumpAndSettle();
@@ -314,7 +312,8 @@ void main() {
         if (layout.stacked) {
           expect(details.width, closeTo(panel.width - 32, 0.5));
           expect(action.top, greaterThanOrEqualTo(details.bottom));
-        } else {
+        }
+        if (!layout.stacked) {
           expect(details.right, lessThanOrEqualTo(action.left));
           expect(action.top, lessThan(details.bottom));
           expect(action.bottom, greaterThan(details.top));

@@ -6,7 +6,6 @@ import 'package:fluffychat/utils/chat_search_models.dart';
 import 'package:flutter/rendering.dart' show ScrollDirection;
 import 'package:material_ui/material_ui.dart';
 
-/// Controls the overlay only; collapsing never pauses the search session.
 class ChatSearchStatusController extends ChangeNotifier {
   static const scrollThreshold = 24.0;
 
@@ -117,38 +116,47 @@ class ChatSearchStatusController extends ChangeNotifier {
         notification.metrics.axis != Axis.vertical) {
       return false;
     }
-    if (notification is UserScrollNotification) {
-      _userScrolling = notification.direction != ScrollDirection.idle;
-      if (_userScrolling &&
-          notification.metrics.pixels <= notification.metrics.minScrollExtent) {
-        _scheduleCollapsed(false);
-      }
-    } else if (notification is ScrollStartNotification &&
-        notification.dragDetails != null) {
-      _userScrolling = true;
-    } else if (notification is ScrollEndNotification) {
-      _userScrolling = false;
-    } else if (notification is ScrollUpdateNotification &&
-        (_userScrolling || notification.dragDetails != null)) {
-      if (notification.metrics.pixels <= notification.metrics.minScrollExtent) {
-        _scrollDistance = 0;
+    switch (notification) {
+      case UserScrollNotification():
+        _userScrolling = notification.direction != ScrollDirection.idle;
+        if (_userScrolling &&
+            notification.metrics.pixels <=
+                notification.metrics.minScrollExtent) {
+          _scheduleCollapsed(false);
+        }
+        return false;
+      case ScrollStartNotification() when notification.dragDetails != null:
+        _userScrolling = true;
+        return false;
+      case ScrollEndNotification():
+        _userScrolling = false;
+        return false;
+      case ScrollUpdateNotification()
+          when _userScrolling || notification.dragDetails != null:
+        if (notification.metrics.pixels <=
+            notification.metrics.minScrollExtent) {
+          _scrollDistance = 0;
+          _scheduleCollapsed(false);
+          return false;
+        }
+        final delta = notification.scrollDelta ?? 0;
+        if (delta == 0 || notification.metrics.outOfRange) return false;
+        if (_scrollDistance.sign != delta.sign) _scrollDistance = 0;
+        _scrollDistance += delta;
+        if (_scrollDistance.abs() >= scrollThreshold) {
+          _scheduleCollapsed(_scrollDistance > 0);
+          _scrollDistance = 0;
+        }
+        return false;
+      case OverscrollNotification()
+          when (_userScrolling || notification.dragDetails != null) &&
+              notification.metrics.pixels <=
+                  notification.metrics.minScrollExtent:
         _scheduleCollapsed(false);
         return false;
-      }
-      final delta = notification.scrollDelta ?? 0;
-      if (delta == 0 || notification.metrics.outOfRange) return false;
-      if (_scrollDistance.sign != delta.sign) _scrollDistance = 0;
-      _scrollDistance += delta;
-      if (_scrollDistance.abs() >= scrollThreshold) {
-        _scheduleCollapsed(_scrollDistance > 0);
-        _scrollDistance = 0;
-      }
-    } else if (notification is OverscrollNotification &&
-        (_userScrolling || notification.dragDetails != null) &&
-        notification.metrics.pixels <= notification.metrics.minScrollExtent) {
-      _scheduleCollapsed(false);
+      default:
+        return false;
     }
-    return false;
   }
 
   @override

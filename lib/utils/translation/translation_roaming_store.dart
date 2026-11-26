@@ -14,7 +14,6 @@ abstract interface class TranslationRoamingStore {
 
   Future<void> delete(String key);
 
-  /// Abandon pending I/O while allowing a subsequent operation to reconnect.
   void reset();
 
   void dispose();

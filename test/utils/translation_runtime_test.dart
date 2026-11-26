@@ -895,7 +895,6 @@ void main() {
     final request = await api.waitForCall(0);
     expect(request.messages.values.single.text, 'Replacement caption');
 
-    // The edit removes its caption while a provider response is in flight.
     newContent['body'] = 'attachment.bin';
     newContent.remove('formatted_body');
     expect(fixture.runtime.sourceForEvent(event), isEmpty);
@@ -1179,6 +1178,36 @@ void main() {
       expect(fixture.backend.records, isEmpty);
     },
   );
+
+  test('a runtime change rolls back an in-flight cache write', () async {
+    final api = _ControlledApiClient();
+    final fixture = await _RuntimeFixture.create(
+      apiClient: api,
+      mergeWindowMs: 0,
+    );
+    addTearDown(fixture.runtime.dispose);
+    final event = _event(fixture);
+    final writeStarted = Completer<void>();
+    final releaseWrite = Completer<void>();
+    addTearDown(() {
+      if (!releaseWrite.isCompleted) releaseWrite.complete();
+    });
+    fixture.backend.beforePutAll = () async {
+      writeStarted.complete();
+      await releaseWrite.future;
+    };
+
+    final result = fixture.runtime.translateEvent(event, manual: true);
+    final expectation = expectLater(result, throwsStateError);
+    (await api.waitForCall(0)).complete('obsolete');
+    await writeStarted.future;
+    await fixture.runtime.setLanguages(source: 'de', target: 'fr');
+    releaseWrite.complete();
+
+    await expectation;
+    expect(fixture.backend.records, isEmpty);
+    expect(fixture.runtime.stateForEvent(event).value.translation, isNull);
+  });
 
   test('forced refresh supersedes an older ordinary request', () async {
     final api = _ControlledApiClient();

@@ -9,9 +9,6 @@ class TranslationLanguage {
   const TranslationLanguage(this.code, this.name);
 }
 
-/// Special target-language value that follows the app's resolved system
-/// locale. It is valid for message translation targets, but not source or
-/// input-translation languages.
 const systemTranslationLanguageCode = 'system';
 
 const translationLanguages = <TranslationLanguage>[

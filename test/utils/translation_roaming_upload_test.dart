@@ -213,10 +213,14 @@ void main() {
         final key = _key();
         await harness.seed(key);
         await harness.session.scan();
-        if (expire) {
-          harness.now = _clock.add(const Duration(days: 37));
-        } else {
-          await harness.cache.invalidateEventIfExists(key.roomId, key.eventId);
+        switch (expire) {
+          case true:
+            harness.now = _clock.add(const Duration(days: 37));
+          case false:
+            await harness.cache.invalidateEventIfExists(
+              key.roomId,
+              key.eventId,
+            );
         }
         await harness.session.upload({'!room:test'});
         expect(harness.session.phase, TranslationRoamingUploadPhase.complete);

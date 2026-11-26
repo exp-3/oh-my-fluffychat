@@ -13,7 +13,6 @@ import 'package:managed_configurations/managed_configurations.dart';
 import 'package:matrix/matrix_api_lite/utils/logs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Notifies mounted chat timelines when the bubble gradient preference changes.
 final ValueNotifier<bool> messageBubbleGradientNotifier = ValueNotifier(true);
 
 enum AppSettings<T> {

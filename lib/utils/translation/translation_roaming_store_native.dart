@@ -148,23 +148,18 @@ class NativeTranslationRoamingStore implements TranslationRoamingStore {
     Object error, {
     List<String> command = const [],
   }) {
-    final String description;
-    if (error is SocketException) {
-      description =
-          'SocketException: ${error.message}'
-          '${error.osError == null ? '' : '\n${error.osError}'}';
-    } else if (error is TlsException) {
-      description =
-          '${error.runtimeType}: ${error.message}'
-          '${error.osError == null ? '' : '\n${error.osError}'}';
-    } else if (error is TimeoutException) {
-      description = 'TimeoutException: Redis operation timed out';
-    } else if (error is FormatException) {
-      description = 'FormatException: Invalid Redis response';
-    } else {
-      // Redis server errors may echo command arguments; sanitize at this boundary.
-      description = error.toString();
-    }
+    // Redis server errors may echo command arguments; sanitize at this boundary.
+    final description = switch (error) {
+      SocketException() =>
+        'SocketException: ${error.message}'
+            '${error.osError == null ? '' : '\n${error.osError}'}',
+      TlsException() =>
+        '${error.runtimeType}: ${error.message}'
+            '${error.osError == null ? '' : '\n${error.osError}'}',
+      TimeoutException() => 'TimeoutException: Redis operation timed out',
+      FormatException() => 'FormatException: Invalid Redis response',
+      _ => error.toString(),
+    };
     final authentication =
         command.firstOrNull == 'AUTH' ||
         RegExp(r'\b(NOAUTH|WRONGPASS)\b').hasMatch(description);

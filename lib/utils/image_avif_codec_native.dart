@@ -56,23 +56,25 @@ class _AvifCodec implements ui.Codec {
     ui.Image? image;
     try {
       if (!_isOpen) return;
-      final cached = _staticImage;
       final Duration duration;
-      if (cached != null) {
-        image = cached.clone();
-        duration = _staticDuration;
-      } else {
-        final frame = await _worker.nextFrame();
-        if (!_isOpen) return;
-        // A static image needs no native decoder after its only frame arrives.
-        if (frameCount == 1) _worker.close();
-        image = await _uploadFrame(frame);
-        if (!_isOpen) return;
-        duration = frame.duration;
-        if (frameCount == 1) {
-          _staticImage = image.clone();
-          _staticDuration = duration;
-        }
+      switch (_staticImage) {
+        case final ui.Image cached:
+          image = cached.clone();
+          duration = _staticDuration;
+          break;
+        case null:
+          final frame = await _worker.nextFrame();
+          if (!_isOpen) return;
+          // A static image needs no native decoder after its only frame arrives.
+          if (frameCount == 1) _worker.close();
+          image = await _uploadFrame(frame);
+          if (!_isOpen) return;
+          duration = frame.duration;
+          if (frameCount == 1) {
+            _staticImage = image.clone();
+            _staticDuration = duration;
+          }
+          break;
       }
       if (!result.isCompleted) {
         result.complete(_AvifFrameInfo(image, duration));
@@ -209,29 +211,37 @@ class _AvifWorker {
   }
 
   void _onMessage(Object? message) {
-    if (message is _WorkerReady) {
-      _commands = message.commands;
-      frameCount = message.frameCount;
-      repetitionCount = message.repetitionCount;
-      if (_closing) {
-        _commands!.send(const _CloseWorker());
-      } else if (!_ready.isCompleted) {
-        _ready.complete();
-      }
-    } else if (message is _WorkerFrame) {
-      final pending = _pendingFrame;
-      _pendingFrame = null;
-      if (pending != null && !pending.isCompleted) pending.complete(message);
-    } else if (message is _WorkerFailure) {
-      _fail(StateError(message.error), StackTrace.fromString(message.stack));
-    } else if (message is List) {
-      // Uncaught isolate errors use [error description, stack trace].
-      _fail(
-        StateError(message.first.toString()),
-        StackTrace.fromString(message.length > 1 ? '${message[1]}' : ''),
-      );
-    } else if (message is _WorkerClosed || message == null) {
-      _finish();
+    switch (message) {
+      case _WorkerReady():
+        _commands = message.commands;
+        frameCount = message.frameCount;
+        repetitionCount = message.repetitionCount;
+        if (_closing) {
+          _commands!.send(const _CloseWorker());
+          return;
+        }
+        if (!_ready.isCompleted) _ready.complete();
+        return;
+      case _WorkerFrame():
+        final pending = _pendingFrame;
+        _pendingFrame = null;
+        if (pending != null && !pending.isCompleted) pending.complete(message);
+        return;
+      case _WorkerFailure():
+        _fail(StateError(message.error), StackTrace.fromString(message.stack));
+        return;
+      case List():
+        // Uncaught isolate errors use [error description, stack trace].
+        _fail(
+          StateError(message.first.toString()),
+          StackTrace.fromString(message.length > 1 ? '${message[1]}' : ''),
+        );
+        return;
+      case _WorkerClosed() || null:
+        _finish();
+        return;
+      default:
+        return;
     }
   }
 

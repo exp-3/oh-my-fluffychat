@@ -179,32 +179,24 @@ class TranslationPreferences {
     store.getString(_inputModeKey),
     InputTranslationMode.disabled,
   );
-  TranslationInputMode get inputTranslationMode => inputMode;
   InputTranslationScope get inputScope => _enumValue(
     InputTranslationScope.values,
     store.getString(_inputScopeKey),
     InputTranslationScope.automaticRooms,
   );
-  TranslationInputScope get inputTranslationScope => inputScope;
   String get inputSourceLanguage =>
       store.getString(_inputSourceLanguageKey) ?? 'auto';
-  String get inputTranslationSourceLanguage => inputSourceLanguage;
   String? get inputTargetLanguage => store.getString(_inputTargetLanguageKey);
-  String? get inputTranslationTargetLanguage => inputTargetLanguage;
   InputTranslationTrigger get inputTrigger => _enumValue(
     InputTranslationTrigger.values,
     store.getString(_inputTriggerKey),
     InputTranslationTrigger.button,
   );
-  TranslationInputTrigger get inputTranslationTrigger => inputTrigger;
   InputTranslationSendMode get inputSendMode => _enumValue(
     InputTranslationSendMode.values,
     store.getString(_inputSendModeKey),
     InputTranslationSendMode.shortOriginalLongTranslated,
   );
-  TranslationInputSendMode get inputTranslationSendMode => inputSendMode;
-  InputTranslationAutoSendMode get inputTranslationAutoSendMode =>
-      inputSendMode;
   bool get privacyAccepted => store.getBool(_privacyAcceptedKey) ?? false;
   String? get selectedProviderId => store.getString(_selectedProviderKey);
   List<TranslationProviderConfig> get providers =>
@@ -225,7 +217,6 @@ class TranslationPreferences {
         TranslationBatchSettings.defaults.malformedResponseRetries,
   );
 
-  /// The per-room automatic translation override. Null means follow default.
   bool? roomTranslationOverride(String userId, String roomId) =>
       store.getBool(_roomKey(userId, roomId));
 
@@ -265,8 +256,6 @@ class TranslationPreferences {
       store.setString(_inputTriggerKey, value.name);
   Future<void> setInputSendMode(InputTranslationSendMode value) =>
       store.setString(_inputSendModeKey, value.name);
-  Future<void> setInputTranslationSendMode(TranslationInputSendMode value) =>
-      setInputSendMode(value);
   Future<void> acceptPrivacyNotice() =>
       store.setBool(_privacyAcceptedKey, true);
   Future<void> selectProvider(String? id) => id == null

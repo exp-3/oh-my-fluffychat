@@ -12,7 +12,6 @@ import 'package:pointycastle/export.dart';
 
 import 'translation_roaming_models.dart';
 
-/// PSK and source-dependent key derivation stay entirely on the client.
 class TranslationRoamingCrypto {
   static const maxTranslationBytes = 3 * 1024 * 1024;
   static const maxCompressedTranslationBytes = 600 * 1024;

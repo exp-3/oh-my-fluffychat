@@ -582,10 +582,10 @@ class _InputGestureDetectorState extends State<_InputGestureDetector> {
         const Duration(milliseconds: 50),
         widget.onDoubleTap!,
       );
-    } else {
-      _lastTapTime = now;
-      _lastTapPosition = position;
+      return;
     }
+    _lastTapTime = now;
+    _lastTapPosition = position;
   }
 
   void _cancelPointer() {

@@ -147,9 +147,9 @@ class WebTranslationCacheBackend implements TranslationCacheBackend {
       }).toJS;
       if (completer.isCompleted) {
         db.close();
-      } else {
-        completer.complete(db);
+        return;
       }
+      completer.complete(db);
     }).toJS;
     return completer.future;
   }
@@ -375,7 +375,7 @@ class _WebTransaction implements TranslationCacheTransaction {
   }) async {
     if (!hasStore(store)) return [];
     final objectStore = tx.objectStore(store.tableName);
-    web.IDBRequest request;
+    String? indexName;
     List<String>? fallbackFields;
     JSAny? indexKey;
     if (index != null) {
@@ -390,25 +390,23 @@ class _WebTransaction implements TranslationCacheTransaction {
         // Pre-v3 safety cleanup may lack a source-binding index. Leave the
         // schema untouched and filter its cursor; v3 always uses an index.
         fallbackFields = cacheIndexes[store]![index]!;
-        request = objectStore.openCursor(
-          after == null
-              ? null
-              : web.IDBKeyRange.lowerBound((after as String).toJS, true),
-        );
-      } else {
-        final key = equals!.length == 1
+      }
+      if (objectStore.indexNames.contains(name)) {
+        indexName = name;
+        indexKey = equals!.length == 1
             ? equals.single.toJS
             : equals.map((item) => item.toJS).toList().toJS;
-        indexKey = key;
-        request = objectStore.index(name).openCursor(web.IDBKeyRange.only(key));
       }
-    } else {
-      request = objectStore.openCursor(
-        after == null
-            ? null
-            : web.IDBKeyRange.lowerBound((after as String).toJS, true),
-      );
     }
+    final request = indexName == null
+        ? objectStore.openCursor(
+            after == null
+                ? null
+                : web.IDBKeyRange.lowerBound((after as String).toJS, true),
+          )
+        : objectStore
+              .index(indexName)
+              .openCursor(web.IDBKeyRange.only(indexKey));
     final completer = Completer<List<CacheRow>>();
     final rows = <CacheRow>[];
     request.onerror = ((web.Event _) {
@@ -449,9 +447,9 @@ class _WebTransaction implements TranslationCacheTransaction {
         }
         if (rows.length >= limit) {
           completer.complete(rows);
-        } else {
-          cursor.continue_();
+          return;
         }
+        cursor.continue_();
       } catch (error, stack) {
         if (!completer.isCompleted) completer.completeError(error, stack);
       }

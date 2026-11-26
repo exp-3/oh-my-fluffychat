@@ -64,14 +64,12 @@ class TranslationBatchTask {
   final String source;
   final String messageType;
   final bool Function() isValid;
-  final Object? metadata;
   final Completer<String> completer = Completer<String>();
 
   TranslationBatchTask({
     required this.source,
     this.messageType = 'm.text',
     required this.isValid,
-    this.metadata,
     String? requestId,
   }) : requestId = requestId ?? const Uuid().v4();
 }
@@ -83,22 +81,14 @@ typedef TranslationBatchSender =
       bool Function() isStillValid,
     );
 
-typedef TranslationBatchPersister =
-    Future<void> Function(Map<TranslationBatchTask, String> results);
-
 class TranslationBatcher {
   final TranslationBatchSender sender;
   final TranslationBatchSettings Function() settings;
-  final TranslationBatchPersister? persister;
   final Map<TranslationBatchKey, List<TranslationBatchTask>> _pending = {};
   final Map<TranslationBatchKey, Timer> _timers = {};
   bool _disposed = false;
 
-  TranslationBatcher({
-    required this.sender,
-    required this.settings,
-    this.persister,
-  });
+  TranslationBatcher({required this.sender, required this.settings});
 
   Future<String> add(TranslationBatchKey key, TranslationBatchTask task) {
     if (_disposed) {
@@ -230,35 +220,17 @@ class TranslationBatcher {
         }
       }
       if (result == null) throw StateError('Translation returned no result');
-      final completedResults = <TranslationBatchTask, String>{};
       for (final task in tasks) {
+        if (task.completer.isCompleted) continue;
         if (!task.isValid()) {
-          if (!task.completer.isCompleted) {
-            task.completer.completeError(
-              StateError('Translation task expired'),
-            );
-          }
+          task.completer.completeError(StateError('Translation task expired'));
           continue;
         }
         final value = result[task.requestId];
         if (value == null) {
           throw const TranslationProtocolException('Missing result ID');
         }
-        completedResults[task] = value;
-      }
-      if (completedResults.isNotEmpty) {
-        await persister?.call(completedResults);
-      }
-      for (final entry in completedResults.entries) {
-        if (!entry.key.isValid()) {
-          if (!entry.key.completer.isCompleted) {
-            entry.key.completer.completeError(
-              StateError('Translation task expired'),
-            );
-          }
-        } else if (!entry.key.completer.isCompleted) {
-          entry.key.completer.complete(entry.value);
-        }
+        task.completer.complete(value);
       }
     } on TranslationProtocolException catch (error) {
       if (tasks.length > 1) {

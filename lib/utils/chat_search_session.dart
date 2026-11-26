@@ -181,9 +181,9 @@ class ChatSearchSession extends ChangeNotifier {
             final sessionId = _pendingSessionKeys.first;
             _pendingSessionKeys.remove(sessionId);
             await _retrySession(sessionId, revision);
-          } else {
-            await _advance(revision);
+            continue;
           }
+          await _advance(revision);
         } on _SearchSuperseded {
           // The old SDK operation may still finish; it has no right to publish
           // into the new query. The same worker starts its local scan now.
@@ -218,11 +218,7 @@ class ChatSearchSession extends ChangeNotifier {
 
     if (_batch == null) {
       final ids = _localIds!;
-      if (_localOffset < ids.length) {
-        final requestedEnd = _localOffset + _pageSize;
-        final end = requestedEnd < ids.length ? requestedEnd : ids.length;
-        _batch = _SearchBatch.local(ids.sublist(_localOffset, end));
-      } else {
+      if (_localOffset >= ids.length) {
         final from = _remoteCursor;
         final page = await _loadRemotePage(from, revision);
         _checkRevision(revision);
@@ -232,6 +228,11 @@ class ChatSearchSession extends ChangeNotifier {
           throw StateError('The history server repeated a pagination cursor.');
         }
         _batch = _SearchBatch.remote(page, from);
+      }
+      if (_batch == null) {
+        final requestedEnd = _localOffset + _pageSize;
+        final end = requestedEnd < ids.length ? requestedEnd : ids.length;
+        _batch = _SearchBatch.local(ids.sublist(_localOffset, end));
       }
     }
     if (!_canScan) return;
@@ -323,16 +324,16 @@ class ChatSearchSession extends ChangeNotifier {
 
     if (batch.isLocal) {
       _localOffset += batch.ids.length;
-    } else {
+    }
+    if (!batch.isLocal) {
       final next = batch.nextBatch;
       if (batch.from != null) _rememberPage(batch);
       _remoteCursor = next;
       if (next == null) {
         _exhausted = true;
         _requestedRunning = false;
-      } else {
-        _visitedRemoteCursors.add(next);
       }
+      if (next != null) _visitedRemoteCursors.add(next);
     }
     _batch = null;
     _publish();
@@ -509,12 +510,12 @@ class ChatSearchSession extends ChangeNotifier {
   }
 
   void _trackEncryptedEvent(Event event) {
-    if (!event.redacted && event.type == EventTypes.Encrypted) {
-      final sessionId = event.parsedRoomEncryptedContent.sessionId;
-      if (sessionId != null) _encryptedSessions[event.eventId] = sessionId;
-    } else {
+    if (event.redacted || event.type != EventTypes.Encrypted) {
       _encryptedSessions.remove(event.eventId);
+      return;
     }
+    final sessionId = event.parsedRoomEncryptedContent.sessionId;
+    if (sessionId != null) _encryptedSessions[event.eventId] = sessionId;
   }
 
   Future<void> _retrySession(String sessionId, int revision) async {

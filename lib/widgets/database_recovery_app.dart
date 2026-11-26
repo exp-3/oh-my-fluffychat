@@ -104,11 +104,10 @@ class _DatabaseRecoveryPageState extends State<_DatabaseRecoveryPage> {
       Logs().e('Unable to recover the local archive', error, stackTrace);
       if (!mounted) return;
       setState(() {
+        _operationError = error;
         if (error is MatrixDatabaseInitializationFailure) {
           _failure = error;
           _operationError = error.cause;
-        } else {
-          _operationError = error;
         }
       });
     } finally {
@@ -155,9 +154,8 @@ class _DatabaseRecoveryPageState extends State<_DatabaseRecoveryPage> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 24),
-                  if (_busy)
-                    const CircularProgressIndicator()
-                  else
+                  if (_busy) const CircularProgressIndicator(),
+                  if (!_busy)
                     Wrap(
                       alignment: WrapAlignment.center,
                       spacing: 12,

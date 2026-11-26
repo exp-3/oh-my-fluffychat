@@ -22,7 +22,6 @@ showTranslationTestFeedback(
       ? null
       : translationErrorDetails(error, secrets: secrets);
   final messenger = ScaffoldMessenger.of(context);
-  // Discard old notices so this controller always belongs to the current bar.
   messenger.clearSnackBars();
   messenger.removeCurrentSnackBar();
   return messenger.showSnackBar(

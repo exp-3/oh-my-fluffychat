@@ -88,7 +88,8 @@ class _TranslationCacheUpgradeGateState
                           : l10n.loadingPleaseWait,
                       textAlign: TextAlign.center,
                     ),
-                  ] else ...[
+                  ],
+                  if (error != null) ...[
                     Text(
                       l10n.translationCacheUpgradeFailed,
                       style: Theme.of(context).textTheme.titleLarge,

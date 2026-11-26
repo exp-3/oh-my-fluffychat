@@ -143,7 +143,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   String get sourceLanguage => _sourceLanguage;
   String get targetLanguage => _targetLanguage;
   InputTranslationMode get inputMode => _inputMode;
-  TranslationInputMode get inputTranslationMode => _inputMode;
   bool get manualInputTranslationEnabled =>
       _inputMode == InputTranslationMode.manual ||
       _inputMode == InputTranslationMode.manualAndAutomatic;
@@ -151,20 +150,13 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       _inputMode == InputTranslationMode.automatic ||
       _inputMode == InputTranslationMode.manualAndAutomatic;
   InputTranslationScope get inputScope => _inputScope;
-  TranslationInputScope get inputTranslationScope => _inputScope;
   String get inputSourceLanguage => _inputSourceLanguage;
-  String get inputTranslationSourceLanguage => _inputSourceLanguage;
   String get inputTargetLanguage => _inputTargetLanguage;
-  String get inputTranslationTargetLanguage => _inputTargetLanguage;
   bool get preferRoomLanguageForSource => _preferRoomLanguageForSource;
   bool get preferRoomLanguageForInputTarget =>
       _preferRoomLanguageForInputTarget;
   InputTranslationTrigger get inputTrigger => _inputTrigger;
-  TranslationInputTrigger get inputTranslationTrigger => _inputTrigger;
   InputTranslationSendMode get inputSendMode => _inputSendMode;
-  TranslationInputSendMode get inputTranslationSendMode => _inputSendMode;
-  InputTranslationAutoSendMode get inputTranslationAutoSendMode =>
-      _inputSendMode;
   int get revision => _revision;
   List<TranslationProviderConfig> get providers =>
       List.unmodifiable(_providers);
@@ -175,10 +167,8 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       _preferences ??
       (throw StateError('Translation runtime is not initialized'));
 
-  /// Waits for input language saves registered before this call.
   Future<void> waitForInputLanguageSaves() => _inputLanguageSaveTail;
 
-  /// Waits for batch settings saves registered before this call.
   Future<void> waitForBatchSettingsSaves() => _batchSettingsSaveTail;
 
   TranslationRoamingConfig get roamingConfig => _roamingConfig;
@@ -562,7 +552,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
         .putIfAbsent(client, () => client.rooms.map((room) => room.id).toSet())
         .addAll(client.rooms.map((room) => room.id));
     if (_clientSubscriptions.containsKey(client)) return;
-    // Stored in _clientSubscriptions and cancelled when the client logs out.
     // ignore: cancel_subscriptions
     final timeline = client.onTimelineEvent.stream.listen((event) {
       _knownClientRoomIds[client]?.add(event.room.id);
@@ -737,9 +726,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     await preferences.setInputMode(value);
   }
 
-  Future<void> setInputTranslationMode(TranslationInputMode value) =>
-      setInputMode(value);
-
   Future<void> setManualInputTranslationEnabled(bool value) =>
       _setInputTranslationEnabled(value, automaticInputTranslationEnabled);
 
@@ -760,9 +746,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     _bumpRevision(clearPending: true, clearStates: false);
     await preferences.setInputScope(value);
   }
-
-  Future<void> setInputTranslationScope(TranslationInputScope value) =>
-      setInputScope(value);
 
   Future<void> setPreferRoomLanguageForSource(bool value) async {
     if (value == _preferRoomLanguageForSource) return;
@@ -806,11 +789,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     return operation;
   }
 
-  Future<void> setInputTranslationLanguages({
-    required String source,
-    required String target,
-  }) => setInputLanguages(source: source, target: target);
-
   Future<void> setInputTrigger(InputTranslationTrigger value) async {
     if (value == _inputTrigger) return;
     _inputTrigger = value;
@@ -818,22 +796,12 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     await preferences.setInputTrigger(value);
   }
 
-  Future<void> setInputTranslationTrigger(TranslationInputTrigger value) =>
-      setInputTrigger(value);
-
   Future<void> setInputSendMode(InputTranslationSendMode value) async {
     if (value == _inputSendMode) return;
     _inputSendMode = value;
     _bumpRevision(clearPending: true, clearStates: false);
     await preferences.setInputSendMode(value);
   }
-
-  Future<void> setInputTranslationSendMode(TranslationInputSendMode value) =>
-      setInputSendMode(value);
-
-  Future<void> setInputTranslationAutoSendMode(
-    InputTranslationAutoSendMode value,
-  ) => setInputSendMode(value);
 
   Future<void> acceptPrivacyNotice() async {
     _privacyAccepted = true;
@@ -870,10 +838,11 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     if (!provider.isValid) throw ArgumentError.value(provider, 'provider');
     final providers = [..._providers];
     final index = providers.indexWhere((item) => item.id == provider.id);
-    if (index < 0) {
-      providers.add(provider);
-    } else {
-      providers[index] = provider;
+    switch (index) {
+      case -1:
+        providers.add(provider);
+      default:
+        providers[index] = provider;
     }
     final becomesActive =
         _activeProvider == null || _activeProvider?.id == provider.id;
@@ -1183,7 +1152,6 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       _sourceLanguageForRoom(event.room) == key.sourceLanguage &&
       _effectiveTargetLanguage == key.targetLanguage;
 
-  /// Called for loaded messages even in rooms with automatic translation off.
   /// Unavailable storage is deliberately distinct from a genuine cache miss.
   Future<String?> restoreEvent(Event event) =>
       translateEvent(event, manual: false);
@@ -1374,10 +1342,10 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     final scheduler = _afterRoamingFrame;
     if (scheduler != null) {
       scheduler(save);
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) => save());
-      WidgetsBinding.instance.ensureVisualUpdate();
+      return;
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) => save());
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   void _saveObservedRoaming(

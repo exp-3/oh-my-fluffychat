@@ -89,39 +89,40 @@ void main() {
           final headers = request.headers;
           expect(headers['authorization'], 'Bearer test-key');
           expect(headers['x-api-key'], 'test-key');
-          if (protocol == TranslationProtocol.anthropicMessages) {
-            expect(headers['anthropic-version'], '2026-10-21');
-          } else {
-            expect(headers, isNot(contains('anthropic-version')));
-          }
-          if (protocol == TranslationProtocol.anthropicMessages &&
-              const bool.fromEnvironment('dart.library.js_interop')) {
-            expect(
-              headers['anthropic-dangerous-direct-browser-access'],
-              'true',
-            );
-          } else {
-            expect(
-              headers,
-              isNot(contains('anthropic-dangerous-direct-browser-access')),
-            );
-          }
+          expect(
+            headers,
+            protocol == TranslationProtocol.anthropicMessages
+                ? containsPair('anthropic-version', '2026-10-21')
+                : isNot(contains('anthropic-version')),
+          );
+          expect(
+            headers,
+            protocol == TranslationProtocol.anthropicMessages &&
+                    const bool.fromEnvironment('dart.library.js_interop')
+                ? containsPair(
+                    'anthropic-dangerous-direct-browser-access',
+                    'true',
+                  )
+                : isNot(contains('anthropic-dangerous-direct-browser-access')),
+          );
         }
-        if (protocol == TranslationProtocol.anthropicMessages || hasEffort) {
-          expect(body, isNot(contains('temperature')));
-        } else {
-          expect(body['temperature'], 0);
-        }
+        expect(
+          body,
+          protocol == TranslationProtocol.anthropicMessages || hasEffort
+              ? isNot(contains('temperature'))
+              : containsPair('temperature', 0),
+        );
 
         late String prompt;
         switch (protocol) {
           case TranslationProtocol.chatCompletions:
             {
-              if (hasEffort) {
-                expect(body['reasoning_effort'], effort.name);
-              } else {
-                expect(body, isNot(contains('reasoning_effort')));
-              }
+              expect(
+                body,
+                hasEffort
+                    ? containsPair('reasoning_effort', effort.name)
+                    : isNot(contains('reasoning_effort')),
+              );
               expect(body, isNot(contains('reasoning')));
               expect(body, isNot(contains('output_config')));
               expect(body['response_format'], {'type': 'json_object'});
@@ -134,11 +135,12 @@ void main() {
             }
           case TranslationProtocol.responses:
             {
-              if (hasEffort) {
-                expect(body['reasoning'], {'effort': effort.name});
-              } else {
-                expect(body, isNot(contains('reasoning')));
-              }
+              expect(
+                body,
+                hasEffort
+                    ? containsPair('reasoning', {'effort': effort.name})
+                    : isNot(contains('reasoning')),
+              );
               expect(body, isNot(contains('reasoning_effort')));
               expect(
                 body['instructions'],
@@ -158,11 +160,12 @@ void main() {
               expect(body['max_tokens'], 4096);
               expect(body['system'], contains('precise message translator'));
               final output = body['output_config']! as Map<String, Object?>;
-              if (hasEffort) {
-                expect(output['effort'], effort.name);
-              } else {
-                expect(output, isNot(contains('effort')));
-              }
+              expect(
+                output,
+                hasEffort
+                    ? containsPair('effort', effort.name)
+                    : isNot(contains('effort')),
+              );
               expect(body, isNot(contains('reasoning')));
               expect(body, isNot(contains('reasoning_effort')));
               expect(body, isNot(contains('response_format')));

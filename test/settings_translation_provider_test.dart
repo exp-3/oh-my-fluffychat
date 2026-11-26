@@ -357,10 +357,11 @@ void main() {
 }
 
 Future<void> _back(WidgetTester tester, {bool systemBack = false}) async {
-  if (systemBack) {
-    await tester.binding.handlePopRoute();
-  } else {
-    await tester.tap(find.byType(BackButton));
+  switch (systemBack) {
+    case true:
+      await tester.binding.handlePopRoute();
+    case false:
+      await tester.tap(find.byType(BackButton));
   }
   await tester.pumpAndSettle();
 }

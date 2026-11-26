@@ -153,7 +153,6 @@ class TranslationRoamingService {
     }
   }
 
-  /// Imports a local translation without replacing a remote value or its TTL.
   /// The remaining lifetime is recalculated immediately before each attempt.
   Future<TranslationRoamingUploadResult> uploadIfAbsent({
     required String source,
@@ -188,7 +187,6 @@ class TranslationRoamingService {
         translation: translation,
       );
     } on TranslationRoamingException {
-      // Apply the same size limits as automatic uploads.
       return skipped;
     }
     for (var attempt = 0; attempt < 2; attempt++) {

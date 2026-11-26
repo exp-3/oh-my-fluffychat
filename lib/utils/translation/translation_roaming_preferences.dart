@@ -109,11 +109,9 @@ class TranslationRoamingPreferences {
     } catch (_) {
       if (written) {
         try {
-          if (previous == null) {
-            await secrets.delete(secretsKey);
-          } else {
-            await secrets.write(secretsKey, previous);
-          }
+          await (previous == null
+              ? secrets.delete(secretsKey)
+              : secrets.write(secretsKey, previous));
         } catch (_) {
           // Do not reactivate an old connection with partially saved secrets.
           try {

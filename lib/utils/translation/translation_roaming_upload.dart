@@ -32,7 +32,6 @@ class TranslationRoamingUploadRoom {
   });
 }
 
-/// One explicit import, with its own connection and no persistent job state.
 class TranslationRoamingUploadSession extends ChangeNotifier {
   final TranslationCache cache;
   final TranslationSourceResolver resolveSource;
@@ -212,12 +211,10 @@ class TranslationRoamingUploadSession extends ChangeNotifier {
         }
         if (!_active) break;
         entries.sort(_compareTranslations);
-        final TranslationRoamingUploadResult result;
-        if (entries.isEmpty) {
-          result = const TranslationRoamingUploadResult(
-            TranslationRoamingUploadStatus.skipped,
-          );
-        } else {
+        var result = const TranslationRoamingUploadResult(
+          TranslationRoamingUploadStatus.skipped,
+        );
+        if (entries.isNotEmpty) {
           final entry = entries.last;
           int ttlSeconds() {
             var ttl = 0;

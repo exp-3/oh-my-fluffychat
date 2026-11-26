@@ -8,7 +8,6 @@ import 'package:material_ui/material_ui.dart';
 
 enum TranslationUnsavedChangesAction { save, discard }
 
-/// A dismissed dialog leaves the settings page and its draft untouched.
 Future<TranslationUnsavedChangesAction?> showTranslationUnsavedChangesDialog(
   BuildContext context,
 ) => showDialog<TranslationUnsavedChangesAction>(

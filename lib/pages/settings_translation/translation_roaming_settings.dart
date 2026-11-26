@@ -7,17 +7,15 @@ import 'dart:async';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/translation/translation_roaming.dart';
 import 'package:fluffychat/utils/translation/translation_runtime.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
-import 'roaming_actions.dart';
+import 'translation_roaming_settings_view.dart';
 import 'translation_test_feedback.dart';
 import 'translation_unsaved_changes_dialog.dart';
 
-/// Keeps roaming settings local until the user explicitly saves them.
 class TranslationRoamingSettings extends StatefulWidget {
   final TranslationRuntime runtime;
 
@@ -25,10 +23,10 @@ class TranslationRoamingSettings extends StatefulWidget {
 
   @override
   State<TranslationRoamingSettings> createState() =>
-      _TranslationRoamingSettingsState();
+      TranslationRoamingSettingsController();
 }
 
-class _TranslationRoamingSettingsState
+class TranslationRoamingSettingsController
     extends State<TranslationRoamingSettings> {
   late TranslationRoamingConfig _saved;
   late TranslationRoamingType _type;
@@ -97,7 +95,7 @@ class _TranslationRoamingSettingsState
     _psk = TextEditingController();
     _days = TextEditingController(text: _saved.retentionDays.toString());
     _baseline = _formValues;
-    unawaited(_loadSecrets());
+    unawaited(loadSecrets());
   }
 
   @override
@@ -119,7 +117,7 @@ class _TranslationRoamingSettingsState
     super.dispose();
   }
 
-  Future<void> _loadSecrets() async {
+  Future<void> loadSecrets() async {
     if (!_loading) setState(() => _loading = true);
     try {
       final settings = await widget.runtime.readRoamingSettings();
@@ -213,7 +211,7 @@ class _TranslationRoamingSettingsState
     );
   }
 
-  void _settingsChanged() {
+  void settingsChanged() {
     _clearTestFeedback();
     setState(() => _saveFailed = false);
   }
@@ -226,7 +224,7 @@ class _TranslationRoamingSettingsState
               config.supportedOnPlatform &&
               _secrets.isValidFor(config)));
 
-  Future<void> _save() async {
+  Future<void> save() async {
     if (_busy || _loadFailed) return;
     final config = _draft;
     final secrets = _secrets;
@@ -254,7 +252,7 @@ class _TranslationRoamingSettingsState
     }
   }
 
-  Future<void> _requestBack() async {
+  Future<void> requestBack() async {
     if (_busy || _confirmingExit) return;
     if (!_dirty) {
       context.go('/rooms/settings/translation');
@@ -266,7 +264,7 @@ class _TranslationRoamingSettingsState
       if (!mounted) return;
       switch (result) {
         case TranslationUnsavedChangesAction.save:
-          await _save();
+          await save();
           return;
         case TranslationUnsavedChangesAction.discard:
           context.go('/rooms/settings/translation');
@@ -279,7 +277,7 @@ class _TranslationRoamingSettingsState
     }
   }
 
-  void _setEnabled(bool value) {
+  void setEnabled(bool value) {
     if (_busy || _loadFailed) return;
     _clearTestFeedback();
     setState(() {
@@ -293,7 +291,7 @@ class _TranslationRoamingSettingsState
     });
   }
 
-  Future<void> _test() async {
+  Future<void> test() async {
     if (_fieldsDisabled) return;
     _clearTestFeedback();
     final l10n = L10n.of(context);
@@ -317,7 +315,7 @@ class _TranslationRoamingSettingsState
     }
   }
 
-  Future<void> _copyKey() async {
+  Future<void> copyKey() async {
     try {
       await Clipboard.setData(ClipboardData(text: _psk.text.trim()));
       if (mounted) _message(L10n.of(context).copiedToClipboard);
@@ -326,412 +324,76 @@ class _TranslationRoamingSettingsState
     }
   }
 
-  void _showUploadSaveHint() {
+  void showUploadSaveHint() {
     _uploadTooltip.currentState?.ensureTooltipVisible();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
-    final theme = Theme.of(context);
-    final unsupported = !_saved.copyWith(type: _type).supportedOnPlatform;
+  bool get busy => _busy;
+  bool get fieldsDisabled => _fieldsDisabled;
+  bool get loading => _loading;
+  bool get loadFailed => _loadFailed;
+  bool get saving => _saving;
+  bool get saveFailed => _saveFailed;
+  bool get testing => _testing;
+  bool get enabled => _enabled;
+  bool get tls => _tls;
+  TranslationRoamingType get type => _type;
+  bool get passwordVisible => _passwordVisible;
+  bool get tokenVisible => _tokenVisible;
+  bool get pskVisible => _pskVisible;
+  GlobalKey<TooltipState> get uploadTooltip => _uploadTooltip;
+  TextEditingController get host => _host;
+  TextEditingController get port => _port;
+  TextEditingController get username => _username;
+  TextEditingController get password => _password;
+  TextEditingController get database => _database;
+  TextEditingController get endpoint => _endpoint;
+  TextEditingController get token => _token;
+  TextEditingController get prefix => _prefix;
+  TextEditingController get psk => _psk;
+  TextEditingController get days => _days;
+  bool get unsupported => !_saved.copyWith(type: _type).supportedOnPlatform;
+  bool get invalidInput =>
+      _validationRequested && !_loading && !_loadFailed && !_canSave(_draft);
+  bool get uploadNeedsSave => _dirty || !_hasSavedKey;
+
+  bool get canUpload {
+    if (_fieldsDisabled || uploadNeedsSave || unsupported) return false;
     final draft = _draft;
-    final invalidInput =
-        _validationRequested && !_loading && !_loadFailed && !_canSave(draft);
-    final uploadNeedsSave = _dirty || !_hasSavedKey;
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) unawaited(_requestBack());
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          leading: BackButton(onPressed: _requestBack),
-          title: Text(l10n.translationRoaming),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: FilledButton(
-                onPressed: _busy || _loadFailed ? null : _save,
-                child: _saving
-                    ? const SizedBox.square(
-                        dimension: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(l10n.save),
-              ),
-            ),
-          ],
-        ),
-        body: MaxWidthBody(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SwitchListTile.adaptive(
-                secondary: const Icon(Icons.cloud_sync_outlined),
-                title: Text(
-                  l10n.translationRoaming,
-                  style: TextStyle(
-                    color: theme.colorScheme.secondary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                subtitle: Text(l10n.translationRoamingDescription),
-                value: _enabled,
-                onChanged: _busy || _loadFailed ? null : _setEnabled,
-              ),
-              if (_loading)
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: LinearProgressIndicator(),
-                ),
-              if (_loadFailed)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: TextButton.icon(
-                    onPressed: _loading ? null : _loadSecrets,
-                    icon: const Icon(Icons.refresh),
-                    label: Text(l10n.tryAgain),
-                  ),
-                ),
-              if (_saveFailed)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          l10n.oopsSomethingWentWrong,
-                          style: TextStyle(color: theme.colorScheme.error),
-                        ),
-                      ),
-                      TextButton.icon(
-                        onPressed: _busy || _loadFailed ? null : _save,
-                        icon: const Icon(Icons.refresh),
-                        label: Text(l10n.tryAgain),
-                      ),
-                    ],
-                  ),
-                ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  spacing: 12,
-                  children: [
-                    DropdownButtonFormField<TranslationRoamingType>(
-                      initialValue: _type,
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText: l10n.translationRoamingConnectionType,
-                      ),
-                      items: [
-                        DropdownMenuItem(
-                          value: TranslationRoamingType.redis,
-                          child: Text(l10n.translationRoamingNative),
-                        ),
-                        DropdownMenuItem(
-                          value: TranslationRoamingType.upstash,
-                          child: Text(l10n.translationRoamingUpstash),
-                        ),
-                      ],
-                      onChanged: _fieldsDisabled
-                          ? null
-                          : (value) {
-                              if (value == null || value == _type) return;
-                              _type = value;
-                              _settingsChanged();
-                            },
-                    ),
-                    if (_enabled && unsupported)
-                      Text(
-                        l10n.translationRoamingWebUnsupported,
-                        style: TextStyle(color: theme.colorScheme.error),
-                      ),
-                    if (_type == TranslationRoamingType.redis) ...[
-                      _RoamingFields(
-                        children: [
-                          TextField(
-                            controller: _host,
-                            enabled: !_fieldsDisabled,
-                            autocorrect: false,
-                            keyboardType: TextInputType.url,
-                            decoration: InputDecoration(
-                              labelText: l10n.translationRoamingHost,
-                            ),
-                            onChanged: (_) => _settingsChanged(),
-                          ),
-                          TextField(
-                            controller: _port,
-                            enabled: !_fieldsDisabled,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              labelText: l10n.translationRoamingPort,
-                            ),
-                            onChanged: (_) => _settingsChanged(),
-                          ),
-                          TextField(
-                            controller: _username,
-                            enabled: !_fieldsDisabled,
-                            autocorrect: false,
-                            decoration: InputDecoration(
-                              labelText: l10n.translationRoamingUsername,
-                            ),
-                            onChanged: (_) => _settingsChanged(),
-                          ),
-                          TextField(
-                            controller: _password,
-                            enabled: !_fieldsDisabled,
-                            obscureText: !_passwordVisible,
-                            autocorrect: false,
-                            enableSuggestions: false,
-                            enableIMEPersonalizedLearning: false,
-                            decoration: InputDecoration(
-                              labelText: l10n.password,
-                              suffixIcon: IconButton(
-                                tooltip: _passwordVisible
-                                    ? l10n.showLess
-                                    : l10n.showMore,
-                                onPressed: _fieldsDisabled
-                                    ? null
-                                    : () => setState(
-                                        () => _passwordVisible =
-                                            !_passwordVisible,
-                                      ),
-                                icon: Icon(
-                                  _passwordVisible
-                                      ? Icons.visibility_off_outlined
-                                      : Icons.visibility_outlined,
-                                ),
-                              ),
-                            ),
-                            onChanged: (_) => _settingsChanged(),
-                          ),
-                          TextField(
-                            controller: _database,
-                            enabled: !_fieldsDisabled,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              labelText: l10n.translationRoamingDatabase,
-                            ),
-                            onChanged: (_) => _settingsChanged(),
-                          ),
-                          DropdownButtonFormField<bool>(
-                            initialValue: _tls,
-                            isExpanded: true,
-                            decoration: const InputDecoration(labelText: 'TLS'),
-                            items: [
-                              DropdownMenuItem(
-                                value: true,
-                                child: Text(
-                                  l10n.open,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              DropdownMenuItem(
-                                value: false,
-                                child: Text(
-                                  l10n.close,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                            onChanged: _fieldsDisabled
-                                ? null
-                                : (value) {
-                                    if (value == null || value == _tls) return;
-                                    _tls = value;
-                                    _settingsChanged();
-                                  },
-                          ),
-                        ],
-                      ),
-                    ] else ...[
-                      TextField(
-                        controller: _endpoint,
-                        enabled: !_fieldsDisabled,
-                        autocorrect: false,
-                        keyboardType: TextInputType.url,
-                        decoration: InputDecoration(
-                          labelText: l10n.translationEndpoint,
-                          hintText: 'https://example.upstash.io',
-                        ),
-                        onChanged: (_) => _settingsChanged(),
-                      ),
-                      TextField(
-                        controller: _token,
-                        enabled: !_fieldsDisabled,
-                        obscureText: !_tokenVisible,
-                        autocorrect: false,
-                        enableSuggestions: false,
-                        enableIMEPersonalizedLearning: false,
-                        decoration: InputDecoration(
-                          labelText: l10n.translationRoamingToken,
-                          suffixIcon: IconButton(
-                            tooltip: _tokenVisible
-                                ? l10n.showLess
-                                : l10n.showMore,
-                            onPressed: _fieldsDisabled
-                                ? null
-                                : () => setState(
-                                    () => _tokenVisible = !_tokenVisible,
-                                  ),
-                            icon: Icon(
-                              _tokenVisible
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
-                            ),
-                          ),
-                        ),
-                        onChanged: (_) => _settingsChanged(),
-                      ),
-                    ],
-                    _RoamingFields(
-                      children: [
-                        TextField(
-                          controller: _prefix,
-                          enabled: !_fieldsDisabled,
-                          autocorrect: false,
-                          decoration: InputDecoration(
-                            labelText: l10n.translationRoamingKeyPrefix,
-                          ),
-                          onChanged: (_) => _settingsChanged(),
-                        ),
-                        TextField(
-                          controller: _days,
-                          enabled: !_fieldsDisabled,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            labelText: l10n.translationRoamingRetentionDays,
-                          ),
-                          onChanged: (_) => _settingsChanged(),
-                        ),
-                      ],
-                    ),
-                    TextField(
-                      controller: _psk,
-                      enabled: !_fieldsDisabled,
-                      obscureText: !_pskVisible,
-                      autocorrect: false,
-                      enableSuggestions: false,
-                      enableIMEPersonalizedLearning: false,
-                      decoration: InputDecoration(
-                        labelText: l10n.translationRoamingPreSharedKey,
-                        suffixIcon: IconButton(
-                          tooltip: _pskVisible ? l10n.showLess : l10n.showMore,
-                          onPressed: _fieldsDisabled
-                              ? null
-                              : () =>
-                                    setState(() => _pskVisible = !_pskVisible),
-                          icon: Icon(
-                            _pskVisible
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                          ),
-                        ),
-                      ),
-                      onChanged: (_) => _settingsChanged(),
-                    ),
-                    if (invalidInput)
-                      Text(
-                        l10n.invalidInput,
-                        style: TextStyle(color: theme.colorScheme.error),
-                      ),
-                    RoamingActions(
-                      keyActions: [
-                        OutlinedButton.icon(
-                          onPressed: _fieldsDisabled
-                              ? null
-                              : () {
-                                  _psk.text =
-                                      TranslationRoamingCrypto.generatePreSharedKey();
-                                  _settingsChanged();
-                                },
-                          icon: const Icon(Icons.key_outlined),
-                          label: Text(l10n.translationRoamingGenerateKey),
-                        ),
-                        OutlinedButton.icon(
-                          onPressed: _fieldsDisabled ? null : _copyKey,
-                          icon: const Icon(Icons.copy_outlined),
-                          label: Text(l10n.copyToClipboard),
-                        ),
-                      ],
-                      testAction: OutlinedButton.icon(
-                        onPressed: _fieldsDisabled || unsupported
-                            ? null
-                            : _test,
-                        icon: _testing
-                            ? const SizedBox.square(
-                                dimension: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(Icons.science_outlined),
-                        label: Text(l10n.test),
-                      ),
-                      uploadAction: Tooltip(
-                        key: _uploadTooltip,
-                        message: !_fieldsDisabled && uploadNeedsSave
-                            ? l10n.translationSaveBeforeUse
-                            : '',
-                        triggerMode: TooltipTriggerMode.manual,
-                        excludeFromSemantics: !uploadNeedsSave,
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: !_fieldsDisabled && uploadNeedsSave
-                              ? _showUploadSaveHint
-                              : null,
-                          child: OutlinedButton.icon(
-                            onPressed:
-                                _fieldsDisabled ||
-                                    uploadNeedsSave ||
-                                    unsupported ||
-                                    draft == null ||
-                                    !draft.isValid ||
-                                    !_secrets.isValidFor(draft) ||
-                                    !widget.runtime.canUploadLocalTranslations
-                                ? null
-                                : () => context.push(
-                                    '/rooms/settings/translation/roaming/upload',
-                                  ),
-                            icon: const Icon(Icons.cloud_upload_outlined),
-                            label: Text(l10n.translationRoamingUploadLocal),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    return draft != null &&
+        draft.isValid &&
+        _secrets.isValidFor(draft) &&
+        widget.runtime.canUploadLocalTranslations;
   }
-}
 
-class _RoamingFields extends StatelessWidget {
-  final List<Widget> children;
+  void changeType(TranslationRoamingType? value) {
+    if (value == null || value == _type) return;
+    _type = value;
+    settingsChanged();
+  }
 
-  const _RoamingFields({required this.children});
+  void changeTls(bool? value) {
+    if (value == null || value == _tls) return;
+    _tls = value;
+    settingsChanged();
+  }
+
+  void togglePasswordVisibility() =>
+      setState(() => _passwordVisible = !_passwordVisible);
+
+  void toggleTokenVisibility() =>
+      setState(() => _tokenVisible = !_tokenVisible);
+
+  void togglePskVisibility() => setState(() => _pskVisible = !_pskVisible);
+
+  void generateKey() {
+    _psk.text = TranslationRoamingCrypto.generatePreSharedKey();
+    settingsChanged();
+  }
+
+  void openUpload() =>
+      unawaited(context.push('/rooms/settings/translation/roaming/upload'));
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
-    builder: (context, constraints) {
-      const spacing = 12.0;
-      final minimumWidth = MediaQuery.textScalerOf(context).scale(188);
-      final width = constraints.maxWidth >= minimumWidth * 2 + spacing
-          ? (constraints.maxWidth - spacing) / 2
-          : constraints.maxWidth;
-      return Wrap(
-        spacing: spacing,
-        runSpacing: 12,
-        children: [
-          for (final child in children) SizedBox(width: width, child: child),
-        ],
-      );
-    },
-  );
+  Widget build(BuildContext context) => TranslationRoamingSettingsView(this);
 }

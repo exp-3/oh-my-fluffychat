@@ -21,14 +21,6 @@ enum InputTranslationSendMode {
   shortTranslatedLongOriginal,
 }
 
-// Keep the longer names available to callers while the concise names are used
-// throughout the chat UI.
-typedef TranslationInputMode = InputTranslationMode;
-typedef TranslationInputScope = InputTranslationScope;
-typedef TranslationInputTrigger = InputTranslationTrigger;
-typedef TranslationInputSendMode = InputTranslationSendMode;
-typedef InputTranslationAutoSendMode = InputTranslationSendMode;
-
 enum TranslationDisplayMode { translatedOnly, bilingual }
 
 enum TranslationBilingualColor { body, accent, secondary, tertiary, muted }

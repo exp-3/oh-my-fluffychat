@@ -120,14 +120,15 @@ void main() {
             : runtime.saveBatchSettings(settings);
         await gate.started.future;
 
-        if (blockInput) {
-          await runtime.saveBatchSettings(settings);
-          await runtime.waitForBatchSettingsSaves();
-          expect(runtime.batchSettings, same(settings));
-        } else {
-          await runtime.setInputLanguages(source: 'de', target: 'fr');
-          await runtime.waitForInputLanguageSaves();
-          expect(fixture.store.getString(_inputTarget), 'fr');
+        switch (blockInput) {
+          case true:
+            await runtime.saveBatchSettings(settings);
+            await runtime.waitForBatchSettingsSaves();
+            expect(runtime.batchSettings, same(settings));
+          case false:
+            await runtime.setInputLanguages(source: 'de', target: 'fr');
+            await runtime.waitForInputLanguageSaves();
+            expect(fixture.store.getString(_inputTarget), 'fr');
         }
 
         gate.release.complete();

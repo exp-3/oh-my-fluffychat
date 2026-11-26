@@ -56,7 +56,6 @@ class SendFileDialogState extends State<SendFileDialog> {
   late bool compressImages = AppSettings.compressImagesByDefault.value;
   bool compressVideos = true;
 
-  /// Videos smaller than 20kb don't need compression.
   static const int minSizeToCompress = 20 * 1000;
 
   final TextEditingController _labelTextController = TextEditingController();
@@ -86,7 +85,6 @@ class SendFileDialogState extends State<SendFileDialog> {
         continue;
       }
       try {
-        // Read only the signature, including for unnamed clipboard images.
         final end = min(await file.length(), defaultMagicNumbersMaxLength);
         final header = await file
             .openRead(0, end)
@@ -585,16 +583,16 @@ class _CompressionSwitch extends StatelessWidget {
     final theme = Theme.of(context);
     return Row(
       children: [
-        if ({TargetPlatform.iOS, TargetPlatform.macOS}.contains(theme.platform))
-          CupertinoSwitch(
-            value: enabled && value,
-            onChanged: enabled ? onChanged : null,
-          )
-        else
-          Switch.adaptive(
+        switch (theme.platform) {
+          TargetPlatform.iOS || TargetPlatform.macOS => CupertinoSwitch(
             value: enabled && value,
             onChanged: enabled ? onChanged : null,
           ),
+          _ => Switch.adaptive(
+            value: enabled && value,
+            onChanged: enabled ? onChanged : null,
+          ),
+        },
         const SizedBox(width: 16),
         Expanded(
           child: Column(

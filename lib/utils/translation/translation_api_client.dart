@@ -56,7 +56,8 @@ class TranslationApiClient {
     final body = switch (provider.protocol) {
       TranslationProtocol.chatCompletions => {
         'model': provider.model,
-        if (hasEffort) 'reasoning_effort': effort.name else 'temperature': 0,
+        if (hasEffort) 'reasoning_effort': effort.name,
+        if (!hasEffort) 'temperature': 0,
         'response_format': {'type': 'json_object'},
         'messages': [
           {'role': 'system', 'content': _systemPrompt},
@@ -65,10 +66,8 @@ class TranslationApiClient {
       },
       TranslationProtocol.responses => {
         'model': provider.model,
-        if (hasEffort)
-          'reasoning': {'effort': effort.name}
-        else
-          'temperature': 0,
+        if (hasEffort) 'reasoning': {'effort': effort.name},
+        if (!hasEffort) 'temperature': 0,
         'instructions': _systemPrompt,
         'input': prompt,
         'text': {

@@ -12,8 +12,6 @@ import 'image_avif.dart';
 import 'image_send_options.dart';
 import 'image_send_raster.dart';
 
-/// Platform codecs receive a PNG with orientation and size already applied.
-/// Keeping this boundary injectable also lets tests exercise codec failures.
 abstract interface class ImageSendEncoder {
   Future<Uint8List> encode(Uint8List png, ImageOutputFormat format);
 }

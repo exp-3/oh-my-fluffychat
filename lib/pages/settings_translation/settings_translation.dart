@@ -4,20 +4,18 @@
 
 import 'dart:async';
 
-import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/translation/translation_languages.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
-import 'package:fluffychat/utils/translation/translation_roaming_models.dart';
 import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:uuid/uuid.dart';
 
-import 'translation_settings_layout.dart';
+import 'settings_translation_provider_view.dart';
+import 'settings_translation_view.dart';
 import 'translation_test_feedback.dart';
 import 'translation_unsaved_changes_dialog.dart';
 
@@ -25,10 +23,10 @@ class SettingsTranslation extends StatefulWidget {
   const SettingsTranslation({super.key});
 
   @override
-  State<SettingsTranslation> createState() => _SettingsTranslationState();
+  State<SettingsTranslation> createState() => SettingsTranslationController();
 }
 
-class _SettingsTranslationState extends State<SettingsTranslation> {
+class SettingsTranslationController extends State<SettingsTranslation> {
   final runtime = TranslationRuntime.instance;
   late String sourceLanguage;
   late String targetLanguage;
@@ -50,7 +48,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
         .onError(_handleLanguageSaveError);
   }
 
-  String _languageLabel(String code, L10n l10n) {
+  String languageLabel(String code, L10n l10n) {
     if (code == 'auto') return l10n.translationAutoDetect;
     for (final language in translationLanguages) {
       if (language.code == code) return language.name;
@@ -68,7 +66,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
     );
   }
 
-  Future<void> _toggleEnabled(bool value) async {
+  Future<void> toggleEnabled(bool value) async {
     if (value) {
       final result = await showOkCancelAlertDialog(
         context: context,
@@ -88,7 +86,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
     );
   }
 
-  Future<void> _cleanCache() async {
+  Future<void> cleanCache() async {
     if (_cacheBusy) return;
     setState(() => _cacheBusy = true);
     try {
@@ -115,7 +113,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
     }
   }
 
-  Future<void> _clearCache() async {
+  Future<void> clearCache() async {
     if (_cacheBusy) return;
     setState(() => _cacheBusy = true);
     try {
@@ -143,433 +141,66 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
-    final theme = Theme.of(context);
-    return AnimatedBuilder(
-      animation: runtime,
-      builder: (context, _) {
-        final enabled = runtime.enabled;
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(l10n.translation),
-            automaticallyImplyLeading: !FluffyThemes.isColumnMode(context),
-            centerTitle: FluffyThemes.isColumnMode(context),
-          ),
-          body: MaxWidthBody(
-            child: Column(
-              children: [
-                SwitchListTile.adaptive(
-                  secondary: const Icon(Icons.translate_outlined),
-                  title: Text(l10n.enableTranslation),
-                  subtitle: Text(l10n.translationPrivacyNotice),
-                  value: enabled,
-                  onChanged: _toggleEnabled,
-                ),
-                _SectionTitle(l10n.translationProviders),
-                for (final provider in runtime.providers)
-                  ListTile(
-                    onTap: () => runtime.selectProvider(provider.id),
-                    leading: Icon(
-                      runtime.activeProvider?.id == provider.id
-                          ? Icons.radio_button_checked
-                          : Icons.radio_button_unchecked,
-                    ),
-                    title: Text(provider.name),
-                    subtitle: Text(provider.model),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.edit_outlined),
-                      tooltip: l10n.edit,
-                      onPressed: () {
-                        final location = Uri(
-                          path: '/rooms/settings/translation/provider',
-                          queryParameters: {'id': provider.id},
-                        );
-                        context.go(location.toString());
-                      },
-                    ),
-                  ),
-                if (runtime.providers.isEmpty)
-                  ListTile(
-                    leading: const Icon(Icons.info_outline),
-                    title: Text(l10n.noTranslationProviders),
-                  ),
-                ListTile(
-                  leading: const Icon(Icons.add),
-                  title: Text(l10n.addTranslationProvider),
-                  trailing: const Icon(Icons.chevron_right_outlined),
-                  onTap: () =>
-                      context.go('/rooms/settings/translation/provider'),
-                ),
-                if (enabled) ...[
-                  Divider(color: theme.dividerColor),
-                  Column(
-                    children: [
-                      _SectionTitle(l10n.automaticTranslation),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: DropdownButtonFormField<TranslationScope>(
-                          initialValue: runtime.scope,
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            labelText: l10n.automaticTranslationScope,
-                            prefixIcon: const Icon(Icons.auto_awesome_outlined),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                          ),
-                          items: [
-                            DropdownMenuItem(
-                              value: TranslationScope.none,
-                              child: Text(
-                                l10n.translationScopeNone,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            DropdownMenuItem(
-                              value: TranslationScope.allRooms,
-                              child: Text(
-                                l10n.translationScopeAllRooms,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            DropdownMenuItem(
-                              value: TranslationScope.unencryptedRooms,
-                              child: Text(
-                                l10n.translationScopeUnencryptedRooms,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                          onChanged: (scope) =>
-                              scope == null ? null : runtime.setScope(scope),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-                        child: Align(
-                          alignment: AlignmentDirectional.centerStart,
-                          child: Text(
-                            l10n.translationScopeOverrideHint,
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: TranslationSettingsLayout(
-                          padding: EdgeInsets.zero,
-                          runSpacing: 12,
-                          children: [
-                            DropdownButtonFormField<String>(
-                              initialValue: sourceLanguage,
-                              isExpanded: true,
-                              decoration: InputDecoration(
-                                labelText: l10n.sourceLanguage,
-                              ),
-                              items: [
-                                DropdownMenuItem(
-                                  value: 'auto',
-                                  child: Text(l10n.translationAutoDetect),
-                                ),
-                                for (final language in translationLanguages)
-                                  DropdownMenuItem(
-                                    value: language.code,
-                                    child: Text(
-                                      language.name,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                              ],
-                              onChanged: (value) {
-                                if (value == null) return;
-                                setState(() => sourceLanguage = value);
-                                _saveLanguages();
-                              },
-                            ),
-                            DropdownButtonFormField<String>(
-                              initialValue: targetLanguage,
-                              isExpanded: true,
-                              decoration: InputDecoration(
-                                labelText: l10n.targetLanguage,
-                              ),
-                              items: [
-                                DropdownMenuItem(
-                                  value: systemTranslationLanguageCode,
-                                  child: Text(l10n.systemTheme),
-                                ),
-                                for (final language in translationLanguages)
-                                  DropdownMenuItem(
-                                    value: language.code,
-                                    child: Text(
-                                      language.name,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                              ],
-                              onChanged: (value) {
-                                if (value == null) return;
-                                setState(() => targetLanguage = value);
-                                _saveLanguages();
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      CheckboxListTile.adaptive(
-                        title: Text(l10n.preferRoomLanguageForSource),
-                        value: runtime.preferRoomLanguageForSource,
-                        onChanged: (value) => value == null
-                            ? null
-                            : runtime.setPreferRoomLanguageForSource(value),
-                      ),
-                      SwitchListTile.adaptive(
-                        secondary: const Icon(Icons.view_agenda_outlined),
-                        title: Text(l10n.bilingual),
-                        value:
-                            runtime.displayMode ==
-                            TranslationDisplayMode.bilingual,
-                        onChanged: (bilingual) => runtime.setDisplayMode(
-                          bilingual
-                              ? TranslationDisplayMode.bilingual
-                              : TranslationDisplayMode.translatedOnly,
-                        ),
-                      ),
-                      if (runtime.displayMode ==
-                          TranslationDisplayMode.bilingual)
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 32,
-                            right: 16,
-                            bottom: 12,
-                          ),
-                          child: TranslationSettingsLayout(
-                            padding: EdgeInsets.zero,
-                            runSpacing: 12,
-                            minimumColumnWidth: 180,
-                            children: [
-                              DropdownButtonFormField<
-                                TranslationBilingualColor
-                              >(
-                                initialValue: runtime.bilingualColor,
-                                isExpanded: true,
-                                decoration: InputDecoration(
-                                  labelText: l10n.translationBilingualColor,
-                                  prefixIcon: const Icon(
-                                    Icons.palette_outlined,
-                                  ),
-                                ),
-                                items: [
-                                  DropdownMenuItem(
-                                    value: TranslationBilingualColor.body,
-                                    child: _ColorOption(
-                                      color: theme.colorScheme.onSurface,
-                                      label: l10n.translationStyleBody,
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: TranslationBilingualColor.accent,
-                                    child: _ColorOption(
-                                      color: theme.colorScheme.primary,
-                                      label: l10n.translationStyleAccent,
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: TranslationBilingualColor.secondary,
-                                    child: _ColorOption(
-                                      color: theme.colorScheme.secondary,
-                                      label: l10n.translationStyleSecondary,
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: TranslationBilingualColor.tertiary,
-                                    child: _ColorOption(
-                                      color: theme.colorScheme.tertiary,
-                                      label: l10n.translationStyleTertiary,
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: TranslationBilingualColor.muted,
-                                    child: _ColorOption(
-                                      color: theme.colorScheme.onSurface
-                                          .withAlpha(170),
-                                      label: l10n.translationStyleMuted,
-                                    ),
-                                  ),
-                                ],
-                                onChanged: (color) => color == null
-                                    ? null
-                                    : runtime.setBilingualColor(color),
-                              ),
-                              DropdownButtonFormField<
-                                TranslationBilingualStyle
-                              >(
-                                initialValue: runtime.bilingualStyle,
-                                isExpanded: true,
-                                decoration: InputDecoration(
-                                  labelText: l10n.translationBilingualStyle,
-                                  prefixIcon: const Icon(
-                                    Icons.view_stream_outlined,
-                                  ),
-                                ),
-                                items: [
-                                  DropdownMenuItem(
-                                    value: TranslationBilingualStyle.plain,
-                                    child: Text(l10n.translationStylePlain),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: TranslationBilingualStyle.divider,
-                                    child: Text(l10n.translationStyleDivider),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: TranslationBilingualStyle.glow,
-                                    child: Text(l10n.translationStyleGlow),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: TranslationBilingualStyle.background,
-                                    child: Text(
-                                      l10n.translationStyleBackground,
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: TranslationBilingualStyle.duotone,
-                                    child: Text(l10n.translationStyleDuotone),
-                                  ),
-                                  DropdownMenuItem(
-                                    value:
-                                        TranslationBilingualStyle.outsideBubble,
-                                    child: Text(
-                                      l10n.translationStyleOutsideBubble,
-                                    ),
-                                  ),
-                                ],
-                                onChanged: (style) => style == null
-                                    ? null
-                                    : runtime.setBilingualStyle(style),
-                              ),
-                            ],
-                          ),
-                        ),
-                      Divider(color: theme.dividerColor),
-                      ListTile(
-                        leading: const Icon(Icons.edit_note_outlined),
-                        title: Text(l10n.inputTranslation),
-                        subtitle: Text(
-                          !runtime.manualInputTranslationEnabled &&
-                                  !runtime.automaticInputTranslationEnabled
-                              ? l10n.roomTranslationAlwaysOff
-                              : '${_languageLabel(runtime.inputSourceLanguage, l10n)}'
-                                    ' → ${_languageLabel(runtime.inputTargetLanguage, l10n)}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        trailing: const Icon(Icons.chevron_right_outlined),
-                        onTap: () =>
-                            context.go('/rooms/settings/translation/input'),
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.layers_outlined),
-                        title: Text(l10n.batchTranslation),
-                        subtitle: Text(
-                          '${l10n.translationMaxMessages}: '
-                          '${runtime.batchSettings.maxMessages}\n'
-                          '${l10n.translationMaxCharacters}: '
-                          '${runtime.batchSettings.maxCharacters}',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        trailing: const Icon(Icons.chevron_right_outlined),
-                        onTap: () =>
-                            context.go('/rooms/settings/translation/batch'),
-                      ),
-                    ],
-                  ),
-                ],
-                Divider(color: theme.dividerColor),
-                ListTile(
-                  leading: Icon(
-                    runtime.roamingConfig.enabled
-                        ? Icons.cloud_sync_outlined
-                        : Icons.cloud_off_outlined,
-                  ),
-                  title: Text(l10n.translationRoaming),
-                  subtitle: Text(
-                    !runtime.roamingConfig.enabled
-                        ? l10n.roomTranslationAlwaysOff
-                        : switch (runtime.roamingConfig.type) {
-                            TranslationRoamingType.redis =>
-                              l10n.translationRoamingNative,
-                            TranslationRoamingType.upstash =>
-                              l10n.translationRoamingUpstash,
-                          },
-                  ),
-                  trailing: const Icon(Icons.chevron_right_outlined),
-                  onTap: () =>
-                      context.go('/rooms/settings/translation/roaming'),
-                ),
-                Divider(color: theme.dividerColor),
-                _SectionTitle(l10n.translationCache),
-                ListTile(
-                  leading: const Icon(Icons.cleaning_services_outlined),
-                  title: Text(l10n.cleanInvalidTranslationCache),
-                  onTap: _cacheBusy ? null : _cleanCache,
-                  enabled: !_cacheBusy,
-                ),
-                ListTile(
-                  leading: const Icon(Icons.delete_sweep_outlined),
-                  title: Text(l10n.clearTranslationCache),
-                  onTap: _cacheBusy ? null : _clearCache,
-                  enabled: !_cacheBusy,
-                ),
-                Divider(color: theme.dividerColor),
-                ListTile(
-                  leading: const Icon(Icons.info_outline),
-                  title: Text(l10n.translationPrivacyDetails),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+  bool get cacheBusy => _cacheBusy;
+
+  void changeSourceLanguage(String? value) {
+    if (value == null) return;
+    setState(() => sourceLanguage = value);
+    _saveLanguages();
   }
-}
 
-class _SectionTitle extends StatelessWidget {
-  final String text;
-  const _SectionTitle(this.text);
+  void changeTargetLanguage(String? value) {
+    if (value == null) return;
+    setState(() => targetLanguage = value);
+    _saveLanguages();
+  }
 
-  @override
-  Widget build(BuildContext context) => ListTile(
-    title: Text(
-      text,
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.secondary,
-        fontWeight: FontWeight.bold,
-      ),
+  void openProvider([String? id]) {
+    final location = Uri(
+      path: '/rooms/settings/translation/provider',
+      queryParameters: id == null ? null : {'id': id},
+    );
+    context.go(location.toString());
+  }
+
+  void openInput() => context.go('/rooms/settings/translation/input');
+
+  void openBatch() => context.go('/rooms/settings/translation/batch');
+
+  void openRoaming() => context.go('/rooms/settings/translation/roaming');
+
+  Future<bool> selectProvider(String id) => runtime.selectProvider(id);
+
+  void changeScope(TranslationScope? value) {
+    if (value == null) return;
+    unawaited(runtime.setScope(value));
+  }
+
+  void changePreferRoomLanguage(bool? value) {
+    if (value == null) return;
+    unawaited(runtime.setPreferRoomLanguageForSource(value));
+  }
+
+  void changeBilingual(bool value) => unawaited(
+    runtime.setDisplayMode(
+      value
+          ? TranslationDisplayMode.bilingual
+          : TranslationDisplayMode.translatedOnly,
     ),
   );
-}
 
-class _ColorOption extends StatelessWidget {
-  final Color color;
-  final String label;
+  void changeBilingualColor(TranslationBilingualColor? value) {
+    if (value == null) return;
+    unawaited(runtime.setBilingualColor(value));
+  }
 
-  const _ColorOption({required this.color, required this.label});
+  void changeBilingualStyle(TranslationBilingualStyle? value) {
+    if (value == null) return;
+    unawaited(runtime.setBilingualStyle(value));
+  }
 
   @override
-  Widget build(BuildContext context) => Row(
-    children: [
-      Icon(Icons.circle, size: 16, color: color),
-      const SizedBox(width: 8),
-      Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
-    ],
-  );
+  Widget build(BuildContext context) => SettingsTranslationView(this);
 }
 
 typedef _ProviderDraftSnapshot = ({
@@ -588,10 +219,10 @@ class SettingsTranslationProvider extends StatefulWidget {
 
   @override
   State<SettingsTranslationProvider> createState() =>
-      _SettingsTranslationProviderState();
+      SettingsTranslationProviderController();
 }
 
-class _SettingsTranslationProviderState
+class SettingsTranslationProviderController
     extends State<SettingsTranslationProvider> {
   final runtime = TranslationRuntime.instance;
   late final TranslationProviderConfig? existing;
@@ -653,7 +284,6 @@ class _SettingsTranslationProviderState
       final value = await runtime.preferences.readApiKey(providerId);
       if (!mounted) return;
       apiKey.text = value ?? '';
-      // Other fields may already have been edited while the secret was read.
       _initialApiKey = apiKey.text;
     } catch (_) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -714,7 +344,7 @@ class _SettingsTranslationProviderState
     context.go('/rooms/settings/translation');
   }
 
-  Future<void> _requestExit() async {
+  Future<void> requestExit() async {
     if (_busy || _dialogOpen || _leaving) return;
     if (!_dirty) {
       _returnToSettings();
@@ -853,249 +483,52 @@ class _SettingsTranslationProviderState
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
-    final theme = Theme.of(context);
-    final value = config;
+  bool get canSave =>
+      !_busy &&
+      !_loadingApiKey &&
+      config != null &&
+      (existing != null || apiKey.text.trim().isNotEmpty);
+
+  bool get busy => _busy;
+  bool get loadingApiKey => _loadingApiKey;
+  bool get apiKeyVisible => _apiKeyVisible;
+  bool get providerMissing => widget.providerId != null && existing == null;
+
+  Uri? get previewEndpoint {
     final draft = _draftConfig;
-    final previewEndpoint =
-        draft != null &&
-            draft.endpoint.hasScheme &&
-            draft.endpoint.host.isNotEmpty
-        ? draft.requestEndpoint
-        : null;
-    final busy = _busy;
-    if (widget.providerId != null && existing == null) {
-      return Scaffold(
-        appBar: AppBar(title: Text(l10n.editTranslationProvider)),
-        body: Center(child: Text(l10n.oopsSomethingWentWrong)),
-      );
+    if (draft == null ||
+        !draft.endpoint.hasScheme ||
+        draft.endpoint.host.isEmpty) {
+      return null;
     }
-    return PopScope<Object?>(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) unawaited(_requestExit());
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          leading: BackButton(onPressed: () => unawaited(_requestExit())),
-          title: Text(
-            existing == null
-                ? l10n.addTranslationProvider
-                : l10n.editTranslationProvider,
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: FilledButton(
-                onPressed:
-                    busy ||
-                        _loadingApiKey ||
-                        value == null ||
-                        (existing == null && apiKey.text.trim().isEmpty)
-                    ? null
-                    : save,
-                child: saving
-                    ? const SizedBox.square(
-                        dimension: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(l10n.save),
-              ),
-            ),
-          ],
-        ),
-        body: MaxWidthBody(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  spacing: 12,
-                  children: [
-                    TextField(
-                      controller: name,
-                      enabled: !busy,
-                      decoration: InputDecoration(labelText: l10n.providerName),
-                      onChanged: (_) => formChanged(),
-                    ),
-                    TextField(
-                      controller: endpoint,
-                      enabled: !busy,
-                      decoration: InputDecoration(
-                        labelText: 'URL',
-                        hintText: useFullEndpoint
-                            ? switch (protocol) {
-                                TranslationProtocol.chatCompletions =>
-                                  'https://api.example/v1/chat/completions',
-                                TranslationProtocol.responses =>
-                                  'https://api.example/v1/responses',
-                                TranslationProtocol.anthropicMessages =>
-                                  'https://api.anthropic.com/v1/messages',
-                              }
-                            : 'https://api.example/v1',
-                        helperText: previewEndpoint == null
-                            ? null
-                            : '${l10n.translationEndpoint}: $previewEndpoint',
-                        helperMaxLines: 3,
-                      ),
-                      keyboardType: TextInputType.url,
-                      onChanged: (_) => formChanged(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16),
-                      child: ListTileTheme.merge(
-                        horizontalTitleGap: 0,
-                        child: CheckboxListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          dense: true,
-                          visualDensity: const VisualDensity(vertical: -2),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          value: useFullEndpoint,
-                          title: Text(l10n.translationEndpointIsComplete),
-                          onChanged: busy
-                              ? null
-                              : (checked) {
-                                  if (checked == null) return;
-                                  useFullEndpoint = checked;
-                                  formChanged();
-                                },
-                        ),
-                      ),
-                    ),
-                    DropdownButtonFormField<TranslationProtocol>(
-                      initialValue: protocol,
-                      decoration: InputDecoration(
-                        labelText: l10n.translationProtocol,
-                      ),
-                      items: const [
-                        DropdownMenuItem(
-                          value: TranslationProtocol.chatCompletions,
-                          child: Text('Chat Completions'),
-                        ),
-                        DropdownMenuItem(
-                          value: TranslationProtocol.responses,
-                          child: Text('Responses'),
-                        ),
-                        DropdownMenuItem(
-                          value: TranslationProtocol.anthropicMessages,
-                          child: Text('Anthropic Messages'),
-                        ),
-                      ],
-                      onChanged: busy
-                          ? null
-                          : (value) {
-                              if (value == null || value == protocol) return;
-                              protocol = value;
-                              formChanged();
-                            },
-                    ),
-                    TextField(
-                      controller: model,
-                      enabled: !busy,
-                      decoration: InputDecoration(labelText: l10n.model),
-                      onChanged: (_) => formChanged(),
-                    ),
-                    DropdownButtonFormField<TranslationReasoningEffort>(
-                      initialValue: reasoningEffort,
-                      decoration: InputDecoration(
-                        labelText: l10n.translationReasoningEffort,
-                      ),
-                      items: TranslationReasoningEffort.values
-                          .map(
-                            (value) => DropdownMenuItem(
-                              value: value,
-                              child: Text(
-                                value == TranslationReasoningEffort.unspecified
-                                    ? l10n.translationReasoningUnspecified
-                                    : value.name,
-                              ),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: busy
-                          ? null
-                          : (value) {
-                              if (value == null) return;
-                              reasoningEffort = value;
-                              formChanged();
-                            },
-                    ),
-                    TextField(
-                      controller: apiKey,
-                      enabled: !busy && !_loadingApiKey,
-                      obscureText: !_apiKeyVisible,
-                      autocorrect: false,
-                      enableSuggestions: false,
-                      enableIMEPersonalizedLearning: false,
-                      decoration: InputDecoration(
-                        labelText: l10n.apiKey,
-                        helperText: existing == null
-                            ? null
-                            : l10n.leaveEmptyToKeepCurrent,
-                        suffixIcon: IconButton(
-                          tooltip: _apiKeyVisible
-                              ? l10n.showLess
-                              : l10n.showMore,
-                          onPressed: busy || _loadingApiKey
-                              ? null
-                              : () => setState(
-                                  () => _apiKeyVisible = !_apiKeyVisible,
-                                ),
-                          icon: Icon(
-                            _apiKeyVisible
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                          ),
-                        ),
-                      ),
-                      onChanged: (_) => formChanged(),
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: busy || _loadingApiKey ? null : test,
-                        icon: testing
-                            ? const SizedBox.square(
-                                dimension: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(Icons.science_outlined),
-                        label: Text(l10n.test),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (existing != null) ...[
-                Divider(color: theme.dividerColor),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: OutlinedButton.icon(
-                    onPressed: busy ? null : delete,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: theme.colorScheme.error,
-                      side: BorderSide(color: theme.colorScheme.error),
-                    ),
-                    icon: deleting
-                        ? const SizedBox.square(
-                            dimension: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.delete_outline),
-                    label: Text(l10n.deleteTranslationProvider),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
+    return draft.requestEndpoint;
   }
+
+  void changeUseFullEndpoint(bool? value) {
+    if (value == null) return;
+    useFullEndpoint = value;
+    formChanged();
+  }
+
+  void changeProtocol(TranslationProtocol? value) {
+    if (value == null || value == protocol) return;
+    protocol = value;
+    formChanged();
+  }
+
+  void changeReasoningEffort(TranslationReasoningEffort? value) {
+    if (value == null) return;
+    reasoningEffort = value;
+    formChanged();
+  }
+
+  void toggleApiKeyVisibility() =>
+      setState(() => _apiKeyVisible = !_apiKeyVisible);
+
+  void onPopInvoked(bool didPop, Object? result) {
+    if (!didPop) unawaited(requestExit());
+  }
+
+  @override
+  Widget build(BuildContext context) => SettingsTranslationProviderView(this);
 }

@@ -114,7 +114,6 @@ typedef TranslationSourceResolver =
       String eventId,
     );
 
-/// An in-memory reference that cannot survive deletion, editing or cache reset.
 class TranslationCacheExportReference {
   final String referenceKey, userId, roomId, eventId;
   final TranslationCacheKey _key;
@@ -312,8 +311,6 @@ class TranslationCache {
     tickets: ticket == null ? null : {key: ticket},
   );
 
-  /// Reads existing references without creating a cache or attaching new ones.
-  ///
   /// An empty page can still have a cursor when all rows in it were invalid.
   Future<TranslationCacheExportPage> exportPage(
     TranslationSourceResolver resolver, {
@@ -376,7 +373,6 @@ class TranslationCache {
     );
   });
 
-  /// Revalidates the original reference and reads its newest translation.
   /// Never use the earlier scan's plaintext directly for a later upload.
   Future<TranslationCacheExportEntry?> refreshExportEntry(
     TranslationCacheExportReference reference,
@@ -388,7 +384,6 @@ class TranslationCache {
     return _readExportEntry(reference, resolver, isValid);
   });
 
-  /// Cheap in-process guard for a write that has already been revalidated.
   /// Persisted changes from other contexts require [refreshExportEntry].
   bool isExportReferenceCurrent(TranslationCacheExportReference reference) =>
       reference._safetyEpoch == _safetyEpoch &&
@@ -511,11 +506,10 @@ class TranslationCache {
               return _createMasterKey();
             })();
         ensureValid();
-        if (existed) {
-          if (!await _openExisting()) {
-            throw StateError('Translation cache disappeared');
-          }
-        } else {
+        if (existed && !await _openExisting()) {
+          throw StateError('Translation cache disappeared');
+        }
+        if (!existed) {
           createdDatabase = true;
           await backend.openOrCreate(_databaseKey(master));
           _formatChecked = true;
@@ -687,10 +681,10 @@ class TranslationCache {
       if (user.isEmpty) {
         await _revise(tx, _scope('room', [room]));
         await _detachMatching(tx, 'room', [room]);
-      } else {
-        await _revise(tx, _scope('user_room', [user, room]));
-        await _detachMatching(tx, 'user_room', [user, room]);
+        return;
       }
+      await _revise(tx, _scope('user_room', [user, room]));
+      await _detachMatching(tx, 'user_room', [user, room]);
       return;
     }
     await _revise(tx, _scope('user', [user]));
@@ -827,23 +821,23 @@ class TranslationCache {
         }
         if (valid) {
           retained++;
-        } else {
-          await backend.transaction(
-            (tx) async {
-              await _revise(
-                tx,
-                _scope('event', [
-                  cacheString(row, 'room_id'),
-                  cacheString(row, 'event_id'),
-                ]),
-              );
-              await _detachReference(tx, row);
-            },
-            write: true,
-            notify: true,
-          );
-          deleted++;
+          continue;
         }
+        await backend.transaction(
+          (tx) async {
+            await _revise(
+              tx,
+              _scope('event', [
+                cacheString(row, 'room_id'),
+                cacheString(row, 'event_id'),
+              ]),
+            );
+            await _detachReference(tx, row);
+          },
+          write: true,
+          notify: true,
+        );
+        deleted++;
       }
       cursor = rows.last['_cursor'];
     }
@@ -987,35 +981,36 @@ class TranslationCache {
       final String sourceLanguage, targetLanguage, messageType;
       Map<String, Object?> payload;
       var priority = 0;
-      if (aad.first == 2 && aad.length == 6) {
-        if (aad[1] != owner ||
-            row['user_id'] != owner ||
-            row['source_binding'] != binding ||
-            aad[2] != binding ||
-            row['cache_key'] != _storageKey(master, aad.sublist(1))) {
+      switch ((aad.first, aad.length)) {
+        case (2, 6):
+          if (aad[1] != owner ||
+              row['user_id'] != owner ||
+              row['source_binding'] != binding ||
+              aad[2] != binding ||
+              row['cache_key'] != _storageKey(master, aad.sublist(1))) {
+            return null;
+          }
+          sourceLanguage = aad[3]! as String;
+          targetLanguage = aad[4]! as String;
+          messageType = aad[5]! as String;
+          payload =
+              jsonDecode(_decrypt(master, source.source!, row))
+                  as Map<String, Object?>;
+          if (payload['v'] != 2 || payload['text'] is! String) return null;
+          priority = row['legacy'] == 2 ? 0 : 1;
+        case (1, 7):
+          if ((cacheString(row, 'source_binding').isNotEmpty &&
+                  row['source_binding'] != binding) ||
+              aad[1] != reference['room_id'] ||
+              aad[2] != reference['event_id']) {
+            return null;
+          }
+          sourceLanguage = aad[3]! as String;
+          targetLanguage = aad[4]! as String;
+          messageType = aad[6]! as String;
+          payload = {'text': _decrypt(master, source.source!, row)};
+        default:
           return null;
-        }
-        sourceLanguage = aad[3]! as String;
-        targetLanguage = aad[4]! as String;
-        messageType = aad[5]! as String;
-        payload =
-            jsonDecode(_decrypt(master, source.source!, row))
-                as Map<String, Object?>;
-        if (payload['v'] != 2 || payload['text'] is! String) return null;
-        priority = row['legacy'] == 2 ? 0 : 1;
-      } else if (aad.first == 1 && aad.length == 7) {
-        if ((cacheString(row, 'source_binding').isNotEmpty &&
-                row['source_binding'] != binding) ||
-            aad[1] != reference['room_id'] ||
-            aad[2] != reference['event_id']) {
-          return null;
-        }
-        sourceLanguage = aad[3]! as String;
-        targetLanguage = aad[4]! as String;
-        messageType = aad[6]! as String;
-        payload = {'text': _decrypt(master, source.source!, row)};
-      } else {
-        return null;
       }
       final writtenAt = payload['written_at'] is String
           ? DateTime.tryParse(payload['written_at']! as String)?.toUtc()

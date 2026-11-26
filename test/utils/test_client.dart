@@ -33,6 +33,7 @@ Future<Client> prepareTestClient({
   final client = Client(
     'FluffyChat Widget Tests',
     httpClient: FakeMatrixApi(),
+    logLevel: Level.warning,
     verificationMethods: {
       KeyVerificationMethod.numbers,
       KeyVerificationMethod.emoji,

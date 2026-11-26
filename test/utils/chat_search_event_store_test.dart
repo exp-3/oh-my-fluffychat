@@ -334,7 +334,6 @@ void main() {
       store.flush();
       expect(store.results.single.originalEventId, 'server');
 
-      // A confirmation that no longer matches must also remove the old row.
       store.setQuery('needle');
       await store.ingest(
         message(

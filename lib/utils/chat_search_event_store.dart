@@ -5,8 +5,6 @@
 import 'package:fluffychat/utils/chat_search_models.dart';
 import 'package:matrix/matrix.dart';
 
-/// Page-local event cache and message version materialization.
-///
 /// The 5000 event limit applies to rereadable scan data. Result content, small
 /// root headers, edit candidates and redaction tombstones live for the session:
 /// evicting them would allow an older page to resurrect obsolete messages.
@@ -58,7 +56,6 @@ class ChatSearchEventStore {
     return cached.event;
   }
 
-  /// Keeps session version knowledge, but does not reuse old query coverage.
   void setQuery(String query) {
     if (_disposed) return;
     _revision++;
@@ -190,7 +187,6 @@ class ChatSearchEventStore {
     _dirtyRoots.add(id);
   }
 
-  /// Materializes a whole batch, then notifies exactly once.
   void flush() {
     if (_disposed) return;
     var resultChanged = false;
@@ -199,7 +195,9 @@ class ChatSearchEventStore {
       final next = _materialize(root);
       if (next == null) {
         if (_matches.remove(root) != null) resultChanged = true;
-      } else if (previous == null || !_sameResult(previous, next)) {
+        continue;
+      }
+      if (previous == null || !_sameResult(previous, next)) {
         _matches[root] = next;
         resultChanged = true;
       }
@@ -295,11 +293,9 @@ class ChatSearchEventStore {
                 previous.event.status.intValue >= event.status.intValue) ||
             (previous.event.type != EventTypes.Encrypted &&
                 event.type == EventTypes.Encrypted));
-    if (previous != null && keepPrevious) {
-      _raw[id] = previous;
-    } else {
-      _raw[id] = _CachedEvent(event, live: live);
-    }
+    _raw[id] = previous != null && keepPrevious
+        ? previous
+        : _CachedEvent(event, live: live);
     while (_raw.length > _rawLimit) {
       _raw.remove(_raw.keys.first);
     }

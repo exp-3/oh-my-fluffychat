@@ -127,7 +127,6 @@ class TranslatedMessage extends StatefulWidget {
   final Event event;
   final String originalHtml;
 
-  /// Optional original content without padding, such as a plain file caption.
   final Widget? originalChild;
   final Color textColor;
   final Color linkColor;
@@ -364,10 +363,8 @@ class _TranslatedContent extends StatelessWidget {
       ownMessage: event.senderId == event.room.client.userID,
     );
     final background = bilingualStyle == TranslationBilingualStyle.background;
-    final duotone = bilingualStyle == TranslationBilingualStyle.duotone;
     final glow = bilingualStyle == TranslationBilingualStyle.glow;
     const backgroundInset = 8.0;
-    // Short shadows outline the glyphs; the centered blur adds a soft halo.
     final glowShadows = glow
         ? [
             for (final offset in const [
@@ -414,8 +411,8 @@ class _TranslatedContent extends StatelessWidget {
         ),
         if (bilingualStyle == TranslationBilingualStyle.divider)
           Divider(height: 1, color: translationColor.withAlpha(64)),
-        if (background)
-          Padding(
+        switch (bilingualStyle) {
+          TranslationBilingualStyle.background => Padding(
             padding: const EdgeInsets.fromLTRB(
               backgroundInset,
               2,
@@ -431,14 +428,13 @@ class _TranslatedContent extends StatelessWidget {
               ),
               child: translatedContent,
             ),
-          )
-        else if (duotone)
-          DecoratedBox(
+          ),
+          TranslationBilingualStyle.duotone => DecoratedBox(
             decoration: BoxDecoration(color: backgroundColor),
             child: translatedContent,
-          )
-        else
-          translatedContent,
+          ),
+          _ => translatedContent,
+        },
       ],
     );
   }

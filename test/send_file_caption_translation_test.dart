@@ -188,10 +188,11 @@ void main() {
     testWidgets(
       '${emptyResponse ? 'empty' : 'failed'} translation retains the draft and sends nothing',
       (tester) async {
-        if (emptyResponse) {
-          api.translation = '';
-        } else {
-          api.failure = StateError('Translation failed');
+        switch (emptyResponse) {
+          case true:
+            api.translation = '';
+          case false:
+            api.failure = StateError('Translation failed');
         }
         final room = _CaptionSendingRoom();
         await _showPreview(tester, room, caption: 'Original caption');

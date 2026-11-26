@@ -5,25 +5,25 @@
 import 'dart:async';
 
 import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/translation/translation_languages.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
 import 'package:fluffychat/utils/translation/translation_runtime.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'settings_translation_batch_view.dart';
+import 'settings_translation_input_view.dart';
 import 'translation_roaming_settings.dart';
-import 'translation_settings_layout.dart';
 
 class SettingsTranslationInput extends StatefulWidget {
   const SettingsTranslationInput({super.key});
 
   @override
   State<SettingsTranslationInput> createState() =>
-      _SettingsTranslationInputState();
+      SettingsTranslationInputController();
 }
 
-class _SettingsTranslationInputState extends State<SettingsTranslationInput> {
+class SettingsTranslationInputController
+    extends State<SettingsTranslationInput> {
   final runtime = TranslationRuntime.instance;
   late String sourceLanguage;
   late String targetLanguage;
@@ -62,205 +62,50 @@ class _SettingsTranslationInputState extends State<SettingsTranslationInput> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
-    return AnimatedBuilder(
-      animation: runtime,
-      builder: (context, _) => _TranslationSettingsScaffold(
-        title: l10n.inputTranslation,
-        children: [
-          if (!runtime.enabled)
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: Text(l10n.translationDisabledGlobally),
-            )
-          else if (_loading)
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: LinearProgressIndicator(),
-            )
-          else ...[
-            SwitchListTile.adaptive(
-              title: Text(l10n.inputTranslationModeManual),
-              value: runtime.manualInputTranslationEnabled,
-              onChanged: (value) =>
-                  _save(runtime.setManualInputTranslationEnabled(value)),
-            ),
-            if (runtime.manualInputTranslationEnabled)
-              Padding(
-                padding: const EdgeInsets.only(left: 32, right: 16, bottom: 12),
-                child: DropdownButtonFormField<InputTranslationTrigger>(
-                  key: ValueKey(runtime.inputTrigger),
-                  initialValue: runtime.inputTrigger,
-                  isExpanded: true,
-                  decoration: InputDecoration(
-                    labelText: l10n.inputTranslationTrigger,
-                    prefixIcon: const Icon(Icons.touch_app_outlined),
-                  ),
-                  items: [
-                    DropdownMenuItem(
-                      value: InputTranslationTrigger.button,
-                      child: Text(l10n.inputTranslationTriggerButton),
-                    ),
-                    DropdownMenuItem(
-                      value: InputTranslationTrigger.longPress,
-                      child: Text(l10n.inputTranslationTriggerLongPress),
-                    ),
-                    DropdownMenuItem(
-                      value: InputTranslationTrigger.doubleTap,
-                      child: Text(l10n.inputTranslationTriggerDoubleTap),
-                    ),
-                  ],
-                  onChanged: (trigger) {
-                    if (trigger != null) {
-                      _save(runtime.setInputTrigger(trigger));
-                    }
-                  },
-                ),
-              ),
-            SwitchListTile.adaptive(
-              title: Text(l10n.inputTranslationModeAutomatic),
-              value: runtime.automaticInputTranslationEnabled,
-              onChanged: (value) =>
-                  _save(runtime.setAutomaticInputTranslationEnabled(value)),
-            ),
-            if (runtime.automaticInputTranslationEnabled)
-              Padding(
-                padding: const EdgeInsets.only(left: 32, right: 16, bottom: 12),
-                child: DropdownButtonFormField<InputTranslationSendMode>(
-                  key: ValueKey(runtime.inputSendMode),
-                  initialValue: runtime.inputSendMode,
-                  isExpanded: true,
-                  decoration: InputDecoration(
-                    labelText: l10n.inputTranslationSendModeTitle,
-                    prefixIcon: const Icon(Icons.touch_app_outlined),
-                  ),
-                  items: [
-                    DropdownMenuItem(
-                      value:
-                          InputTranslationSendMode.shortOriginalLongTranslated,
-                      child: Text(
-                        l10n.inputTranslationSendModeLongTrans,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    DropdownMenuItem(
-                      value:
-                          InputTranslationSendMode.shortTranslatedLongOriginal,
-                      child: Text(
-                        l10n.inputTranslationSendModeShortTrans,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                  onChanged: (mode) {
-                    if (mode != null) {
-                      _save(runtime.setInputSendMode(mode));
-                    }
-                  },
-                ),
-              ),
-            if (runtime.inputMode != InputTranslationMode.disabled) ...[
-              Padding(
-                padding: const EdgeInsets.only(left: 16, top: 12, right: 16),
-                child: DropdownButtonFormField<InputTranslationScope>(
-                  key: ValueKey(runtime.inputScope),
-                  initialValue: runtime.inputScope,
-                  isExpanded: true,
-                  decoration: InputDecoration(
-                    labelText: l10n.inputTranslationScope,
-                    prefixIcon: const Icon(Icons.meeting_room_outlined),
-                  ),
-                  items: [
-                    DropdownMenuItem(
-                      value: InputTranslationScope.automaticRooms,
-                      child: Text(l10n.inputTranslationScopeAutomaticRooms),
-                    ),
-                    DropdownMenuItem(
-                      value: InputTranslationScope.allRooms,
-                      child: Text(l10n.inputTranslationScopeAllRooms),
-                    ),
-                  ],
-                  onChanged: (scope) {
-                    if (scope != null) {
-                      _save(runtime.setInputScope(scope));
-                    }
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16, top: 12, right: 16),
-                child: TranslationSettingsLayout(
-                  padding: EdgeInsets.zero,
-                  runSpacing: 12,
-                  children: [
-                    DropdownButtonFormField<String>(
-                      initialValue: sourceLanguage,
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText: l10n.inputSourceLanguage,
-                      ),
-                      items: [
-                        DropdownMenuItem(
-                          value: 'auto',
-                          child: Text(l10n.translationAutoDetect),
-                        ),
-                        for (final language in translationLanguages)
-                          DropdownMenuItem(
-                            value: language.code,
-                            child: Text(
-                              language.name,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                      ],
-                      onChanged: (value) {
-                        if (value == null) return;
-                        setState(() => sourceLanguage = value);
-                        _saveLanguages();
-                      },
-                    ),
-                    DropdownButtonFormField<String>(
-                      initialValue: targetLanguage,
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText: l10n.inputTargetLanguage,
-                      ),
-                      items: [
-                        for (final language in translationLanguages)
-                          DropdownMenuItem(
-                            value: language.code,
-                            child: Text(
-                              language.name,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                      ],
-                      onChanged: (value) {
-                        if (value == null) return;
-                        setState(() => targetLanguage = value);
-                        _saveLanguages();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              CheckboxListTile.adaptive(
-                title: Text(l10n.preferRoomLanguageForInputTarget),
-                value: runtime.preferRoomLanguageForInputTarget,
-                onChanged: (value) {
-                  if (value != null) {
-                    _save(runtime.setPreferRoomLanguageForInputTarget(value));
-                  }
-                },
-              ),
-            ],
-          ],
-        ],
-      ),
-    );
+  bool get loading => _loading;
+
+  void changeManualEnabled(bool value) =>
+      _save(runtime.setManualInputTranslationEnabled(value));
+
+  void changeAutomaticEnabled(bool value) =>
+      _save(runtime.setAutomaticInputTranslationEnabled(value));
+
+  void changeTrigger(InputTranslationTrigger? value) {
+    if (value == null) return;
+    _save(runtime.setInputTrigger(value));
   }
+
+  void changeSendMode(InputTranslationSendMode? value) {
+    if (value == null) return;
+    _save(runtime.setInputSendMode(value));
+  }
+
+  void changeScope(InputTranslationScope? value) {
+    if (value == null) return;
+    _save(runtime.setInputScope(value));
+  }
+
+  void changeSourceLanguage(String? value) {
+    if (value == null) return;
+    setState(() => sourceLanguage = value);
+    _saveLanguages();
+  }
+
+  void changeTargetLanguage(String? value) {
+    if (value == null) return;
+    setState(() => targetLanguage = value);
+    _saveLanguages();
+  }
+
+  void changePreferRoomLanguage(bool? value) {
+    if (value == null) return;
+    _save(runtime.setPreferRoomLanguageForInputTarget(value));
+  }
+
+  void back() => context.go('/rooms/settings/translation');
+
+  @override
+  Widget build(BuildContext context) => SettingsTranslationInputView(this);
 }
 
 class SettingsTranslationBatch extends StatefulWidget {
@@ -268,10 +113,11 @@ class SettingsTranslationBatch extends StatefulWidget {
 
   @override
   State<SettingsTranslationBatch> createState() =>
-      _SettingsTranslationBatchState();
+      SettingsTranslationBatchController();
 }
 
-class _SettingsTranslationBatchState extends State<SettingsTranslationBatch> {
+class SettingsTranslationBatchController
+    extends State<SettingsTranslationBatch> {
   final runtime = TranslationRuntime.instance;
   final mergeWindow = TextEditingController();
   final maxMessages = TextEditingController();
@@ -318,7 +164,7 @@ class _SettingsTranslationBatchState extends State<SettingsTranslationBatch> {
     return value.isValid ? value : null;
   }
 
-  void _settingsChanged() {
+  void settingsChanged() {
     setState(() {});
     final token = ++_batchSaveToken;
     final settings = _parsedSettings;
@@ -338,63 +184,28 @@ class _SettingsTranslationBatchState extends State<SettingsTranslationBatch> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
-    return AnimatedBuilder(
-      animation: runtime,
-      builder: (context, _) => _TranslationSettingsScaffold(
-        title: l10n.batchTranslation,
-        children: [
-          if (!runtime.enabled)
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: Text(l10n.translationDisabledGlobally),
-            )
-          else if (_loading)
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: LinearProgressIndicator(),
-            )
-          else
-            TranslationSettingsLayout(
-              children: [
-                _NumberSetting(
-                  controller: mergeWindow,
-                  label: l10n.translationMergeWait,
-                  min: 0,
-                  max: 2000,
-                  suffix: 'ms',
-                  onChanged: _settingsChanged,
-                ),
-                _NumberSetting(
-                  controller: maxMessages,
-                  label: l10n.translationMaxMessages,
-                  min: 1,
-                  max: 50,
-                  onChanged: _settingsChanged,
-                ),
-                _NumberSetting(
-                  controller: maxCharacters,
-                  label: l10n.translationMaxCharacters,
-                  min: 100,
-                  max: 20000,
-                  step: 100,
-                  onChanged: _settingsChanged,
-                ),
-                _NumberSetting(
-                  controller: retries,
-                  label: l10n.translationStructureRetries,
-                  min: 0,
-                  max: 3,
-                  onChanged: _settingsChanged,
-                ),
-              ],
-            ),
-        ],
-      ),
-    );
+  bool numberValid(TextEditingController field, int min, int max) {
+    final value = int.tryParse(field.text);
+    return value != null && value >= min && value <= max;
   }
+
+  bool get loading => _loading;
+
+  void changeNumber(
+    TextEditingController field,
+    int delta, {
+    required int min,
+    required int max,
+  }) {
+    final current = int.tryParse(field.text) ?? min;
+    field.text = (current + delta).clamp(min, max).toString();
+    settingsChanged();
+  }
+
+  void back() => context.go('/rooms/settings/translation');
+
+  @override
+  Widget build(BuildContext context) => SettingsTranslationBatchView(this);
 }
 
 class SettingsTranslationRoaming extends StatelessWidget {
@@ -408,96 +219,4 @@ class SettingsTranslationRoaming extends StatelessWidget {
       builder: (context, _) => TranslationRoamingSettings(runtime: runtime),
     );
   }
-}
-
-class _TranslationSettingsScaffold extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-
-  const _TranslationSettingsScaffold({
-    required this.title,
-    required this.children,
-  });
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      leading: BackButton(
-        onPressed: () => context.go('/rooms/settings/translation'),
-      ),
-      title: Text(title),
-    ),
-    body: MaxWidthBody(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: children,
-      ),
-    ),
-  );
-}
-
-class _NumberSetting extends StatelessWidget {
-  final TextEditingController controller;
-  final String label;
-  final int min;
-  final int max;
-  final int step;
-  final String? suffix;
-  final VoidCallback onChanged;
-
-  const _NumberSetting({
-    required this.controller,
-    required this.label,
-    required this.min,
-    required this.max,
-    this.step = 1,
-    this.suffix,
-    required this.onChanged,
-  });
-
-  bool get valid {
-    final value = int.tryParse(controller.text);
-    return value != null && value >= min && value <= max;
-  }
-
-  void change(int delta) {
-    final current = int.tryParse(controller.text) ?? min;
-    controller.text = (current + delta).clamp(min, max).toString();
-    onChanged();
-  }
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 6),
-    child: TextField(
-      controller: controller,
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-        labelText: label,
-        helperText: '$min-$max',
-        suffixText: suffix,
-        errorText: valid ? null : L10n.of(context).invalidInput,
-        suffixIconConstraints: const BoxConstraints(
-          minWidth: 96,
-          minHeight: 48,
-        ),
-        suffixIcon: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.remove),
-              tooltip: L10n.of(context).decrease,
-              onPressed: () => change(-step),
-            ),
-            IconButton(
-              icon: const Icon(Icons.add),
-              tooltip: L10n.of(context).increase,
-              onPressed: () => change(step),
-            ),
-          ],
-        ),
-      ),
-      onChanged: (_) => onChanged(),
-    ),
-  );
 }
