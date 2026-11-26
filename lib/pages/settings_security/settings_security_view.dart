@@ -11,6 +11,7 @@ import 'package:fluffychat/utils/beautify_string_extension.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/app_lock.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:fluffychat/widgets/settings_switch_list_tile.dart';
 import 'package:go_router/go_router.dart';
@@ -41,6 +42,7 @@ class SettingsSecurityView extends StatelessWidget {
       body: ListTileTheme(
         iconColor: theme.colorScheme.onSurface,
         child: MaxWidthBody(
+          contentPadding: EdgeInsets.zero,
           child: FutureBuilder(
             future: Matrix.of(
               context,
@@ -56,178 +58,199 @@ class SettingsSecurityView extends StatelessWidget {
                   ),
                 );
               }
-              return Column(
-                children: [
-                  ListTile(
-                    title: Text(
-                      L10n.of(context).privacy,
-                      style: TextStyle(
-                        color: theme.colorScheme.secondary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SettingsSwitchListTile.adaptive(
-                    title: L10n.of(context).sendTypingNotifications,
-                    subtitle: L10n.of(
-                      context,
-                    ).sendTypingNotificationsDescription,
-                    setting: AppSettings.sendTypingNotifications,
-                  ),
-                  SettingsSwitchListTile.adaptive(
-                    title: L10n.of(context).sendReadReceipts,
-                    subtitle: L10n.of(context).sendReadReceiptsDescription,
-                    setting: AppSettings.sendPublicReadReceipts,
-                  ),
-                  SettingsSwitchListTile.adaptive(
-                    title: L10n.of(context).shareCrashReports,
-                    subtitle: L10n.of(context).shareCrashReportsDescription,
-                    setting: AppSettings.autoSendErrorReports,
-                    defaultValue: false,
-                  ),
-                  ListTile(
-                    trailing: const Icon(Icons.chevron_right_outlined),
-                    title: Text(L10n.of(context).blockedUsers),
-                    subtitle: Text(
-                      L10n.of(context).thereAreCountUsersBlocked(
-                        Matrix.of(context).client.ignoredUsers.length,
-                      ),
-                    ),
-                    onTap: () =>
-                        context.go('/rooms/settings/security/ignorelist'),
-                  ),
-                  if (PlatformInfos.supportsAppLock) ...[
-                    Divider(color: theme.dividerColor),
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: SettingsSpacing.inset,
+                ),
+                child: Column(
+                  children: [
                     ListTile(
                       title: Text(
-                        L10n.of(context).appLock,
+                        L10n.of(context).privacy,
                         style: TextStyle(
                           color: theme.colorScheme.secondary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      subtitle: Text(L10n.of(context).appLockDescription),
                     ),
-                    SwitchListTile.adaptive(
-                      value: AppLock.of(context).isActive,
-                      title: Text(L10n.of(context).useAppLock),
-                      onChanged: (active) => active
-                          ? controller.setAppLockAction()
-                          : controller.disableAppLockAction(),
+                    SettingsSwitchListTile.adaptive(
+                      title: L10n.of(context).sendTypingNotifications,
+                      subtitle: L10n.of(
+                        context,
+                      ).sendTypingNotificationsDescription,
+                      setting: AppSettings.sendTypingNotifications,
                     ),
-                    if (AppLock.of(context).isActive) ...[
-                      FutureBuilder(
-                        future: LocalAuthentication().canCheckBiometrics,
-                        builder: (context, snapshot) {
-                          if (snapshot.data != true) return SizedBox.shrink();
-                          return SwitchListTile.adaptive(
-                            value: AppLock.of(context).useBiometrics,
-                            onChanged: (_) => controller.toggleBiometrics(),
-                            title: Text(L10n.of(context).unlockWithBiometrics),
-                          );
-                        },
+                    SettingsSwitchListTile.adaptive(
+                      title: L10n.of(context).sendReadReceipts,
+                      subtitle: L10n.of(context).sendReadReceiptsDescription,
+                      setting: AppSettings.sendPublicReadReceipts,
+                    ),
+                    SettingsSwitchListTile.adaptive(
+                      title: L10n.of(context).shareCrashReports,
+                      subtitle: L10n.of(context).shareCrashReportsDescription,
+                      setting: AppSettings.autoSendErrorReports,
+                      defaultValue: false,
+                    ),
+                    ListTile(
+                      trailing: const Icon(Icons.chevron_right_outlined),
+                      title: Text(L10n.of(context).blockedUsers),
+                      subtitle: Text(
+                        L10n.of(context).thereAreCountUsersBlocked(
+                          Matrix.of(context).client.ignoredUsers.length,
+                        ),
+                      ),
+                      onTap: () =>
+                          context.go('/rooms/settings/security/ignorelist'),
+                    ),
+                    if (PlatformInfos.supportsAppLock) ...[
+                      Divider(
+                        height: SettingsSpacing.section,
+                        color: theme.dividerColor,
                       ),
                       ListTile(
-                        trailing: const Icon(Icons.lock_reset_outlined),
-                        title: Text(L10n.of(context).resetPin),
-                        onTap: controller.setAppLockAction,
+                        title: Text(
+                          L10n.of(context).appLock,
+                          style: TextStyle(
+                            color: theme.colorScheme.secondary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(L10n.of(context).appLockDescription),
                       ),
+                      SwitchListTile.adaptive(
+                        value: AppLock.of(context).isActive,
+                        title: Text(L10n.of(context).useAppLock),
+                        onChanged: (active) => active
+                            ? controller.setAppLockAction()
+                            : controller.disableAppLockAction(),
+                      ),
+                      if (AppLock.of(context).isActive) ...[
+                        FutureBuilder(
+                          future: LocalAuthentication().canCheckBiometrics,
+                          builder: (context, snapshot) {
+                            if (snapshot.data != true) return SizedBox.shrink();
+                            return SwitchListTile.adaptive(
+                              value: AppLock.of(context).useBiometrics,
+                              onChanged: (_) => controller.toggleBiometrics(),
+                              title: Text(
+                                L10n.of(context).unlockWithBiometrics,
+                              ),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          trailing: const Icon(Icons.lock_reset_outlined),
+                          title: Text(L10n.of(context).resetPin),
+                          onTap: controller.setAppLockAction,
+                        ),
+                      ],
                     ],
-                  ],
 
-                  Divider(color: theme.dividerColor),
-                  ListTile(
-                    title: Text(
-                      L10n.of(context).shareKeysWith,
-                      style: TextStyle(
-                        color: theme.colorScheme.secondary,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Divider(
+                      height: SettingsSpacing.section,
+                      color: theme.dividerColor,
                     ),
-                    subtitle: Text(L10n.of(context).shareKeysWithDescription),
-                  ),
-                  ListTile(
-                    title: Material(
-                      borderRadius: BorderRadius.circular(
-                        AppConfig.borderRadius / 2,
+                    ListTile(
+                      title: Text(
+                        L10n.of(context).shareKeysWith,
+                        style: TextStyle(
+                          color: theme.colorScheme.secondary,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      color: theme.colorScheme.onInverseSurface,
-                      child: DropdownButton<ShareKeysWith>(
-                        isExpanded: true,
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      subtitle: Text(L10n.of(context).shareKeysWithDescription),
+                    ),
+                    ListTile(
+                      title: Material(
                         borderRadius: BorderRadius.circular(
                           AppConfig.borderRadius / 2,
                         ),
-                        underline: const SizedBox.shrink(),
-                        value: Matrix.of(context).client.shareKeysWith,
-                        items: ShareKeysWith.values
-                            .map(
-                              (share) => DropdownMenuItem(
-                                value: share,
-                                child: Text(share.localized(L10n.of(context))),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: controller.changeShareKeysWith,
+                        color: theme.colorScheme.onInverseSurface,
+                        child: DropdownButton<ShareKeysWith>(
+                          isExpanded: true,
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          borderRadius: BorderRadius.circular(
+                            AppConfig.borderRadius / 2,
+                          ),
+                          underline: const SizedBox.shrink(),
+                          value: Matrix.of(context).client.shareKeysWith,
+                          items: ShareKeysWith.values
+                              .map(
+                                (share) => DropdownMenuItem(
+                                  value: share,
+                                  child: Text(
+                                    share.localized(L10n.of(context)),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: controller.changeShareKeysWith,
+                        ),
                       ),
                     ),
-                  ),
-                  Divider(color: theme.dividerColor),
-                  ListTile(
-                    title: Text(
-                      L10n.of(context).account,
-                      style: TextStyle(
-                        color: theme.colorScheme.secondary,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Divider(
+                      height: SettingsSpacing.section,
+                      color: theme.dividerColor,
                     ),
-                  ),
-                  if (publicMasterKey != null)
                     ListTile(
-                      title: Text(L10n.of(context).yourPublicKey),
-                      leading: const Icon(Icons.verified_user_outlined),
+                      title: Text(
+                        L10n.of(context).account,
+                        style: TextStyle(
+                          color: theme.colorScheme.secondary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    if (publicMasterKey != null)
+                      ListTile(
+                        title: Text(L10n.of(context).yourPublicKey),
+                        leading: const Icon(Icons.verified_user_outlined),
+                        subtitle: SelectableText(
+                          publicMasterKey.beautified,
+                          style: const TextStyle(fontFamily: 'RobotoMono'),
+                        ),
+                      ),
+                    ListTile(
+                      title: Text(L10n.of(context).deviceIdentityKey),
+                      leading: const Icon(Icons.mobile_friendly_outlined),
                       subtitle: SelectableText(
-                        publicMasterKey.beautified,
+                        Matrix.of(context).client.fingerprintKey.beautified,
                         style: const TextStyle(fontFamily: 'RobotoMono'),
                       ),
                     ),
-                  ListTile(
-                    title: Text(L10n.of(context).deviceIdentityKey),
-                    leading: const Icon(Icons.mobile_friendly_outlined),
-                    subtitle: SelectableText(
-                      Matrix.of(context).client.fingerprintKey.beautified,
-                      style: const TextStyle(fontFamily: 'RobotoMono'),
+                    if (capabilities?.mChangePassword?.enabled != false ||
+                        error != null)
+                      ListTile(
+                        leading: const Icon(Icons.password_outlined),
+                        trailing: const Icon(Icons.chevron_right_outlined),
+                        title: Text(L10n.of(context).changePassword),
+                        onTap: () =>
+                            context.go('/rooms/settings/security/password'),
+                      ),
+                    Divider(
+                      height: SettingsSpacing.section,
+                      color: theme.dividerColor,
                     ),
-                  ),
-                  if (capabilities?.mChangePassword?.enabled != false ||
-                      error != null)
                     ListTile(
-                      leading: const Icon(Icons.password_outlined),
-                      trailing: const Icon(Icons.chevron_right_outlined),
-                      title: Text(L10n.of(context).changePassword),
-                      onTap: () =>
-                          context.go('/rooms/settings/security/password'),
+                      iconColor: Colors.orange,
+                      leading: const Icon(Icons.delete_sweep_outlined),
+                      title: Text(
+                        L10n.of(context).dehydrate,
+                        style: const TextStyle(color: Colors.orange),
+                      ),
+                      onTap: controller.dehydrateAction,
                     ),
-                  Divider(color: theme.dividerColor),
-                  ListTile(
-                    iconColor: Colors.orange,
-                    leading: const Icon(Icons.delete_sweep_outlined),
-                    title: Text(
-                      L10n.of(context).dehydrate,
-                      style: const TextStyle(color: Colors.orange),
+                    ListTile(
+                      iconColor: Colors.red,
+                      leading: const Icon(Icons.delete_outlined),
+                      title: Text(
+                        L10n.of(context).deleteAccount,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                      onTap: controller.deleteAccountAction,
                     ),
-                    onTap: controller.dehydrateAction,
-                  ),
-                  ListTile(
-                    iconColor: Colors.red,
-                    leading: const Icon(Icons.delete_outlined),
-                    title: Text(
-                      L10n.of(context).deleteAccount,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                    onTap: controller.deleteAccountAction,
-                  ),
-                ],
+                  ],
+                ),
               );
             },
           ),

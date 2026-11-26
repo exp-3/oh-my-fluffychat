@@ -12,6 +12,7 @@ import 'package:fluffychat/pages/settings_emotes/settings_emotes.dart';
 import 'package:fluffychat/utils/client_manager.dart';
 import 'package:fluffychat/utils/compatible_memory_image.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
@@ -272,6 +273,7 @@ class _EmojiImportPreviewState extends State<_EmojiImportPreview> {
                     return _ImageFileError(name: widget.entry.key.name);
                   },
                 ),
+                const SizedBox(height: SettingsSpacing.related),
                 SizedBox(
                   width: 128,
                   child: TextField(

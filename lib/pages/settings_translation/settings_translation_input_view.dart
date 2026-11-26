@@ -5,6 +5,7 @@
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/translation/translation_languages.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:fluffychat/widgets/settings_checkbox_list_tile.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -19,6 +20,7 @@ class SettingsTranslationInputView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
+    final theme = Theme.of(context);
     final runtime = controller.runtime;
     return AnimatedBuilder(
       animation: runtime,
@@ -34,7 +36,7 @@ class SettingsTranslationInputView extends StatelessWidget {
           ],
           (true, true) => [
             const Padding(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.symmetric(horizontal: SettingsSpacing.inset),
               child: LinearProgressIndicator(),
             ),
           ],
@@ -46,7 +48,11 @@ class SettingsTranslationInputView extends StatelessWidget {
             ),
             if (runtime.manualInputTranslationEnabled)
               Padding(
-                padding: const EdgeInsets.only(left: 32, right: 16, bottom: 12),
+                padding: const EdgeInsetsDirectional.only(
+                  start: SettingsSpacing.inset * 2,
+                  top: SettingsSpacing.related,
+                  end: SettingsSpacing.inset,
+                ),
                 child: DropdownButtonFormField<InputTranslationTrigger>(
                   key: ValueKey(runtime.inputTrigger),
                   initialValue: runtime.inputTrigger,
@@ -72,6 +78,7 @@ class SettingsTranslationInputView extends StatelessWidget {
                   onChanged: controller.changeTrigger,
                 ),
               ),
+            Divider(height: SettingsSpacing.section, color: theme.dividerColor),
             SwitchListTile.adaptive(
               title: Text(l10n.inputTranslationModeAutomatic),
               value: runtime.automaticInputTranslationEnabled,
@@ -79,7 +86,11 @@ class SettingsTranslationInputView extends StatelessWidget {
             ),
             if (runtime.automaticInputTranslationEnabled)
               Padding(
-                padding: const EdgeInsets.only(left: 32, right: 16, bottom: 12),
+                padding: const EdgeInsetsDirectional.only(
+                  start: SettingsSpacing.inset * 2,
+                  top: SettingsSpacing.related,
+                  end: SettingsSpacing.inset,
+                ),
                 child: DropdownButtonFormField<InputTranslationSendMode>(
                   key: ValueKey(runtime.inputSendMode),
                   initialValue: runtime.inputSendMode,
@@ -110,8 +121,14 @@ class SettingsTranslationInputView extends StatelessWidget {
                 ),
               ),
             if (runtime.inputMode != InputTranslationMode.disabled) ...[
+              Divider(
+                height: SettingsSpacing.section,
+                color: theme.dividerColor,
+              ),
               Padding(
-                padding: const EdgeInsets.only(left: 16, top: 12, right: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: SettingsSpacing.inset,
+                ),
                 child: DropdownButtonFormField<InputTranslationScope>(
                   key: ValueKey(runtime.inputScope),
                   initialValue: runtime.inputScope,
@@ -134,10 +151,14 @@ class SettingsTranslationInputView extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 16, top: 12, right: 16),
+                padding: const EdgeInsets.fromLTRB(
+                  SettingsSpacing.inset,
+                  SettingsSpacing.field,
+                  SettingsSpacing.inset,
+                  SettingsSpacing.related,
+                ),
                 child: TranslationSettingsLayout(
                   padding: EdgeInsets.zero,
-                  runSpacing: 12,
                   children: [
                     DropdownButtonFormField<String>(
                       initialValue: controller.sourceLanguage,
@@ -183,7 +204,9 @@ class SettingsTranslationInputView extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: SettingsSpacing.inset,
+                ),
                 child: SettingsCheckboxListTile(
                   title: Text(l10n.preferRoomLanguageForInputTarget),
                   value: runtime.preferRoomLanguageForInputTarget,

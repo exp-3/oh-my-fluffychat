@@ -8,6 +8,7 @@ import 'package:fluffychat/pages/chat_access_settings/chat_access_settings_contr
 import 'package:fluffychat/utils/fluffy_share.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:material_ui/material_ui.dart' hide Visibility;
 import 'package:matrix/matrix.dart';
 
@@ -26,93 +27,63 @@ class ChatAccessSettingsPageView extends StatelessWidget {
         title: Text(L10n.of(context).accessAndVisibility),
       ),
       body: MaxWidthBody(
-        child: StreamBuilder<Object>(
-          stream: room.client.onRoomState.stream.where(
-            (update) => update.roomId == controller.room.id,
-          ),
-          builder: (context, snapshot) {
-            final canonicalAlias = room.canonicalAlias;
-            final altAliases =
-                room
-                    .getState(EventTypes.RoomCanonicalAlias)
-                    ?.content
-                    .tryGetList<String>('alt_aliases') ??
-                [];
-            return Column(
-              mainAxisSize: .min,
-              children: [
-                ListTile(
-                  title: Text(
-                    L10n.of(context).visibilityOfTheChatHistory,
-                    style: TextStyle(
-                      color: theme.colorScheme.secondary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                RadioGroup<HistoryVisibility>(
-                  groupValue: room.historyVisibility,
-                  onChanged:
-                      controller.historyVisibilityLoading ||
-                          !room.canChangeHistoryVisibility
-                      ? (_) {}
-                      : controller.setHistoryVisibility,
-                  child: Column(
-                    mainAxisSize: .min,
-                    children: [
-                      for (final historyVisibility in HistoryVisibility.values)
-                        RadioListTile<HistoryVisibility>.adaptive(
-                          title: Text(
-                            historyVisibility.getLocalizedString(
-                              MatrixLocals(L10n.of(context)),
-                            ),
-                          ),
-                          value: historyVisibility,
-                        ),
-                    ],
-                  ),
-                ),
-                Divider(color: theme.dividerColor),
-                ListTile(
-                  title: Text(
-                    L10n.of(context).whoIsAllowedToJoinThisGroup,
-                    style: TextStyle(
-                      color: theme.colorScheme.secondary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                RadioGroup(
-                  groupValue: room.joinRules,
-                  onChanged: controller.setJoinRule,
-                  child: Column(
-                    mainAxisSize: .min,
-                    children: [
-                      for (final joinRule in controller.availableJoinRules)
-                        if (joinRule != JoinRules.private)
-                          RadioListTile<JoinRules>.adaptive(
-                            enabled:
-                                !controller.joinRulesLoading &&
-                                room.canChangeJoinRules,
-                            title: Text(
-                              joinRule.localizedString(
-                                L10n.of(context),
-                                controller.knownSpaceParents,
-                              ),
-                            ),
-                            value: joinRule,
-                          ),
-                    ],
-                  ),
-                ),
-                Divider(color: theme.dividerColor),
-                if ({
-                  JoinRules.public,
-                  JoinRules.knock,
-                }.contains(room.joinRules)) ...[
+        contentPadding: EdgeInsets.zero,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: SettingsSpacing.inset),
+          child: StreamBuilder<Object>(
+            stream: room.client.onRoomState.stream.where(
+              (update) => update.roomId == controller.room.id,
+            ),
+            builder: (context, snapshot) {
+              final canonicalAlias = room.canonicalAlias;
+              final altAliases =
+                  room
+                      .getState(EventTypes.RoomCanonicalAlias)
+                      ?.content
+                      .tryGetList<String>('alt_aliases') ??
+                  [];
+              return Column(
+                mainAxisSize: .min,
+                children: [
                   ListTile(
                     title: Text(
-                      L10n.of(context).areGuestsAllowedToJoin,
+                      L10n.of(context).visibilityOfTheChatHistory,
+                      style: TextStyle(
+                        color: theme.colorScheme.secondary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  RadioGroup<HistoryVisibility>(
+                    groupValue: room.historyVisibility,
+                    onChanged:
+                        controller.historyVisibilityLoading ||
+                            !room.canChangeHistoryVisibility
+                        ? (_) {}
+                        : controller.setHistoryVisibility,
+                    child: Column(
+                      mainAxisSize: .min,
+                      children: [
+                        for (final historyVisibility
+                            in HistoryVisibility.values)
+                          RadioListTile<HistoryVisibility>.adaptive(
+                            title: Text(
+                              historyVisibility.getLocalizedString(
+                                MatrixLocals(L10n.of(context)),
+                              ),
+                            ),
+                            value: historyVisibility,
+                          ),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height: SettingsSpacing.section,
+                    color: theme.dividerColor,
+                  ),
+                  ListTile(
+                    title: Text(
+                      L10n.of(context).whoIsAllowedToJoinThisGroup,
                       style: TextStyle(
                         color: theme.colorScheme.secondary,
                         fontWeight: FontWeight.bold,
@@ -120,126 +91,173 @@ class ChatAccessSettingsPageView extends StatelessWidget {
                     ),
                   ),
                   RadioGroup(
-                    groupValue: room.guestAccess,
-                    onChanged: controller.setGuestAccess,
+                    groupValue: room.joinRules,
+                    onChanged: controller.setJoinRule,
                     child: Column(
                       mainAxisSize: .min,
                       children: [
-                        for (final guestAccess in GuestAccess.values)
-                          RadioListTile<GuestAccess>.adaptive(
-                            enabled:
-                                !controller.guestAccessLoading &&
-                                room.canChangeGuestAccess,
-                            title: Text(
-                              guestAccess.getLocalizedString(
-                                MatrixLocals(L10n.of(context)),
+                        for (final joinRule in controller.availableJoinRules)
+                          if (joinRule != JoinRules.private)
+                            RadioListTile<JoinRules>.adaptive(
+                              enabled:
+                                  !controller.joinRulesLoading &&
+                                  room.canChangeJoinRules,
+                              title: Text(
+                                joinRule.localizedString(
+                                  L10n.of(context),
+                                  controller.knownSpaceParents,
+                                ),
                               ),
+                              value: joinRule,
                             ),
-                            value: guestAccess,
-                          ),
                       ],
                     ),
                   ),
-                  Divider(color: theme.dividerColor),
-                  ListTile(
-                    title: Text(
-                      L10n.of(context).publicChatAddresses,
-                      style: TextStyle(
-                        color: theme.colorScheme.secondary,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  if ({
+                    JoinRules.public,
+                    JoinRules.knock,
+                  }.contains(room.joinRules)) ...[
+                    Divider(
+                      height: SettingsSpacing.section,
+                      color: theme.dividerColor,
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.add_outlined),
-                      tooltip: L10n.of(context).createNewAddress,
-                      onPressed: controller.addAlias,
-                    ),
-                  ),
-                  if (canonicalAlias.isNotEmpty)
-                    _AliasListTile(
-                      alias: canonicalAlias,
-                      onDelete:
-                          room.canChangeStateEvent(
-                            EventTypes.RoomCanonicalAlias,
-                          )
-                          ? () => controller.deleteAlias(canonicalAlias)
-                          : null,
-                      isCanonicalAlias: true,
-                    ),
-                  for (final alias in altAliases)
-                    _AliasListTile(
-                      alias: alias,
-                      onDelete:
-                          room.canChangeStateEvent(
-                            EventTypes.RoomCanonicalAlias,
-                          )
-                          ? () => controller.deleteAlias(alias)
-                          : null,
-                    ),
-                  FutureBuilder(
-                    future: room.client.getLocalAliases(room.id),
-                    builder: (context, snapshot) {
-                      final localAddresses = snapshot.data;
-                      if (localAddresses == null) {
-                        return const SizedBox.shrink();
-                      }
-                      localAddresses.remove(room.canonicalAlias);
-                      localAddresses.removeWhere(altAliases.contains);
-                      return Column(
-                        mainAxisSize: .min,
-                        children: localAddresses
-                            .map(
-                              (alias) => _AliasListTile(
-                                alias: alias,
-                                published: false,
-                                onDelete: () => controller.deleteAlias(alias),
-                              ),
-                            )
-                            .toList(),
-                      );
-                    },
-                  ),
-                  Divider(color: theme.dividerColor),
-                  FutureBuilder(
-                    future: room.client.getRoomVisibilityOnDirectory(room.id),
-                    builder: (context, snapshot) => SwitchListTile.adaptive(
-                      value: snapshot.data == Visibility.public,
+                    ListTile(
                       title: Text(
-                        L10n.of(context).chatCanBeDiscoveredViaSearchOnServer(
-                          room.client.userID!.domain!,
+                        L10n.of(context).areGuestsAllowedToJoin,
+                        style: TextStyle(
+                          color: theme.colorScheme.secondary,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      onChanged: controller.setChatVisibilityOnDirectory,
+                    ),
+                    RadioGroup(
+                      groupValue: room.guestAccess,
+                      onChanged: controller.setGuestAccess,
+                      child: Column(
+                        mainAxisSize: .min,
+                        children: [
+                          for (final guestAccess in GuestAccess.values)
+                            RadioListTile<GuestAccess>.adaptive(
+                              enabled:
+                                  !controller.guestAccessLoading &&
+                                  room.canChangeGuestAccess,
+                              title: Text(
+                                guestAccess.getLocalizedString(
+                                  MatrixLocals(L10n.of(context)),
+                                ),
+                              ),
+                              value: guestAccess,
+                            ),
+                        ],
+                      ),
+                    ),
+                    Divider(
+                      height: SettingsSpacing.section,
+                      color: theme.dividerColor,
+                    ),
+                    ListTile(
+                      title: Text(
+                        L10n.of(context).publicChatAddresses,
+                        style: TextStyle(
+                          color: theme.colorScheme.secondary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.add_outlined),
+                        tooltip: L10n.of(context).createNewAddress,
+                        onPressed: controller.addAlias,
+                      ),
+                    ),
+                    if (canonicalAlias.isNotEmpty)
+                      _AliasListTile(
+                        alias: canonicalAlias,
+                        onDelete:
+                            room.canChangeStateEvent(
+                              EventTypes.RoomCanonicalAlias,
+                            )
+                            ? () => controller.deleteAlias(canonicalAlias)
+                            : null,
+                        isCanonicalAlias: true,
+                      ),
+                    for (final alias in altAliases)
+                      _AliasListTile(
+                        alias: alias,
+                        onDelete:
+                            room.canChangeStateEvent(
+                              EventTypes.RoomCanonicalAlias,
+                            )
+                            ? () => controller.deleteAlias(alias)
+                            : null,
+                      ),
+                    FutureBuilder(
+                      future: room.client.getLocalAliases(room.id),
+                      builder: (context, snapshot) {
+                        final localAddresses = snapshot.data;
+                        if (localAddresses == null) {
+                          return const SizedBox.shrink();
+                        }
+                        localAddresses.remove(room.canonicalAlias);
+                        localAddresses.removeWhere(altAliases.contains);
+                        return Column(
+                          mainAxisSize: .min,
+                          children: localAddresses
+                              .map(
+                                (alias) => _AliasListTile(
+                                  alias: alias,
+                                  published: false,
+                                  onDelete: () => controller.deleteAlias(alias),
+                                ),
+                              )
+                              .toList(),
+                        );
+                      },
+                    ),
+                    Divider(
+                      height: SettingsSpacing.section,
+                      color: theme.dividerColor,
+                    ),
+                    FutureBuilder(
+                      future: room.client.getRoomVisibilityOnDirectory(room.id),
+                      builder: (context, snapshot) => SwitchListTile.adaptive(
+                        value: snapshot.data == Visibility.public,
+                        title: Text(
+                          L10n.of(context).chatCanBeDiscoveredViaSearchOnServer(
+                            room.client.userID!.domain!,
+                          ),
+                        ),
+                        onChanged: controller.setChatVisibilityOnDirectory,
+                      ),
+                    ),
+                  ],
+                  ListTile(
+                    title: Text(L10n.of(context).globalChatId),
+                    subtitle: SelectableText(room.id),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.copy_outlined),
+                      onPressed: () => FluffyShare.share(room.id, context),
                     ),
                   ),
+                  ListTile(
+                    title: Text(L10n.of(context).roomVersion),
+                    subtitle: SelectableText(
+                      room
+                              .getState(EventTypes.RoomCreate)!
+                              .content
+                              .tryGet<String>('room_version') ??
+                          'Unknown',
+                    ),
+                    trailing: room.canSendEvent(EventTypes.RoomTombstone)
+                        ? IconButton(
+                            icon: const Icon(Icons.upgrade_outlined),
+                            onPressed: controller.updateRoomAction,
+                          )
+                        : null,
+                  ),
                 ],
-                ListTile(
-                  title: Text(L10n.of(context).globalChatId),
-                  subtitle: SelectableText(room.id),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.copy_outlined),
-                    onPressed: () => FluffyShare.share(room.id, context),
-                  ),
-                ),
-                ListTile(
-                  title: Text(L10n.of(context).roomVersion),
-                  subtitle: SelectableText(
-                    room
-                            .getState(EventTypes.RoomCreate)!
-                            .content
-                            .tryGet<String>('room_version') ??
-                        'Unknown',
-                  ),
-                  trailing: room.canSendEvent(EventTypes.RoomTombstone)
-                      ? IconButton(
-                          icon: const Icon(Icons.upgrade_outlined),
-                          onPressed: controller.updateRoomAction,
-                        )
-                      : null,
-                ),
-              ],
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

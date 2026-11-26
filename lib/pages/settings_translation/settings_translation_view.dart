@@ -8,6 +8,7 @@ import 'package:fluffychat/utils/translation/translation_languages.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
 import 'package:fluffychat/utils/translation/translation_roaming_models.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:fluffychat/widgets/settings_checkbox_list_tile.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -43,8 +44,11 @@ class SettingsTranslationView extends StatelessWidget {
             centerTitle: FluffyThemes.isColumnMode(context),
           ),
           body: MaxWidthBody(
+            contentPadding: EdgeInsets.zero,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const SizedBox(height: SettingsSpacing.inset),
                 SwitchListTile.adaptive(
                   secondary: const Icon(Icons.translate_outlined),
                   title: Text(l10n.enableTranslation),
@@ -52,6 +56,7 @@ class SettingsTranslationView extends StatelessWidget {
                   value: enabled,
                   onChanged: controller.toggleEnabled,
                 ),
+                const SizedBox(height: SettingsSpacing.section),
                 _SectionTitle(l10n.translationProviders),
                 for (final provider in runtime.providers)
                   ListTile(
@@ -81,12 +86,17 @@ class SettingsTranslationView extends StatelessWidget {
                   onTap: controller.openProvider,
                 ),
                 if (enabled) ...[
-                  Divider(color: theme.dividerColor),
+                  Divider(
+                    height: SettingsSpacing.section,
+                    color: theme.dividerColor,
+                  ),
                   Column(
                     children: [
                       _SectionTitle(l10n.automaticTranslation),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: SettingsSpacing.inset,
+                        ),
                         child: DropdownButtonFormField<TranslationScope>(
                           initialValue: runtime.scope,
                           isExpanded: true,
@@ -128,7 +138,12 @@ class SettingsTranslationView extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                        padding: const EdgeInsets.fromLTRB(
+                          SettingsSpacing.inset,
+                          SettingsSpacing.related,
+                          SettingsSpacing.inset,
+                          SettingsSpacing.field,
+                        ),
                         child: Align(
                           alignment: AlignmentDirectional.centerStart,
                           child: Text(
@@ -138,10 +153,14 @@ class SettingsTranslationView extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.fromLTRB(
+                          SettingsSpacing.inset,
+                          0,
+                          SettingsSpacing.inset,
+                          SettingsSpacing.related,
+                        ),
                         child: TranslationSettingsLayout(
                           padding: EdgeInsets.zero,
-                          runSpacing: 12,
                           children: [
                             DropdownButtonFormField<String>(
                               initialValue: controller.sourceLanguage,
@@ -191,13 +210,16 @@ class SettingsTranslationView extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: SettingsSpacing.inset,
+                        ),
                         child: SettingsCheckboxListTile(
                           title: Text(l10n.preferRoomLanguageForSource),
                           value: runtime.preferRoomLanguageForSource,
                           onChanged: controller.changePreferRoomLanguage,
                         ),
                       ),
+                      const SizedBox(height: SettingsSpacing.section),
                       SwitchListTile.adaptive(
                         secondary: const Icon(Icons.view_agenda_outlined),
                         title: Text(l10n.bilingual),
@@ -209,14 +231,13 @@ class SettingsTranslationView extends StatelessWidget {
                       if (runtime.displayMode ==
                           TranslationDisplayMode.bilingual)
                         Padding(
-                          padding: const EdgeInsets.only(
-                            left: 32,
-                            right: 16,
-                            bottom: 12,
+                          padding: const EdgeInsetsDirectional.only(
+                            start: SettingsSpacing.inset * 2,
+                            top: SettingsSpacing.related,
+                            end: SettingsSpacing.inset,
                           ),
                           child: TranslationSettingsLayout(
                             padding: EdgeInsets.zero,
-                            runSpacing: 12,
                             minimumColumnWidth: 180,
                             children: [
                               DropdownButtonFormField<
@@ -317,7 +338,10 @@ class SettingsTranslationView extends StatelessWidget {
                             ],
                           ),
                         ),
-                      Divider(color: theme.dividerColor),
+                      Divider(
+                        height: SettingsSpacing.section,
+                        color: theme.dividerColor,
+                      ),
                       ListTile(
                         leading: const Icon(Icons.edit_note_outlined),
                         title: Text(l10n.inputTranslation),
@@ -349,7 +373,10 @@ class SettingsTranslationView extends StatelessWidget {
                     ],
                   ),
                 ],
-                Divider(color: theme.dividerColor),
+                Divider(
+                  height: SettingsSpacing.section,
+                  color: theme.dividerColor,
+                ),
                 ListTile(
                   leading: Icon(
                     runtime.roamingConfig.enabled
@@ -370,7 +397,10 @@ class SettingsTranslationView extends StatelessWidget {
                   trailing: const Icon(Icons.chevron_right_outlined),
                   onTap: controller.openRoaming,
                 ),
-                Divider(color: theme.dividerColor),
+                Divider(
+                  height: SettingsSpacing.section,
+                  color: theme.dividerColor,
+                ),
                 _SectionTitle(l10n.translationCache),
                 ListTile(
                   leading: const Icon(Icons.cleaning_services_outlined),
@@ -384,11 +414,15 @@ class SettingsTranslationView extends StatelessWidget {
                   onTap: controller.cacheBusy ? null : controller.clearCache,
                   enabled: !controller.cacheBusy,
                 ),
-                Divider(color: theme.dividerColor),
+                Divider(
+                  height: SettingsSpacing.section,
+                  color: theme.dividerColor,
+                ),
                 ListTile(
                   leading: const Icon(Icons.info_outline),
                   title: Text(l10n.translationPrivacyDetails),
                 ),
+                const SizedBox(height: SettingsSpacing.inset),
               ],
             ),
           ),
@@ -424,7 +458,7 @@ class _ColorOption extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     children: [
       Icon(Icons.circle, size: 16, color: color),
-      const SizedBox(width: 8),
+      const SizedBox(width: SettingsSpacing.actions),
       Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
     ],
   );

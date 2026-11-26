@@ -6,6 +6,7 @@
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/settings_password/settings_password.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -22,11 +23,11 @@ class SettingsPasswordView extends StatelessWidget {
       body: ListTileTheme(
         iconColor: theme.colorScheme.onSurface,
         child: MaxWidthBody(
+          contentPadding: EdgeInsets.zero,
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(SettingsSpacing.inset),
             child: Column(
               children: [
-                const SizedBox(height: 16),
                 TextField(
                   controller: controller.oldPasswordController,
                   obscureText: true,
@@ -40,7 +41,7 @@ class SettingsPasswordView extends StatelessWidget {
                     errorText: controller.oldPasswordError,
                   ),
                 ),
-                const Divider(height: 64),
+                const Divider(height: SettingsSpacing.section),
                 TextField(
                   controller: controller.newPassword1Controller,
                   obscureText: true,
@@ -53,7 +54,7 @@ class SettingsPasswordView extends StatelessWidget {
                     errorText: controller.newPassword1Error,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: SettingsSpacing.field),
                 TextField(
                   controller: controller.newPassword2Controller,
                   obscureText: true,
@@ -66,7 +67,7 @@ class SettingsPasswordView extends StatelessWidget {
                     errorText: controller.newPassword2Error,
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: SettingsSpacing.section),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -78,7 +79,7 @@ class SettingsPasswordView extends StatelessWidget {
                         : Text(L10n.of(context).changePassword),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: SettingsSpacing.actions),
                 TextButton(
                   child: Text(L10n.of(context).passwordRecoverySettings),
                   onPressed: () => context.go('/rooms/settings/security/3pid'),

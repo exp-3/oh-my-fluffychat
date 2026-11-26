@@ -6,6 +6,7 @@
 import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
+import 'package:fluffychat/widgets/layouts/settings_spacing.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -77,69 +78,81 @@ class _ConfigViewerState extends State<ConfigViewer> {
           TextButton(onPressed: _reset, child: Text(L10n.of(context).reset)),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: .stretch,
-        children: [
-          Container(
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.all(16),
-            color: theme.colorScheme.errorContainer,
-            child: Text(
-              'Changing configs by hand is untested! Use without any warranty!',
-              style: TextStyle(color: theme.colorScheme.onErrorContainer),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: .stretch,
+          children: [
+            Container(
+              margin: const EdgeInsets.fromLTRB(
+                SettingsSpacing.inset,
+                SettingsSpacing.inset,
+                SettingsSpacing.inset,
+                SettingsSpacing.section,
+              ),
+              padding: const EdgeInsets.all(16),
+              color: theme.colorScheme.errorContainer,
+              child: Text(
+                'Changing configs by hand is untested! Use without any warranty!',
+                style: TextStyle(color: theme.colorScheme.onErrorContainer),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TextField(
-              onChanged: (value) => setState(() => _searchQuery = value),
-              decoration: InputDecoration(
-                hintText: 'Search config key',
-                prefixIcon: const Icon(Icons.search),
-                border: const OutlineInputBorder(),
-                isDense: true,
-                filled: true,
-                fillColor: theme.colorScheme.surfaceContainerHighest.withAlpha(
-                  128,
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: SettingsSpacing.inset,
+              ),
+              child: TextField(
+                onChanged: (value) => setState(() => _searchQuery = value),
+                decoration: InputDecoration(
+                  hintText: 'Search config key',
+                  prefixIcon: const Icon(Icons.search),
+                  border: const OutlineInputBorder(),
+                  isDense: true,
+                  filled: true,
+                  fillColor: theme.colorScheme.surfaceContainerHighest
+                      .withAlpha(128),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredSettings.length,
-              itemBuilder: (context, i) {
-                final store = Matrix.of(context).store;
-                final appSetting = filteredSettings[i];
-                var value = '';
-                if (appSetting is AppSettings<String>) {
-                  value = appSetting.value;
-                }
-                if (appSetting is AppSettings<int>) {
-                  value = appSetting.value.toString();
-                }
-                if (appSetting is AppSettings<bool>) {
-                  return SwitchListTile.adaptive(
+            const SizedBox(height: SettingsSpacing.field),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.only(bottom: SettingsSpacing.inset),
+                itemCount: filteredSettings.length,
+                itemBuilder: (context, i) {
+                  final store = Matrix.of(context).store;
+                  final appSetting = filteredSettings[i];
+                  var value = '';
+                  if (appSetting is AppSettings<String>) {
+                    value = appSetting.value;
+                  }
+                  if (appSetting is AppSettings<int>) {
+                    value = appSetting.value.toString();
+                  }
+                  if (appSetting is AppSettings<bool>) {
+                    return SwitchListTile.adaptive(
+                      title: Text(appSetting.name),
+                      subtitle: Text(value),
+                      value: appSetting.value,
+                      onChanged: (value) => _changeSetting(
+                        appSetting,
+                        store,
+                        (!value).toString(),
+                      ),
+                    );
+                  }
+                  if (appSetting is AppSettings<double>) {
+                    value = appSetting.value.toString();
+                  }
+                  return ListTile(
                     title: Text(appSetting.name),
                     subtitle: Text(value),
-                    value: appSetting.value,
-                    onChanged: (value) =>
-                        _changeSetting(appSetting, store, (!value).toString()),
+                    onTap: () => _changeSetting(appSetting, store, value),
                   );
-                }
-                if (appSetting is AppSettings<double>) {
-                  value = appSetting.value.toString();
-                }
-                return ListTile(
-                  title: Text(appSetting.name),
-                  subtitle: Text(value),
-                  onTap: () => _changeSetting(appSetting, store, value),
-                );
-              },
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
