@@ -36,3 +36,7 @@ if (-not $iscc) {
 if ($LASTEXITCODE -ne 0) {
     throw "Inno Setup failed with exit code $LASTEXITCODE"
 }
+
+Compress-Archive -Path "$buildDir\*" `
+    -DestinationPath "build\windows\installer\fluffychat-windows-x64.zip" `
+    -CompressionLevel Optimal -Force

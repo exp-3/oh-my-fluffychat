@@ -212,14 +212,18 @@ jobs:
       - name: Install Inno Setup
         shell: pwsh
         run: choco install innosetup -y
-      - name: Create Windows release installer
+      - name: Create Windows release packages
         shell: pwsh
         run: ./scripts/package-windows.ps1 -BuildMode Release
-      - name: Attach Windows installer to release
+      - name: Attach Windows packages to release
         if: github.event.release.prerelease == false
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${{ github.event.release.tag_name }}" "build/windows/installer/fluffychat-windows-x64-setup.exe" --repo "${{ github.repository }}" --clobber
+        run: >-
+          gh release upload "${{ github.event.release.tag_name }}"
+          "build/windows/installer/fluffychat-windows-x64-setup.exe"
+          "build/windows/installer/fluffychat-windows-x64.zip"
+          --repo "${{ github.repository }}" --clobber
   build_linux:
     name: Build release Linux (${{ matrix.arch }})
     needs: check_release
@@ -233,8 +237,16 @@ jobs:
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest'}}
     steps:
       - uses: actions/checkout@v7
+      - name: Attach Linux ZIP conversion script to release
+        if: github.event.release.prerelease == false && matrix.arch == 'x64'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release upload "${{ github.event.release.tag_name }}"
+          scripts/convert-linux-deb-to-zip.sh
+          --repo "${{ github.repository }}" --clobber
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install curl clang cmake ninja-build pkg-config libgtk-3-dev libblkid-dev liblzma-dev libjsoncpp-dev cmake-data libsecret-1-dev libsecret-1-0 libssl-dev libwebkit2gtk-4.1-dev -y
+        run: sudo apt-get update && sudo apt-get install curl clang cmake ninja-build pkg-config libgtk-3-dev libblkid-dev liblzma-dev libjsoncpp-dev cmake-data libsecret-1-dev libsecret-1-0 libssl-dev libwebkit2gtk-4.1-dev dpkg-dev binutils xz-utils libmpv2 libblas3 liblapack3 -y
       - run: echo "FLUTTER_VERSION=$(yq '.flutter' < .fvmrc)" >> $GITHUB_ENV
       - name: Install Flutter
         run: |
@@ -242,11 +254,11 @@ jobs:
           ./flutter/bin/flutter doctor
       - uses: dtolnay/rust-toolchain@stable
       - run: ./flutter/bin/flutter pub get
-      - run: ./flutter/bin/flutter build linux --target-platform linux-${{ matrix.arch }}
-      - name: Create archive
-        run: tar -czf fluffychat-linux-${{ matrix.arch }}.tar.gz -C build/linux/${{ matrix.arch }}/release/bundle/ .
-      - name: Upload to release
+      - run: ./flutter/bin/flutter build linux --release --target-platform linux-${{ matrix.arch }}
+      - name: Create Linux Debian package
+        run: bash ./scripts/package-linux.sh "${{ matrix.arch }}"
+      - name: Attach Linux Debian package to release
         if: github.event.release.prerelease == false
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${{ github.event.release.tag_name }}" "fluffychat-linux-${{ matrix.arch }}.tar.gz" --repo "${{ github.repository }}" --clobber
+        run: gh release upload "${{ github.event.release.tag_name }}" "fluffychat-linux-${{ matrix.arch }}.deb" --repo "${{ github.repository }}" --clobber
