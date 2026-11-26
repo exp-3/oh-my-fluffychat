@@ -1,4 +1,4 @@
-name: Release Workflow
+name: Release Builds
 
 on:
   release:
@@ -42,6 +42,7 @@ jobs:
             core.info(isLatest ? 'Building the latest release.' : 'Skipping a release without the Latest marker.');
 
   build_web:
+    name: Build release web
     needs: check_release
     if: needs.check_release.outputs.is_latest == 'true'
     concurrency:
@@ -188,6 +189,7 @@ jobs:
         run: rm -f android/release.jks android/key.properties
 
   build_windows:
+    name: Build release Windows (x64)
     needs: check_release
     if: needs.check_release.outputs.is_latest == 'true'
     concurrency:
@@ -221,6 +223,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh release upload "${{ github.event.release.tag_name }}" "build/windows/installer/fluffychat-windows-x64-setup.exe" --repo "${{ github.repository }}" --clobber
   build_linux:
+    name: Build release Linux (${{ matrix.arch }})
     needs: check_release
     if: needs.check_release.outputs.is_latest == 'true'
     concurrency:

@@ -8,6 +8,7 @@ permissions:
 
 jobs:
    build_android:
+      name: Build debug APK (arm64-v8a)
       if: github.event.release.prerelease == true
       runs-on: ubuntu-latest
       steps:
@@ -87,6 +88,7 @@ jobs:
            run: rm -f android/release.jks android/key.properties
 
    build_windows:
+      name: Build debug Windows (x64)
       if: github.event.release.prerelease == true
       runs-on: windows-latest
       env:

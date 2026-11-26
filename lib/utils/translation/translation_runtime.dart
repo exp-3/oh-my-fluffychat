@@ -18,6 +18,7 @@ import 'translation_languages.dart';
 import 'translation_models.dart';
 import 'translation_preferences.dart';
 import 'translation_roaming.dart';
+import 'translation_roaming_upload.dart';
 
 typedef TranslationRoamingServiceFactory =
     TranslationRoamingService Function(
@@ -101,6 +102,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       {};
   final Map<Client, Set<String>> _knownClientRoomIds = {};
   final Set<Future<void>> _safetyFutures = {};
+  final Set<TranslationRoamingUploadSession> _roamingUploads = {};
   List<Client> _clients = const [];
   List<TranslationProviderConfig> _providers = const [];
   TranslationProviderConfig? _activeProvider;
@@ -180,6 +182,73 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   Future<void> waitForBatchSettingsSaves() => _batchSettingsSaveTail;
 
   TranslationRoamingConfig get roamingConfig => _roamingConfig;
+
+  bool get canUploadLocalTranslations =>
+      _initialized &&
+      !_disposed &&
+      _enabled &&
+      !_roamingMutationInProgress &&
+      _safetyOperations == 0 &&
+      _roamingConfig.enabled &&
+      _roamingConfig.isValid &&
+      _roamingConfig.supportedOnPlatform;
+
+  Room? roamingUploadRoom(String userId, String roomId) {
+    for (final client in _clients) {
+      if (!client.isLogged() || client.userID != userId) continue;
+      final room = client.getRoomById(roomId);
+      if (room?.membership == Membership.join) return room;
+    }
+    return null;
+  }
+
+  Future<TranslationRoamingUploadSession> createRoamingUploadSession() async {
+    await _roamingSaveTail;
+    final snapshotRevision = _roamingRevision;
+    final settings = await readRoamingSettings();
+    if (!canUploadLocalTranslations ||
+        snapshotRevision != _roamingRevision ||
+        !settings.secrets.isValidFor(settings.config)) {
+      throw const TranslationRoamingException(
+        TranslationRoamingError.configuration,
+      );
+    }
+    final roamingRevision = _roamingRevision;
+    final runtimeRevision = _revision;
+    final clients = List<Client>.of(_clients);
+    bool isCurrent() =>
+        canUploadLocalTranslations &&
+        roamingRevision == _roamingRevision &&
+        runtimeRevision == _revision;
+    bool canAccess(TranslationCacheExportReference reference) => clients.any(
+      (client) =>
+          _clients.contains(client) &&
+          client.isLogged() &&
+          client.userID == reference.userId &&
+          client.getRoomById(reference.roomId)?.membership == Membership.join,
+    );
+    _localHistories.clear();
+    late final TranslationRoamingUploadSession session;
+    session = TranslationRoamingUploadSession(
+      cache: cache,
+      resolveSource: (userId, roomId, eventId) async {
+        if (!isCurrent() || roamingUploadRoom(userId, roomId) == null) {
+          return TranslationLocalSource.unavailable;
+        }
+        final source = await _localSource(userId, roomId, eventId);
+        return isCurrent() && roamingUploadRoom(userId, roomId) != null
+            ? source
+            : TranslationLocalSource.unavailable;
+      },
+      service: _roamingFactory(settings.config, settings.secrets),
+      lifecycle: this,
+      isCurrent: isCurrent,
+      canAccess: canAccess,
+      onDispose: () => _roamingUploads.remove(session),
+    );
+    _roamingUploads.add(session);
+    return session;
+  }
 
   Future<TranslationRoamingSecrets> readRoamingSecrets() =>
       _roamingPreferences!.readSecrets();
@@ -1604,18 +1673,18 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
       if (room == null || room.membership != Membership.join) continue;
       try {
         final event = await client.database.getEventById(eventId, room);
-        if (event == null) return TranslationLocalSource.unavailable;
+        if (event == null) continue;
         if (event.redacted) return TranslationLocalSource.obsolete;
         if ((event.type != EventTypes.Message &&
                 event.type != EventTypes.Sticker) ||
             (!_isMediaEvent(_replacementEvent(event)) &&
                 event.body.trim().isEmpty)) {
-          return TranslationLocalSource.unavailable;
+          continue;
         }
         final rootId = event.relationshipType == RelationshipTypes.edit
             ? event.relationshipEventId
             : event.eventId;
-        if (rootId == null) return TranslationLocalSource.unavailable;
+        if (rootId == null) continue;
         final history = await _localHistory(room);
         final edits =
             history
@@ -1630,22 +1699,30 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
               ..sort((a, b) => a.originServerTs.compareTo(b.originServerTs));
         if (event.relationshipType == RelationshipTypes.edit) {
           final original = await client.database.getEventById(rootId, room);
-          if (original == null) return TranslationLocalSource.unavailable;
+          if (original == null) continue;
           if (original.type != EventTypes.Message &&
               original.type != EventTypes.Sticker &&
               !original.redacted) {
-            return TranslationLocalSource.unavailable;
+            continue;
           }
           if (original.redacted ||
               (edits.isNotEmpty && edits.last.eventId != event.eventId)) {
             return TranslationLocalSource.obsolete;
           }
-          return _localSourceForEvent(event, originalEventId: rootId);
+          return _localSourceForEvent(
+            event,
+            originalEventId: rootId,
+            messageTimestamp: original.originServerTs,
+          );
         }
-        return _localSourceForEvent(edits.isEmpty ? event : edits.last);
+        return _localSourceForEvent(
+          edits.isEmpty ? event : edits.last,
+          originalEventId: rootId,
+          messageTimestamp: event.originServerTs,
+        );
       } catch (_) {
         if (strict) rethrow;
-        return TranslationLocalSource.unavailable;
+        continue;
       }
     }
     return TranslationLocalSource.unavailable;
@@ -1780,6 +1857,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
   TranslationLocalSource _localSourceForEvent(
     Event event, {
     String? originalEventId,
+    DateTime? messageTimestamp,
   }) {
     final source = _sourceForCachedEvent(event);
     if (_isMediaEvent(_replacementEvent(event)) && source.trim().isEmpty) {
@@ -1788,6 +1866,7 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     return TranslationLocalSource.valid(
       source,
       originalEventId: originalEventId,
+      messageTimestamp: messageTimestamp,
     );
   }
 
@@ -1980,6 +2059,10 @@ class TranslationRuntime extends ChangeNotifier with WidgetsBindingObserver {
     _disposed = true;
     _revision++;
     _resetRoaming();
+    for (final session in _roamingUploads.toList()) {
+      session.cancel();
+    }
+    _roamingUploads.clear();
     WidgetsBinding.instance.removeObserver(this);
     unawaited(_cacheSubscription?.cancel());
     _batcher?.dispose();

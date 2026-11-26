@@ -1,6 +1,18 @@
 {
     "@@locale": "en",
     "@@last_modified": "2021-08-14 12:38:37.885451",
+    "translationUnsavedChanges": "You have unsaved changes. Do you want to save them?",
+    "translationDiscardChanges": "Discard",
+    "translationSaveBeforeUse": "Save the settings before using this feature.",
+    "@translationUnsavedChanges": {
+        "description": "Prompt shown when leaving translation settings with unsaved changes."
+    },
+    "@translationDiscardChanges": {
+        "description": "Button that discards unsaved translation settings and leaves the page."
+    },
+    "@translationSaveBeforeUse": {
+        "description": "Tooltip for an action that requires saving translation settings first."
+    },
     "translationCacheUpgrading": "Upgrading the local archive. Please wait a moment.",
     "translationCacheUpgradeFailed": "Translation cache upgrade failed",
     "translationRoaming": "Translation roaming",
@@ -19,6 +31,49 @@
     "translationRoamingTestPassed": "Connection test passed",
     "translationRoamingToken": "Bearer token",
     "translationRoamingUsername": "Username",
+    "translationRoamingUploadLocal": "Upload local translations",
+    "translationRoamingUploadDescription": "Select chats whose translations you want to upload. Existing remote translations are kept.",
+    "translationRoamingUploadScanning": "Looking for local translations to upload…",
+    "translationRoamingUploadEmpty": "No eligible local translations",
+    "translationRoamingUploadCount": "{count} translations",
+    "@translationRoamingUploadCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "translationRoamingUploadProgress": "Processed {processed}/{total} translations",
+    "@translationRoamingUploadProgress": {
+        "placeholders": {
+            "processed": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "translationRoamingUploadResult": "Uploaded {uploaded}, already on server {existing}, skipped {skipped}, failed {failed}.",
+    "@translationRoamingUploadResult": {
+        "placeholders": {
+            "uploaded": {
+                "type": "int"
+            },
+            "existing": {
+                "type": "int"
+            },
+            "skipped": {
+                "type": "int"
+            },
+            "failed": {
+                "type": "int"
+            }
+        }
+    },
+    "translationRoamingUploadStopped": "Upload stopped",
+    "translationRoamingUploadUnavailable": "Enable translation and translation roaming and complete valid connection settings first.",
+    "translationRoamingUploadSelectAll": "Select all chats",
     "databaseInitializationFailed": "Local archive initialization failed",
     "databaseInitializationFailedBody": "The local archive for \"{clientName}\" could not be opened. It may be corrupted, or a required runtime component may be missing.\n\nResetting permanently deletes this device's local archive. Server data can be synchronized again, but unsent or local-only data may be lost. Do you want to reset it?",
     "@databaseInitializationFailedBody": {

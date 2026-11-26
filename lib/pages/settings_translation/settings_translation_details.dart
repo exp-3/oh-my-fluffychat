@@ -405,10 +405,7 @@ class SettingsTranslationRoaming extends StatelessWidget {
     final runtime = TranslationRuntime.instance;
     return AnimatedBuilder(
       animation: runtime,
-      builder: (context, _) => _TranslationSettingsScaffold(
-        title: L10n.of(context).translationRoaming,
-        children: [TranslationRoamingSettings(runtime: runtime)],
-      ),
+      builder: (context, _) => TranslationRoamingSettings(runtime: runtime),
     );
   }
 }

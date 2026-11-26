@@ -48,6 +48,8 @@ void main() {
 
       expect(await store.getEx('鍵🌍', 30), '譯文 🌍');
       await store.set('鍵🌍', 'encrypted value', 40);
+      expect(await store.setIfAbsent('import', 'encrypted import', 20), isTrue);
+      expect(await store.setIfAbsent('import', 'replacement', 10), isFalse);
       await store.delete('鍵🌍');
       store.reset();
       expect(await store.getEx('鍵🌍', 50), '譯文 🌍');
@@ -57,6 +59,8 @@ void main() {
         ['SELECT', '2'],
         ['GETEX', '鍵🌍', 'EX', '30'],
         ['SET', '鍵🌍', 'encrypted value', 'EX', '40'],
+        ['SET', 'import', 'encrypted import', 'EX', '20', 'NX'],
+        ['SET', 'import', 'replacement', 'EX', '10', 'NX'],
         ['DEL', '鍵🌍'],
         ['AUTH', 'tester', 'authentication'],
         ['SELECT', '2'],
@@ -134,6 +138,7 @@ Future<void> _serve(
   String? authenticationError,
 }) async {
   final input = _RequestReader(socket);
+  final importedKeys = <String>{};
   try {
     while (true) {
       final command = await input.read();
@@ -143,6 +148,8 @@ Future<void> _serve(
         'AUTH' when authenticationError != null => utf8.encode(
           '-$authenticationError\r\n',
         ),
+        'SET' when command.last == 'NX' && !importedKeys.add(command[1]) =>
+          utf8.encode('\$-1\r\n'),
         'AUTH' || 'SELECT' || 'SET' => utf8.encode('+OK\r\n'),
         'DEL' => utf8.encode(':1\r\n'),
         'GETEX' => [

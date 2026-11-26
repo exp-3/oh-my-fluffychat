@@ -25,6 +25,10 @@ class NativeTranslationRoamingStore implements TranslationRoamingStore {
       _unsupported();
 
   @override
+  Future<bool> setIfAbsent(String key, String value, int ttlSeconds) async =>
+      _unsupported();
+
+  @override
   Future<void> delete(String key) async => _unsupported();
 
   @override

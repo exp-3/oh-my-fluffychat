@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'translation_diagnostics.dart';
 import 'translation_languages.dart';
 import 'translation_roaming_crypto.dart';
 import 'translation_roaming_models.dart';
@@ -150,6 +151,97 @@ class TranslationRoamingService {
         await _delay(retryDelay);
       }
     }
+  }
+
+  /// Imports a local translation without replacing a remote value or its TTL.
+  /// The remaining lifetime is recalculated immediately before each attempt.
+  Future<TranslationRoamingUploadResult> uploadIfAbsent({
+    required String source,
+    required String targetLanguage,
+    required String translation,
+    required int Function() ttlSeconds,
+    required bool Function() isValid,
+  }) async {
+    const skipped = TranslationRoamingUploadResult(
+      TranslationRoamingUploadStatus.skipped,
+    );
+    final crypto = _crypto;
+    if (!available ||
+        crypto == null ||
+        !isValid() ||
+        source.isEmpty ||
+        translation.trim().isEmpty ||
+        !isTranslationLanguage(targetLanguage)) {
+      return skipped;
+    }
+    final key = crypto.storageKey(
+      source: source,
+      targetLanguage: targetLanguage,
+      keyPrefix: config.keyPrefix,
+    );
+    final String envelope;
+    try {
+      envelope = crypto.encrypt(
+        source: source,
+        targetLanguage: targetLanguage,
+        key: key,
+        translation: translation,
+      );
+    } on TranslationRoamingException {
+      // Apply the same size limits as automatic uploads.
+      return skipped;
+    }
+    for (var attempt = 0; attempt < 2; attempt++) {
+      if (!available || !isValid()) return skipped;
+      final remaining = ttlSeconds();
+      if (remaining <= 0) return skipped;
+      // Redis command integers must also remain exact on Dart Web.
+      if (remaining > 9007199254740991) {
+        return const TranslationRoamingUploadResult(
+          TranslationRoamingUploadStatus.failed,
+          error: TranslationRoamingException(
+            TranslationRoamingError.configuration,
+          ),
+        );
+      }
+      try {
+        final uploaded = await _timed(
+          _transport.setIfAbsent(key, envelope, remaining),
+          writeTimeout,
+        );
+        return TranslationRoamingUploadResult(
+          uploaded
+              ? TranslationRoamingUploadStatus.uploaded
+              : TranslationRoamingUploadStatus.existing,
+        );
+      } catch (error) {
+        if (!available || !isValid()) return skipped;
+        if (attempt == 1) {
+          return TranslationRoamingUploadResult(
+            TranslationRoamingUploadStatus.failed,
+            error: TranslationRoamingException(
+              error is TranslationRoamingException
+                  ? error.error
+                  : TranslationRoamingError.connection,
+              diagnosticDetails: translationErrorDetails(
+                error,
+                secrets: [
+                  _secrets.preSharedKey,
+                  _secrets.redisPassword,
+                  _secrets.restToken,
+                  source,
+                  translation,
+                  key,
+                  envelope,
+                ],
+              ),
+            ),
+          );
+        }
+        await _delay(retryDelay);
+      }
+    }
+    return skipped;
   }
 
   Future<T> _timed<T>(Future<T> operation, Duration timeout) =>

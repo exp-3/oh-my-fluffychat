@@ -88,9 +88,13 @@ class TranslationLocalSource {
   final TranslationLocalSourceStatus status;
   final String? source;
   final String? originalEventId;
-  const TranslationLocalSource.valid(String value, {this.originalEventId})
-    : status = TranslationLocalSourceStatus.valid,
-      source = value;
+  final DateTime? messageTimestamp;
+  const TranslationLocalSource.valid(
+    String value, {
+    this.originalEventId,
+    this.messageTimestamp,
+  }) : status = TranslationLocalSourceStatus.valid,
+       source = value;
   static const obsolete = TranslationLocalSource._(
     TranslationLocalSourceStatus.obsolete,
   );
@@ -99,7 +103,8 @@ class TranslationLocalSource {
   );
   const TranslationLocalSource._(this.status)
     : source = null,
-      originalEventId = null;
+      originalEventId = null,
+      messageTimestamp = null;
 }
 
 typedef TranslationSourceResolver =
@@ -108,6 +113,55 @@ typedef TranslationSourceResolver =
       String roomId,
       String eventId,
     );
+
+/// An in-memory reference that cannot survive deletion, editing or cache reset.
+class TranslationCacheExportReference {
+  final String referenceKey, userId, roomId, eventId;
+  final TranslationCacheKey _key;
+  final String _contentKey, _generation, _storeId;
+  final int _epoch, _safetyEpoch;
+
+  TranslationCacheExportReference._(
+    TranslationCacheKey key, {
+    required String contentKey,
+    required String generation,
+    required String storeId,
+    required int epoch,
+    required int safetyEpoch,
+  }) : referenceKey = key.referenceKey,
+       userId = key.userId,
+       roomId = key.roomId,
+       eventId = key.eventId,
+       _key = key,
+       _contentKey = contentKey,
+       _generation = generation,
+       _storeId = storeId,
+       _epoch = epoch,
+       _safetyEpoch = safetyEpoch;
+}
+
+class TranslationCacheExportEntry {
+  final TranslationCacheExportReference reference;
+  final TranslationCacheKey key;
+  final String translation;
+  final DateTime? writtenAt;
+  final DateTime messageTimestamp;
+
+  const TranslationCacheExportEntry({
+    required this.reference,
+    required this.key,
+    required this.translation,
+    required this.writtenAt,
+    required this.messageTimestamp,
+  });
+}
+
+class TranslationCacheExportPage {
+  final List<TranslationCacheExportEntry> entries;
+  final Object? nextCursor;
+
+  const TranslationCacheExportPage({required this.entries, this.nextCursor});
+}
 
 class TranslationCacheCleanupResult {
   final int checked, retained, deleted;
@@ -257,6 +311,162 @@ class TranslationCache {
     isValid: isValid,
     tickets: ticket == null ? null : {key: ticket},
   );
+
+  /// Reads existing references without creating a cache or attaching new ones.
+  ///
+  /// An empty page can still have a cursor when all rows in it were invalid.
+  Future<TranslationCacheExportPage> exportPage(
+    TranslationSourceResolver resolver, {
+    Object? after,
+    int pageSize = 200,
+    bool Function()? isValid,
+  }) => _serialized(() async {
+    if (isValid?.call() == false || !await _openExisting()) {
+      return const TranslationCacheExportPage(entries: []);
+    }
+    await _replayPending();
+    final limit = pageSize.clamp(1, 200);
+    final snapshot = await backend.transaction((tx) async {
+      final rows = await tx.query(
+        CacheStore.messageRefs,
+        after: after,
+        limit: limit,
+      );
+      final storeId = cacheString(
+        await tx.get(CacheStore.metadata, 'store_id') ?? {},
+        'value',
+      );
+      final references = <TranslationCacheExportReference>[];
+      for (final row in rows) {
+        final key = _keyFromReference(
+          row,
+          TranslationLocalSource.valid(
+            '',
+            originalEventId: cacheString(row, 'original_event_id'),
+          ),
+        );
+        if (key.userId.isEmpty || key.roomId.isEmpty || key.eventId.isEmpty) {
+          continue;
+        }
+        references.add(
+          TranslationCacheExportReference._(
+            key,
+            contentKey: cacheString(row, 'content_key'),
+            generation: await _generation(tx, key),
+            storeId: storeId,
+            epoch: _epoch(key),
+            safetyEpoch: _safetyEpoch,
+          ),
+        );
+      }
+      return (
+        references: references,
+        nextCursor: rows.length == limit ? rows.last['_cursor'] : null,
+      );
+    });
+    final entries = <TranslationCacheExportEntry>[];
+    for (final reference in snapshot.references) {
+      if (isValid?.call() == false) break;
+      final entry = await _readExportEntry(reference, resolver, isValid);
+      if (entry != null) entries.add(entry);
+    }
+    return TranslationCacheExportPage(
+      entries: List.unmodifiable(entries),
+      nextCursor: snapshot.nextCursor,
+    );
+  });
+
+  /// Revalidates the original reference and reads its newest translation.
+  /// Never use the earlier scan's plaintext directly for a later upload.
+  Future<TranslationCacheExportEntry?> refreshExportEntry(
+    TranslationCacheExportReference reference,
+    TranslationSourceResolver resolver, {
+    bool Function()? isValid,
+  }) => _serialized(() async {
+    if (isValid?.call() == false || !await _openExisting()) return null;
+    await _replayPending();
+    return _readExportEntry(reference, resolver, isValid);
+  });
+
+  /// Cheap in-process guard for a write that has already been revalidated.
+  /// Persisted changes from other contexts require [refreshExportEntry].
+  bool isExportReferenceCurrent(TranslationCacheExportReference reference) =>
+      reference._safetyEpoch == _safetyEpoch &&
+      reference._epoch == _epoch(reference._key);
+
+  Future<TranslationCacheExportEntry?> _readExportEntry(
+    TranslationCacheExportReference reference,
+    TranslationSourceResolver resolver,
+    bool Function()? isValid,
+  ) async {
+    bool current() =>
+        isValid?.call() != false && isExportReferenceCurrent(reference);
+    if (!current()) return null;
+    final TranslationLocalSource source;
+    try {
+      source = await resolver(
+        reference.userId,
+        reference.roomId,
+        reference.eventId,
+      );
+    } catch (_) {
+      return null;
+    }
+    if (!current() ||
+        source.status != TranslationLocalSourceStatus.valid ||
+        source.source == null ||
+        source.source!.isEmpty ||
+        source.messageTimestamp == null) {
+      return null;
+    }
+    return backend.transaction((tx) async {
+      final row = await tx.get(CacheStore.messageRefs, reference.referenceKey);
+      if (row == null ||
+          cacheString(row, 'content_key') != reference._contentKey ||
+          cacheString(row, 'original_event_id') !=
+              reference._key.originalEventId ||
+          cacheString(
+                await tx.get(CacheStore.metadata, 'store_id') ?? {},
+                'value',
+              ) !=
+              reference._storeId ||
+          await _generation(tx, reference._key) != reference._generation) {
+        return null;
+      }
+      final originalId = source.originalEventId;
+      if (originalId != null && originalId != reference._key.originalEventId) {
+        return null;
+      }
+      final key = _keyFromReference(
+        row,
+        TranslationLocalSource.valid(
+          source.source!,
+          originalEventId: originalId ?? reference._key.originalEventId,
+        ),
+      );
+      if (key.referenceKey != reference.referenceKey) return null;
+      final content = await tx.get(
+        CacheStore.sharedContents,
+        reference._contentKey,
+      );
+      if (content == null) return null;
+      final ({String text, DateTime? writtenAt}) decoded;
+      try {
+        decoded = _readContentPayload(_masterKey!, key, content);
+      } catch (_) {
+        // Corrupt and obsolete rows remain local for the normal cleanup flow.
+        return null;
+      }
+      if (!current() || decoded.text.trim().isEmpty) return null;
+      return TranslationCacheExportEntry(
+        reference: reference,
+        key: key,
+        translation: decoded.text,
+        writtenAt: decoded.writtenAt,
+        messageTimestamp: source.messageTimestamp!,
+      );
+    });
+  }
 
   Future<void> writeAll(
     Map<TranslationCacheKey, String> translations, {
@@ -993,6 +1203,12 @@ class TranslationCache {
     Uint8List master,
     TranslationCacheKey key,
     CacheRow row,
+  ) => _readContentPayload(master, key, row).text;
+
+  static ({String text, DateTime? writtenAt}) _readContentPayload(
+    Uint8List master,
+    TranslationCacheKey key,
+    CacheRow row,
   ) {
     if (row['source_language'] != key.sourceLanguage ||
         row['target_language'] != key.targetLanguage ||
@@ -1005,7 +1221,10 @@ class TranslationCache {
     if (payload['v'] != 3 || payload['text'] is! String) {
       throw const FormatException('Translation envelope is invalid');
     }
-    return payload['text']! as String;
+    return (
+      text: payload['text']! as String,
+      writtenAt: DateTime.tryParse(cacheString(payload, 'written_at')),
+    );
   }
 
   static CacheRow _encrypt(

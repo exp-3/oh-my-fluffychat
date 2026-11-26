@@ -19,6 +19,7 @@ import 'package:uuid/uuid.dart';
 
 import 'translation_settings_layout.dart';
 import 'translation_test_feedback.dart';
+import 'translation_unsaved_changes_dialog.dart';
 
 class SettingsTranslation extends StatefulWidget {
   const SettingsTranslation({super.key});
@@ -210,6 +211,7 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: DropdownButtonFormField<TranslationScope>(
                           initialValue: runtime.scope,
+                          isExpanded: true,
                           decoration: InputDecoration(
                             labelText: l10n.automaticTranslationScope,
                             prefixIcon: const Icon(Icons.auto_awesome_outlined),
@@ -221,16 +223,26 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                           items: [
                             DropdownMenuItem(
                               value: TranslationScope.none,
-                              child: Text(l10n.translationScopeNone),
+                              child: Text(
+                                l10n.translationScopeNone,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                             DropdownMenuItem(
                               value: TranslationScope.allRooms,
-                              child: Text(l10n.translationScopeAllRooms),
+                              child: Text(
+                                l10n.translationScopeAllRooms,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                             DropdownMenuItem(
                               value: TranslationScope.unencryptedRooms,
                               child: Text(
                                 l10n.translationScopeUnencryptedRooms,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -448,8 +460,11 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                         leading: const Icon(Icons.edit_note_outlined),
                         title: Text(l10n.inputTranslation),
                         subtitle: Text(
-                          '${_languageLabel(runtime.inputSourceLanguage, l10n)}'
-                          ' → ${_languageLabel(runtime.inputTargetLanguage, l10n)}',
+                          !runtime.manualInputTranslationEnabled &&
+                                  !runtime.automaticInputTranslationEnabled
+                              ? l10n.roomTranslationAlwaysOff
+                              : '${_languageLabel(runtime.inputSourceLanguage, l10n)}'
+                                    ' → ${_languageLabel(runtime.inputTargetLanguage, l10n)}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -483,12 +498,16 @@ class _SettingsTranslationState extends State<SettingsTranslation> {
                         : Icons.cloud_off_outlined,
                   ),
                   title: Text(l10n.translationRoaming),
-                  subtitle: Text(switch (runtime.roamingConfig.type) {
-                    TranslationRoamingType.redis =>
-                      l10n.translationRoamingNative,
-                    TranslationRoamingType.upstash =>
-                      l10n.translationRoamingUpstash,
-                  }),
+                  subtitle: Text(
+                    !runtime.roamingConfig.enabled
+                        ? l10n.roomTranslationAlwaysOff
+                        : switch (runtime.roamingConfig.type) {
+                            TranslationRoamingType.redis =>
+                              l10n.translationRoamingNative,
+                            TranslationRoamingType.upstash =>
+                              l10n.translationRoamingUpstash,
+                          },
+                  ),
                   trailing: const Icon(Icons.chevron_right_outlined),
                   onTap: () =>
                       context.go('/rooms/settings/translation/roaming'),
@@ -553,6 +572,15 @@ class _ColorOption extends StatelessWidget {
   );
 }
 
+typedef _ProviderDraftSnapshot = ({
+  String name,
+  String endpoint,
+  String model,
+  TranslationProtocol protocol,
+  TranslationReasoningEffort reasoningEffort,
+  bool useFullEndpoint,
+});
+
 class SettingsTranslationProvider extends StatefulWidget {
   final String? providerId;
 
@@ -580,9 +608,25 @@ class _SettingsTranslationProviderState
   bool deleting = false;
   bool _loadingApiKey = false;
   bool _apiKeyVisible = false;
+  bool _dialogOpen = false;
+  bool _leaving = false;
+  late final _ProviderDraftSnapshot _initialValues;
+  String _initialApiKey = '';
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? _testFeedback;
 
   bool get _busy => testing || saving || deleting;
+
+  _ProviderDraftSnapshot get _formValues => (
+    name: name.text,
+    endpoint: endpoint.text,
+    model: model.text,
+    protocol: protocol,
+    reasoningEffort: reasoningEffort,
+    useFullEndpoint: useFullEndpoint,
+  );
+
+  bool get _dirty =>
+      _formValues != _initialValues || apiKey.text != _initialApiKey;
 
   @override
   void initState() {
@@ -597,6 +641,7 @@ class _SettingsTranslationProviderState
     reasoningEffort =
         existing?.reasoningEffort ?? TranslationReasoningEffort.unspecified;
     useFullEndpoint = existing?.useFullEndpoint ?? false;
+    _initialValues = _formValues;
     if (existing != null) {
       _loadingApiKey = true;
       unawaited(_loadApiKey());
@@ -608,6 +653,8 @@ class _SettingsTranslationProviderState
       final value = await runtime.preferences.readApiKey(providerId);
       if (!mounted) return;
       apiKey.text = value ?? '';
+      // Other fields may already have been edited while the secret was read.
+      _initialApiKey = apiKey.text;
     } catch (_) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -661,6 +708,36 @@ class _SettingsTranslationProviderState
     setState(() {});
   }
 
+  void _returnToSettings() {
+    if (!mounted || _leaving) return;
+    _leaving = true;
+    context.go('/rooms/settings/translation');
+  }
+
+  Future<void> _requestExit() async {
+    if (_busy || _dialogOpen || _leaving) return;
+    if (!_dirty) {
+      _returnToSettings();
+      return;
+    }
+    _dialogOpen = true;
+    final TranslationUnsavedChangesAction? action;
+    try {
+      action = await showTranslationUnsavedChangesDialog(context);
+    } finally {
+      _dialogOpen = false;
+    }
+    if (!mounted) return;
+    switch (action) {
+      case TranslationUnsavedChangesAction.save:
+        await save();
+      case TranslationUnsavedChangesAction.discard:
+        _returnToSettings();
+      case null:
+        break;
+    }
+  }
+
   void _clearTestFeedback() {
     _testFeedback?.close();
     _testFeedback = null;
@@ -708,11 +785,18 @@ class _SettingsTranslationProviderState
   }
 
   Future<void> save() async {
+    if (_busy) return;
+    if (_loadingApiKey) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(L10n.of(context).loadingPleaseWait)),
+      );
+      return;
+    }
     final value = config;
-    if (value == null ||
-        (existing == null && apiKey.text.trim().isEmpty) ||
-        _busy ||
-        _loadingApiKey) {
+    if (value == null || (existing == null && apiKey.text.trim().isEmpty)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(L10n.of(context).translationProviderRequired)),
+      );
       return;
     }
     setState(() => saving = true);
@@ -722,7 +806,7 @@ class _SettingsTranslationProviderState
         apiKey: apiKey.text.trim().isEmpty ? null : apiKey.text,
       );
       if (!mounted) return;
-      context.go('/rooms/settings/translation');
+      _returnToSettings();
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -737,22 +821,28 @@ class _SettingsTranslationProviderState
 
   Future<void> delete() async {
     final provider = existing;
-    if (provider == null || deleting) return;
+    if (provider == null || _busy || _dialogOpen) return;
     final l10n = L10n.of(context);
-    final result = await showOkCancelAlertDialog(
-      context: context,
-      title: l10n.deleteTranslationProvider,
-      message: l10n.areYouSure,
-      okLabel: l10n.delete,
-      cancelLabel: l10n.cancel,
-      isDestructive: true,
-    );
+    _dialogOpen = true;
+    final OkCancelResult? result;
+    try {
+      result = await showOkCancelAlertDialog(
+        context: context,
+        title: l10n.deleteTranslationProvider,
+        message: l10n.areYouSure,
+        okLabel: l10n.delete,
+        cancelLabel: l10n.cancel,
+        isDestructive: true,
+      );
+    } finally {
+      _dialogOpen = false;
+    }
     if (result != OkCancelResult.ok || !mounted) return;
     setState(() => deleting = true);
     try {
       await runtime.deleteProvider(provider.id);
       if (!mounted) return;
-      context.go('/rooms/settings/translation');
+      _returnToSettings();
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -782,222 +872,228 @@ class _SettingsTranslationProviderState
         body: Center(child: Text(l10n.oopsSomethingWentWrong)),
       );
     }
-    return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(
-          onPressed: busy
-              ? null
-              : () => context.go('/rooms/settings/translation'),
-        ),
-        title: Text(
-          existing == null
-              ? l10n.addTranslationProvider
-              : l10n.editTranslationProvider,
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: FilledButton(
-              onPressed:
-                  busy ||
-                      _loadingApiKey ||
-                      value == null ||
-                      (existing == null && apiKey.text.trim().isEmpty)
-                  ? null
-                  : save,
-              child: saving
-                  ? const SizedBox.square(
-                      dimension: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(l10n.save),
-            ),
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) unawaited(_requestExit());
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: BackButton(onPressed: () => unawaited(_requestExit())),
+          title: Text(
+            existing == null
+                ? l10n.addTranslationProvider
+                : l10n.editTranslationProvider,
           ),
-        ],
-      ),
-      body: MaxWidthBody(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+          actions: [
             Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                spacing: 12,
-                children: [
-                  TextField(
-                    controller: name,
-                    enabled: !busy,
-                    decoration: InputDecoration(labelText: l10n.providerName),
-                    onChanged: (_) => formChanged(),
-                  ),
-                  TextField(
-                    controller: endpoint,
-                    enabled: !busy,
-                    decoration: InputDecoration(
-                      labelText: 'URL',
-                      hintText: useFullEndpoint
-                          ? switch (protocol) {
-                              TranslationProtocol.chatCompletions =>
-                                'https://api.example/v1/chat/completions',
-                              TranslationProtocol.responses =>
-                                'https://api.example/v1/responses',
-                              TranslationProtocol.anthropicMessages =>
-                                'https://api.anthropic.com/v1/messages',
-                            }
-                          : 'https://api.example/v1',
-                      helperText: previewEndpoint == null
-                          ? null
-                          : '${l10n.translationEndpoint}: $previewEndpoint',
-                      helperMaxLines: 3,
+              padding: const EdgeInsets.only(right: 16),
+              child: FilledButton(
+                onPressed:
+                    busy ||
+                        _loadingApiKey ||
+                        value == null ||
+                        (existing == null && apiKey.text.trim().isEmpty)
+                    ? null
+                    : save,
+                child: saving
+                    ? const SizedBox.square(
+                        dimension: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(l10n.save),
+              ),
+            ),
+          ],
+        ),
+        body: MaxWidthBody(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  spacing: 12,
+                  children: [
+                    TextField(
+                      controller: name,
+                      enabled: !busy,
+                      decoration: InputDecoration(labelText: l10n.providerName),
+                      onChanged: (_) => formChanged(),
                     ),
-                    keyboardType: TextInputType.url,
-                    onChanged: (_) => formChanged(),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: ListTileTheme.merge(
-                      horizontalTitleGap: 0,
-                      child: CheckboxListTile.adaptive(
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
-                        visualDensity: const VisualDensity(vertical: -2),
-                        controlAffinity: ListTileControlAffinity.leading,
-                        value: useFullEndpoint,
-                        title: Text(l10n.translationEndpointIsComplete),
-                        onChanged: busy
+                    TextField(
+                      controller: endpoint,
+                      enabled: !busy,
+                      decoration: InputDecoration(
+                        labelText: 'URL',
+                        hintText: useFullEndpoint
+                            ? switch (protocol) {
+                                TranslationProtocol.chatCompletions =>
+                                  'https://api.example/v1/chat/completions',
+                                TranslationProtocol.responses =>
+                                  'https://api.example/v1/responses',
+                                TranslationProtocol.anthropicMessages =>
+                                  'https://api.anthropic.com/v1/messages',
+                              }
+                            : 'https://api.example/v1',
+                        helperText: previewEndpoint == null
                             ? null
-                            : (checked) {
-                                if (checked == null) return;
-                                useFullEndpoint = checked;
-                                formChanged();
-                              },
+                            : '${l10n.translationEndpoint}: $previewEndpoint',
+                        helperMaxLines: 3,
                       ),
+                      keyboardType: TextInputType.url,
+                      onChanged: (_) => formChanged(),
                     ),
-                  ),
-                  DropdownButtonFormField<TranslationProtocol>(
-                    initialValue: protocol,
-                    decoration: InputDecoration(
-                      labelText: l10n.translationProtocol,
-                    ),
-                    items: const [
-                      DropdownMenuItem(
-                        value: TranslationProtocol.chatCompletions,
-                        child: Text('Chat Completions'),
-                      ),
-                      DropdownMenuItem(
-                        value: TranslationProtocol.responses,
-                        child: Text('Responses'),
-                      ),
-                      DropdownMenuItem(
-                        value: TranslationProtocol.anthropicMessages,
-                        child: Text('Anthropic Messages'),
-                      ),
-                    ],
-                    onChanged: busy
-                        ? null
-                        : (value) {
-                            if (value == null || value == protocol) return;
-                            protocol = value;
-                            formChanged();
-                          },
-                  ),
-                  TextField(
-                    controller: model,
-                    enabled: !busy,
-                    decoration: InputDecoration(labelText: l10n.model),
-                    onChanged: (_) => formChanged(),
-                  ),
-                  DropdownButtonFormField<TranslationReasoningEffort>(
-                    initialValue: reasoningEffort,
-                    decoration: InputDecoration(
-                      labelText: l10n.translationReasoningEffort,
-                    ),
-                    items: TranslationReasoningEffort.values
-                        .map(
-                          (value) => DropdownMenuItem(
-                            value: value,
-                            child: Text(
-                              value == TranslationReasoningEffort.unspecified
-                                  ? l10n.translationReasoningUnspecified
-                                  : value.name,
-                            ),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: busy
-                        ? null
-                        : (value) {
-                            if (value == null) return;
-                            reasoningEffort = value;
-                            formChanged();
-                          },
-                  ),
-                  TextField(
-                    controller: apiKey,
-                    enabled: !busy && !_loadingApiKey,
-                    obscureText: !_apiKeyVisible,
-                    autocorrect: false,
-                    enableSuggestions: false,
-                    enableIMEPersonalizedLearning: false,
-                    decoration: InputDecoration(
-                      labelText: l10n.apiKey,
-                      helperText: existing == null
-                          ? null
-                          : l10n.leaveEmptyToKeepCurrent,
-                      suffixIcon: IconButton(
-                        tooltip: _apiKeyVisible ? l10n.showLess : l10n.showMore,
-                        onPressed: busy || _loadingApiKey
-                            ? null
-                            : () => setState(
-                                () => _apiKeyVisible = !_apiKeyVisible,
-                              ),
-                        icon: Icon(
-                          _apiKeyVisible
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: ListTileTheme.merge(
+                        horizontalTitleGap: 0,
+                        child: CheckboxListTile.adaptive(
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                          visualDensity: const VisualDensity(vertical: -2),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          value: useFullEndpoint,
+                          title: Text(l10n.translationEndpointIsComplete),
+                          onChanged: busy
+                              ? null
+                              : (checked) {
+                                  if (checked == null) return;
+                                  useFullEndpoint = checked;
+                                  formChanged();
+                                },
                         ),
                       ),
                     ),
-                    onChanged: (_) => formChanged(),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: busy || _loadingApiKey ? null : test,
-                      icon: testing
-                          ? const SizedBox.square(
-                              dimension: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.science_outlined),
-                      label: Text(l10n.test),
+                    DropdownButtonFormField<TranslationProtocol>(
+                      initialValue: protocol,
+                      decoration: InputDecoration(
+                        labelText: l10n.translationProtocol,
+                      ),
+                      items: const [
+                        DropdownMenuItem(
+                          value: TranslationProtocol.chatCompletions,
+                          child: Text('Chat Completions'),
+                        ),
+                        DropdownMenuItem(
+                          value: TranslationProtocol.responses,
+                          child: Text('Responses'),
+                        ),
+                        DropdownMenuItem(
+                          value: TranslationProtocol.anthropicMessages,
+                          child: Text('Anthropic Messages'),
+                        ),
+                      ],
+                      onChanged: busy
+                          ? null
+                          : (value) {
+                              if (value == null || value == protocol) return;
+                              protocol = value;
+                              formChanged();
+                            },
                     ),
-                  ),
-                ],
-              ),
-            ),
-            if (existing != null) ...[
-              Divider(color: theme.dividerColor),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: OutlinedButton.icon(
-                  onPressed: busy ? null : delete,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: theme.colorScheme.error,
-                    side: BorderSide(color: theme.colorScheme.error),
-                  ),
-                  icon: deleting
-                      ? const SizedBox.square(
-                          dimension: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.delete_outline),
-                  label: Text(l10n.deleteTranslationProvider),
+                    TextField(
+                      controller: model,
+                      enabled: !busy,
+                      decoration: InputDecoration(labelText: l10n.model),
+                      onChanged: (_) => formChanged(),
+                    ),
+                    DropdownButtonFormField<TranslationReasoningEffort>(
+                      initialValue: reasoningEffort,
+                      decoration: InputDecoration(
+                        labelText: l10n.translationReasoningEffort,
+                      ),
+                      items: TranslationReasoningEffort.values
+                          .map(
+                            (value) => DropdownMenuItem(
+                              value: value,
+                              child: Text(
+                                value == TranslationReasoningEffort.unspecified
+                                    ? l10n.translationReasoningUnspecified
+                                    : value.name,
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: busy
+                          ? null
+                          : (value) {
+                              if (value == null) return;
+                              reasoningEffort = value;
+                              formChanged();
+                            },
+                    ),
+                    TextField(
+                      controller: apiKey,
+                      enabled: !busy && !_loadingApiKey,
+                      obscureText: !_apiKeyVisible,
+                      autocorrect: false,
+                      enableSuggestions: false,
+                      enableIMEPersonalizedLearning: false,
+                      decoration: InputDecoration(
+                        labelText: l10n.apiKey,
+                        helperText: existing == null
+                            ? null
+                            : l10n.leaveEmptyToKeepCurrent,
+                        suffixIcon: IconButton(
+                          tooltip: _apiKeyVisible
+                              ? l10n.showLess
+                              : l10n.showMore,
+                          onPressed: busy || _loadingApiKey
+                              ? null
+                              : () => setState(
+                                  () => _apiKeyVisible = !_apiKeyVisible,
+                                ),
+                          icon: Icon(
+                            _apiKeyVisible
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                          ),
+                        ),
+                      ),
+                      onChanged: (_) => formChanged(),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: busy || _loadingApiKey ? null : test,
+                        icon: testing
+                            ? const SizedBox.square(
+                                dimension: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.science_outlined),
+                        label: Text(l10n.test),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              if (existing != null) ...[
+                Divider(color: theme.dividerColor),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: OutlinedButton.icon(
+                    onPressed: busy ? null : delete,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: theme.colorScheme.error,
+                      side: BorderSide(color: theme.colorScheme.error),
+                    ),
+                    icon: deleting
+                        ? const SizedBox.square(
+                            dimension: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.delete_outline),
+                    label: Text(l10n.deleteTranslationProvider),
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

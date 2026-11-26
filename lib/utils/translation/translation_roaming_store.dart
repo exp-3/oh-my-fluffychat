@@ -9,6 +9,9 @@ abstract interface class TranslationRoamingStore {
 
   Future<void> set(String key, String value, int ttlSeconds);
 
+  /// Atomically preserves both the value and expiry of an existing record.
+  Future<bool> setIfAbsent(String key, String value, int ttlSeconds);
+
   Future<void> delete(String key);
 
   /// Abandon pending I/O while allowing a subsequent operation to reconnect.

@@ -401,6 +401,214 @@ void main() {
   );
 
   test(
+    'REST imports atomically preserve existing ciphertext and expiry',
+    () async {
+      final records = <String, String>{};
+      final lifetimes = <String, int>{};
+      final commands = <List<String>>[];
+      final config = _config.copyWith(
+        type: TranslationRoamingType.upstash,
+        endpoint: 'https://redis.example.invalid',
+      );
+      final service = TranslationRoamingService(
+        config: config,
+        secrets: _secrets,
+        store: RestTranslationRoamingStore(
+          endpoint: Uri.parse(config.endpoint),
+          token: _secrets.restToken,
+          clientFactory: () => MockClient((request) async {
+            expect(request.body, isNot(contains('private source text')));
+            expect(request.body, isNot(contains('private translated text')));
+            expect(request.body, isNot(contains(_psk)));
+            final command = (jsonDecode(request.body) as List).cast<String>();
+            commands.add(command);
+            final key = command[1];
+            if (command.first == 'SET') {
+              expect(command.sublist(3, 4), ['EX']);
+              expect(command.last, 'NX');
+              if (records.containsKey(key)) {
+                return http.Response(jsonEncode({'result': null}), 200);
+              }
+              records[key] = command[2];
+              lifetimes[key] = int.parse(command[4]);
+              return http.Response(jsonEncode({'result': 'OK'}), 200);
+            }
+            expect(command.first, 'GETEX');
+            lifetimes[key] = int.parse(command[3]);
+            return http.Response(jsonEncode({'result': records[key]}), 200);
+          }),
+        ),
+      );
+      addTearDown(service.dispose);
+      final first = await service.uploadIfAbsent(
+        source: 'private source text',
+        targetLanguage: 'zh',
+        translation: 'private translated text',
+        ttlSeconds: () => 123,
+        isValid: () => true,
+      );
+      expect(first.status, TranslationRoamingUploadStatus.uploaded);
+      final ciphertext = records.values.single;
+      final second = await service.uploadIfAbsent(
+        source: 'private source text',
+        targetLanguage: 'zh',
+        translation: 'replacement',
+        ttlSeconds: () => 3,
+        isValid: () => true,
+      );
+      expect(second.status, TranslationRoamingUploadStatus.existing);
+      expect(records.values.single, ciphertext);
+      expect(lifetimes.values.single, 123);
+      expect(commands.map((command) => command.first), ['SET', 'SET']);
+      expect(commands[0].sublist(3), ['EX', '123', 'NX']);
+      expect(commands[1].sublist(3), ['EX', '3', 'NX']);
+
+      final restored = await service.lookup(
+        source: 'private source text',
+        targetLanguage: 'zh',
+      );
+      expect(restored.translation, 'private translated text');
+      expect(lifetimes.values.single, config.ttlSeconds);
+    },
+  );
+
+  test('REST imports reject unexpected NX response types', () async {
+    for (final response in [false, 1, 'unexpected']) {
+      final store = RestTranslationRoamingStore(
+        endpoint: Uri.parse('https://redis.example.invalid'),
+        token: _secrets.restToken,
+        clientFactory: () => MockClient(
+          (_) async => http.Response(jsonEncode({'result': response}), 200),
+        ),
+      );
+      addTearDown(store.dispose);
+      await expectLater(
+        store.setIfAbsent('key', 'encrypted', 60),
+        throwsA(
+          isA<TranslationRoamingException>().having(
+            (error) => error.error,
+            'classification',
+            TranslationRoamingError.protocol,
+          ),
+        ),
+      );
+    }
+  });
+
+  test('imports recalculate remaining lifetime before retrying', () async {
+    final store = _MemoryStore()..failedWritesRemaining = 1;
+    var remaining = 120;
+    final service = TranslationRoamingService(
+      config: _config,
+      secrets: _secrets,
+      store: store,
+      delay: (_) async {
+        remaining = 60;
+      },
+    );
+    addTearDown(service.dispose);
+    final result = await service.uploadIfAbsent(
+      source: 'source',
+      targetLanguage: 'en',
+      translation: 'translated',
+      ttlSeconds: () => remaining,
+      isValid: () => true,
+    );
+    expect(result.status, TranslationRoamingUploadStatus.uploaded);
+    expect(store.conditionalLifetimes, [120, 60]);
+    expect(store.lifetimes.values.single, 60);
+    expect(store.reads, 0);
+  });
+
+  test('imports stop on expiry or invalidation before a retry', () async {
+    for (final expire in [true, false]) {
+      final store = _MemoryStore()..failWrites = true;
+      var remaining = 60;
+      var valid = true;
+      final service = TranslationRoamingService(
+        config: _config,
+        secrets: _secrets,
+        store: store,
+        delay: (_) async {
+          if (expire) {
+            remaining = 0;
+          } else {
+            valid = false;
+          }
+        },
+      );
+      addTearDown(service.dispose);
+      final result = await service.uploadIfAbsent(
+        source: 'source',
+        targetLanguage: 'en',
+        translation: 'translated',
+        ttlSeconds: () => remaining,
+        isValid: () => valid,
+      );
+      expect(result.status, TranslationRoamingUploadStatus.skipped);
+      expect(store.writes, 1);
+    }
+  });
+
+  test('imports report sanitized failures and skip oversized entries', () async {
+    final store = _MemoryStore()
+      ..failWrites = true
+      ..writeError = TranslationRoamingException(
+        TranslationRoamingError.authentication,
+        diagnosticDetails:
+            'denied $_psk ${_secrets.restToken} private-source private-result',
+      );
+    final service = TranslationRoamingService(
+      config: _config,
+      secrets: _secrets,
+      store: store,
+      delay: (_) async {},
+    );
+    addTearDown(service.dispose);
+    final result = await service.uploadIfAbsent(
+      source: 'private-source',
+      targetLanguage: 'en',
+      translation: 'private-result',
+      ttlSeconds: () => 60,
+      isValid: () => true,
+    );
+    expect(result.status, TranslationRoamingUploadStatus.failed);
+    expect(result.error?.error, TranslationRoamingError.authentication);
+    expect(
+      result.error?.diagnosticDetails,
+      allOf(
+        contains('denied'),
+        isNot(contains(_psk)),
+        isNot(contains(_secrets.restToken)),
+        isNot(contains('private-source')),
+        isNot(contains('private-result')),
+      ),
+    );
+    expect(store.writes, 2);
+    final oversized = await service.uploadIfAbsent(
+      source: 'source',
+      targetLanguage: 'en',
+      translation: List.filled(
+        TranslationRoamingCrypto.maxTranslationBytes + 1,
+        'a',
+      ).join(),
+      ttlSeconds: () => 60,
+      isValid: () => true,
+    );
+    expect(oversized.status, TranslationRoamingUploadStatus.skipped);
+    final invalidTtl = await service.uploadIfAbsent(
+      source: 'source',
+      targetLanguage: 'en',
+      translation: 'translated',
+      ttlSeconds: () => 9007199254740992,
+      isValid: () => true,
+    );
+    expect(invalidTtl.status, TranslationRoamingUploadStatus.failed);
+    expect(invalidTtl.error?.error, TranslationRoamingError.configuration);
+    expect(store.writes, 2);
+  });
+
+  test(
     'REST diagnostics retain errors without tokens or command arguments',
     () async {
       const key = 'private-record-key';
@@ -643,10 +851,14 @@ String _sealPayload(
 
 class _MemoryStore implements TranslationRoamingStore {
   final records = <String, String>{};
+  final lifetimes = <String, int>{};
+  final conditionalLifetimes = <int>[];
   Completer<String?>? readGate;
   var reads = 0;
   var writes = 0;
   var failWrites = false;
+  var failedWritesRemaining = 0;
+  TranslationRoamingException? writeError;
   var disposed = false;
 
   @override
@@ -665,6 +877,22 @@ class _MemoryStore implements TranslationRoamingStore {
       );
     }
     records[key] = value;
+    lifetimes[key] = ttlSeconds;
+  }
+
+  @override
+  Future<bool> setIfAbsent(String key, String value, int ttlSeconds) async {
+    writes++;
+    conditionalLifetimes.add(ttlSeconds);
+    if (failWrites || failedWritesRemaining > 0) {
+      if (failedWritesRemaining > 0) failedWritesRemaining--;
+      throw writeError ??
+          const TranslationRoamingException(TranslationRoamingError.connection);
+    }
+    if (records.containsKey(key)) return false;
+    records[key] = value;
+    lifetimes[key] = ttlSeconds;
+    return true;
   }
 
   @override

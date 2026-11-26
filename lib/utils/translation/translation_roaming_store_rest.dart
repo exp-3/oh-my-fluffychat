@@ -123,6 +123,21 @@ class RestTranslationRoamingStore implements TranslationRoamingStore {
   }
 
   @override
+  Future<bool> setIfAbsent(String key, String value, int ttlSeconds) async {
+    final response = await _execute([
+      'SET',
+      key,
+      value,
+      'EX',
+      ttlSeconds.toString(),
+      'NX',
+    ]);
+    if (response == 'OK') return true;
+    if (response == null) return false;
+    throw const TranslationRoamingException(TranslationRoamingError.protocol);
+  }
+
+  @override
   Future<void> delete(String key) async {
     final response = await _execute(['DEL', key]);
     if (response is! int) {

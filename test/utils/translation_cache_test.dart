@@ -59,11 +59,167 @@ void main() {
       final result = await cache.cleanInvalid(
         (_, _, _) async => throw StateError('must not resolve source'),
       );
+      final exported = await cache.exportPage(
+        (_, _, _) async => throw StateError('must not resolve source'),
+      );
       expect(result.cacheExisted, isFalse);
+      expect(exported.entries, isEmpty);
+      expect(exported.nextCursor, isNull);
       expect(backend.createCalls, 0);
       expect(backend.openExistingCalls, 0);
       expect(secrets.readCalls, 0);
       expect(secrets.values, isEmpty);
+    },
+  );
+
+  test('export pages skip invalid rows without writes', () async {
+    final sentAt = DateTime.utc(2026, 1, 1);
+    for (final event in [r'$a', r'$b', r'$c', r'$d']) {
+      await cache.write(key(event: event), 'translated');
+    }
+    final persisted = jsonEncode(
+      backend.rows.map((store, rows) => MapEntry(store.name, rows)),
+    );
+    Future<TranslationLocalSource> resolve(
+      String user,
+      String room,
+      String event,
+    ) async => switch (event) {
+      r'$a' => const TranslationLocalSource.valid('private source'),
+      r'$b' => TranslationLocalSource.obsolete,
+      r'$c' => TranslationLocalSource.valid(
+        'changed source',
+        messageTimestamp: sentAt,
+      ),
+      _ => TranslationLocalSource.valid(
+        'private source',
+        messageTimestamp: sentAt,
+      ),
+    };
+    Object? cursor;
+    final entries = <TranslationCacheExportEntry>[];
+    var pages = 0;
+    do {
+      final page = await cache.exportPage(resolve, after: cursor, pageSize: 1);
+      entries.addAll(page.entries);
+      cursor = page.nextCursor;
+      pages++;
+    } while (cursor != null);
+    expect(pages, 5);
+    expect(entries, hasLength(1));
+    final entry = entries.single;
+    expect(entry.reference.eventId, r'$d');
+    expect(entry.reference.referenceKey, key(event: r'$d').referenceKey);
+    expect(entry.reference.userId, '@alice:test');
+    expect(entry.reference.roomId, '!room:test');
+    expect(entry.key.source, 'private source');
+    expect(entry.translation, 'translated');
+    expect(entry.messageTimestamp, sentAt);
+    expect(entry.writtenAt, isNotNull);
+    expect(
+      jsonEncode(backend.rows.map((store, rows) => MapEntry(store.name, rows))),
+      persisted,
+    );
+  });
+
+  test('export refresh reads the latest translation', () async {
+    final sentAt = DateTime.utc(2026, 1, 1);
+    Future<TranslationLocalSource> resolve(
+      String _,
+      String _,
+      String _,
+    ) async => TranslationLocalSource.valid(
+      'private source',
+      messageTimestamp: sentAt,
+    );
+    await cache.write(key(), 'first');
+    final exported = (await cache.exportPage(resolve)).entries.single;
+    await cache.write(key(), 'latest');
+    final refreshed = await cache.refreshExportEntry(
+      exported.reference,
+      resolve,
+    );
+    expect(exported.translation, 'first');
+    expect(refreshed?.translation, 'latest');
+    expect(refreshed?.messageTimestamp, sentAt);
+  });
+
+  test('export refresh rejects edits and invalidated generations', () async {
+    final sentAt = DateTime.utc(2026, 1, 1);
+    var source = 'private source';
+    Future<TranslationLocalSource> resolve(
+      String _,
+      String _,
+      String _,
+    ) async => TranslationLocalSource.valid(source, messageTimestamp: sentAt);
+    await cache.write(key(), 'first');
+    final exported = (await cache.exportPage(resolve)).entries.single;
+    source = 'edited source';
+    expect(await cache.refreshExportEntry(exported.reference, resolve), isNull);
+    await cache.write(key(source: source), 'edited');
+    expect(await cache.refreshExportEntry(exported.reference, resolve), isNull);
+
+    final edited = (await cache.exportPage(resolve)).entries.single;
+    final other = TranslationCache(secrets, backend);
+    await other.invalidateEventIfExists('!room:test', r'$event');
+    await other.write(key(source: source), 'recreated');
+    expect(await cache.refreshExportEntry(edited.reference, resolve), isNull);
+  });
+
+  test('export references cannot survive a cache replacement', () async {
+    final sentAt = DateTime.utc(2026, 1, 1);
+    Future<TranslationLocalSource> resolve(
+      String _,
+      String _,
+      String _,
+    ) async => TranslationLocalSource.valid(
+      'private source',
+      messageTimestamp: sentAt,
+    );
+    await cache.write(key(), 'first');
+    final exported = (await cache.exportPage(resolve)).entries.single;
+    final other = TranslationCache(secrets, backend);
+    await other.deleteIfExists();
+    await other.write(key(), 'replacement');
+    expect(await cache.refreshExportEntry(exported.reference, resolve), isNull);
+  });
+
+  test('export respects cancellation during source resolution', () async {
+    final sentAt = DateTime.utc(2026, 1, 1);
+    await cache.write(key(), 'first');
+    var current = true;
+    final page = await cache.exportPage((_, _, _) async {
+      current = false;
+      return TranslationLocalSource.valid(
+        'private source',
+        messageTimestamp: sentAt,
+      );
+    }, isValid: () => current);
+    expect(page.entries, isEmpty);
+    expect(await cache.read(key()), 'first');
+  });
+
+  test(
+    'export guard rejects synchronous invalidation before cleanup',
+    () async {
+      final sentAt = DateTime.utc(2026, 1, 1);
+      Future<TranslationLocalSource> resolve(
+        String _,
+        String _,
+        String _,
+      ) async => TranslationLocalSource.valid(
+        'private source',
+        messageTimestamp: sentAt,
+      );
+      await cache.write(key(), 'first');
+      final reference = (await cache.exportPage(
+        resolve,
+      )).entries.single.reference;
+      expect(cache.isExportReferenceCurrent(reference), isTrue);
+      final cleanup = cache.invalidateEventIfExists('!room:test', r'$event');
+      expect(cache.isExportReferenceCurrent(reference), isFalse);
+      await cleanup;
+      expect(await cache.refreshExportEntry(reference, resolve), isNull);
     },
   );
 

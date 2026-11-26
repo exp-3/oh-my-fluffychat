@@ -12,6 +12,7 @@ import 'package:fluffychat/utils/translation/translation_languages.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
 import 'package:fluffychat/utils/translation/translation_preferences.dart';
 import 'package:fluffychat/utils/translation/translation_roaming.dart';
+import 'package:fluffychat/utils/translation/translation_roaming_upload.dart';
 import 'package:fluffychat/utils/translation/translation_runtime.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:matrix/matrix.dart';
@@ -50,6 +51,71 @@ const _inputSendModePreference = 'chat.fluffy.translation.input.send_mode';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  test(
+    'manual roaming imports require both enable switches and valid secrets',
+    () async {
+      final fixture = await _RuntimeFixture.create(
+        roamingFactory: _ImmediateRoaming.new,
+      );
+      addTearDown(fixture.runtime.dispose);
+      expect(fixture.runtime.canUploadLocalTranslations, isFalse);
+      await expectLater(
+        fixture.runtime.createRoamingUploadSession(),
+        throwsA(isA<TranslationRoamingException>()),
+      );
+      await _enableRoaming(fixture.runtime);
+      expect(fixture.runtime.canUploadLocalTranslations, isTrue);
+      final session = await fixture.runtime.createRoamingUploadSession();
+      addTearDown(session.dispose);
+      await fixture.runtime.setEnabled(false);
+      expect(session.phase, TranslationRoamingUploadPhase.stopped);
+      expect(fixture.runtime.canUploadLocalTranslations, isFalse);
+    },
+  );
+
+  test(
+    'manual import snapshots stop on configuration and cache safety changes',
+    () async {
+      final fixture = await _RuntimeFixture.create(
+        roamingFactory: _ImmediateRoaming.new,
+      );
+      addTearDown(fixture.runtime.dispose);
+      await _enableRoaming(fixture.runtime);
+      final first = await fixture.runtime.createRoamingUploadSession();
+      addTearDown(first.dispose);
+      await fixture.runtime.setRoamingEnabled(false);
+      expect(first.phase, TranslationRoamingUploadPhase.stopped);
+
+      await fixture.runtime.setRoamingEnabled(true);
+      final second = await fixture.runtime.createRoamingUploadSession();
+      addTearDown(second.dispose);
+      await fixture.runtime.clearCache();
+      expect(second.phase, TranslationRoamingUploadPhase.stopped);
+      expect(fixture.backend.createCalls, 0);
+    },
+  );
+
+  test(
+    'manual import cannot export a cache reference without a local event',
+    () async {
+      final fixture = await _RuntimeFixture.create(
+        roamingFactory: _ImmediateRoaming.new,
+      );
+      addTearDown(fixture.runtime.dispose);
+      await _enableRoaming(fixture.runtime);
+      final event = _event(fixture);
+      fixture.client.rooms = [event.room];
+      fixture.runtime.attachClient(fixture.client);
+      await fixture.runtime.cache.write(_eventCacheKey(event), 'local only');
+      final session = await fixture.runtime.createRoamingUploadSession();
+      addTearDown(session.dispose);
+      await session.scan();
+      expect(session.phase, TranslationRoamingUploadPhase.ready);
+      expect(session.rooms, isEmpty);
+      expect(fixture.backend.records, hasLength(1));
+    },
+  );
 
   test(
     'room preferences use nullable overrides and account-scoped languages',

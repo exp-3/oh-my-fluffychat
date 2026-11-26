@@ -11,6 +11,8 @@ enum TranslationRoamingType { redis, upstash }
 
 enum TranslationRoamingLookupStatus { hit, miss, unavailable }
 
+enum TranslationRoamingUploadStatus { uploaded, existing, skipped, failed }
+
 enum TranslationRoamingError {
   configuration,
   unsupportedPlatform,
@@ -32,6 +34,13 @@ class TranslationRoamingException implements TranslationDiagnosticException {
 
   @override
   String toString() => 'TranslationRoamingException: ${error.name}';
+}
+
+class TranslationRoamingUploadResult {
+  final TranslationRoamingUploadStatus status;
+  final TranslationRoamingException? error;
+
+  const TranslationRoamingUploadResult(this.status, {this.error});
 }
 
 class TranslationRoamingLookup {
