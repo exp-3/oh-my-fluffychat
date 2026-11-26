@@ -7,6 +7,8 @@
     "translationCacheUpgradeFailed": "譯文快取升級失敗",
     "translationRoaming": "譯文漫遊",
     "translationRoamingDescription": "透過外部快取服務喺裝置之間分享譯文，減少重複翻譯，從而節省 AI 服務費用。譯文會喺裝置上用預先共用金鑰做端對端加密，金鑰唔會上傳。每部裝置都要用相同嘅連線設定同金鑰。",
+    "translationRoamingReadOnly": "唯讀模式（唔上傳譯文）",
+    "translationRoamingReadOnlyUploadUnavailable": "唯讀模式下唔可以上傳譯文。",
     "translationRoamingConnectionType": "連線類型",
     "translationRoamingNative": "Redis 原生",
     "translationRoamingUpstash": "Upstash 風格",

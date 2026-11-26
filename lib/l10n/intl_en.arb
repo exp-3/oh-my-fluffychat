@@ -17,6 +17,14 @@
     "translationCacheUpgradeFailed": "Translation cache upgrade failed",
     "translationRoaming": "Translation roaming",
     "translationRoamingDescription": "Use an external caching service to share translations between devices, reducing repeated translations to save on AI service costs. Translations are end-to-end encrypted on your devices with a pre-shared key that is never uploaded. Use the same connection settings and key on each device.",
+    "translationRoamingReadOnly": "Read-only mode (do not upload translations)",
+    "translationRoamingReadOnlyUploadUnavailable": "Translations cannot be uploaded in read-only mode.",
+    "@translationRoamingReadOnly": {
+        "description": "Checkbox label for translation roaming read-only mode, which disables automatic and manual uploads."
+    },
+    "@translationRoamingReadOnlyUploadUnavailable": {
+        "description": "Tooltip explaining why uploading local translations is disabled in read-only mode."
+    },
     "translationRoamingConnectionType": "Connection type",
     "translationRoamingNative": "Redis native",
     "translationRoamingUpstash": "Upstash style",

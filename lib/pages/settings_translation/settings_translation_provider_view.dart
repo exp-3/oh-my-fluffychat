@@ -184,7 +184,7 @@ class SettingsTranslationProviderView extends StatelessWidget {
                     ),
                     SizedBox(
                       width: double.infinity,
-                      child: OutlinedButton.icon(
+                      child: FilledButton.tonalIcon(
                         onPressed: busy || controller.loadingApiKey
                             ? null
                             : controller.test,

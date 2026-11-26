@@ -8,6 +8,8 @@
     "translationCacheUpgradeFailed": "فشلت ترقية ذاكرة التخزين المؤقت للترجمة",
     "translationRoaming": "تجوال الترجمات",
     "translationRoamingDescription": "استخدم خدمة تخزين مؤقت خارجية لمشاركة الترجمات بين الأجهزة، مما يقلل تكرار الترجمة ويوفّر تكاليف خدمات الذكاء الاصطناعي. تُشفَّر الترجمات من طرف إلى طرف على أجهزتك بمفتاح مشترك مسبقًا لا يُرفع أبدًا. استخدم إعدادات الاتصال والمفتاح نفسيهما على كل جهاز.",
+    "translationRoamingReadOnly": "وضع القراءة فقط (دون رفع الترجمات)",
+    "translationRoamingReadOnlyUploadUnavailable": "لا يمكن رفع الترجمات في وضع القراءة فقط.",
     "translationRoamingConnectionType": "نوع الاتصال",
     "translationRoamingNative": "Redis الأصلي",
     "translationRoamingUpstash": "نمط Upstash",

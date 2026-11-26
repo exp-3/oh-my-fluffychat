@@ -31,6 +31,7 @@ class TranslationRoamingSettingsController
   late TranslationRoamingConfig _saved;
   late TranslationRoamingType _type;
   late bool _enabled;
+  late bool _readOnly;
   late bool _tls;
   late final TextEditingController _host;
   late final TextEditingController _port;
@@ -63,6 +64,7 @@ class TranslationRoamingSettingsController
 
   List<Object> get _formValues => [
     _enabled,
+    _readOnly,
     _type,
     _tls,
     _host.text,
@@ -83,6 +85,7 @@ class TranslationRoamingSettingsController
     _saved = widget.runtime.roamingConfig;
     _type = _saved.type;
     _enabled = _saved.enabled;
+    _readOnly = _saved.readOnly;
     _tls = _saved.tls;
     _host = TextEditingController(text: _saved.host);
     _port = TextEditingController(text: _saved.port.toString());
@@ -128,6 +131,7 @@ class TranslationRoamingSettingsController
       _type = config.type;
       _tls = config.tls;
       _enabled = config.enabled;
+      _readOnly = config.readOnly;
       _host.text = config.host;
       _port.text = config.port.toString();
       _username.text = config.username;
@@ -164,6 +168,7 @@ class TranslationRoamingSettingsController
     if (port == null || database == null || days == null) return null;
     return _saved.copyWith(
       enabled: _enabled,
+      readOnly: _readOnly,
       type: _type,
       host: _host.text.trim(),
       port: port,
@@ -324,7 +329,7 @@ class TranslationRoamingSettingsController
     }
   }
 
-  void showUploadSaveHint() {
+  void showUploadHint() {
     _uploadTooltip.currentState?.ensureTooltipVisible();
   }
 
@@ -336,6 +341,7 @@ class TranslationRoamingSettingsController
   bool get saveFailed => _saveFailed;
   bool get testing => _testing;
   bool get enabled => _enabled;
+  bool get readOnly => _readOnly;
   bool get tls => _tls;
   TranslationRoamingType get type => _type;
   bool get passwordVisible => _passwordVisible;
@@ -358,7 +364,9 @@ class TranslationRoamingSettingsController
   bool get uploadNeedsSave => _dirty || !_hasSavedKey;
 
   bool get canUpload {
-    if (_fieldsDisabled || uploadNeedsSave || unsupported) return false;
+    if (_fieldsDisabled || _readOnly || uploadNeedsSave || unsupported) {
+      return false;
+    }
     final draft = _draft;
     return draft != null &&
         draft.isValid &&
@@ -375,6 +383,12 @@ class TranslationRoamingSettingsController
   void changeTls(bool? value) {
     if (value == null || value == _tls) return;
     _tls = value;
+    settingsChanged();
+  }
+
+  void changeReadOnly(bool? value) {
+    if (_fieldsDisabled || value == null || value == _readOnly) return;
+    _readOnly = value;
     settingsChanged();
   }
 

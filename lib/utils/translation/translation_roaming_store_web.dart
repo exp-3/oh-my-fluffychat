@@ -18,6 +18,9 @@ class NativeTranslationRoamingStore implements TranslationRoamingStore {
   );
 
   @override
+  Future<String?> get(String key) async => _unsupported();
+
+  @override
   Future<String?> getEx(String key, int ttlSeconds) async => _unsupported();
 
   @override

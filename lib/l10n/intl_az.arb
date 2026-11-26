@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "Tərcümə keşinin yenilənməsi uğursuz oldu",
     "translationRoaming": "Tərcümələrin cihazlararası paylaşılması",
     "translationRoamingDescription": "Tərcümələri cihazlar arasında paylaşmaq üçün xarici keş xidmətindən istifadə edin; təkrar tərcümələri azaltmaqla süni intellekt xidmətlərinin xərclərinə qənaət edin. Tərcümələr cihazlarınızda əvvəlcədən paylaşılmış və heç vaxt serverə yüklənməyən açarla başdan-başa şifrələnir. Hər cihazda eyni bağlantı parametrlərindən və açardan istifadə edin.",
+    "translationRoamingReadOnly": "Yalnız oxuma rejimi (tərcümələri serverə göndərməyin)",
+    "translationRoamingReadOnlyUploadUnavailable": "Yalnız oxuma rejimində tərcümələr serverə göndərilə bilməz.",
     "translationRoamingConnectionType": "Bağlantı növü",
     "translationRoamingNative": "Birbaşa Redis",
     "translationRoamingUpstash": "Upstash üslubu",

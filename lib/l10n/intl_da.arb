@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "Opgradering af oversættelsescachen mislykkedes",
     "translationRoaming": "Deling af oversættelser",
     "translationRoamingDescription": "Brug en ekstern cachetjeneste til at dele oversættelser mellem enheder, så du sparer udgifter til AI-tjenester ved at mindske gentagne oversættelser. Oversættelserne krypteres fra ende til ende på dine enheder med en forhåndsdelt nøgle, som aldrig uploades. Brug de samme forbindelsesindstillinger og den samme nøgle på alle enheder.",
+    "translationRoamingReadOnly": "Skrivebeskyttet tilstand (upload ikke oversættelser)",
+    "translationRoamingReadOnlyUploadUnavailable": "Oversættelser kan ikke uploades i skrivebeskyttet tilstand.",
     "translationRoamingConnectionType": "Forbindelsestype",
     "translationRoamingNative": "Direkte Redis",
     "translationRoamingUpstash": "Upstash-stil",

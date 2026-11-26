@@ -7,6 +7,8 @@
     "translationCacheUpgradeFailed": "Pemutakhiran cache terjemahan gagal",
     "translationRoaming": "Berbagi terjemahan antarperangkat",
     "translationRoamingDescription": "Gunakan layanan cache eksternal untuk membagikan terjemahan antarperangkat dan menghemat biaya layanan AI dengan mengurangi penerjemahan berulang. Terjemahan dienkripsi dari ujung ke ujung di perangkat Anda menggunakan kunci yang telah dibagikan sebelumnya dan tidak pernah diunggah. Gunakan pengaturan koneksi dan kunci yang sama di setiap perangkat.",
+    "translationRoamingReadOnly": "Mode hanya baca (jangan unggah terjemahan)",
+    "translationRoamingReadOnlyUploadUnavailable": "Terjemahan tidak dapat diunggah dalam mode hanya baca.",
     "translationRoamingConnectionType": "Jenis koneksi",
     "translationRoamingNative": "Redis langsung",
     "translationRoamingUpstash": "Gaya Upstash",

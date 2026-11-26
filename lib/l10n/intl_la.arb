@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "Renovatio memoriae translationum defecit",
     "translationRoaming": "Translationes inter machinas",
     "translationRoamingDescription": "Ministerio externo memoriae temporariae utere ad translationes inter machinas communicandas, quo translationibus repetitis imminutis impensas ministeriorum intellegentiae artificialis minuas. Translationes in machinis tuis ab extremo ad extremum cryptantur clave ante communicata, quae numquam ad servitorem mittitur. Eadem configuratione conexionis eademque clave in unaquaque machina utere.",
+    "translationRoamingReadOnly": "Modus tantum legendi (translationes ne imponantur)",
+    "translationRoamingReadOnlyUploadUnavailable": "Translationes in modo tantum legendi imponi non possunt.",
     "translationRoamingConnectionType": "Genus conexionis",
     "translationRoamingNative": "Redis directum",
     "translationRoamingUpstash": "Forma Upstash",

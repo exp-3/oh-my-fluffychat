@@ -8,6 +8,8 @@
     "translationCacheUpgradeFailed": "Çeviri önbelleği yükseltilemedi",
     "translationRoaming": "Çeviri dolaşımı",
     "translationRoamingDescription": "Çevirileri aygıtlar arasında paylaşmak için bir dış önbellek hizmeti kullanarak yinelenen çevirileri azaltın ve böylece yapay zekâ hizmeti maliyetlerinden tasarruf edin. Çeviriler, aygıtlarınızda önceden paylaşılan ve hiçbir zaman sunucuya yüklenmeyen bir anahtarla uçtan uca şifrelenir. Her aygıtta aynı bağlantı ayarlarını ve anahtarı kullanın.",
+    "translationRoamingReadOnly": "Salt okunur mod (çevirileri yükleme)",
+    "translationRoamingReadOnlyUploadUnavailable": "Salt okunur modda çeviriler yüklenemez.",
     "translationRoamingConnectionType": "Bağlantı türü",
     "translationRoamingNative": "Doğrudan Redis",
     "translationRoamingUpstash": "Upstash tarzı",

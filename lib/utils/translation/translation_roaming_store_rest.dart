@@ -97,6 +97,13 @@ class RestTranslationRoamingStore implements TranslationRoamingStore {
   static Object? _decode(String value) => jsonDecode(value);
 
   @override
+  Future<String?> get(String key) async {
+    final response = await _execute(['GET', key]);
+    if (response == null || response is String) return response as String?;
+    throw const TranslationRoamingException(TranslationRoamingError.protocol);
+  }
+
+  @override
   Future<String?> getEx(String key, int ttlSeconds) async {
     final response = await _execute([
       'GETEX',

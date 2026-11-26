@@ -7,6 +7,8 @@
     "translationCacheUpgradeFailed": "Actualizarea memoriei cache pentru traduceri a eșuat",
     "translationRoaming": "Partajarea traducerilor",
     "translationRoamingDescription": "Folosește un serviciu extern de cache pentru a partaja traduceri între dispozitive, reducând traducerile repetate și, astfel, costurile serviciului AI. Traducerile sunt criptate de la un capăt la altul pe dispozitivele tale cu o cheie partajată în prealabil, care nu este niciodată încărcată pe server. Folosește aceleași setări de conexiune și aceeași cheie pe fiecare dispozitiv.",
+    "translationRoamingReadOnly": "Mod doar pentru citire (nu încărca traduceri)",
+    "translationRoamingReadOnlyUploadUnavailable": "Traducerile nu pot fi încărcate în modul doar pentru citire.",
     "translationRoamingConnectionType": "Tipul conexiunii",
     "translationRoamingNative": "Redis nativ",
     "translationRoamingUpstash": "Stil Upstash",

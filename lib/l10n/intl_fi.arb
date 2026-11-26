@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "Käännösvälimuistin päivitys epäonnistui",
     "translationRoaming": "Käännösten jakaminen",
     "translationRoamingDescription": "Käytä ulkoista välimuistipalvelua käännösten jakamiseen laitteiden välillä ja vähennä toistuvia käännöksiä säästääksesi tekoälypalveluiden kustannuksissa. Käännökset salataan laitteillasi päästä päähän ennalta jaetulla avaimella, jota ei koskaan lähetetä palvelimelle. Käytä samoja yhteysasetuksia ja samaa avainta kaikilla laitteilla.",
+    "translationRoamingReadOnly": "Vain luku -tila (älä lähetä käännöksiä)",
+    "translationRoamingReadOnlyUploadUnavailable": "Käännöksiä ei voi lähettää vain luku -tilassa.",
     "translationRoamingConnectionType": "Yhteystyyppi",
     "translationRoamingNative": "Natiivi Redis",
     "translationRoamingUpstash": "Upstash-tyyli",

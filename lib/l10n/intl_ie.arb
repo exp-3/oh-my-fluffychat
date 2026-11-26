@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "Li actualisation del cache de traduction ne successat",
     "translationRoaming": "Partir traductiones",
     "translationRoamingDescription": "Usa un extern servicie de cache por partir traductiones inter aparates, reductent traductiones repetit por economisar li custas de servicies de AI. Li traductiones es ciffrat de extrem a extrem sur vor aparates per un clave prepartit quel nequande es cargat al servitor. Usa li sam parametres de conexion e li sam clave sur chascun aparate.",
+    "translationRoamingReadOnly": "Mode de sol letion (ne incargar traductiones)",
+    "translationRoamingReadOnlyUploadUnavailable": "Traductiones ne posse esser incargat in mode de sol letion.",
     "translationRoamingConnectionType": "Tip de conexion",
     "translationRoamingNative": "Redis nativ",
     "translationRoamingUpstash": "Stil Upstash",

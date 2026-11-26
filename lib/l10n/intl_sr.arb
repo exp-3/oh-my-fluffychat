@@ -7,6 +7,8 @@
     "translationCacheUpgradeFailed": "Надоградња кеша превода није успела",
     "translationRoaming": "Дељење превода између уређаја",
     "translationRoamingDescription": "Користите спољну услугу кеширања за дељење превода између уређаја, чиме се смањују поновљени преводи, а тиме и трошкови услуге вештачке интелигенције. Преводи се на вашим уређајима шифрују од краја до краја унапред дељеним кључем који се никада не отпрема на сервер. На сваком уређају користите иста подешавања везе и исти кључ.",
+    "translationRoamingReadOnly": "Режим само за читање (без отпремања превода)",
+    "translationRoamingReadOnlyUploadUnavailable": "Преводи се не могу отпремати у режиму само за читање.",
     "translationRoamingConnectionType": "Врста везе",
     "translationRoamingNative": "Изворни Redis",
     "translationRoamingUpstash": "Upstash стил",

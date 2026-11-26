@@ -8,6 +8,8 @@
     "translationCacheUpgradeFailed": "Der Übersetzungszwischenspeicher konnte nicht aktualisiert werden",
     "translationRoaming": "Geräteübergreifende Übersetzungen",
     "translationRoamingDescription": "Nutzen Sie einen externen Cache-Dienst, um Übersetzungen zwischen Geräten zu teilen und durch weniger wiederholte Übersetzungen Kosten für KI-Dienste zu sparen. Die Übersetzungen werden auf Ihren Geräten mit einem vorab geteilten Schlüssel Ende-zu-Ende verschlüsselt; der Schlüssel wird niemals hochgeladen. Verwenden Sie auf jedem Gerät dieselben Verbindungseinstellungen und denselben Schlüssel.",
+    "translationRoamingReadOnly": "Nur-Lese-Modus (keine Übersetzungen hochladen)",
+    "translationRoamingReadOnlyUploadUnavailable": "Im Nur-Lese-Modus können keine Übersetzungen hochgeladen werden.",
     "translationRoamingConnectionType": "Verbindungstyp",
     "translationRoamingNative": "Natives Redis",
     "translationRoamingUpstash": "Upstash-Stil",

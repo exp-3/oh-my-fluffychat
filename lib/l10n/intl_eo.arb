@@ -7,6 +7,8 @@
     "translationCacheUpgradeFailed": "Ĝisdatigo de la traduka kaŝmemoro malsukcesis",
     "translationRoaming": "Traduka vagado",
     "translationRoamingDescription": "Uzu eksteran kaŝmemoran servon por kunhavigi tradukojn inter aparatoj kaj redukti ripetajn tradukojn por ŝpari kostojn de servoj de artefarita intelekto. La tradukoj estas ĉifritaj tutvoje sur viaj aparatoj per antaŭe kunhavigita ŝlosilo, kiu neniam estas alŝutata. Uzu la samajn konektajn agordojn kaj ŝlosilon sur ĉiu aparato.",
+    "translationRoamingReadOnly": "Nurlega reĝimo (ne alŝuti tradukojn)",
+    "translationRoamingReadOnlyUploadUnavailable": "Tradukoj ne povas esti alŝutitaj en nurlega reĝimo.",
     "translationRoamingConnectionType": "Tipo de konekto",
     "translationRoamingNative": "Denaska Redis",
     "translationRoamingUpstash": "Stilo de Upstash",

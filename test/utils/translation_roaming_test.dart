@@ -28,9 +28,456 @@ const _secrets = TranslationRoamingSecrets(
   restToken: 'rest-authentication',
   preSharedKey: _psk,
 );
+const _getExDisabledKey = 'chat.fluffy.translation.roaming.getex_disabled';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  test('read-only configuration round-trips and defaults to writable', () {
+    expect(TranslationRoamingConfig.fromJson({}).readOnly, isFalse);
+    final config = _config.copyWith(readOnly: true);
+    expect(TranslationRoamingConfig.fromJson(config.toJson()).readOnly, isTrue);
+    expect(config.copyWith(enabled: false).readOnly, isTrue);
+    expect(config.copyWith(readOnly: false).readOnly, isFalse);
+  });
+
+  test('read-only roaming never uploads or writes test data', () async {
+    final store = _MemoryStore();
+    final writable = TranslationRoamingService(
+      config: _config,
+      secrets: _secrets,
+      store: store,
+    );
+    addTearDown(writable.dispose);
+    await writable.upload(
+      source: 'source',
+      targetLanguage: 'en',
+      translation: 'shared translation',
+      isValid: () => true,
+    );
+    final writes = store.writes;
+    store.failWrites = true;
+    final service = TranslationRoamingService(
+      config: _config.copyWith(readOnly: true),
+      secrets: _secrets,
+      store: store,
+    );
+    addTearDown(service.dispose);
+    expect(service.available, isTrue);
+    final result = await service.lookup(source: 'source', targetLanguage: 'en');
+    expect(result.translation, 'shared translation');
+    await service.upload(
+      source: 'new source',
+      targetLanguage: 'en',
+      translation: 'new translation',
+      isValid: () => true,
+    );
+    final imported = await service.uploadIfAbsent(
+      source: 'local source',
+      targetLanguage: 'en',
+      translation: 'local translation',
+      ttlSeconds: () => 60,
+      isValid: () => true,
+    );
+    expect(imported.status, TranslationRoamingUploadStatus.skipped);
+    await service.testConnection();
+    expect(store.writes, writes);
+    expect(store.reads, 1);
+    expect(store.gets, 1);
+    expect(store.getKeys.single, startsWith('${_config.keyPrefix}:v1:en:'));
+  });
+
+  test('read-only connection tests still reject failed reads', () async {
+    final service = TranslationRoamingService(
+      config: _config.copyWith(readOnly: true),
+      secrets: _secrets,
+      store: _MemoryStore()..failGets = true,
+    );
+    addTearDown(service.dispose);
+    await expectLater(
+      service.testConnection(),
+      throwsA(isA<TranslationRoamingException>()),
+    );
+  });
+
+  test('ten confirmed fallbacks latch across services', () async {
+    SharedPreferences.setMockInitialValues({});
+    final preferences = await SharedPreferences.getInstance();
+    final state = TranslationRoamingReadState(preferences);
+    final firstStore = _MemoryStore()..failGetEx = true;
+    final first = TranslationRoamingService(
+      config: _config,
+      secrets: _secrets,
+      store: firstStore,
+      readState: state,
+    );
+    final secondStore = _MemoryStore()..failGetEx = true;
+    final second = TranslationRoamingService(
+      config: _config.copyWith(readOnly: true),
+      secrets: _secrets,
+      store: secondStore,
+      readState: state,
+    );
+    addTearDown(first.dispose);
+    addTearDown(second.dispose);
+    for (var i = 0; i < 9; i++) {
+      final service = i.isEven ? first : second;
+      final result = await service.lookup(
+        source: 'source $i',
+        targetLanguage: 'en',
+      );
+      expect(result.status, TranslationRoamingLookupStatus.miss);
+      expect(preferences.getKeys(), isEmpty);
+      expect(state.getExDisabled, isFalse);
+    }
+    expect(TranslationRoamingReadState(preferences).getExDisabled, isFalse);
+    await second.lookup(source: 'tenth source', targetLanguage: 'en');
+    expect(state.getExDisabled, isTrue);
+    expect(preferences.getKeys(), {_getExDisabledKey});
+    expect(preferences.get(_getExDisabledKey), isTrue);
+    for (var i = 0; i < 3; i++) {
+      await first.lookup(source: 'latched source $i', targetLanguage: 'en');
+    }
+    expect(firstStore.reads + secondStore.reads, 10);
+    expect(firstStore.gets + secondStore.gets, 13);
+    final restoredStore = _MemoryStore();
+    final restored = TranslationRoamingService(
+      config: _config,
+      secrets: _secrets,
+      store: restoredStore,
+      readState: TranslationRoamingReadState(preferences),
+    );
+    addTearDown(restored.dispose);
+    await restored.lookup(source: 'after restart', targetLanguage: 'en');
+    expect(restoredStore.reads, 0);
+    expect(restoredStore.gets, 1);
+  });
+
+  test('only confirmed GETEX failures contribute to the latch', () async {
+    final state = TranslationRoamingReadState();
+    final store = _MemoryStore()
+      ..failGetEx = true
+      ..failGets = true;
+    final service = TranslationRoamingService(
+      config: _config,
+      secrets: _secrets,
+      store: store,
+      readState: state,
+    );
+    addTearDown(service.dispose);
+    for (var i = 0; i < 12; i++) {
+      final result = await service.lookup(
+        source: 'failed $i',
+        targetLanguage: 'en',
+      );
+      expect(result.status, TranslationRoamingLookupStatus.unavailable);
+    }
+    expect(state.getExDisabled, isFalse);
+    store.failGetEx = false;
+    store.failGets = false;
+    final crypto = TranslationRoamingCrypto(_psk);
+    addTearDown(crypto.dispose);
+    final key = crypto.storageKey(
+      source: 'invalid',
+      targetLanguage: 'en',
+      keyPrefix: _config.keyPrefix,
+    );
+    store.records[key] = 'invalid envelope';
+    for (var i = 0; i < 12; i++) {
+      await service.lookup(source: 'missing $i', targetLanguage: 'en');
+      final result = await service.lookup(
+        source: 'invalid',
+        targetLanguage: 'en',
+      );
+      expect(result.status, TranslationRoamingLookupStatus.unavailable);
+    }
+    expect(state.getExDisabled, isFalse);
+    expect(store.gets, 12);
+    store.failGetEx = true;
+    for (var i = 0; i < 9; i++) {
+      await service.lookup(source: 'fallback $i', targetLanguage: 'en');
+    }
+    expect(state.getExDisabled, isFalse);
+    await service.lookup(source: 'fallback tenth', targetLanguage: 'en');
+    expect(state.getExDisabled, isTrue);
+  });
+
+  test('successful GETEX does not erase accumulated failures', () async {
+    final state = TranslationRoamingReadState();
+    final store = _MemoryStore()..failGetEx = true;
+    final service = TranslationRoamingService(
+      config: _config,
+      secrets: _secrets,
+      store: store,
+      readState: state,
+    );
+    addTearDown(service.dispose);
+    for (var i = 0; i < 9; i++) {
+      await service.lookup(source: 'fallback $i', targetLanguage: 'en');
+    }
+    store.failGetEx = false;
+    await service.lookup(source: 'successful GETEX', targetLanguage: 'en');
+    store.failGetEx = true;
+    await service.lookup(source: 'tenth fallback', targetLanguage: 'en');
+    expect(state.getExDisabled, isTrue);
+    expect(store.reads, 11);
+    expect(store.gets, 10);
+  });
+
+  test('normal tests retain writes and share read fallback', () async {
+    final state = TranslationRoamingReadState();
+    final store = _MemoryStore()..failGetEx = true;
+    final service = TranslationRoamingService(
+      config: _config,
+      secrets: _secrets,
+      store: store,
+      readState: state,
+    );
+    addTearDown(service.dispose);
+    for (var i = 0; i < 11; i++) {
+      await service.testConnection();
+    }
+    expect(store.writes, 11);
+    expect(store.reads, 10);
+    expect(store.gets, 11);
+    expect(store.records, isEmpty);
+    expect(state.getExDisabled, isTrue);
+  });
+
+  test('parallel and late fallbacks respect a settings reset', () async {
+    SharedPreferences.setMockInitialValues({});
+    final preferences = await SharedPreferences.getInstance();
+    final state = TranslationRoamingReadState(preferences);
+    final store = _MemoryStore()
+      ..failGetEx = true
+      ..getGate = Completer<String?>();
+    final service = TranslationRoamingService(
+      config: _config,
+      secrets: _secrets,
+      store: store,
+      readState: state,
+    );
+    addTearDown(service.dispose);
+    final pending = [
+      for (var i = 0; i < 12; i++)
+        service.lookup(source: 'source $i', targetLanguage: 'en'),
+    ];
+    await Future<void>.delayed(Duration.zero);
+    expect(store.gets, 12);
+    store.getGate!.complete(null);
+    await Future.wait(pending);
+    expect(state.getExDisabled, isTrue);
+    expect(preferences.get(_getExDisabledKey), isTrue);
+    await state.reset();
+    expect(preferences.getKeys(), isEmpty);
+    store.getGate = Completer<String?>();
+    final pendingFallback = service.lookup(
+      source: 'late source',
+      targetLanguage: 'en',
+    );
+    await Future<void>.delayed(Duration.zero);
+    await state.reset();
+    store.getGate!.complete(null);
+    await pendingFallback;
+    for (var i = 0; i < 9; i++) {
+      await service.lookup(source: 'new source $i', targetLanguage: 'en');
+    }
+    expect(state.getExDisabled, isFalse);
+    expect(preferences.getKeys(), isEmpty);
+    await service.lookup(source: 'new tenth', targetLanguage: 'en');
+    expect(state.getExDisabled, isTrue);
+  });
+
+  test('threshold writes once before a queued reset', () async {
+    final preferences = _ReadStatePreferences();
+    final state = TranslationRoamingReadState(preferences);
+    final generation = state.generation;
+    for (var i = 0; i < 9; i++) {
+      await state.recordFallback(generation);
+    }
+    expect(preferences.writes, 0);
+    preferences.writeGate = Completer<void>();
+    final threshold = [
+      for (var i = 0; i < 12; i++) state.recordFallback(generation),
+    ];
+    await Future<void>.delayed(Duration.zero);
+    expect(preferences.writes, 1);
+    expect(state.getExDisabled, isTrue);
+    final reset = state.reset();
+    preferences.writeGate!.complete();
+    await Future.wait([...threshold, reset]);
+    expect(state.getExDisabled, isFalse);
+    expect(preferences.disabled, isNull);
+    expect(preferences.removals, 1);
+    for (var i = 0; i < 12; i++) {
+      await state.recordFallback(generation);
+    }
+    expect(state.getExDisabled, isFalse);
+    expect(preferences.disabled, isNull);
+    expect(preferences.writes, 1);
+  });
+
+  test('failed persistence keeps reads working without rewriting', () async {
+    final preferences = _ReadStatePreferences()..failWrites = true;
+    final state = TranslationRoamingReadState(preferences);
+    final service = TranslationRoamingService(
+      config: _config,
+      secrets: _secrets,
+      store: _MemoryStore()..failGetEx = true,
+      readState: state,
+    );
+    addTearDown(service.dispose);
+    for (var i = 0; i < 12; i++) {
+      final result = await service.lookup(
+        source: 'source $i',
+        targetLanguage: 'en',
+      );
+      expect(result.status, TranslationRoamingLookupStatus.miss);
+    }
+    expect(state.getExDisabled, isTrue);
+    expect(preferences.disabled, isNull);
+    expect(preferences.writes, 1);
+    await state.reset();
+    expect(state.getExDisabled, isFalse);
+    expect(preferences.removals, 1);
+  });
+
+  test('only successful settings writes reset the hidden latch', () async {
+    SharedPreferences.setMockInitialValues({_getExDisabledKey: true});
+    final store = await SharedPreferences.getInstance();
+    final secrets = _MemorySecrets();
+    final preferences = TranslationRoamingPreferences(store, secrets);
+    expect(preferences.readState.getExDisabled, isTrue);
+    secrets.failAccess = true;
+    await expectLater(
+      preferences.save(_config, _secrets),
+      throwsA(isA<TranslationRoamingException>()),
+    );
+    expect(preferences.readState.getExDisabled, isTrue);
+    expect(store.getBool(_getExDisabledKey), isTrue);
+    secrets.failAccess = false;
+    await preferences.save(_config.copyWith(readOnly: true), _secrets);
+    expect(preferences.readState.getExDisabled, isFalse);
+    expect(store.containsKey(_getExDisabledKey), isFalse);
+    expect(preferences.config.readOnly, isTrue);
+    final generation = preferences.readState.generation;
+    for (var i = 0; i < 10; i++) {
+      await preferences.readState.recordFallback(generation);
+    }
+    expect(store.getBool(_getExDisabledKey), isTrue);
+    await preferences.save(preferences.config, _secrets);
+    expect(preferences.readState.getExDisabled, isFalse);
+    for (var i = 0; i < 10; i++) {
+      await preferences.readState.recordFallback(
+        preferences.readState.generation,
+      );
+    }
+    secrets.failAccess = true;
+    await preferences.saveEnabled(false);
+    expect(preferences.readState.getExDisabled, isFalse);
+    expect(store.containsKey(_getExDisabledKey), isFalse);
+    expect(preferences.config.readOnly, isTrue);
+  });
+
+  test('disposed fallbacks cannot trip the shared latch', () async {
+    final state = TranslationRoamingReadState();
+    for (var i = 0; i < 9; i++) {
+      await state.recordFallback(state.generation);
+    }
+    final gate = Completer<String?>();
+    final store = _MemoryStore()
+      ..failGetEx = true
+      ..getGate = gate;
+    final service = TranslationRoamingService(
+      config: _config,
+      secrets: _secrets,
+      store: store,
+      readState: state,
+    );
+    final pending = service.lookup(source: 'late source', targetLanguage: 'en');
+    await Future<void>.delayed(Duration.zero);
+    service.dispose();
+    gate.complete(null);
+    expect((await pending).status, TranslationRoamingLookupStatus.unavailable);
+    expect(state.getExDisabled, isFalse);
+    expect(store.gets, 1);
+  });
+
+  test('REST reads after GETEX permission failures in both modes', () async {
+    final crypto = TranslationRoamingCrypto(_psk);
+    addTearDown(crypto.dispose);
+    for (final readOnly in [false, true]) {
+      final config = _config.copyWith(
+        type: TranslationRoamingType.upstash,
+        endpoint: 'https://redis.example.invalid',
+        readOnly: readOnly,
+      );
+      final key = crypto.storageKey(
+        source: 'private source',
+        targetLanguage: 'zh',
+        keyPrefix: config.keyPrefix,
+      );
+      final envelope = crypto.encrypt(
+        source: 'private source',
+        targetLanguage: 'zh',
+        key: key,
+        translation: 'private translation',
+      );
+      final commands = <List<String>>[];
+      final service = TranslationRoamingService(
+        config: config,
+        secrets: _secrets,
+        store: RestTranslationRoamingStore(
+          endpoint: Uri.parse(config.endpoint),
+          token: _secrets.restToken,
+          clientFactory: () => MockClient((request) async {
+            expect(request.body, isNot(contains('private source')));
+            expect(request.body, isNot(contains('private translation')));
+            expect(request.body, isNot(contains(_psk)));
+            final command = (jsonDecode(request.body) as List).cast<String>();
+            commands.add(command);
+            if (command.first == 'GETEX') {
+              return http.Response(jsonEncode({'error': 'GETEX denied'}), 403);
+            }
+            return http.Response(jsonEncode({'result': envelope}), 200);
+          }),
+        ),
+      );
+      addTearDown(service.dispose);
+      final result = await service.lookup(
+        source: 'private source',
+        targetLanguage: 'zh',
+      );
+      expect(result.translation, 'private translation');
+      expect(commands, [
+        ['GETEX', key, 'EX', config.ttlSeconds.toString()],
+        ['GET', key],
+      ]);
+    }
+  });
+
+  test('REST GET validates values and accepts absent keys', () async {
+    final responses = <Object?>['譯文 🌍', null, 42];
+    final store = RestTranslationRoamingStore(
+      endpoint: Uri.parse('https://redis.example.invalid'),
+      token: _secrets.restToken,
+      clientFactory: () => MockClient((request) async {
+        expect(jsonDecode(request.body), ['GET', '鍵🌍']);
+        return http.Response(
+          jsonEncode({'result': responses.removeAt(0)}),
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      }),
+    );
+    addTearDown(store.dispose);
+    expect(await store.get('鍵🌍'), '譯文 🌍');
+    expect(await store.get('鍵🌍'), isNull);
+    await expectLater(
+      store.get('鍵🌍'),
+      throwsA(isA<TranslationRoamingException>()),
+    );
+  });
 
   test('portable ciphertext requires the original source and matching PSK', () {
     // RFC 4231, test case 2. Zero-padding Jefe to 32 bytes does not change
@@ -677,6 +1124,7 @@ void main() {
       expect((await first).status, TranslationRoamingLookupStatus.unavailable);
       expect((await second).status, TranslationRoamingLookupStatus.unavailable);
       expect(store.disposed, isTrue);
+      expect(store.gets, 0);
     },
   );
 
@@ -849,21 +1297,71 @@ String _sealPayload(
   }
 }
 
+class _ReadStatePreferences extends Fake implements SharedPreferences {
+  bool? disabled;
+  int writes = 0;
+  int removals = 0;
+  bool failWrites = false;
+  Completer<void>? writeGate;
+
+  @override
+  bool? getBool(String key) => disabled;
+
+  @override
+  Future<bool> setBool(String key, bool value) async {
+    writes++;
+    await writeGate?.future;
+    if (failWrites) throw StateError('State storage unavailable');
+    disabled = value;
+    return true;
+  }
+
+  @override
+  Future<bool> remove(String key) async {
+    removals++;
+    disabled = null;
+    return true;
+  }
+}
+
 class _MemoryStore implements TranslationRoamingStore {
   final records = <String, String>{};
   final lifetimes = <String, int>{};
   final conditionalLifetimes = <int>[];
   Completer<String?>? readGate;
+  Completer<String?>? getGate;
+  final getKeys = <String>[];
   var reads = 0;
+  var gets = 0;
   var writes = 0;
   var failWrites = false;
+  var failGetEx = false;
+  var failGets = false;
   var failedWritesRemaining = 0;
   TranslationRoamingException? writeError;
   var disposed = false;
 
   @override
+  Future<String?> get(String key) async {
+    gets++;
+    getKeys.add(key);
+    if (failGets) {
+      throw const TranslationRoamingException(
+        TranslationRoamingError.connection,
+      );
+    }
+    final gate = getGate;
+    return gate == null ? records[key] : await gate.future;
+  }
+
+  @override
   Future<String?> getEx(String key, int ttlSeconds) async {
     reads++;
+    if (failGetEx) {
+      throw const TranslationRoamingException(
+        TranslationRoamingError.protocol,
+      );
+    }
     final gate = readGate;
     return gate == null ? records[key] : await gate.future;
   }

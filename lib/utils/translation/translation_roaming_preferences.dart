@@ -15,6 +15,8 @@ class TranslationRoamingPreferences {
 
   final SharedPreferences store;
   final TranslationSecretStore secrets;
+  late final TranslationRoamingReadState readState =
+      TranslationRoamingReadState(store);
 
   TranslationRoamingPreferences(this.store, this.secrets);
 
@@ -67,12 +69,13 @@ class TranslationRoamingPreferences {
           TranslationRoamingError.configuration,
         );
       }
-      return value;
     } catch (_) {
       throw const TranslationRoamingException(
         TranslationRoamingError.configuration,
       );
     }
+    await readState.reset();
+    return value;
   }
 
   Future<void> save(
@@ -125,5 +128,55 @@ class TranslationRoamingPreferences {
         TranslationRoamingError.configuration,
       );
     }
+    await readState.reset();
+  }
+}
+
+class TranslationRoamingReadState {
+  static const _disabledKey = 'chat.fluffy.translation.roaming.getex_disabled';
+
+  final SharedPreferences? _store;
+  int _failures = 0;
+  int _generation = 0;
+  bool _getExDisabled = false;
+  Future<void> _writeTail = Future.value();
+
+  TranslationRoamingReadState([this._store]) {
+    try {
+      _getExDisabled = _store?.getBool(_disabledKey) ?? false;
+    } catch (_) {
+      _getExDisabled = false;
+    }
+  }
+
+  bool get getExDisabled => _getExDisabled;
+  int get generation => _generation;
+
+  Future<void> recordFallback(int generation) {
+    if (generation != _generation || _getExDisabled) return _writeTail;
+    _failures++;
+    if (_failures < 10) return _writeTail;
+    _getExDisabled = true;
+    return _persist(true);
+  }
+
+  Future<void> reset() {
+    _generation++;
+    _failures = 0;
+    _getExDisabled = false;
+    return _persist(false);
+  }
+
+  Future<void> _persist(bool disabled) {
+    final store = _store;
+    if (store == null) return Future.value();
+    final operation = _writeTail.then((_) async {
+      if (disabled) {
+        await store.setBool(_disabledKey, true);
+        return;
+      }
+      await store.remove(_disabledKey);
+    });
+    return _writeTail = operation.catchError((Object _) {});
   }
 }

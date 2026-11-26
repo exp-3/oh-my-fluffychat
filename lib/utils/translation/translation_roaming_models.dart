@@ -62,6 +62,7 @@ class TranslationRoamingConfig {
   static const _isWeb = bool.fromEnvironment('dart.library.js_interop');
 
   final bool enabled;
+  final bool readOnly;
   final TranslationRoamingType type;
   final String host;
   final int port;
@@ -74,6 +75,7 @@ class TranslationRoamingConfig {
 
   const TranslationRoamingConfig({
     this.enabled = false,
+    this.readOnly = false,
     this.type = TranslationRoamingType.redis,
     this.host = '',
     this.port = 6379,
@@ -126,6 +128,7 @@ class TranslationRoamingConfig {
 
   TranslationRoamingConfig copyWith({
     bool? enabled,
+    bool? readOnly,
     TranslationRoamingType? type,
     String? host,
     int? port,
@@ -137,6 +140,7 @@ class TranslationRoamingConfig {
     int? retentionDays,
   }) => TranslationRoamingConfig(
     enabled: enabled ?? this.enabled,
+    readOnly: readOnly ?? this.readOnly,
     type: type ?? this.type,
     host: host ?? this.host,
     port: port ?? this.port,
@@ -150,6 +154,7 @@ class TranslationRoamingConfig {
 
   Map<String, Object?> toJson() => {
     'enabled': enabled,
+    'readOnly': readOnly,
     'type': type.name,
     'host': host,
     'port': port,
@@ -164,6 +169,7 @@ class TranslationRoamingConfig {
   factory TranslationRoamingConfig.fromJson(Map<String, Object?> json) =>
       TranslationRoamingConfig(
         enabled: json['enabled'] == true,
+        readOnly: json['readOnly'] == true,
         type: json['type'] == 'upstash'
             ? TranslationRoamingType.upstash
             : TranslationRoamingType.redis,

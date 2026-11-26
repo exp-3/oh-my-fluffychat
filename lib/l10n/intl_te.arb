@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "అనువాద కాష్‌ను అప్‌గ్రేడ్ చేయలేకపోయింది",
     "translationRoaming": "అనువాదాల భాగస్వామ్యం",
     "translationRoamingDescription": "బాహ్య క్యాషింగ్ సేవ ద్వారా పరికరాల మధ్య అనువాదాలను పంచుకుని, మళ్లీ మళ్లీ అనువదించాల్సిన అవసరాన్ని తగ్గించడం ద్వారా AI సేవ ఖర్చులను ఆదా చేయండి. అనువాదాలు మీ పరికరాల్లోనే ముందుగా పంచుకున్న కీతో ఎండ్-టు-ఎండ్ పద్ధతిలో గుప్తీకరించబడతాయి. ఆ కీ ఎప్పుడూ సర్వర్‌కు అప్‌లోడ్ చేయబడదు. ప్రతి పరికరంలో ఒకే కనెక్షన్ సెట్టింగ్‌లను, కీని ఉపయోగించండి.",
+    "translationRoamingReadOnly": "చదవడానికి మాత్రమే మోడ్ (అనువాదాలను అప్‌లోడ్ చేయవద్దు)",
+    "translationRoamingReadOnlyUploadUnavailable": "చదవడానికి మాత్రమే మోడ్‌లో అనువాదాలను అప్‌లోడ్ చేయలేరు.",
     "translationRoamingConnectionType": "కనెక్షన్ రకం",
     "translationRoamingNative": "నేరుగా Redis",
     "translationRoamingUpstash": "Upstash శైలి",

@@ -8,6 +8,8 @@
     "translationCacheUpgradeFailed": "翻译缓存升级失败",
     "translationRoaming": "译文漫游",
     "translationRoamingDescription": "借助外部缓存服务在设备间共享译文，减少重复翻译以节省 AI 服务费用。译文在设备上使用预共享密钥进行端到端加密，密钥不会上传。各设备需使用相同的连接配置和密钥。",
+    "translationRoamingReadOnly": "只读模式（不上传译文）",
+    "translationRoamingReadOnlyUploadUnavailable": "只读模式下无法上传译文。",
     "translationRoamingConnectionType": "连接类型",
     "translationRoamingNative": "Redis 原生",
     "translationRoamingUpstash": "Upstash 风格",

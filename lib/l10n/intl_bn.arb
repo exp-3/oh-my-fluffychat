@@ -7,6 +7,8 @@
     "translationCacheUpgradeFailed": "অনুবাদ ক্যাশে আপগ্রেড করা যায়নি",
     "translationRoaming": "অনুবাদ রোমিং",
     "translationRoamingDescription": "বাহ্যিক ক্যাশে পরিষেবা ব্যবহার করে ডিভাইসগুলোর মধ্যে অনুবাদ শেয়ার করুন, যাতে একই লেখা বারবার অনুবাদ কমিয়ে কৃত্রিম বুদ্ধিমত্তার পরিষেবার খরচ বাঁচানো যায়। আগে থেকে শেয়ার করা একটি কী দিয়ে আপনার ডিভাইসেই অনুবাদগুলো প্রান্ত থেকে প্রান্তে এনক্রিপ্ট করা হয়; এই কী কখনো আপলোড করা হয় না। প্রতিটি ডিভাইসে একই সংযোগ সেটিংস ও কী ব্যবহার করুন।",
+    "translationRoamingReadOnly": "শুধু পড়ার মোড (অনুবাদ আপলোড করবেন না)",
+    "translationRoamingReadOnlyUploadUnavailable": "শুধু পড়ার মোডে অনুবাদ আপলোড করা যায় না।",
     "translationRoamingConnectionType": "সংযোগের ধরন",
     "translationRoamingNative": "সরাসরি Redis",
     "translationRoamingUpstash": "Upstash ধরন",

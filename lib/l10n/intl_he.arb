@@ -7,6 +7,8 @@
     "translationCacheUpgradeFailed": "שדרוג מטמון התרגומים נכשל",
     "translationRoaming": "נדידת תרגומים",
     "translationRoamingDescription": "השתמשו בשירות מטמון חיצוני כדי לשתף תרגומים בין מכשירים ולצמצם תרגומים חוזרים, וכך לחסוך בעלויות של שירותי בינה מלאכותית. התרגומים מוצפנים מקצה לקצה במכשירים שלכם באמצעות מפתח משותף מראש שלעולם אינו מועלה לשרת. השתמשו באותן הגדרות חיבור ובאותו מפתח בכל מכשיר.",
+    "translationRoamingReadOnly": "מצב קריאה בלבד (ללא העלאת תרגומים)",
+    "translationRoamingReadOnlyUploadUnavailable": "לא ניתן להעלות תרגומים במצב קריאה בלבד.",
     "translationRoamingConnectionType": "סוג חיבור",
     "translationRoamingNative": "Redis ישיר",
     "translationRoamingUpstash": "סגנון Upstash",

@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "อัปเกรดแคชคำแปลไม่สำเร็จ",
     "translationRoaming": "การใช้คำแปลร่วมกันระหว่างอุปกรณ์",
     "translationRoamingDescription": "ใช้บริการแคชภายนอกเพื่อแชร์คำแปลระหว่างอุปกรณ์ ลดการแปลซ้ำเพื่อประหยัดค่าใช้บริการ AI คำแปลจะถูกเข้ารหัสจากต้นทางถึงปลายทางบนอุปกรณ์ของคุณด้วยคีย์ที่แชร์ไว้ล่วงหน้า ซึ่งจะไม่ถูกอัปโหลดไปยังเซิร์ฟเวอร์ ใช้การตั้งค่าการเชื่อมต่อและคีย์เดียวกันในทุกอุปกรณ์",
+    "translationRoamingReadOnly": "โหมดอ่านอย่างเดียว (ไม่อัปโหลดคำแปล)",
+    "translationRoamingReadOnlyUploadUnavailable": "ไม่สามารถอัปโหลดคำแปลในโหมดอ่านอย่างเดียวได้",
     "translationRoamingConnectionType": "ประเภทการเชื่อมต่อ",
     "translationRoamingNative": "Redis โดยตรง",
     "translationRoamingUpstash": "รูปแบบ Upstash",

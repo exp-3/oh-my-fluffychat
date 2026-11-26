@@ -8,6 +8,8 @@
     "translationCacheUpgradeFailed": "Tõlkevahemälu uuendamine ebaõnnestus",
     "translationRoaming": "Tõlgete jagamine seadmete vahel",
     "translationRoamingDescription": "Kasuta välist vahemäluteenust tõlgete jagamiseks seadmete vahel, et vähendada korduvaid tõlkeid ja säästa seeläbi tehisintellektiteenuste kuludelt. Tõlked krüptitakse sinu seadmetes läbivalt eeljagatud võtmega, mida kunagi üles ei laadita. Kasuta kõigis seadmetes samu ühenduse seadeid ja sama võtit.",
+    "translationRoamingReadOnly": "Kirjutuskaitstud režiim (tõlkeid ei laadita üles)",
+    "translationRoamingReadOnlyUploadUnavailable": "Kirjutuskaitstud režiimis ei saa tõlkeid üles laadida.",
     "translationRoamingConnectionType": "Ühenduse tüüp",
     "translationRoamingNative": "Redis otseühendus",
     "translationRoamingUpstash": "Upstashi laad",

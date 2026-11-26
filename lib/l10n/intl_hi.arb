@@ -6,6 +6,8 @@
     "translationCacheUpgradeFailed": "अनुवाद कैश अपग्रेड नहीं हो सका",
     "translationRoaming": "अनुवाद रोमिंग",
     "translationRoamingDescription": "बाहरी कैश सेवा की मदद से उपकरणों के बीच अनुवाद साझा करें और बार-बार अनुवाद करने की ज़रूरत घटाकर AI सेवाओं की लागत बचाएँ। अनुवाद आपके उपकरणों पर पहले से साझा की गई कुंजी से एंड-टू-एंड एन्क्रिप्ट किए जाते हैं। यह कुंजी कभी अपलोड नहीं की जाती। हर उपकरण पर एक जैसी कनेक्शन सेटिंग और कुंजी का उपयोग करें।",
+    "translationRoamingReadOnly": "केवल पढ़ने का मोड (अनुवाद अपलोड न करें)",
+    "translationRoamingReadOnlyUploadUnavailable": "केवल पढ़ने के मोड में अनुवाद अपलोड नहीं किए जा सकते।",
     "translationRoamingConnectionType": "कनेक्शन का प्रकार",
     "translationRoamingNative": "सीधा Redis",
     "translationRoamingUpstash": "Upstash शैली",

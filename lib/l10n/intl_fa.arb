@@ -7,6 +7,8 @@
     "translationCacheUpgradeFailed": "ارتقای حافظهٔ نهان ترجمه ناموفق بود",
     "translationRoaming": "همگام‌سازی ترجمه‌ها",
     "translationRoamingDescription": "با استفاده از یک سرویس خارجی ذخیره‌سازی موقت، ترجمه‌ها را بین دستگاه‌ها به اشتراک بگذارید تا با کاهش ترجمه‌های تکراری در هزینهٔ خدمات هوش مصنوعی صرفه‌جویی کنید. ترجمه‌ها روی دستگاه‌های شما با یک کلید از پیش مشترک، به‌صورت سرتاسری رمزگذاری می‌شوند؛ این کلید هرگز بارگذاری نمی‌شود. در همهٔ دستگاه‌ها از تنظیمات اتصال و کلید یکسان استفاده کنید.",
+    "translationRoamingReadOnly": "حالت فقط‌خواندنی (ترجمه‌ها بارگذاری نشوند)",
+    "translationRoamingReadOnlyUploadUnavailable": "در حالت فقط‌خواندنی نمی‌توان ترجمه‌ها را بارگذاری کرد.",
     "translationRoamingConnectionType": "نوع اتصال",
     "translationRoamingNative": "Redis بومی",
     "translationRoamingUpstash": "سبک Upstash",

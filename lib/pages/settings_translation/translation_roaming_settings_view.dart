@@ -21,6 +21,16 @@ class TranslationRoamingSettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     final theme = Theme.of(context);
+    final uploadHint = switch ((
+      controller.fieldsDisabled,
+      controller.readOnly,
+      controller.uploadNeedsSave,
+    )) {
+      (true, _, _) => '',
+      (_, true, _) => l10n.translationRoamingReadOnlyUploadUnavailable,
+      (_, _, true) => l10n.translationSaveBeforeUse,
+      _ => '',
+    };
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
@@ -328,21 +338,47 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        OutlinedButton.icon(
+                        FilledButton.tonalIcon(
                           onPressed: controller.fieldsDisabled
                               ? null
                               : controller.generateKey,
-                          icon: const Icon(Icons.key_outlined),
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                          ),
+                          icon: const Icon(Icons.key_outlined, size: 18),
                           label: Text(l10n.translationRoamingGenerateKey),
                         ),
-                        OutlinedButton.icon(
+                        FilledButton.tonalIcon(
                           onPressed: controller.fieldsDisabled
                               ? null
                               : controller.copyKey,
-                          icon: const Icon(Icons.copy_outlined),
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                          ),
+                          icon: const Icon(Icons.copy_outlined, size: 18),
                           label: Text(l10n.copyToClipboard),
                         ),
                       ],
+                    ),
+                    ListTileTheme.merge(
+                      horizontalTitleGap: 0,
+                      child: CheckboxListTile.adaptive(
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                        visualDensity: const VisualDensity(vertical: -2),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        title: Text(l10n.translationRoamingReadOnly),
+                        value: controller.readOnly,
+                        onChanged: controller.fieldsDisabled
+                            ? null
+                            : controller.changeReadOnly,
+                      ),
                     ),
                     Divider(height: 16, color: theme.dividerColor),
                     TranslationSettingsLayout(
@@ -367,19 +403,13 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                         ),
                         Tooltip(
                           key: controller.uploadTooltip,
-                          message:
-                              !controller.fieldsDisabled &&
-                                  controller.uploadNeedsSave
-                              ? l10n.translationSaveBeforeUse
-                              : '',
+                          message: uploadHint,
                           triggerMode: TooltipTriggerMode.manual,
-                          excludeFromSemantics: !controller.uploadNeedsSave,
+                          excludeFromSemantics: uploadHint.isEmpty,
                           child: GestureDetector(
                             behavior: HitTestBehavior.opaque,
-                            onTap:
-                                !controller.fieldsDisabled &&
-                                    controller.uploadNeedsSave
-                                ? controller.showUploadSaveHint
+                            onTap: uploadHint.isNotEmpty
+                                ? controller.showUploadHint
                                 : null,
                             child: OutlinedButton.icon(
                               onPressed: controller.canUpload

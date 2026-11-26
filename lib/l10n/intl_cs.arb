@@ -8,6 +8,8 @@
     "translationCacheUpgradeFailed": "Aktualizace mezipaměti překladů se nezdařila",
     "translationRoaming": "Sdílení překladů mezi zařízeními",
     "translationRoamingDescription": "Použijte externí službu mezipaměti ke sdílení překladů mezi zařízeními. Omezením opakovaných překladů ušetříte za služby umělé inteligence. Překlady se na vašich zařízeních šifrují koncovým šifrováním pomocí předem sdíleného klíče, který se nikdy nenahrává na server. Na všech zařízeních používejte stejné nastavení připojení a stejný klíč.",
+    "translationRoamingReadOnly": "Režim pouze pro čtení (nenahrávat překlady)",
+    "translationRoamingReadOnlyUploadUnavailable": "V režimu pouze pro čtení nelze nahrávat překlady.",
     "translationRoamingConnectionType": "Typ připojení",
     "translationRoamingNative": "Nativní Redis",
     "translationRoamingUpstash": "Styl Upstash",

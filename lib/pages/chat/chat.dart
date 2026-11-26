@@ -1860,7 +1860,14 @@ class ChatController extends State<ChatPageWithRoom>
             },
       child: Row(
         children: [
-          Expanded(child: ChatView(this)),
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) => ChatView(
+                this,
+                showSearchAction: constraints.maxWidth >= 600,
+              ),
+            ),
+          ),
           ValueListenableBuilder(
             valueListenable: _displayChatDetailsColumn,
             builder: (context, displayChatDetailsColumn, _) =>
