@@ -32,9 +32,7 @@ class EmotesSettingsView extends StatelessWidget {
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(SettingsSpacing.inset),
-            child: Text(
-              L10n.of(context).youAreNoLongerParticipatingInThisChat,
-            ),
+            child: Text(L10n.of(context).youAreNoLongerParticipatingInThisChat),
           ),
         ),
       );
@@ -163,9 +161,7 @@ class EmotesSettingsView extends StatelessWidget {
       body: MaxWidthBody(
         contentPadding: EdgeInsets.zero,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: SettingsSpacing.inset,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: SettingsSpacing.inset),
           child: Column(
             mainAxisSize: .min,
             crossAxisAlignment: .stretch,
@@ -272,8 +268,9 @@ class EmotesSettingsView extends StatelessWidget {
                                   shortcuts: !useShortCuts
                                       ? {}
                                       : {
-                                          LogicalKeySet(LogicalKeyboardKey.enter):
-                                              SubmitLineIntent(),
+                                          LogicalKeySet(
+                                            LogicalKeyboardKey.enter,
+                                          ): SubmitLineIntent(),
                                         },
                                   child: Actions(
                                     actions: !useShortCuts
@@ -298,7 +295,9 @@ class EmotesSettingsView extends StatelessWidget {
                                       maxLines: 1,
                                       maxLength: 128,
                                       decoration: InputDecoration(
-                                        hintText: L10n.of(context).emoteShortcode,
+                                        hintText: L10n.of(
+                                          context,
+                                        ).emoteShortcode,
                                         prefixText: ': ',
                                         suffixText: ':',
                                         counter: const SizedBox.shrink(),

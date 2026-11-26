@@ -132,7 +132,9 @@ class SettingsSecurityView extends StatelessWidget {
                             return SwitchListTile.adaptive(
                               value: AppLock.of(context).useBiometrics,
                               onChanged: (_) => controller.toggleBiometrics(),
-                              title: Text(L10n.of(context).unlockWithBiometrics),
+                              title: Text(
+                                L10n.of(context).unlockWithBiometrics,
+                              ),
                             );
                           },
                         ),
@@ -176,7 +178,9 @@ class SettingsSecurityView extends StatelessWidget {
                               .map(
                                 (share) => DropdownMenuItem(
                                   value: share,
-                                  child: Text(share.localized(L10n.of(context))),
+                                  child: Text(
+                                    share.localized(L10n.of(context)),
+                                  ),
                                 ),
                               )
                               .toList(),

@@ -156,7 +156,9 @@ class SettingsNotificationsView extends StatelessWidget {
 
                     if (firebaseUnsupported)
                       ListTile(
-                        title: Text(L10n.of(context).buildDoesNotSupportFirebase),
+                        title: Text(
+                          L10n.of(context).buildDoesNotSupportFirebase,
+                        ),
                         leading: Icon(
                           Icons.close,
                           color: theme.colorScheme.error,
@@ -229,7 +231,9 @@ class SettingsNotificationsView extends StatelessWidget {
                                   L10n.of(context).unifiedPushDistributors,
                                 ),
                                 leading: Icon(Icons.info_outlined),
-                                subtitle: SelectableText(distributors.join(', ')),
+                                subtitle: SelectableText(
+                                  distributors.join(', '),
+                                ),
                                 trailing: distributors.length >= 2
                                     ? IconButton(
                                         onPressed: () => UnifiedPushUi(
@@ -242,8 +246,9 @@ class SettingsNotificationsView extends StatelessWidget {
                                         ).registerAppWithDialog(),
                                         icon: Icon(Icons.edit_outlined),
                                         style: IconButton.styleFrom(
-                                          backgroundColor:
-                                              theme.colorScheme.primaryContainer,
+                                          backgroundColor: theme
+                                              .colorScheme
+                                              .primaryContainer,
                                           foregroundColor: theme
                                               .colorScheme
                                               .onPrimaryContainer,

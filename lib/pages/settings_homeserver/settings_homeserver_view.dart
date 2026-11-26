@@ -77,7 +77,9 @@ class SettingsHomeserverView extends StatelessWidget {
                     }
                     if (data == null) {
                       return const Center(
-                        child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+                        child: CircularProgressIndicator.adaptive(
+                          strokeWidth: 2,
+                        ),
                       );
                     }
                     final supportPage = data.supportPage;
@@ -155,7 +157,9 @@ class SettingsHomeserverView extends StatelessWidget {
                     final data = snapshot.data;
                     if (data == null) {
                       return const Center(
-                        child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+                        child: CircularProgressIndicator.adaptive(
+                          strokeWidth: 2,
+                        ),
                       );
                     }
                     return Column(
@@ -173,7 +177,9 @@ class SettingsHomeserverView extends StatelessWidget {
                           title: Text(L10n.of(context).federationBaseUrl),
                           subtitle: Linkify(
                             text: data.federationBaseUrl.toString(),
-                            style: TextStyle(color: theme.colorScheme.onSurface),
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
+                            ),
                             textScaleFactor: MediaQuery.textScalerOf(
                               context,
                             ).scale(1),
@@ -222,7 +228,9 @@ class SettingsHomeserverView extends StatelessWidget {
                     final wellKnown = snapshot.data;
                     if (wellKnown == null) {
                       return const Center(
-                        child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+                        child: CircularProgressIndicator.adaptive(
+                          strokeWidth: 2,
+                        ),
                       );
                     }
                     final identityServer = wellKnown.mIdentityServer;
@@ -242,7 +250,9 @@ class SettingsHomeserverView extends StatelessWidget {
                           title: Text(L10n.of(context).baseUrl),
                           subtitle: Linkify(
                             text: wellKnown.mHomeserver.baseUrl.toString(),
-                            style: TextStyle(color: theme.colorScheme.onSurface),
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
+                            ),
                             textScaleFactor: MediaQuery.textScalerOf(
                               context,
                             ).scale(1),

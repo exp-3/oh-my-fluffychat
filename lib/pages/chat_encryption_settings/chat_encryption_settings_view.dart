@@ -155,12 +155,16 @@ class ChatEncryptionSettingsView extends StatelessWidget {
                                             ? L10n.of(context).verified
                                             : tofuSince != null
                                             ? L10n.of(context).knownSince(
-                                                tofuSince.localizedTime(context),
+                                                tofuSince.localizedTime(
+                                                  context,
+                                                ),
                                               )
                                             : L10n.of(context).unverified,
                                         style: TextStyle(
                                           color: masterKey == null
-                                              ? theme.colorScheme.onErrorContainer
+                                              ? theme
+                                                    .colorScheme
+                                                    .onErrorContainer
                                               : masterKey.verified
                                               ? Colors.green
                                               : tofuSince != null
@@ -205,13 +209,17 @@ class ChatEncryptionSettingsView extends StatelessWidget {
                                               : device.blocked
                                               ? theme.colorScheme.error
                                               : !signedDevice
-                                              ? theme.colorScheme.onErrorContainer
+                                              ? theme
+                                                    .colorScheme
+                                                    .onErrorContainer
                                               : theme.colorScheme.primary,
                                         ),
                                       ),
                                       subtitle: Text(
                                         device.curve25519Key?.beautified ??
-                                            L10n.of(context).noCurve25519KeyFound,
+                                            L10n.of(
+                                              context,
+                                            ).noCurve25519KeyFound,
                                       ),
                                       trailing: IconButton(
                                         icon: Icon(Icons.block_outlined),

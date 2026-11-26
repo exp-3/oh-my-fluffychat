@@ -115,9 +115,8 @@ class SettingsChatView extends StatelessWidget {
                                 categoryViewConfig: CategoryViewConfig(
                                   initCategory: Category.SMILEYS,
                                   backspaceColor: theme.colorScheme.primary,
-                                  iconColor: theme.colorScheme.primary.withAlpha(
-                                    128,
-                                  ),
+                                  iconColor: theme.colorScheme.primary
+                                      .withAlpha(128),
                                   iconColorSelected: theme.colorScheme.primary,
                                   indicatorColor: theme.colorScheme.primary,
                                   backgroundColor: theme.colorScheme.surface,

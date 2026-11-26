@@ -91,21 +91,25 @@ class Settings3PidView extends StatelessWidget {
                         child: ListView.builder(
                           padding: EdgeInsets.zero,
                           itemCount: identifier.length,
-                          itemBuilder: (BuildContext context, int i) => ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: theme.scaffoldBackgroundColor,
-                              foregroundColor: Colors.grey,
-                              child: Icon(identifier[i].iconData),
-                            ),
-                            title: Text(identifier[i].address),
-                            trailing: IconButton(
-                              tooltip: L10n.of(context).delete,
-                              icon: const Icon(Icons.delete_forever_outlined),
-                              color: Colors.red,
-                              onPressed: () =>
-                                  controller.delete3Pid(identifier[i]),
-                            ),
-                          ),
+                          itemBuilder: (BuildContext context, int i) =>
+                              ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor:
+                                      theme.scaffoldBackgroundColor,
+                                  foregroundColor: Colors.grey,
+                                  child: Icon(identifier[i].iconData),
+                                ),
+                                title: Text(identifier[i].address),
+                                trailing: IconButton(
+                                  tooltip: L10n.of(context).delete,
+                                  icon: const Icon(
+                                    Icons.delete_forever_outlined,
+                                  ),
+                                  color: Colors.red,
+                                  onPressed: () =>
+                                      controller.delete3Pid(identifier[i]),
+                                ),
+                              ),
                         ),
                       ),
                     ],

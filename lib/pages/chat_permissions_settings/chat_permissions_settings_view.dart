@@ -30,9 +30,7 @@ class ChatPermissionsSettingsView extends StatelessWidget {
       body: MaxWidthBody(
         contentPadding: EdgeInsets.zero,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: SettingsSpacing.inset,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: SettingsSpacing.inset),
           child: StreamBuilder(
             stream: controller.onChanged,
             builder: (context, _) {

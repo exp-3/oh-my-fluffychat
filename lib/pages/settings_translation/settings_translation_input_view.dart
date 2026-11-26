@@ -36,9 +36,7 @@ class SettingsTranslationInputView extends StatelessWidget {
           ],
           (true, true) => [
             const Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: SettingsSpacing.inset,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: SettingsSpacing.inset),
               child: LinearProgressIndicator(),
             ),
           ],
@@ -80,10 +78,7 @@ class SettingsTranslationInputView extends StatelessWidget {
                   onChanged: controller.changeTrigger,
                 ),
               ),
-            Divider(
-              height: SettingsSpacing.section,
-              color: theme.dividerColor,
-            ),
+            Divider(height: SettingsSpacing.section, color: theme.dividerColor),
             SwitchListTile.adaptive(
               title: Text(l10n.inputTranslationModeAutomatic),
               value: runtime.automaticInputTranslationEnabled,

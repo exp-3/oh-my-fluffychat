@@ -138,7 +138,9 @@ class _SettingsImageSendingState extends State<SettingsImageSending> {
                     if (value == null) return;
                     await AppSettings.preferredImageFormat.setItem(value.name);
                     if (mounted) {
-                      setState(() => _options = ImageSendOptions.fromSettings());
+                      setState(
+                        () => _options = ImageSendOptions.fromSettings(),
+                      );
                     }
                   },
                 ),

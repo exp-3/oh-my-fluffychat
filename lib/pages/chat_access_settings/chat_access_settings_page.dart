@@ -29,9 +29,7 @@ class ChatAccessSettingsPageView extends StatelessWidget {
       body: MaxWidthBody(
         contentPadding: EdgeInsets.zero,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: SettingsSpacing.inset,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: SettingsSpacing.inset),
           child: StreamBuilder<Object>(
             stream: room.client.onRoomState.stream.where(
               (update) => update.roomId == controller.room.id,
@@ -66,7 +64,8 @@ class ChatAccessSettingsPageView extends StatelessWidget {
                     child: Column(
                       mainAxisSize: .min,
                       children: [
-                        for (final historyVisibility in HistoryVisibility.values)
+                        for (final historyVisibility
+                            in HistoryVisibility.values)
                           RadioListTile<HistoryVisibility>.adaptive(
                             title: Text(
                               historyVisibility.getLocalizedString(
@@ -118,10 +117,10 @@ class ChatAccessSettingsPageView extends StatelessWidget {
                     JoinRules.public,
                     JoinRules.knock,
                   }.contains(room.joinRules)) ...[
-                  Divider(
-                    height: SettingsSpacing.section,
-                    color: theme.dividerColor,
-                  ),
+                    Divider(
+                      height: SettingsSpacing.section,
+                      color: theme.dividerColor,
+                    ),
                     ListTile(
                       title: Text(
                         L10n.of(context).areGuestsAllowedToJoin,

@@ -1358,9 +1358,7 @@ class _MemoryStore implements TranslationRoamingStore {
   Future<String?> getEx(String key, int ttlSeconds) async {
     reads++;
     if (failGetEx) {
-      throw const TranslationRoamingException(
-        TranslationRoamingError.protocol,
-      );
+      throw const TranslationRoamingException(TranslationRoamingError.protocol);
     }
     final gate = readGate;
     return gate == null ? records[key] : await gate.future;

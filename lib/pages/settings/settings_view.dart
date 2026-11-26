@@ -45,7 +45,9 @@ class SettingsView extends StatelessWidget {
           iconColor: theme.colorScheme.onSurface,
           child: ListView(
             key: const Key('SettingsListViewContent'),
-            padding: const EdgeInsets.symmetric(vertical: SettingsSpacing.inset),
+            padding: const EdgeInsets.symmetric(
+              vertical: SettingsSpacing.inset,
+            ),
             children: <Widget>[
               FutureBuilder<Profile>(
                 future: controller.profileFuture,
@@ -92,17 +94,26 @@ class SettingsView extends StatelessWidget {
                               child: avatarActions.length == 1
                                   ? IconButton(
                                       style: avatarButtonStyle,
-                                      tooltip: L10n.of(context).changeYourAvatar,
-                                      onPressed: () => controller.setAvatarAction(
-                                        avatarActions.single,
+                                      tooltip: L10n.of(
+                                        context,
+                                      ).changeYourAvatar,
+                                      onPressed: () =>
+                                          controller.setAvatarAction(
+                                            avatarActions.single,
+                                          ),
+                                      icon: const Icon(
+                                        Icons.camera_alt_outlined,
                                       ),
-                                      icon: const Icon(Icons.camera_alt_outlined),
                                     )
                                   : PopupMenuButton<AvatarAction>(
                                       style: avatarButtonStyle,
-                                      tooltip: L10n.of(context).changeYourAvatar,
+                                      tooltip: L10n.of(
+                                        context,
+                                      ).changeYourAvatar,
                                       onSelected: controller.setAvatarAction,
-                                      icon: const Icon(Icons.camera_alt_outlined),
+                                      icon: const Icon(
+                                        Icons.camera_alt_outlined,
+                                      ),
                                       itemBuilder: (context) => [
                                         for (final action in avatarActions)
                                           PopupMenuItem(
@@ -120,15 +131,15 @@ class SettingsView extends StatelessWidget {
                                                     Icons.delete_outlined,
                                                 }),
                                                 Text(switch (action) {
-                                                  AvatarAction.camera => L10n.of(
-                                                    context,
-                                                  ).openCamera,
+                                                  AvatarAction.camera =>
+                                                    L10n.of(context).openCamera,
                                                   AvatarAction.file => L10n.of(
                                                     context,
                                                   ).openGallery,
-                                                  AvatarAction.remove => L10n.of(
-                                                    context,
-                                                  ).removeYourAvatar,
+                                                  AvatarAction.remove =>
+                                                    L10n.of(
+                                                      context,
+                                                    ).removeYourAvatar,
                                                 }),
                                               ],
                                             ),
@@ -209,7 +220,8 @@ class SettingsView extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.notifications_outlined),
                 title: Text(L10n.of(context).notifications),
-                tileColor: activeRoute.startsWith('/rooms/settings/notifications')
+                tileColor:
+                    activeRoute.startsWith('/rooms/settings/notifications')
                     ? theme.colorScheme.surfaceContainerHigh
                     : null,
                 onTap: () => context.go('/rooms/settings/notifications'),

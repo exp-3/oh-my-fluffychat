@@ -71,9 +71,7 @@ class TranslationSettingsScaffold extends StatelessWidget {
     body: MaxWidthBody(
       contentPadding: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: SettingsSpacing.inset,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: SettingsSpacing.inset),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: children,

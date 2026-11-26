@@ -44,9 +44,7 @@ class SettingsStyleView extends StatelessWidget {
       body: MaxWidthBody(
         contentPadding: EdgeInsets.zero,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: SettingsSpacing.inset,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: SettingsSpacing.inset),
           child: Column(
             crossAxisAlignment: .stretch,
             children: [
@@ -77,7 +75,10 @@ class SettingsStyleView extends StatelessWidget {
                   ],
                 ),
               ),
-              Divider(height: SettingsSpacing.section, color: theme.dividerColor),
+              Divider(
+                height: SettingsSpacing.section,
+                color: theme.dividerColor,
+              ),
               ListTile(
                 title: Text(
                   L10n.of(context).setColorTheme,
@@ -93,16 +94,21 @@ class SettingsStyleView extends StatelessWidget {
                       Theme.of(context).brightness == Brightness.light
                       ? light?.primary
                       : dark?.primary;
-                  final colors = [null, AppConfig.chatColor, ...Colors.primaries];
+                  final colors = [
+                    null,
+                    AppConfig.chatColor,
+                    ...Colors.primaries,
+                  ];
                   if (systemColor == null) {
                     colors.remove(null);
                   }
                   return GridView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 64,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 64,
+                        ),
                     itemCount: colors.length,
                     itemBuilder: (context, i) {
                       final color = colors[i];
@@ -113,7 +119,9 @@ class SettingsStyleView extends StatelessWidget {
                               ? L10n.of(context).systemTheme
                               : '#${color.hexValue.toRadixString(16).toUpperCase()}',
                           child: InkWell(
-                            borderRadius: BorderRadius.circular(colorPickerSize),
+                            borderRadius: BorderRadius.circular(
+                              colorPickerSize,
+                            ),
                             onTap: () => controller.setChatColor(color),
                             child: Material(
                               color: color ?? systemColor,
@@ -144,7 +152,10 @@ class SettingsStyleView extends StatelessWidget {
                   );
                 },
               ),
-              Divider(height: SettingsSpacing.section, color: theme.dividerColor),
+              Divider(
+                height: SettingsSpacing.section,
+                color: theme.dividerColor,
+              ),
               ListTile(
                 title: Text(
                   L10n.of(context).messagesStyle,
@@ -270,7 +281,8 @@ class SettingsStyleView extends StatelessWidget {
                                             'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor',
                                             style: TextStyle(
                                               color: theme.onBubbleColor,
-                                              fontSize: AppConfig.messageFontSize,
+                                              fontSize:
+                                                  AppConfig.messageFontSize,
                                             ),
                                           ),
                                         ),
@@ -303,8 +315,10 @@ class SettingsStyleView extends StatelessWidget {
                                           child: Text(
                                             'Lorem ipsum dolor sit amet',
                                             style: TextStyle(
-                                              color: theme.colorScheme.onSurface,
-                                              fontSize: AppConfig.messageFontSize,
+                                              color:
+                                                  theme.colorScheme.onSurface,
+                                              fontSize:
+                                                  AppConfig.messageFontSize,
                                             ),
                                           ),
                                         ),
@@ -324,7 +338,8 @@ class SettingsStyleView extends StatelessWidget {
                       ListTile(
                         title: TextButton.icon(
                           style: TextButton.styleFrom(
-                            backgroundColor: theme.colorScheme.secondaryContainer,
+                            backgroundColor:
+                                theme.colorScheme.secondaryContainer,
                             foregroundColor:
                                 theme.colorScheme.onSecondaryContainer,
                           ),

@@ -368,9 +368,7 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                       onChanged: (_) => controller.settingsChanged(),
                     ),
                     if (controller.invalidInput) ...[
-                      const SizedBox(
-                        height: SettingsSpacing.related,
-                      ),
+                      const SizedBox(height: SettingsSpacing.related),
                       Text(
                         l10n.invalidInput,
                         style: TextStyle(color: theme.colorScheme.error),

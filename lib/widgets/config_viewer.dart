@@ -108,9 +108,8 @@ class _ConfigViewerState extends State<ConfigViewer> {
                   border: const OutlineInputBorder(),
                   isDense: true,
                   filled: true,
-                  fillColor: theme.colorScheme.surfaceContainerHighest.withAlpha(
-                    128,
-                  ),
+                  fillColor: theme.colorScheme.surfaceContainerHighest
+                      .withAlpha(128),
                 ),
               ),
             ),
@@ -134,8 +133,11 @@ class _ConfigViewerState extends State<ConfigViewer> {
                       title: Text(appSetting.name),
                       subtitle: Text(value),
                       value: appSetting.value,
-                      onChanged: (value) =>
-                          _changeSetting(appSetting, store, (!value).toString()),
+                      onChanged: (value) => _changeSetting(
+                        appSetting,
+                        store,
+                        (!value).toString(),
+                      ),
                     );
                   }
                   if (appSetting is AppSettings<double>) {

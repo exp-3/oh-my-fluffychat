@@ -219,9 +219,7 @@ class SettingsTranslationView extends StatelessWidget {
                           onChanged: controller.changePreferRoomLanguage,
                         ),
                       ),
-                      const SizedBox(
-                        height: SettingsSpacing.section,
-                      ),
+                      const SizedBox(height: SettingsSpacing.section),
                       SwitchListTile.adaptive(
                         secondary: const Icon(Icons.view_agenda_outlined),
                         title: Text(l10n.bilingual),

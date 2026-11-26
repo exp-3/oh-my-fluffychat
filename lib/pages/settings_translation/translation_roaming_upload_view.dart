@@ -35,20 +35,14 @@ class TranslationRoamingUploadView extends StatelessWidget {
               if (scanning) {
                 return Center(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(
-                      SettingsSpacing.inset,
-                    ),
+                    padding: const EdgeInsets.all(SettingsSpacing.inset),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const CircularProgressIndicator(),
-                        const SizedBox(
-                          height: SettingsSpacing.field,
-                        ),
+                        const SizedBox(height: SettingsSpacing.field),
                         Text(l10n.translationRoamingUploadScanning),
-                        const SizedBox(
-                          height: SettingsSpacing.actions,
-                        ),
+                        const SizedBox(height: SettingsSpacing.actions),
                         TextButton(
                           onPressed: controller.back,
                           child: Text(l10n.cancel),
@@ -67,16 +61,12 @@ class TranslationRoamingUploadView extends StatelessWidget {
                     : l10n.translationRoamingUploadEmpty;
                 return Center(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(
-                      SettingsSpacing.inset,
-                    ),
+                    padding: const EdgeInsets.all(SettingsSpacing.inset),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(message),
-                        const SizedBox(
-                          height: SettingsSpacing.actions,
-                        ),
+                        const SizedBox(height: SettingsSpacing.actions),
                         OutlinedButton.icon(
                           onPressed: controller.load,
                           icon: const Icon(Icons.refresh),
@@ -96,9 +86,7 @@ class TranslationRoamingUploadView extends StatelessWidget {
                     session.phase == TranslationRoamingUploadPhase.stopped;
                 return Center(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(
-                      SettingsSpacing.inset,
-                    ),
+                    padding: const EdgeInsets.all(SettingsSpacing.inset),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -109,9 +97,7 @@ class TranslationRoamingUploadView extends StatelessWidget {
                                 ? null
                                 : session.processed / session.total,
                           ),
-                          const SizedBox(
-                            height: SettingsSpacing.field,
-                          ),
+                          const SizedBox(height: SettingsSpacing.field),
                           Text(
                             l10n.translationRoamingUploadProgress(
                               session.processed,
@@ -131,9 +117,7 @@ class TranslationRoamingUploadView extends StatelessWidget {
                             session.failed,
                           ),
                         ),
-                        const SizedBox(
-                          height: SettingsSpacing.actions,
-                        ),
+                        const SizedBox(height: SettingsSpacing.actions),
                         if (uploading)
                           OutlinedButton(
                             onPressed: controller.cancelUpload,
@@ -187,9 +171,7 @@ class TranslationRoamingUploadView extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              const SizedBox(
-                                height: SettingsSpacing.field,
-                              ),
+                              const SizedBox(height: SettingsSpacing.field),
                               CheckboxListTile.adaptive(
                                 title: Text(
                                   l10n.translationRoamingUploadSelectAll,
@@ -227,9 +209,7 @@ class TranslationRoamingUploadView extends StatelessWidget {
                   ),
                   Divider(height: 1, color: Theme.of(context).dividerColor),
                   Padding(
-                    padding: const EdgeInsets.all(
-                      SettingsSpacing.inset,
-                    ),
+                    padding: const EdgeInsets.all(SettingsSpacing.inset),
                     child: FilledButton.icon(
                       onPressed: controller.canUpload
                           ? controller.upload

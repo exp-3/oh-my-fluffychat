@@ -69,7 +69,9 @@ class DevicesSettingsView extends StatelessWidget {
                       children: [
                         if (controller.chatBackupEnabled == false)
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                            ),
                             child: ListTile(
                               leading: const CircleAvatar(
                                 child: Icon(Icons.info_outlined),

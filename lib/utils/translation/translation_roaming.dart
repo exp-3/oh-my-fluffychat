@@ -121,7 +121,10 @@ class TranslationRoamingService {
     }
     final generation = _readState.generation;
     try {
-      final result = await _timed(_transport.getEx(key, ttlSeconds), readTimeout);
+      final result = await _timed(
+        _transport.getEx(key, ttlSeconds),
+        readTimeout,
+      );
       _ensureActive();
       return result;
     } catch (_) {
@@ -302,7 +305,9 @@ class TranslationRoamingService {
     final key = crypto.storageKey(
       source: source,
       targetLanguage: 'en',
-      keyPrefix: config.readOnly ? config.keyPrefix : '${config.keyPrefix}:test',
+      keyPrefix: config.readOnly
+          ? config.keyPrefix
+          : '${config.keyPrefix}:test',
     );
     if (config.readOnly) {
       await _timed(_transport.get(key), readTimeout);

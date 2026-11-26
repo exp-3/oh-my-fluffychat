@@ -59,9 +59,7 @@ class ChatMembersView extends StatelessWidget {
         withScrolling: false,
         contentPadding: EdgeInsets.zero,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: SettingsSpacing.inset,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: SettingsSpacing.inset),
           child: error != null
               ? Center(
                   child: Padding(
@@ -186,8 +184,10 @@ class ChatMembersView extends StatelessWidget {
                                     selected:
                                         controller.membershipFilter ==
                                         availableFilters[i],
-                                    onSelected: (_) => controller
-                                        .setMembershipFilter(availableFilters[i]),
+                                    onSelected: (_) =>
+                                        controller.setMembershipFilter(
+                                          availableFilters[i],
+                                        ),
                                   ),
                                 ),
                               ),

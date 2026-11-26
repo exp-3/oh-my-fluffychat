@@ -31,9 +31,7 @@ class SettingsTranslationBatchView extends StatelessWidget {
           ],
           (true, true) => [
             const Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: SettingsSpacing.inset,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: SettingsSpacing.inset),
               child: LinearProgressIndicator(),
             ),
           ],
@@ -147,10 +145,7 @@ class _NumberSetting extends StatelessWidget {
       helperText: '$min-$max',
       suffixText: suffix,
       errorText: valid ? null : L10n.of(context).invalidInput,
-      suffixIconConstraints: const BoxConstraints(
-        minWidth: 96,
-        minHeight: 48,
-      ),
+      suffixIconConstraints: const BoxConstraints(minWidth: 96, minHeight: 48),
       suffixIcon: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
