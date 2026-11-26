@@ -125,7 +125,7 @@
     "inputTranslationTriggerButton": "Tərcümə düyməsi",
     "inputTranslationTriggerLongPress": "Daxiletmə sahəsinə uzun basın",
     "inputTranslationTriggerDoubleTap": "Tez daxiletmə sahəsinə iki dəfə toxunun",
-    "translationPrivacyDetails": "Mesaj və daxil edilən mətnin tərcüməsi tərcümə olunan mətni seçdiyiniz xarici model təminatçısına açıq mətn şəklində göndərir. Bu, başdan-başa şifrələnmiş söhbətlərə də aiddir. Daxil etdiyiniz mətn mesajı göndərməzdən əvvəl təminatçıya göndərilə bilər. Təminatçı bu məzmunu oxuya, öz məxfilik siyasətinə uyğun olaraq saxlaya və ya istifadə edə bilər.\n\nİstifadədən əvvəl ehtiyaclarınızı nəzərə alın, təhlükəsizlik və məxfilik risklərini qiymətləndirin. Məxfi məzmunu tərcümə etməkdən və etibar etmədiyiniz təminatçılardan istifadə etməkdən çəkinin. Məlumatların emalını və saxlanmasını özünüz idarə etdiyiniz, öz serverinizdə yerləşdirilmiş modeldən də istifadə edə bilərsiniz.",
+    "translationPrivacyDetails": "Mesaj və daxil edilən mətnin tərcüməsi tərcümə olunan mətni seçdiyiniz xarici model təminatçısına açıq mətn şəklində göndərir. Bu, başdan-başa şifrələnmiş söhbətlərə də aiddir. Daxil etdiyiniz mətn mesajı göndərməzdən əvvəl təminatçıya göndərilə bilər. Təminatçı bu məzmunu oxuya, öz məxfilik siyasətinə uyğun olaraq saxlaya və ya istifadə edə bilər.\nİstifadədən əvvəl ehtiyaclarınızı nəzərə alın, təhlükəsizlik və məxfilik risklərini qiymətləndirin. Məxfi məzmunu tərcümə etməkdən və etibar etmədiyiniz təminatçılardan istifadə etməkdən çəkinin. Məlumatların emalını və saxlanmasını özünüz idarə etdiyiniz, öz serverinizdə yerləşdirilmiş modeldən də istifadə edə bilərsiniz.",
     "translateInput": "Daxiletməni tərcümə edin",
     "messageBubbleGradient": "Mesaj qabarcığı qradiyenti",
     "compressImagesWhenSending": "Göndərərkən şəkilləri sıx",
@@ -163,5 +163,7 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "formattedMessages": "Formatlanmış mesajları göstər",
+    "changeTheme": "Görünüş"
 }

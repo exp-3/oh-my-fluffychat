@@ -129,7 +129,7 @@
     "inputTranslationTriggerButton": "Fordítás gomb",
     "inputTranslationTriggerLongPress": "Nyomja meg hosszan a beviteli mezőt",
     "inputTranslationTriggerDoubleTap": "Gyors dupla koppintás beviteli mező",
-    "translationPrivacyDetails": "Az üzenetek és a beírt szöveg fordításakor a lefordítandó szöveg titkosítatlanul jut el az Ön által kiválasztott külső modellszolgáltatóhoz, még a végpontok között titkosított csevegések esetében is. A beírt szöveg már az üzenet elküldése előtt eljuthat a szolgáltatóhoz. A szolgáltató elolvashatja ezt a tartalmat, és az adatvédelmi szabályzatának megfelelően tárolhatja vagy felhasználhatja.\n\nHasználat előtt mérlegelje az igényeit, valamint a biztonsági és adatvédelmi kockázatokat. Kerülje a bizalmas tartalmak fordítását és az olyan szolgáltatók használatát, amelyekben nem bízik. Saját üzemeltetésű modellt is használhat, amelynek adatfeldolgozását és adattárolását Ön felügyeli.",
+    "translationPrivacyDetails": "Az üzenetek és a beírt szöveg fordításakor a lefordítandó szöveg titkosítatlanul jut el az Ön által kiválasztott külső modellszolgáltatóhoz, még a végpontok között titkosított csevegések esetében is. A beírt szöveg már az üzenet elküldése előtt eljuthat a szolgáltatóhoz. A szolgáltató elolvashatja ezt a tartalmat, és az adatvédelmi szabályzatának megfelelően tárolhatja vagy felhasználhatja.\nHasználat előtt mérlegelje az igényeit, valamint a biztonsági és adatvédelmi kockázatokat. Kerülje a bizalmas tartalmak fordítását és az olyan szolgáltatók használatát, amelyekben nem bízik. Saját üzemeltetésű modellt is használhat, amelynek adatfeldolgozását és adattárolását Ön felügyeli.",
     "translateInput": "Bemenet fordítása",
     "messageBubbleGradient": "Üzenetbuborék színátmenete",
     "compressImagesWhenSending": "Képek tömörítése küldéskor",
@@ -395,7 +395,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "changeTheme": "Stílusának módosítása",
+    "changeTheme": "Megjelenés",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2141,7 +2141,7 @@
     "sendTypingNotificationsDescription": "A csevegés többi tagja látja amikor gépel.",
     "sendReadReceiptsDescription": "A csevegés többi tagja láthatja, ha olvasta az üzeneteiket.",
     "sendReadReceipts": "Olvasási igazolás küldése",
-    "formattedMessages": "Formázott üzenetek",
+    "formattedMessages": "Formázott üzenetek megjelenítése",
     "formattedMessagesDescription": "Formázott szöveg - mint például félkövér - megjelenítése \"markdown\"-al.",
     "verifyOtherUser": "🔐 Más felhasználó igazolása",
     "verifyOtherDevice": "🔐 Más eszköz hitelesítése",

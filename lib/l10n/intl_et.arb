@@ -127,7 +127,7 @@
     "inputTranslationTriggerButton": "Tõlke nupp",
     "inputTranslationTriggerLongPress": "Vajutage pikalt sisestusvälja",
     "inputTranslationTriggerDoubleTap": "Kiire topeltpuudutusega sisestusväli",
-    "translationPrivacyDetails": "Sõnumite ja sisestatava teksti tõlkimisel saadetakse tõlgitav tekst lihttekstina sinu valitud välisele mudelipakkujale, ka läbivalt krüptitud vestlustes. Sisestatavat teksti võidakse pakkujale saata enne, kui sa sõnumi saadad. Pakkuja saab seda sisu lugeda ning oma privaatsuspõhimõtete kohaselt salvestada või kasutada.\n\nEnne kasutamist kaalu oma vajadusi ning hinda turvalisuse ja privaatsusega seotud riske. Väldi konfidentsiaalse sisu tõlkimist ja selliste pakkujate kasutamist, keda sa ei usalda. Võid kasutada ka enda majutatud mudelit, mille andmetöötlust ja andmete salvestamist saad ise juhtida.",
+    "translationPrivacyDetails": "Sõnumite ja sisestatava teksti tõlkimisel saadetakse tõlgitav tekst lihttekstina sinu valitud välisele mudelipakkujale, ka läbivalt krüptitud vestlustes. Sisestatavat teksti võidakse pakkujale saata enne, kui sa sõnumi saadad. Pakkuja saab seda sisu lugeda ning oma privaatsuspõhimõtete kohaselt salvestada või kasutada.\nEnne kasutamist kaalu oma vajadusi ning hinda turvalisuse ja privaatsusega seotud riske. Väldi konfidentsiaalse sisu tõlkimist ja selliste pakkujate kasutamist, keda sa ei usalda. Võid kasutada ka enda majutatud mudelit, mille andmetöötlust ja andmete salvestamist saad ise juhtida.",
     "translateInput": "Tõlgi sisend",
     "messageBubbleGradient": "Sõnumimulli värviüleminek",
     "compressImagesWhenSending": "Piltide tihendamine saatmisel",
@@ -444,7 +444,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "changeTheme": "Muuda oma stiili",
+    "changeTheme": "Välimus",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2165,7 +2165,7 @@
     "verifyOtherUserDescription": "Kui sa oled vestluse teise osapoole verifitseerinud, siis saad kindel olla, et tead, kellega suhtled. 💪\n\nKui alustad verifitseerimist, siis sinul ja teisel osapoolel tekib rakenduses hüpikaken. Seal kuvatakse emotikonide või numbrite jada, mida peate omavahel võrdlema.\n\nKõige lihtsam on seda teha kas omavahelise kohtumise ajal või videokõne kestel. 👭",
     "sendTypingNotificationsDescription": "Muud vestluses osalejad saavad näha, kui sa oled uut sõnumit kirjutamas.",
     "sendReadReceiptsDescription": "Muud vestluses osalejad näevad, kas oled sõnumit lugenud.",
-    "formattedMessages": "Vormindatud sõnumid",
+    "formattedMessages": "Kuva vormindatud sõnumeid",
     "verifyOtherUser": "🔐 Verifitseeri teine kasutaja",
     "verifyOtherDevice": "🔐 Verifitseeri oma muu seade",
     "canceledKeyVerification": "{sender} katkestas krüptovõtmete verifitseerimise",

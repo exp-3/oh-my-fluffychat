@@ -125,7 +125,7 @@
     "inputTranslationTriggerButton": "Gumb za prevajanje",
     "inputTranslationTriggerLongPress": "Dolg pritisk na vnosno polje",
     "inputTranslationTriggerDoubleTap": "Polje za vnos s hitrim dvojnim dotikom",
-    "translationPrivacyDetails": "Pri prevajanju sporočil in vnesenega besedila se besedilo za prevod pošlje v nešifrirani obliki izbranemu zunanjemu ponudniku modela, tudi v klepetih, šifriranih od konca do konca. Vneseno besedilo se lahko ponudniku pošlje, še preden pošljete sporočilo. Ponudnik lahko to vsebino bere ter jo shranjuje ali uporablja v skladu s svojim pravilnikom o zasebnosti.\n\nPred uporabo razmislite o svojih potrebah ter ocenite tveganja za varnost in zasebnost. Izogibajte se prevajanju zaupnih vsebin in ponudnikom, ki jim ne zaupate. Uporabite lahko tudi model na lastnem strežniku, pri katerem sami nadzorujete obdelavo in shranjevanje podatkov.",
+    "translationPrivacyDetails": "Pri prevajanju sporočil in vnesenega besedila se besedilo za prevod pošlje v nešifrirani obliki izbranemu zunanjemu ponudniku modela, tudi v klepetih, šifriranih od konca do konca. Vneseno besedilo se lahko ponudniku pošlje, še preden pošljete sporočilo. Ponudnik lahko to vsebino bere ter jo shranjuje ali uporablja v skladu s svojim pravilnikom o zasebnosti.\nPred uporabo razmislite o svojih potrebah ter ocenite tveganja za varnost in zasebnost. Izogibajte se prevajanju zaupnih vsebin in ponudnikom, ki jim ne zaupate. Uporabite lahko tudi model na lastnem strežniku, pri katerem sami nadzorujete obdelavo in shranjevanje podatkov.",
     "translateInput": "Prevedi vnos",
     "messageBubbleGradient": "Barvni preliv oblačka sporočila",
     "compressImagesWhenSending": "Stisni slike pri pošiljanju",
@@ -397,7 +397,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "changeTheme": "Spremenite svoj slog",
+    "changeTheme": "Videz",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2075,5 +2075,6 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "formattedMessages": "Prikaži oblikovana sporočila"
 }

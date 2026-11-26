@@ -125,7 +125,7 @@
     "inputTranslationTriggerButton": "Tulkošanas poga",
     "inputTranslationTriggerLongPress": "Turiet nospiestu ievades lauku",
     "inputTranslationTriggerDoubleTap": "Ātri veiciet dubultskārienu ievades laukā",
-    "translationPrivacyDetails": "Ziņojumu un ievadītā teksta tulkošana nosūta tulkojamo tekstu nešifrētā veidā jūsu izvēlētajam ārējam modeļa pakalpojumu sniedzējam, arī sarunās, kas šifrētas no gala līdz galam. Ievadītais teksts var tikt nosūtīts pakalpojumu sniedzējam vēl pirms ziņojuma nosūtīšanas. Pakalpojumu sniedzējs var lasīt šo saturu un glabāt vai izmantot to saskaņā ar savu privātuma politiku.\n\nPirms lietošanas apsveriet savas vajadzības un izvērtējiet drošības un privātuma riskus. Izvairieties no konfidenciāla satura tulkošanas un tādu pakalpojumu sniedzēju izmantošanas, kuriem neuzticaties. Varat arī izmantot pašu mitinātu modeli, kura datu apstrādi un glabāšanu kontrolējat.",
+    "translationPrivacyDetails": "Ziņojumu un ievadītā teksta tulkošana nosūta tulkojamo tekstu nešifrētā veidā jūsu izvēlētajam ārējam modeļa pakalpojumu sniedzējam, arī sarunās, kas šifrētas no gala līdz galam. Ievadītais teksts var tikt nosūtīts pakalpojumu sniedzējam vēl pirms ziņojuma nosūtīšanas. Pakalpojumu sniedzējs var lasīt šo saturu un glabāt vai izmantot to saskaņā ar savu privātuma politiku.\nPirms lietošanas apsveriet savas vajadzības un izvērtējiet drošības un privātuma riskus. Izvairieties no konfidenciāla satura tulkošanas un tādu pakalpojumu sniedzēju izmantošanas, kuriem neuzticaties. Varat arī izmantot pašu mitinātu modeli, kura datu apstrādi un glabāšanu kontrolējat.",
     "translateInput": "Tulkot ievadi",
     "messageBubbleGradient": "Ziņas burbuļa gradients",
     "compressImagesWhenSending": "Saspiest attēlus nosūtot",
@@ -462,7 +462,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "changeTheme": "Mainīt izskatu",
+    "changeTheme": "Izskats",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2113,7 +2113,7 @@
     "yourGlobalUserIdIs": "Vispārējais lietotāja Id ir: ",
     "select": "Atlasīt",
     "initAppError": "Atgadījās kļūda lietotnes sāknēšanas laikā",
-    "formattedMessages": "Formatētas ziņas",
+    "formattedMessages": "Rādīt formatētas ziņas",
     "canceledKeyVerification": "{sender} atcēla atslēgas apliecināšanu",
     "@canceledKeyVerification": {
         "type": "String",

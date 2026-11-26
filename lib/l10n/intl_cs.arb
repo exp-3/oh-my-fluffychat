@@ -129,7 +129,7 @@
     "inputTranslationTriggerButton": "Překlad tlačítko",
     "inputTranslationTriggerLongPress": "Dlouhé stisknutí vstupního pole",
     "inputTranslationTriggerDoubleTap": "Rychlé dvojité poklepání na vstupní pole",
-    "translationPrivacyDetails": "Překlad zpráv a zadávaného textu odesílá překládaný text v prosté podobě vámi vybranému externímu poskytovateli modelu, a to i v koncově šifrovaných chatech. Zadávaný text může být poskytovateli odeslán ještě před odesláním zprávy. Poskytovatel může tento obsah číst a ukládat nebo používat podle svých zásad ochrany soukromí.\n\nPřed použitím zvažte své potřeby a posuďte rizika pro bezpečnost a soukromí. Vyhněte se překládání důvěrného obsahu a používání poskytovatelů, kterým nedůvěřujete. Můžete také použít model provozovaný na vlastním serveru, u něhož máte pod kontrolou zpracování a ukládání dat.",
+    "translationPrivacyDetails": "Překlad zpráv a zadávaného textu odesílá překládaný text v prosté podobě vámi vybranému externímu poskytovateli modelu, a to i v koncově šifrovaných chatech. Zadávaný text může být poskytovateli odeslán ještě před odesláním zprávy. Poskytovatel může tento obsah číst a ukládat nebo používat podle svých zásad ochrany soukromí.\nPřed použitím zvažte své potřeby a posuďte rizika pro bezpečnost a soukromí. Vyhněte se překládání důvěrného obsahu a používání poskytovatelů, kterým nedůvěřujete. Můžete také použít model provozovaný na vlastním serveru, u něhož máte pod kontrolou zpracování a ukládání dat.",
     "translateInput": "Přeložit vstup",
     "messageBubbleGradient": "Barevný přechod bubliny zprávy",
     "compressImagesWhenSending": "Komprimovat obrázky při odesílání",
@@ -446,7 +446,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "changeTheme": "Změňte svůj styl",
+    "changeTheme": "Vzhled",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2227,7 +2227,7 @@
     "sendReadReceipts": "Posílat potvrzení o přečtení",
     "sendTypingNotificationsDescription": "Ostatní účastníci konverzace uvidí, že píšete novou zprávu.",
     "sendReadReceiptsDescription": "Ostatní účastníci konverzace uvidí, že jste si přečetl/a jejich zprávu.",
-    "formattedMessages": "Formátované zprávy",
+    "formattedMessages": "Zobrazovat formátované zprávy",
     "formattedMessagesDescription": "Zobrazovat formátovaný obsah zpráv, jako například tučný text pomocí markdownu.",
     "verifyOtherUser": "🔐 Ověřit jiného uživatele",
     "verifyOtherUserDescription": "Když ověříte jiného uživatele, můžete si být jistí, že víte, s kým si píšete. 💪\n\nJakmile začnete s ověřením, vy a druhý uživatel uvidíte v aplikaci vyskakovací okno. V něm uvidíte sérii emodži nebo čísel, které musíte společně porovnat.\n\nNejjednodušší je setkat se osobně nebo si udělat videohovor. 👭",

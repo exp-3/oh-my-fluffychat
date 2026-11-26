@@ -21,6 +21,7 @@ import 'package:fluffychat/widgets/chat_settings_popup_menu.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:fluffychat/widgets/mxc_image.dart';
 import 'package:fluffychat/widgets/pulsating_widget.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:matrix/matrix.dart';
 
@@ -32,13 +33,18 @@ enum _EventContextAction { info, report }
 
 class ChatView extends StatelessWidget {
   final ChatController controller;
+  final bool showSearchAction;
 
-  const ChatView(this.controller, {super.key});
+  const ChatView(this.controller, {super.key, required this.showSearchAction});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final hasActiveGroupCall = controller.room.hasActiveMatrixRtcCall;
+    final displaySearch =
+        showSearchAction &&
+        (controller.room.membership == Membership.join ||
+            controller.room.membership == Membership.leave);
 
     final bottomSheetPadding = FluffyThemes.isColumnMode(context) ? 16.0 : 8.0;
     final scrollUpBannerEventId = controller.scrollUpBannerEventId;
@@ -262,7 +268,18 @@ class ChatView extends StatelessWidget {
                         icon: Icon(Icons.call_outlined),
                         onPressed: controller.startOrJoinVideoCall,
                       ),
-                    ChatSettingsPopupMenu(controller.room, true),
+                    if (displaySearch)
+                      IconButton(
+                        icon: const Icon(Icons.search_outlined),
+                        tooltip: L10n.of(context).search,
+                        onPressed: () =>
+                            context.go('/rooms/${controller.room.id}/search'),
+                      ),
+                    ChatSettingsPopupMenu(
+                      controller.room,
+                      true,
+                      displaySearch: !displaySearch,
+                    ),
                   ],
                 ],
                 bottom: PreferredSize(

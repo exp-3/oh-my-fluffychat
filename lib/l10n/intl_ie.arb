@@ -125,7 +125,7 @@
     "inputTranslationTriggerButton": "Button de traduction",
     "inputTranslationTriggerLongPress": "Long pression del campo de intrada",
     "inputTranslationTriggerDoubleTap": "Rapid duple pression del campo de intrada",
-    "translationPrivacyDetails": "Li traduction de missages e de textu intrat invia li textu a traducter quam textu ínciffrat al extern provisor de modelles quel vu selecte, mem in conversationes ciffrat de extrem a extrem. Li textu intrat posse esser inviat al provisor ante que vu invia li missage. Li provisor posse leer ti contenete e conservar o usar it secun su politica de privatitá.\n\nConsidera vor besones e evalua li riscos de securitá e privatitá ante li usation. Evita traducter confidential contenete o usar provisores in queles vu ne fide. Vu posse anc usar un modelle quel vu self hospeda e por quel vu controla li tractation e conservation del data.",
+    "translationPrivacyDetails": "Li traduction de missages e de textu intrat invia li textu a traducter quam textu ínciffrat al extern provisor de modelles quel vu selecte, mem in conversationes ciffrat de extrem a extrem. Li textu intrat posse esser inviat al provisor ante que vu invia li missage. Li provisor posse leer ti contenete e conservar o usar it secun su politica de privatitá.\nConsidera vor besones e evalua li riscos de securitá e privatitá ante li usation. Evita traducter confidential contenete o usar provisores in queles vu ne fide. Vu posse anc usar un modelle quel vu self hospeda e por quel vu controla li tractation e conservation del data.",
     "translateInput": "Traducter li intrada",
     "messageBubbleGradient": "Gradiente del bulla de missage",
     "compressImagesWhenSending": "Compresser images durant li inviation",
@@ -781,7 +781,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "changeTheme": "Cambiar li stil",
+    "changeTheme": "Aspecte",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2162,5 +2162,6 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "formattedMessages": "Monstrar formatat missages"
 }

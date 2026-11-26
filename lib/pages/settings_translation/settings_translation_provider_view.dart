@@ -5,6 +5,7 @@
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/translation/translation_models.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:fluffychat/widgets/settings_checkbox_list_tile.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'settings_translation.dart';
@@ -93,19 +94,12 @@ class SettingsTranslationProviderView extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 16),
-                      child: ListTileTheme.merge(
-                        horizontalTitleGap: 0,
-                        child: CheckboxListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          dense: true,
-                          visualDensity: const VisualDensity(vertical: -2),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          value: controller.useFullEndpoint,
-                          title: Text(l10n.translationEndpointIsComplete),
-                          onChanged: busy
-                              ? null
-                              : controller.changeUseFullEndpoint,
-                        ),
+                      child: SettingsCheckboxListTile(
+                        value: controller.useFullEndpoint,
+                        title: Text(l10n.translationEndpointIsComplete),
+                        onChanged: busy
+                            ? null
+                            : controller.changeUseFullEndpoint,
                       ),
                     ),
                     DropdownButtonFormField<TranslationProtocol>(
@@ -184,7 +178,7 @@ class SettingsTranslationProviderView extends StatelessWidget {
                     ),
                     SizedBox(
                       width: double.infinity,
-                      child: OutlinedButton.icon(
+                      child: FilledButton.tonalIcon(
                         onPressed: busy || controller.loadingApiKey
                             ? null
                             : controller.test,

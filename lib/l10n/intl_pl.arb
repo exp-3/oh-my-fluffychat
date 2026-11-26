@@ -129,7 +129,7 @@
     "inputTranslationTriggerButton": "Przycisk tłumaczenia",
     "inputTranslationTriggerLongPress": "Długie naciśnięcie pola wprowadzania",
     "inputTranslationTriggerDoubleTap": "Szybkie dwukrotne dotknięcie pola wprowadzania",
-    "translationPrivacyDetails": "Tłumaczenie wiadomości i wpisywanego tekstu przesyła tłumaczony tekst w postaci jawnej do wybranego zewnętrznego dostawcy modelu, nawet w czatach z szyfrowaniem od końca do końca. Wpisywany tekst może zostać przesłany do dostawcy jeszcze przed wysłaniem wiadomości. Dostawca może odczytać tę treść oraz przechowywać ją lub wykorzystywać zgodnie ze swoją polityką prywatności.\n\nPrzed użyciem rozważ swoje potrzeby oraz oceń zagrożenia dla bezpieczeństwa i prywatności. Unikaj tłumaczenia poufnych treści i korzystania z dostawców, którym nie ufasz. Możesz też używać modelu na własnym serwerze, którego przetwarzanie i przechowywanie danych kontrolujesz.",
+    "translationPrivacyDetails": "Tłumaczenie wiadomości i wpisywanego tekstu przesyła tłumaczony tekst w postaci jawnej do wybranego zewnętrznego dostawcy modelu, nawet w czatach z szyfrowaniem od końca do końca. Wpisywany tekst może zostać przesłany do dostawcy jeszcze przed wysłaniem wiadomości. Dostawca może odczytać tę treść oraz przechowywać ją lub wykorzystywać zgodnie ze swoją polityką prywatności.\nPrzed użyciem rozważ swoje potrzeby oraz oceń zagrożenia dla bezpieczeństwa i prywatności. Unikaj tłumaczenia poufnych treści i korzystania z dostawców, którym nie ufasz. Możesz też używać modelu na własnym serwerze, którego przetwarzanie i przechowywanie danych kontrolujesz.",
     "translateInput": "Przetłumacz dane wejściowe",
     "messageBubbleGradient": "Gradient dymku wiadomości",
     "compressImagesWhenSending": "Kompresuj obrazy podczas wysyłania",
@@ -422,7 +422,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "changeTheme": "Zmień swój styl",
+    "changeTheme": "Wygląd",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2127,7 +2127,7 @@
     "changelog": "Lista zmian",
     "inviteOtherUsers": "Zaproś innych użytkowników do tego czatu",
     "blockListDescription": "Możesz zablokować uciążliwych użytkowników. Nie będziesz widzieć ani otrzymywać wiadomości oraz zaproszeń od nich.",
-    "formattedMessages": "Sformatowane wiadomości",
+    "formattedMessages": "Wyświetlaj sformatowane wiadomości",
     "banUserDescription": "Użytkownik zostanie zbanowany w czacie i nie będzie w stanie dołączyć do czatu do momentu odbanowania.",
     "sendReadReceipts": "Wysyłaj powiadomienia o przeczytaniu wiadomości",
     "verifyOtherDevice": "🔐 Zweryfikuj inne urządzenie",

@@ -128,7 +128,7 @@
     "inputTranslationTriggerButton": "번역 버튼",
     "inputTranslationTriggerLongPress": "길게 누르기 입력 필드",
     "inputTranslationTriggerDoubleTap": "빠른 두 번 탭 입력 필드",
-    "translationPrivacyDetails": "메시지 번역과 입력 번역은 번역할 텍스트를 선택한 외부 모델 제공업체에 평문으로 전송합니다. 종단 간 암호화된 채팅에서도 마찬가지입니다. 입력한 텍스트는 메시지를 보내기 전에 제공업체에 전송될 수 있습니다. 제공업체는 이 내용을 읽을 수 있으며, 자체 개인정보 처리방침에 따라 저장하거나 사용할 수 있습니다.\n\n사용하기 전에 필요성을 검토하고 보안 및 개인정보 보호 위험을 평가하세요. 기밀 내용을 번역하거나 신뢰하지 않는 제공업체를 사용하는 것은 피하세요. 데이터 처리와 저장을 직접 관리할 수 있는 자체 호스팅 모델을 사용할 수도 있습니다.",
+    "translationPrivacyDetails": "메시지 번역과 입력 번역은 번역할 텍스트를 선택한 외부 모델 제공업체에 평문으로 전송합니다. 종단 간 암호화된 채팅에서도 마찬가지입니다. 입력한 텍스트는 메시지를 보내기 전에 제공업체에 전송될 수 있습니다. 제공업체는 이 내용을 읽을 수 있으며, 자체 개인정보 처리방침에 따라 저장하거나 사용할 수 있습니다.\n사용하기 전에 필요성을 검토하고 보안 및 개인정보 보호 위험을 평가하세요. 기밀 내용을 번역하거나 신뢰하지 않는 제공업체를 사용하는 것은 피하세요. 데이터 처리와 저장을 직접 관리할 수 있는 자체 호스팅 모델을 사용할 수도 있습니다.",
     "translateInput": "입력 번역",
     "messageBubbleGradient": "메시지 말풍선 그라데이션",
     "compressImagesWhenSending": "보낼 때 이미지 압축",
@@ -560,7 +560,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "changeTheme": "스타일 바꾸기",
+    "changeTheme": "모양",
     "@changeTheme": {
         "type": "String",
         "placeholders": {}
@@ -2196,7 +2196,7 @@
     "publicSpaces": "공개 스페이스들",
     "initAppError": "앱 초기화중 오류 발생",
     "sendTypingNotificationsDescription": "채팅의 다른 참가자들이 당신이 새 메시지를 입력중인것을 볼 수 있습니다.",
-    "formattedMessages": "형식이 지정된 메시지",
+    "formattedMessages": "서식 있는 메시지 표시",
     "verifyOtherDevice": "🔐 다른 기기를 확인",
     "verifyOtherUserDescription": "다른 유저를 확인하면, 당신은 당신이 누구에게 말하고있는지 알 수 있습니다. 💪\n\n확인을 시작할 때, 다른 유저는 앱에서 팝업을 볼 수 있습니다. 당신은 그런 다음 서로 비교해야 이모지 또는 숫자의 목록을 볼 수 있습니다.\n\n이 작업을 수행하는 가장 좋은 방법은 직접 만나거나 영상통화를 하는것입니다. 👭",
     "verifyOtherDeviceDescription": "다른 장치를 확인하면, 장치와 키를 교환하고, 전반적인 보안을 증가시킵니다. 💪 확인을 시작하면 팝업은 두 장치에 나타납니다. 그런 다음 서로 비교해야 이모지 또는 숫자의 목록를 볼 수 있습니다. 확인을 시작하기 전에 모든 장치를 준비하세요. 🤳",
