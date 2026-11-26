@@ -17,7 +17,6 @@ import file_selector_macos
 import flutter_local_notifications
 import flutter_new_badger
 import flutter_secure_storage_darwin
-import flutter_web_auth_2
 import flutter_webrtc
 import geolocator_apple
 import just_audio
@@ -37,6 +36,7 @@ import wakelock_plus
 import webcrypto
 import window_manager
 import window_to_front
+import flutter_web_auth_2
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   AudioSessionPlugin.register(with: registry.registrar(forPlugin: "AudioSessionPlugin"))
@@ -51,7 +51,6 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FlutterLocalNotificationsPlugin.register(with: registry.registrar(forPlugin: "FlutterLocalNotificationsPlugin"))
   FlutterNewBadgerPlugin.register(with: registry.registrar(forPlugin: "FlutterNewBadgerPlugin"))
   FlutterSecureStorageDarwinPlugin.register(with: registry.registrar(forPlugin: "FlutterSecureStorageDarwinPlugin"))
-  FlutterWebAuth2Plugin.register(with: registry.registrar(forPlugin: "FlutterWebAuth2Plugin"))
   FlutterWebRTCPlugin.register(with: registry.registrar(forPlugin: "FlutterWebRTCPlugin"))
   GeolocatorPlugin.register(with: registry.registrar(forPlugin: "GeolocatorPlugin"))
   JustAudioPlugin.register(with: registry.registrar(forPlugin: "JustAudioPlugin"))
@@ -71,4 +70,5 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   WebcryptoPlugin.register(with: registry.registrar(forPlugin: "WebcryptoPlugin"))
   WindowManagerPlugin.register(with: registry.registrar(forPlugin: "WindowManagerPlugin"))
   WindowToFrontPlugin.register(with: registry.registrar(forPlugin: "WindowToFrontPlugin"))
+  FlutterWebAuth2Plugin.register(with: registry.registrar(forPlugin: "FlutterWebAuth2Plugin"))
 }

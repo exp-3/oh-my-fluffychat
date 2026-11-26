@@ -42,7 +42,7 @@ dependencies:
   flutter_new_badger: ^2.0.0
   flutter_secure_storage: ^11.2.0
   flutter_shortcuts_new: ^2.1.0
-  flutter_vodozemac: ^0.9.0
+  flutter_vodozemac: ^0.10.0
   flutter_web_auth_2: ^5.1.0
   flutter_webrtc: ^1.6.2+hotfix.3
   geolocator: ^14.1.2
@@ -63,7 +63,7 @@ dependencies:
   lottie: ^3.8.2
   managed_configurations: ^1.2.0
   material_ui: 1.8.0
-  matrix: ^16.0.4
+  matrix: ^18.0.0
   media_kit_libs_linux: ^1.2.1
   media_kit_libs_windows_audio: ^1.0.9
   mime: ^2.1.0
@@ -108,7 +108,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   license_checker: ^1.6.2
-  vodozemac: ^0.9.0
+  vodozemac: ^0.10.0
 
 flutter:
   generate: true
@@ -117,7 +117,7 @@ flutter:
     - assets/
     - assets/logo/mini/
     - assets/sounds/
-    - assets/vodozemac/0.9.0/
+    - assets/vodozemac/0.10.0/
 
 hooks:
   user_defines:
@@ -146,6 +146,10 @@ flutter_launcher_icons:
 # 2. Always link an (upstream?) issue
 # 3. Explain how and when this can be removed (overrides must be temporarily)
 dependency_overrides:
+  # flutter_launcher_icons 0.14.4 pins cli_util ^0.4.1 but pana (via license_checker) needs ^0.5.0 on Flutter 3.50.
+  # https://github.com/fluttercommunity/flutter_launcher_icons/issues/675 (fix: PR #671)
+  # Remove once flutter_launcher_icons releases a version allowing cli_util ^0.5.0.
+  cli_util: ^0.5.0
   # Use the fixed fork for direct and transitive users until the fix is published upstream.
   # https://github.com/exp-3/pointycastle-dart-fix/commit/099dc23ddcfb5e2bfb8edf080a6556696b54e962
   pointycastle:

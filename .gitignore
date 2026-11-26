@@ -204,6 +204,7 @@ web/e2ee.worker.dart.js.deps
 web/e2ee.worker.dart.js.map
 
 test/rust
+test/vodozemac/
 
 # FVM Version Cache
 .fvm/
