@@ -5,7 +5,6 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-# Downloads the prebuilt native vodozemac library for running tests on this host.
 set -e
 version=$(yq ".packages.vodozemac.version" < pubspec.lock | tr -d '"')
 case "$(uname -s)-$(uname -m)" in
