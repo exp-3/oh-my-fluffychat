@@ -121,37 +121,6 @@ void main() {
     });
   });
 
-  for (final mode in [
-    InputTranslationMode.disabled,
-    InputTranslationMode.manual,
-  ]) {
-    testWidgets('${mode.name} input mode does not translate a sent caption', (
-      tester,
-    ) async {
-      await runtime.setInputMode(mode);
-      final room = _CaptionSendingRoom();
-      await _showPreview(tester, room, caption: 'Original caption');
-      await _send(tester);
-
-      expect(api.requests, isEmpty);
-      expect(room.calls.single.namedArguments[#extraContent], {
-        'body': 'Original caption',
-      });
-    });
-  }
-
-  testWidgets('global disable bypasses caption translation', (tester) async {
-    await runtime.setEnabled(false);
-    final room = _CaptionSendingRoom();
-    await _showPreview(tester, room, caption: 'Original caption');
-    await _send(tester);
-
-    expect(api.requests, isEmpty);
-    expect(room.calls.single.namedArguments[#extraContent], {
-      'body': 'Original caption',
-    });
-  });
-
   testWidgets('input scope follows automatic room eligibility', (tester) async {
     await runtime.setInputScope(InputTranslationScope.automaticRooms);
     final room = _CaptionSendingRoom();

@@ -177,7 +177,7 @@ jobs:
           fi
 
   code_metrics:
-    name: Dart code metrics
+    name: Dart code analysis
     needs: prepare_checks
     runs-on: ubuntu-latest
     permissions:
@@ -191,14 +191,35 @@ jobs:
           dependency-lock-repaired: ${{ needs.prepare_checks.outputs.dependency_lock_repaired }}
           dart-sources-repaired: ${{ needs.prepare_checks.outputs.dart_sources_repaired }}
       - run: dart run dart_code_linter:metrics analyze lib --reporter=github
-      - run: dart run dart_code_linter:metrics check-unused-code lib
-      - run: dart run dart_code_linter:metrics check-unused-files lib
-      - run: dart run dart_code_linter:metrics check-unused-l10n lib
 
-  tests:
-    name: Tests and optional Firebase analysis
+  unused_code_checks:
+    name: Unused checks (${{ matrix.check }})
     needs: prepare_checks
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [code, files, l10n]
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+      - uses: ./.github/actions/restore_code_checks
+        with:
+          dependency-lock-repaired: ${{ needs.prepare_checks.outputs.dependency_lock_repaired }}
+          dart-sources-repaired: ${{ needs.prepare_checks.outputs.dart_sources_repaired }}
+      - run: dart run dart_code_linter:metrics check-unused-${{ matrix.check }} lib
+
+  tests:
+    name: Tests (shard ${{ matrix.shard }})
+    needs: prepare_checks
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2]
     permissions:
       contents: read
     steps:
@@ -218,11 +239,23 @@ jobs:
         if: steps.firebase.outputs.configured == 'true'
         run: ./scripts/add-firebase-messaging.sh
       - name: Analyze with Firebase Messaging
-        if: steps.firebase.outputs.configured == 'true'
+        if: steps.firebase.outputs.configured == 'true' && matrix.shard == 0
         run: flutter analyze
       - name: Prepare test encryption library
         run: ./scripts/prepare_vodozemac.sh
-      - run: flutter test
+      - name: Run test shard
+        id: flutter_tests
+        run: >-
+          flutter test --total-shards=3 --shard-index=${{ matrix.shard }}
+          --file-reporter=json:${{ runner.temp }}/test-results.json
+      - name: Upload test timing report
+        if: ${{ !cancelled() && steps.flutter_tests.outcome != 'skipped' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results-shard-${{ matrix.shard }}
+          path: ${{ runner.temp }}/test-results.json
+          if-no-files-found: warn
+          retention-days: 7
 
   code_tests:
     needs:
@@ -230,6 +263,7 @@ jobs:
       - prepare_checks
       - analysis_checks
       - code_metrics
+      - unused_code_checks
       - tests
     if: ${{ always() }}
     runs-on: ubuntu-latest

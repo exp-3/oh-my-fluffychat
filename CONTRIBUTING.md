@@ -185,7 +185,11 @@ We do not allow codes with dart errors or warnings. We use the [flutter_lints](h
 
 ### Code Checks CI
 
-Repository checks run alongside dependency resolution, Dart fixes, and formatting. Once preparation succeeds, analysis and dependency checks, Dart code metrics, and tests run in three parallel jobs. Each job checks out the triggering commit and applies the same prepared source repairs and dependency lock before resolving dependencies with `--enforce-lockfile`.
+Repository checks run alongside dependency resolution, Dart fixes, and formatting. Once preparation succeeds, analysis and dependency checks, Dart code analysis, unused code checks, and three test shards run in parallel. Each job checks out the triggering commit and applies the same prepared source repairs and dependency lock before resolving dependencies with `--enforce-lockfile`.
+
+Unused code, file, and translation checks run as three parallel matrix jobs (`code`, `files`, and `l10n`). A failing check does not cancel the other checks, and the `code_tests` job waits for every matrix job.
+
+Tests use Flutter's `--total-shards=3` with shard indices 0, 1, and 2. A failing shard does not cancel the other shards. Each shard uploads a JSON report with test events and timestamps as `test-results-shard-0`, `test-results-shard-1`, or `test-results-shard-2`, including on test failure when the report is available. Reports are retained for seven days to help compare durations and shard balance.
 
 The `code_tests` job aggregates every required result and fails if any required job fails, is cancelled, or is skipped. On pushes to `main`, automatic repairs are committed after the checks finish, including when a check fails.
 
@@ -194,3 +198,5 @@ The `code_tests` job aggregates every required result and fails if any required 
 To enable Firebase checks in Code Checks and Firebase Messaging in debug Android builds, configure the repository secret `GOOGLE_SERVICES_JSON` with the complete contents of the Android Firebase configuration file. Its client package name must match `applicationId` in `android/app/build.gradle.kts`.
 
 CI checks the project number, project ID, matching client's mobile SDK app ID, and API key before enabling Firebase. If the secret is unavailable, invalid, or incomplete, Firebase steps are skipped with a notice; the regular analysis, tests, and debug builds still run. Fork pull requests without access to the secret also skip Firebase steps.
+
+When Firebase is configured, all three test shards enable Firebase Messaging, and only shard 0 runs the additional Firebase analysis.

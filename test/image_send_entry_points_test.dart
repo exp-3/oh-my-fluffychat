@@ -7,6 +7,7 @@ import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/chat/input_bar.dart';
 import 'package:fluffychat/pages/chat/send_file_dialog.dart';
 import 'package:fluffychat/pages/chat/utils/clipboard_image_to_x_file.dart';
+import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -76,6 +77,7 @@ void main() {
 
   void expectSize(MatrixFile file, int width, int height) {
     expect(file, isA<MatrixImageFile>());
+    expect(file.msgType, MessageTypes.Image);
     final image = img.decodeImage(file.bytes)!;
     expect((image.width, image.height), (width, height));
     expect((file.info['w'], file.info['h']), (width, height));
@@ -95,6 +97,13 @@ void main() {
               path: 'shared-content',
               mimeType: 'application/octet-stream',
             );
+      if (source == 'windows-clipboard') {
+        expect(file.mimeType, 'image/bmp');
+        expect(file.path, 'clipboard.bmp');
+        expect(file.name, 'clipboard.bmp');
+        expect(await file.length(), bytes.length);
+        expect(await file.readAsBytes(), bytes);
+      }
       final room = _SendingRoom();
       await showPreview(tester, room, [file]);
       expect(find.byType(Switch), findsOneWidget);
@@ -151,19 +160,25 @@ void main() {
     expect(img.decodeImage(room.sent.single.bytes)!.width, 80);
   });
 
-  testWidgets('unnamed clipboard images can enable compression locally', (
+  testWidgets('mixed previews can enable unnamed image compression locally', (
     tester,
   ) async {
     await AppSettings.compressImagesByDefault.setItem(false);
     final room = _SendingRoom();
     await showPreview(tester, room, [
       clipboardImageToXFile(picture(), isWindows: false),
+      XFile.fromData(Uint8List(0), name: 'video.mp4', mimeType: 'video/mp4'),
     ]);
-    expect(tester.widget<Switch>(find.byType(Switch)).value, isFalse);
-    await tester.tap(find.byType(Switch));
+    final switches = find.byType(Switch);
+    expect(switches, findsNWidgets(PlatformInfos.isMobile ? 2 : 1));
+    expect(tester.widget<Switch>(switches.first).value, isFalse);
+    await tester.tap(switches.first);
     await tester.pumpAndSettle();
+    expect(tester.widget<Switch>(switches.first).value, isTrue);
     await send(tester);
-    expectSize(room.sent.single, 32, 16);
+    expect(room.sent, hasLength(2));
+    expectSize(room.sent.first, 32, 16);
+    expect(room.sent.last.mimeType, 'video/mp4');
     expect(AppSettings.compressImagesByDefault.value, isFalse);
   });
 

@@ -56,6 +56,7 @@ void main() {
     'manual roaming imports require both enable switches and valid secrets',
     () async {
       final fixture = await _RuntimeFixture.create(
+        withClient: false,
         roamingFactory: _ImmediateRoaming.new,
       );
       addTearDown(fixture.runtime.dispose);
@@ -78,6 +79,7 @@ void main() {
     'read-only roaming stops existing imports and rejects new sessions',
     () async {
       final fixture = await _RuntimeFixture.create(
+        withClient: false,
         roamingFactory: _ImmediateRoaming.new,
       );
       addTearDown(fixture.runtime.dispose);
@@ -110,6 +112,7 @@ void main() {
     'manual import snapshots stop on configuration and cache safety changes',
     () async {
       final fixture = await _RuntimeFixture.create(
+        withClient: false,
         roamingFactory: _ImmediateRoaming.new,
       );
       addTearDown(fixture.runtime.dispose);
@@ -388,7 +391,7 @@ void main() {
   );
 
   test('input translation settings persist independently', () async {
-    final fixture = await _RuntimeFixture.create();
+    final fixture = await _RuntimeFixture.create(withClient: false);
     expect(fixture.runtime.preferRoomLanguageForSource, isFalse);
     expect(fixture.runtime.preferRoomLanguageForInputTarget, isTrue);
     expect(fixture.runtime.inputMode, InputTranslationMode.disabled);
@@ -531,7 +534,10 @@ void main() {
 
   for (final mode in InputTranslationMode.values) {
     test('restores saved input translation mode ${mode.name}', () async {
-      final fixture = await _RuntimeFixture.create(inputMode: mode);
+      final fixture = await _RuntimeFixture.create(
+        withClient: false,
+        inputMode: mode,
+      );
       expect(
         fixture.runtime.manualInputTranslationEnabled,
         mode == InputTranslationMode.manual ||
@@ -1943,13 +1949,16 @@ void _expectControl(
 
 class _RuntimeFixture {
   final TranslationRuntime runtime;
-  final Client client;
+  final Client? _client;
   final _MemoryBackend backend;
   final _MemorySecrets secrets;
 
-  const _RuntimeFixture(this.runtime, this.client, this.backend, this.secrets);
+  const _RuntimeFixture(this.runtime, this._client, this.backend, this.secrets);
+
+  Client get client => _client!;
 
   static Future<_RuntimeFixture> create({
+    bool withClient = true,
     _MemorySecrets? secrets,
     TranslationApiClient? apiClient,
     TranslationRoamingServiceFactory? roamingFactory,
@@ -1982,7 +1991,7 @@ class _RuntimeFixture {
       roamingFactory: roamingFactory,
       afterRoamingFrame: afterRoamingFrame,
     );
-    final client = await prepareTestClient(loggedIn: true);
+    final client = withClient ? await prepareTestClient(loggedIn: true) : null;
     return _RuntimeFixture(runtime, client, backend, memorySecrets);
   }
 }
