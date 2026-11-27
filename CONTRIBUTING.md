@@ -182,3 +182,9 @@ We do not allow code with wrong formatting. Please run `flutter format lib` if y
 ### Code Analyzis
 
 We do not allow codes with dart errors or warnings. We use the [flutter_lints](https://pub.dev/packages/flutter_lints) package for static code analysis with additional rules under `analysis_options.yaml`.
+
+### Optional Firebase CI configuration
+
+To enable Firebase checks in Code Checks and Firebase Messaging in debug Android builds, configure the repository secret `GOOGLE_SERVICES_JSON` with the complete contents of the Android Firebase configuration file. Its client package name must match `applicationId` in `android/app/build.gradle.kts`.
+
+CI checks the project number, project ID, matching client's mobile SDK app ID, and API key before enabling Firebase. If the secret is unavailable, invalid, or incomplete, Firebase steps are skipped with a notice; the regular analysis, tests, and debug builds still run. Fork pull requests without access to the secret also skip Firebase steps.

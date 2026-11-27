@@ -18,6 +18,11 @@ jobs:
       dart_sources_repaired: ${{ steps.dart_repairs.outputs.repaired }}
     steps:
       - uses: actions/checkout@v7
+      - name: Check Firebase configuration
+        id: firebase
+        uses: ./.github/actions/prepare_firebase
+        with:
+          google-services-json: ${{ secrets.GOOGLE_SERVICES_JSON }}
       - uses: webiny/action-conventional-commits@v1.4.2
       - name: Check licenses
         uses: fsfe/reuse-action@v6
@@ -156,8 +161,11 @@ jobs:
             exit 1
           fi
       - name: Add Firebase Messaging
+        if: steps.firebase.outputs.configured == 'true'
         run: ./scripts/add-firebase-messaging.sh
-      - run: flutter analyze
+      - name: Analyze with Firebase Messaging
+        if: steps.firebase.outputs.configured == 'true'
+        run: flutter analyze
       - name: Prepare test encryption library
         run: ./scripts/prepare_vodozemac.sh
       - run: flutter test

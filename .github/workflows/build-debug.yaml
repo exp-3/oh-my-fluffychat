@@ -13,6 +13,11 @@ jobs:
       runs-on: ubuntu-latest
       steps:
          - uses: actions/checkout@v7
+         - name: Check Firebase configuration
+           id: firebase
+           uses: ./.github/actions/prepare_firebase
+           with:
+              google-services-json: ${{ secrets.GOOGLE_SERVICES_JSON }}
          - uses: ./.github/actions/free_up_space
          - uses: subosito/flutter-action@v2
            with:
@@ -27,7 +32,9 @@ jobs:
                  ~/.gradle/wrapper
               key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
               restore-keys: gradle-${{ runner.os }}-
-         - run: ./scripts/add-firebase-messaging.sh
+         - name: Add Firebase Messaging
+           if: steps.firebase.outputs.configured == 'true'
+           run: ./scripts/add-firebase-messaging.sh
          - name: Prepare Android signing
            if: github.event.release.prerelease == true
            shell: bash

@@ -1,0 +1,56 @@
+# SPDX-FileCopyrightText: 2026 The Oh-My-FluffyChat Project
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: Prepare Firebase configuration
+description: Enable Firebase tasks only when Android Firebase parameters are configured
+
+inputs:
+  google-services-json:
+    description: Contents of the Android google-services.json configuration
+    required: false
+
+outputs:
+  configured:
+    description: Whether the required Firebase parameters are configured
+    value: ${{ steps.configuration.outputs.configured }}
+
+runs:
+  using: composite
+  steps:
+    - name: Check Firebase parameters
+      id: configuration
+      shell: bash
+      env:
+        GOOGLE_SERVICES_JSON: ${{ inputs.google-services-json }}
+      run: |
+        set -euo pipefail
+        echo "configured=false" >> "$GITHUB_OUTPUT"
+
+        if [[ -z "${GOOGLE_SERVICES_JSON//[[:space:]]/}" ]]; then
+          echo "::notice::Skipping Firebase tasks: GOOGLE_SERVICES_JSON is not configured."
+          exit 0
+        fi
+
+        android_package="$(sed -n 's/^[[:space:]]*applicationId[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' android/app/build.gradle.kts)"
+        if [[ -z "$android_package" ]]; then
+          echo "::error::Unable to determine the Android application ID."
+          exit 1
+        fi
+
+        if ! printf '%s' "$GOOGLE_SERVICES_JSON" | jq -e --arg package "$android_package" '
+          def configured: type == "string" and test("\\S");
+          (.project_info.project_number | configured) and
+          (.project_info.project_id | configured) and
+          any(.client[]?;
+            .client_info.android_client_info.package_name == $package and
+            (.client_info.mobilesdk_app_id | configured) and
+            any(.api_key[]?; .current_key | configured)
+          )
+        ' > /dev/null 2>&1; then
+          echo "::notice::Skipping Firebase tasks: GOOGLE_SERVICES_JSON is invalid, incomplete, or does not match the Android application ID."
+          exit 0
+        fi
+
+        printf '%s\n' "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+        echo "configured=true" >> "$GITHUB_OUTPUT"
