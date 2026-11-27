@@ -52,28 +52,42 @@ Color _translationTextColor(
   TranslationBilingualColor.muted => textColor.withAlpha(170),
 };
 
-class OutsideBubbleTranslation extends StatelessWidget {
+class OutsideBubbleTranslation extends StatefulWidget {
   final Event event;
   final Timeline timeline;
+  final Widget child;
+  final VoidCallback? onLongPress;
   final List<Shadow>? textShadows;
 
   const OutsideBubbleTranslation({
     super.key,
     required this.event,
     required this.timeline,
+    required this.child,
+    this.onLongPress,
     this.textShadows,
   });
 
   @override
+  State<OutsideBubbleTranslation> createState() =>
+      _OutsideBubbleTranslationState();
+}
+
+class _OutsideBubbleTranslationState extends State<OutsideBubbleTranslation> {
+  final _bubbleKey = GlobalKey();
+
+  @override
   Widget build(BuildContext context) {
     final runtime = TranslationRuntime.instance;
+    final event = widget.event;
+    final child = KeyedSubtree(key: _bubbleKey, child: widget.child);
     return AnimatedBuilder(
       animation: runtime,
       builder: (context, _) {
         if (!runtime.canTranslateEvent(event) ||
             runtime.displayMode != TranslationDisplayMode.bilingual ||
             runtime.bilingualStyle != TranslationBilingualStyle.outsideBubble) {
-          return const SizedBox.shrink();
+          return child;
         }
         return ValueListenableBuilder<TranslationResultState>(
           valueListenable: runtime.stateForEvent(event),
@@ -84,35 +98,40 @@ class OutsideBubbleTranslation extends StatelessWidget {
                   translation,
                   runtime.sourceForEvent(event),
                 )) {
-              return const SizedBox.shrink();
+              return child;
             }
             final colorScheme = Theme.of(context).colorScheme;
-            final ownMessage = event.senderId == event.room.client.userID;
-            return Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: Align(
-                alignment: ownMessage ? Alignment.topRight : Alignment.topLeft,
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: FluffyThemes.columnWidth * 1.5,
-                  ),
-                  child: _TranslationHtml(
-                    event: event,
-                    html: translationHtmlForEvent(event, translation),
-                    textColor: _translationTextColor(
-                      runtime.bilingualColor,
-                      colorScheme.onSurface,
-                      colorScheme,
+            return ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: FluffyThemes.columnWidth * 1.5,
+              ),
+              child: IntrinsicWidth(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    child,
+                    GestureDetector(
+                      onLongPress: widget.onLongPress,
+                      child: _TranslationHtml(
+                        event: event,
+                        html: translationHtmlForEvent(event, translation),
+                        textColor: _translationTextColor(
+                          runtime.bilingualColor,
+                          colorScheme.onSurface,
+                          colorScheme,
+                        ),
+                        linkColor: colorScheme.primary,
+                        fontSize: AppConfig.messageFontSize,
+                        timeline: widget.timeline,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
+                        textShadows: widget.textShadows,
+                      ),
                     ),
-                    linkColor: colorScheme.primary,
-                    fontSize: AppConfig.messageFontSize,
-                    timeline: timeline,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 4,
-                    ),
-                    textShadows: textShadows,
-                  ),
+                  ],
                 ),
               ),
             );
@@ -395,47 +414,49 @@ class _TranslatedContent extends StatelessWidget {
           ? const EdgeInsets.fromLTRB(16, 3, 16, 8)
           : const EdgeInsets.fromLTRB(16, 4, 16, 8),
     );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _OriginalTranslation(
-          event: event,
-          originalHtml: originalHtml,
-          originalChild: originalChild,
-          textColor: textColor,
-          linkColor: linkColor,
-          originalFontSize: originalFontSize,
-          timeline: timeline,
-          padding: EdgeInsets.fromLTRB(16, 8, 16, glow ? 3 : 4),
-        ),
-        if (bilingualStyle == TranslationBilingualStyle.divider)
-          Divider(height: 1, color: translationColor.withAlpha(64)),
-        switch (bilingualStyle) {
-          TranslationBilingualStyle.background => Padding(
-            padding: const EdgeInsets.fromLTRB(
-              backgroundInset,
-              2,
-              backgroundInset,
-              backgroundInset,
-            ),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: backgroundColor,
-                borderRadius: BorderRadius.circular(
-                  AppConfig.borderRadius - backgroundInset,
-                ),
+    return IntrinsicWidth(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _OriginalTranslation(
+            event: event,
+            originalHtml: originalHtml,
+            originalChild: originalChild,
+            textColor: textColor,
+            linkColor: linkColor,
+            originalFontSize: originalFontSize,
+            timeline: timeline,
+            padding: EdgeInsets.fromLTRB(16, 8, 16, glow ? 3 : 4),
+          ),
+          if (bilingualStyle == TranslationBilingualStyle.divider)
+            Divider(height: 1, color: translationColor.withAlpha(64)),
+          switch (bilingualStyle) {
+            TranslationBilingualStyle.background => Padding(
+              padding: const EdgeInsets.fromLTRB(
+                backgroundInset,
+                2,
+                backgroundInset,
+                backgroundInset,
               ),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(
+                    AppConfig.borderRadius - backgroundInset,
+                  ),
+                ),
+                child: translatedContent,
+              ),
+            ),
+            TranslationBilingualStyle.duotone => DecoratedBox(
+              decoration: BoxDecoration(color: backgroundColor),
               child: translatedContent,
             ),
-          ),
-          TranslationBilingualStyle.duotone => DecoratedBox(
-            decoration: BoxDecoration(color: backgroundColor),
-            child: translatedContent,
-          ),
-          _ => translatedContent,
-        },
-      ],
+            _ => translatedContent,
+          },
+        ],
+      ),
     );
   }
 }
