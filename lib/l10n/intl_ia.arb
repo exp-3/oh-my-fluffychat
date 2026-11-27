@@ -1,4 +1,6 @@
 {
+    "translationProviderHttpWarning": "Iste fornitor usa HTTP. Tu clave API e le texto a traducer essera transmittite sin cryptage e poterea esser interceptate o modificate. HTTP es recommendate solmente in retes local de fiducia. Usa HTTPS in altere casos. Salvar totevia?",
+    "translationProviderHttpSaveAnyway": "Salvar totevia",
     "translationUnsavedChanges": "Tu ha modificationes non salvate. Vole tu salvar los?",
     "translationDiscardChanges": "Abandonar",
     "translationSaveBeforeUse": "Salva le configurationes ante de usar iste function.",

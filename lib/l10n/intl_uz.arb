@@ -1,4 +1,6 @@
 {
+    "translationProviderHttpWarning": "Bu provayder HTTP ishlatadi. API kalitingiz va tarjima qilinadigan matn shifrlanmasdan yuboriladi va boshqalar ularni tutib olishi yoki o‘zgartirishi mumkin. HTTP faqat ishonchli mahalliy tarmoqlarda tavsiya etiladi. Boshqa hollarda HTTPS ishlating. Baribir saqlansinmi?",
+    "translationProviderHttpSaveAnyway": "Baribir saqlash",
     "translationUnsavedChanges": "Saqlanmagan oʻzgarishlar bor. Ularni saqlamoqchimisiz?",
     "translationDiscardChanges": "Bekor qilish",
     "translationSaveBeforeUse": "Bu funksiyadan foydalanishdan oldin sozlamalarni saqlang.",

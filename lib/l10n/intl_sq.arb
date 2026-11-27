@@ -1,4 +1,6 @@
 {
+    "translationProviderHttpWarning": "Ky ofrues përdor HTTP. Kyçi juaj API dhe teksti për përkthim do të dërgohen pa enkriptim dhe mund të përgjohen ose të ndryshohen. HTTP këshillohet vetëm në rrjete vendore të besuara. Në raste të tjera përdorni HTTPS. Të ruhet sidoqoftë?",
+    "translationProviderHttpSaveAnyway": "Ruaje sidoqoftë",
     "translationUnsavedChanges": "Keni ndryshime të paruajtura. Dëshironi t’i ruani?",
     "translationDiscardChanges": "Hidhi poshtë",
     "translationSaveBeforeUse": "Ruani rregullimet përpara se të përdorni këtë veçori.",

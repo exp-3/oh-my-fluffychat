@@ -1,6 +1,8 @@
 {
     "@@locale": "sk",
     "@@last_modified": "2021-08-14 12:41:09.879987",
+    "translationProviderHttpWarning": "Tento poskytovateľ používa HTTP. Váš kľúč API a text na preklad sa odošlú bez šifrovania a môžu byť zachytené alebo pozmenené. HTTP sa odporúča iba v dôveryhodných lokálnych sieťach. V ostatných prípadoch použite HTTPS. Napriek tomu uložiť?",
+    "translationProviderHttpSaveAnyway": "Napriek tomu uložiť",
     "translationUnsavedChanges": "Máte neuložené zmeny. Chcete ich uložiť?",
     "translationDiscardChanges": "Zahodiť",
     "translationSaveBeforeUse": "Pred použitím tejto funkcie uložte nastavenia.",

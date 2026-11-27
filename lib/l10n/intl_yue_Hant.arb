@@ -1,5 +1,7 @@
 {
     "@@locale": "yue",
+    "translationProviderHttpWarning": "呢個供應商使用 HTTP。你嘅 API 金鑰同要翻譯嘅文字會未經加密傳送，可能畀人截取或竄改。HTTP 只建議喺可信任嘅區域網絡使用，其他情況請用 HTTPS。仍然要儲存嗎？",
+    "translationProviderHttpSaveAnyway": "繼續儲存",
     "translationUnsavedChanges": "有未儲存嘅更改，要儲存嗎？",
     "translationDiscardChanges": "捨棄",
     "translationSaveBeforeUse": "請先儲存設定再用呢個功能。",

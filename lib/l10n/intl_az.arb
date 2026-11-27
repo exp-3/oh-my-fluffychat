@@ -1,4 +1,6 @@
 {
+    "translationProviderHttpWarning": "Bu təchizatçı HTTP istifadə edir. API açarınız və tərcümə ediləcək mətn şifrələnmədən göndəriləcək və ələ keçirilə və ya dəyişdirilə bilər. HTTP yalnız etibarlı yerli şəbəkələrdə tövsiyə olunur. Digər hallarda HTTPS istifadə edin. Yenə də yadda saxlanılsın?",
+    "translationProviderHttpSaveAnyway": "Yenə də yadda saxla",
     "translationUnsavedChanges": "Yadda saxlanılmamış dəyişiklikləriniz var. Onları yadda saxlamaq istəyirsiniz?",
     "translationDiscardChanges": "Dəyişiklikləri ləğv et",
     "translationSaveBeforeUse": "Bu funksiyadan istifadə etməzdən əvvəl parametrləri yadda saxlayın.",

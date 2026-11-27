@@ -150,7 +150,7 @@ void main() {
     expect(provider.reasoningEffort, TranslationReasoningEffort.unspecified);
   });
 
-  test('provider endpoints require a valid HTTPS host or local HTTP host', () {
+  test('provider endpoints require a valid HTTP or HTTPS host', () {
     TranslationProviderConfig provider(Uri endpoint) =>
         TranslationProviderConfig(
           id: 'provider-id',
@@ -165,14 +165,30 @@ void main() {
       isTrue,
     );
     expect(provider(Uri.parse('https:/v1/responses')).isValid, isFalse);
-    expect(
-      provider(Uri.parse('http://localhost/v1/responses')).isValid,
-      isTrue,
-    );
-    expect(
-      provider(Uri.parse('http://example.test/v1/responses')).isValid,
-      isFalse,
-    );
+    for (final endpoint in [
+      'http://example.test/v1/responses',
+      'http://192.168.1.10:8080/v1/responses',
+      'http://[fd00::1]:8080/v1/responses',
+      'http://localhost/v1/responses',
+      'http://127.0.0.1/v1/responses',
+      'http://[::1]/v1/responses',
+    ]) {
+      final value = provider(Uri.parse(endpoint));
+      expect(value.isValid, isTrue, reason: endpoint);
+      final decoded = TranslationProviderConfig.decodeList(
+        TranslationProviderConfig.encodeList([value]),
+      ).single;
+      expect(decoded.toJson(), value.toJson());
+    }
+    for (final endpoint in [
+      'http:/v1/responses',
+      'ftp://example.test/v1/responses',
+      'http://example.test/v1/responses?api_key=secret',
+      'http://user:secret@example.test/v1/responses',
+      'http://example.test/v1/responses#fragment',
+    ]) {
+      expect(provider(Uri.parse(endpoint)).isValid, isFalse, reason: endpoint);
+    }
     expect(
       provider(
         Uri.parse('https://example.test/v1/responses?api_key=secret'),

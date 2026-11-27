@@ -1,4 +1,6 @@
 {
+    "translationProviderHttpWarning": "Ti provider usa HTTP. Vor clave API e li textu a traducter va esser inviat sin ciffration e posse esser interceptet o modificat. HTTP es recomandat solmen in local retes de fidantie. Usa HTTPS in altri casus. Salvar totvez?",
+    "translationProviderHttpSaveAnyway": "Salvar totvez",
     "translationUnsavedChanges": "Vu have modificationes ne salvat. Esque vu vole salvar les?",
     "translationDiscardChanges": "Abandonar",
     "translationSaveBeforeUse": "Salva li parametres ante usar ti function.",

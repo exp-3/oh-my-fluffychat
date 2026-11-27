@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.940318",
+    "translationProviderHttpWarning": "Este fornecedor utiliza HTTP. A sua chave de API e o texto a traduzir serão enviados sem encriptação e poderão ser intercetados ou alterados. O HTTP só é recomendado em redes locais de confiança. Nos restantes casos, utilize HTTPS. Guardar na mesma?",
+    "translationProviderHttpSaveAnyway": "Guardar na mesma",
     "translationUnsavedChanges": "Tem alterações por guardar. Deseja guardá-las?",
     "translationDiscardChanges": "Descartar",
     "translationSaveBeforeUse": "Guarde as definições antes de usar esta funcionalidade.",

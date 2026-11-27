@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.708353",
+    "translationProviderHttpWarning": "此供應商使用 HTTP。API 金鑰和待翻譯內容將未經加密傳輸，可能遭他人攔截或竄改。僅建議在可信任的區域網路中使用 HTTP，其他情況下請使用 HTTPS。是否繼續儲存？",
+    "translationProviderHttpSaveAnyway": "繼續儲存",
     "translationUnsavedChanges": "有尚未儲存的變更，是否儲存？",
     "translationDiscardChanges": "捨棄",
     "translationSaveBeforeUse": "請先儲存設定再使用此功能",

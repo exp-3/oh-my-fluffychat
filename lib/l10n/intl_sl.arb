@@ -1,4 +1,6 @@
 {
+    "translationProviderHttpWarning": "Ta ponudnik uporablja HTTP. Vaš ključ API in besedilo za prevod bosta poslana brez šifriranja, zato ju je mogoče prestreči ali spremeniti. HTTP je priporočen le v zaupanja vrednih krajevnih omrežjih. V drugih primerih uporabite HTTPS. Vseeno shranim?",
+    "translationProviderHttpSaveAnyway": "Vseeno shrani",
     "translationUnsavedChanges": "Imate neshranjene spremembe. Ali jih želite shraniti?",
     "translationDiscardChanges": "Zavrzi",
     "translationSaveBeforeUse": "Pred uporabo te funkcije shranite nastavitve.",

@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.918296",
+    "translationProviderHttpWarning": "Acest furnizor folosește HTTP. Cheia API și textul de tradus vor fi trimise fără criptare și pot fi interceptate sau modificate. HTTP este recomandat doar în rețele locale de încredere. În celelalte cazuri, folosiți HTTPS. Salvați oricum?",
+    "translationProviderHttpSaveAnyway": "Salvează oricum",
     "translationUnsavedChanges": "Aveți modificări nesalvate. Doriți să le salvați?",
     "translationDiscardChanges": "Renunță",
     "translationSaveBeforeUse": "Salvați setările înainte de a utiliza această funcție.",

@@ -1,6 +1,8 @@
 {
     "@@locale": "et",
     "@@last_modified": "2021-08-14 12:41:10.079944",
+    "translationProviderHttpWarning": "See teenusepakkuja kasutab HTTP-d. Sinu API-võti ja tõlgitav tekst saadetakse krüptimata ning neid võidakse pealt kuulata või muuta. HTTP-d soovitatakse kasutada ainult usaldusväärsetes kohtvõrkudes. Muudel juhtudel kasuta HTTPS-i. Kas salvestada siiski?",
+    "translationProviderHttpSaveAnyway": "Salvesta siiski",
     "translationUnsavedChanges": "Sul on salvestamata muudatusi. Kas soovid need salvestada?",
     "translationDiscardChanges": "Loobu",
     "translationSaveBeforeUse": "Enne selle funktsiooni kasutamist salvesta seadistused.",

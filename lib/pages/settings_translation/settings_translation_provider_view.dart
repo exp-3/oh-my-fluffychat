@@ -10,6 +10,7 @@ import 'package:fluffychat/widgets/settings_checkbox_list_tile.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'settings_translation.dart';
+import 'translation_settings_layout.dart';
 
 class SettingsTranslationProviderView extends StatelessWidget {
   final SettingsTranslationProviderController controller;
@@ -33,6 +34,16 @@ class SettingsTranslationProviderView extends StatelessWidget {
         ),
       );
     }
+    final testButton = FilledButton.tonalIcon(
+      onPressed: busy || controller.loadingApiKey ? null : controller.test,
+      icon: controller.testing
+          ? const SizedBox.square(
+              dimension: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : const Icon(Icons.science_outlined),
+      label: Text(l10n.test),
+    );
     return PopScope<Object?>(
       canPop: false,
       onPopInvokedWithResult: controller.onPopInvoked,
@@ -206,44 +217,34 @@ class SettingsTranslationProviderView extends StatelessWidget {
                   SettingsSpacing.inset,
                   0,
                 ),
-                child: FilledButton.tonalIcon(
-                  onPressed: busy || controller.loadingApiKey
-                      ? null
-                      : controller.test,
-                  icon: controller.testing
-                      ? const SizedBox.square(
-                          dimension: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.science_outlined),
-                  label: Text(l10n.test),
-                ),
+                child: controller.existing == null
+                    ? testButton
+                    : TranslationSettingsLayout(
+                        padding: EdgeInsets.zero,
+                        spacing: SettingsSpacing.actions,
+                        runSpacing: SettingsSpacing.actions,
+                        children: [
+                          testButton,
+                          OutlinedButton.icon(
+                            onPressed: busy ? null : controller.delete,
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: theme.colorScheme.error,
+                              side: BorderSide(color: theme.colorScheme.error),
+                              shape: const StadiumBorder(),
+                            ),
+                            icon: controller.deleting
+                                ? const SizedBox.square(
+                                    dimension: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.delete_outline),
+                            label: Text(l10n.deleteTranslationProvider),
+                          ),
+                        ],
+                      ),
               ),
-              if (controller.existing != null) ...[
-                Divider(
-                  height: SettingsSpacing.section,
-                  color: theme.dividerColor,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: SettingsSpacing.inset,
-                  ),
-                  child: OutlinedButton.icon(
-                    onPressed: busy ? null : controller.delete,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: theme.colorScheme.error,
-                      side: BorderSide(color: theme.colorScheme.error),
-                    ),
-                    icon: controller.deleting
-                        ? const SizedBox.square(
-                            dimension: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.delete_outline),
-                    label: Text(l10n.deleteTranslationProvider),
-                  ),
-                ),
-              ],
               const SizedBox(height: SettingsSpacing.inset),
             ],
           ),

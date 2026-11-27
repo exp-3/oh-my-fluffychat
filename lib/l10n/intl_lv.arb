@@ -1,4 +1,6 @@
 {
+    "translationProviderHttpWarning": "Šis pakalpojumu sniedzējs izmanto HTTP. Jūsu API atslēga un tulkojamais teksts tiks nosūtīti bez šifrēšanas, un tos var pārtvert vai mainīt. HTTP ieteicams izmantot tikai uzticamos lokālajos tīklos. Citos gadījumos izmantojiet HTTPS. Vai tomēr saglabāt?",
+    "translationProviderHttpSaveAnyway": "Tomēr saglabāt",
     "translationUnsavedChanges": "Jums ir nesaglabātas izmaiņas. Vai vēlaties tās saglabāt?",
     "translationDiscardChanges": "Atmest",
     "translationSaveBeforeUse": "Pirms šīs funkcijas izmantošanas saglabājiet iestatījumus.",

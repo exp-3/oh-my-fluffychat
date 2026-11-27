@@ -1,6 +1,8 @@
 {
     "@@locale": "ar",
     "@@last_modified": "2021-08-14 12:41:10.156221",
+    "translationProviderHttpWarning": "يستخدم هذا المزوّد HTTP. سيُرسَل مفتاح API والنص المراد ترجمته دون تشفير، وقد يتم اعتراضهما أو تعديلهما. يُنصح باستخدام HTTP على الشبكات المحلية الموثوقة فقط. استخدم HTTPS في غير ذلك. هل تريد الحفظ على أي حال؟",
+    "translationProviderHttpSaveAnyway": "الحفظ على أي حال",
     "translationUnsavedChanges": "لديك تغييرات غير محفوظة. هل تريد حفظها؟",
     "translationDiscardChanges": "تجاهل",
     "translationSaveBeforeUse": "احفظ الإعدادات قبل استخدام هذه الميزة.",

@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:10.107750",
+    "translationProviderHttpWarning": "Ĉi tiu provizanto uzas HTTP. Via API-ŝlosilo kaj la tradukota teksto estos senditaj sen ĉifrado kaj povus esti interkaptitaj aŭ ŝanĝitaj. HTTP estas rekomendata nur en fidindaj lokaj retoj. Aliloke uzu HTTPS. Ĉu tamen konservi?",
+    "translationProviderHttpSaveAnyway": "Tamen konservi",
     "translationUnsavedChanges": "Vi havas nekonservitajn ŝanĝojn. Ĉu vi volas konservi ilin?",
     "translationDiscardChanges": "Forĵeti",
     "translationSaveBeforeUse": "Konservu la agordojn antaŭ ol uzi ĉi tiun funkcion.",

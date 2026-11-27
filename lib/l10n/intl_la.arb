@@ -1,4 +1,6 @@
 {
+    "translationProviderHttpWarning": "Hic provisor HTTP utitur. Clavis tua API et textus vertendus sine cryptographia mittentur atque intercipi vel mutari poterunt. HTTP tantum in retibus localibus fidis commendatur. Aliis in casibus HTTPS utere. Visne nihilominus servare?",
+    "translationProviderHttpSaveAnyway": "Nihilominus servare",
     "translationUnsavedChanges": "Mutationes nondum servatae sunt. Visne eas servare?",
     "translationDiscardChanges": "Abicere",
     "translationSaveBeforeUse": "Configurationem serva antequam hac functione uteris.",

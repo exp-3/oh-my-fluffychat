@@ -1,4 +1,6 @@
 {
+    "translationProviderHttpWarning": "Gumagamit ng HTTP ang provider na ito. Ipapadala nang walang pag-encrypt ang iyong API key at tekstong isasalin, at maaaring maharang o mabago ang mga ito. Inirerekomenda lang ang HTTP sa mga pinagkakatiwalaang lokal na network. Gumamit ng HTTPS sa ibang sitwasyon. I-save pa rin?",
+    "translationProviderHttpSaveAnyway": "I-save pa rin",
     "translationUnsavedChanges": "May mga pagbabago kang hindi pa nai-save. Gusto mo bang i-save ang mga ito?",
     "translationDiscardChanges": "Itapon",
     "translationSaveBeforeUse": "I-save muna ang mga setting bago gamitin ang tampok na ito.",

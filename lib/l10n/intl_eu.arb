@@ -1,6 +1,8 @@
 {
     "@@locale": "eu",
     "@@last_modified": "2021-08-14 12:41:10.062383",
+    "translationProviderHttpWarning": "Hornitzaile honek HTTP erabiltzen du. Zure API gakoa eta itzuli beharreko testua zifratu gabe bidaliko dira, eta atzeman edo alda litezke. HTTP sare lokal fidagarrietan soilik erabiltzea gomendatzen da. Beste kasuetan, erabili HTTPS. Gorde hala ere?",
+    "translationProviderHttpSaveAnyway": "Gorde hala ere",
     "translationUnsavedChanges": "Gorde gabeko aldaketak dituzu. Gorde nahi dituzu?",
     "translationDiscardChanges": "Baztertu",
     "translationSaveBeforeUse": "Gorde ezarpenak eginbide hau erabili aurretik.",

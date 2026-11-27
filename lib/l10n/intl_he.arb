@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:10.036931",
+    "translationProviderHttpWarning": "ספק זה משתמש ב־HTTP. מפתח ה־API שלך והטקסט לתרגום יישלחו ללא הצפנה ועלולים להיחשף ליירוט או לשינוי. השימוש ב־HTTP מומלץ רק ברשתות מקומיות מהימנות. במקרים אחרים יש להשתמש ב־HTTPS. לשמור בכל זאת?",
+    "translationProviderHttpSaveAnyway": "לשמור בכל זאת",
     "translationUnsavedChanges": "יש לך שינויים שלא נשמרו. לשמור אותם?",
     "translationDiscardChanges": "ויתור",
     "translationSaveBeforeUse": "יש לשמור את ההגדרות לפני השימוש בתכונה זו.",

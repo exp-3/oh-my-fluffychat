@@ -1,4 +1,6 @@
 {
+    "translationProviderHttpWarning": "Úsáideann an soláthraí seo HTTP. Seolfar d’eochair API agus an téacs atá le haistriú gan chriptiú, agus d’fhéadfaí iad a idircheapadh nó a athrú. Ní mholtar HTTP ach ar líonraí áitiúla iontaofa. Úsáid HTTPS i gcásanna eile. An bhfuil fonn ort sábháil mar sin féin?",
+    "translationProviderHttpSaveAnyway": "Sábháil mar sin féin",
     "translationUnsavedChanges": "Tá athruithe gan sábháil agat. Ar mhaith leat iad a shábháil?",
     "translationDiscardChanges": "Ná sábháil",
     "translationSaveBeforeUse": "Sábháil na socruithe sula n-úsáideann tú an ghné seo.",

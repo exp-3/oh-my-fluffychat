@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.857024",
+    "translationProviderHttpWarning": "Овај добављач користи HTTP. Ваш API кључ и текст за превод биће послати без шифровања и могу бити пресретнути или измењени. HTTP се препоручује само у поузданим локалним мрежама. У другим случајевима користите HTTPS. Ипак сачувати?",
+    "translationProviderHttpSaveAnyway": "Ипак сачувај",
     "translationUnsavedChanges": "Имате несачуване измене. Желите ли да их сачувате?",
     "translationDiscardChanges": "Одбаци",
     "translationSaveBeforeUse": "Сачувајте подешавања пре коришћења ове функције.",

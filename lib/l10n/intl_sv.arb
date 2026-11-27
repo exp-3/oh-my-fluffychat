@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.835634",
+    "translationProviderHttpWarning": "Den här leverantören använder HTTP. Din API-nyckel och texten som ska översättas skickas utan kryptering och kan fångas upp eller ändras. HTTP rekommenderas endast i betrodda lokala nätverk. Använd HTTPS i andra fall. Vill du spara ändå?",
+    "translationProviderHttpSaveAnyway": "Spara ändå",
     "translationUnsavedChanges": "Du har osparade ändringar. Vill du spara dem?",
     "translationDiscardChanges": "Förkasta",
     "translationSaveBeforeUse": "Spara inställningarna innan du använder den här funktionen.",

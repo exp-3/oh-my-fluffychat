@@ -1,6 +1,14 @@
 {
     "@@locale": "en",
     "@@last_modified": "2021-08-14 12:38:37.885451",
+    "translationProviderHttpWarning": "This provider uses HTTP. Your API key and text to translate will be sent without encryption and may be intercepted or modified. HTTP is only recommended on trusted local networks. Use HTTPS elsewhere. Save anyway?",
+    "translationProviderHttpSaveAnyway": "Save anyway",
+    "@translationProviderHttpWarning": {
+        "description": "Confirmation shown before saving a new or changed HTTP provider request URL, warning about unencrypted API keys and text and recommending HTTP only on trusted local networks."
+    },
+    "@translationProviderHttpSaveAnyway": {
+        "description": "Button that saves an HTTP provider despite the unencrypted transport warning."
+    },
     "translationUnsavedChanges": "You have unsaved changes. Do you want to save them?",
     "translationDiscardChanges": "Discard",
     "translationSaveBeforeUse": "Save the settings before using this feature.",

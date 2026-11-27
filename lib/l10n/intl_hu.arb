@@ -1,6 +1,8 @@
 {
     "@@locale": "hu",
     "@@last_modified": "2021-08-14 12:41:10.016566",
+    "translationProviderHttpWarning": "Ez a szolgáltató HTTP-t használ. Az API-kulcs és a lefordítandó szöveg titkosítás nélkül lesz elküldve, így lehallgathatók vagy módosíthatók. A HTTP használata csak megbízható helyi hálózatokon ajánlott. Más esetekben használjon HTTPS-t. Mégis menti?",
+    "translationProviderHttpSaveAnyway": "Mentés mindenképpen",
     "translationUnsavedChanges": "Nem mentett módosításaid vannak. Szeretnéd menteni őket?",
     "translationDiscardChanges": "Elvetés",
     "translationSaveBeforeUse": "A funkció használata előtt mentsd a beállításokat.",

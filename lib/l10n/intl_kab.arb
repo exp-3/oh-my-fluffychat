@@ -1,5 +1,7 @@
 {
     "@@locale": "kab",
+    "translationProviderHttpWarning": "Aseqdac-a iseqdac HTTP. Tasarut-ik API akked uḍris ara yettwasuqlen ad ttwaznen war awgelhen, yerna zemren ad ttwaṭṭfen neɣ ad ttwabeddlen. Aseqdec n HTTP yettuwelleh-d kan deg yiẓeḍwan idiganen yettwamanen. Deg tegnatin-nniḍen, seqdec HTTPS. Tebɣiḍ ad teskelseḍ akken yebɣu yili?",
+    "translationProviderHttpSaveAnyway": "Sekles akken yebɣu yili",
     "translationUnsavedChanges": "Ɣur-k ibeddilen ur yettwaskelsen ara. Tebɣiḍ ad ten-teskelseḍ?",
     "translationDiscardChanges": "Sefsex",
     "translationSaveBeforeUse": "Sekles iɣewwaren send ad tesqedceḍ tameẓluyt-a.",

@@ -1,6 +1,8 @@
 {
     "@@locale": "pl",
     "@@last_modified": "2021-08-14 12:41:09.943634",
+    "translationProviderHttpWarning": "Ten dostawca korzysta z HTTP. Twój klucz API i tekst do tłumaczenia będą przesyłane bez szyfrowania i mogą zostać przechwycone lub zmodyfikowane. HTTP jest zalecane tylko w zaufanych sieciach lokalnych. W pozostałych przypadkach używaj HTTPS. Zapisać mimo to?",
+    "translationProviderHttpSaveAnyway": "Zapisz mimo to",
     "translationUnsavedChanges": "Masz niezapisane zmiany. Czy chcesz je zapisać?",
     "translationDiscardChanges": "Odrzuć",
     "translationSaveBeforeUse": "Zapisz ustawienia przed użyciem tej funkcji.",

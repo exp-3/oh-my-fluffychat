@@ -1,4 +1,6 @@
 {
+    "translationProviderHttpWarning": "Denne udbyder bruger HTTP. Din API-nøgle og teksten, der skal oversættes, sendes uden kryptering og kan blive opsnappet eller ændret. HTTP anbefales kun på betroede lokale netværk. Brug HTTPS i andre tilfælde. Vil du gemme alligevel?",
+    "translationProviderHttpSaveAnyway": "Gem alligevel",
     "translationUnsavedChanges": "Du har ændringer, der ikke er gemt. Vil du gemme dem?",
     "translationDiscardChanges": "Kassér",
     "translationSaveBeforeUse": "Gem indstillingerne, før du bruger denne funktion.",

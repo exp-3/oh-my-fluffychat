@@ -1,6 +1,8 @@
 {
     "@@locale": "ja",
     "@@last_modified": "2021-08-14 12:41:09.978060",
+    "translationProviderHttpWarning": "このプロバイダーは HTTP を使用しています。API キーと翻訳対象のテキストは暗号化されずに送信され、傍受や改ざんのおそれがあります。HTTP の使用は信頼できるローカルネットワーク内でのみ推奨されます。それ以外では HTTPS を使用してください。このまま保存しますか？",
+    "translationProviderHttpSaveAnyway": "このまま保存",
     "translationUnsavedChanges": "保存されていない変更があります。保存しますか？",
     "translationDiscardChanges": "破棄",
     "translationSaveBeforeUse": "この機能を使用する前に設定を保存してください。",

@@ -1,4 +1,6 @@
 {
+    "translationProviderHttpWarning": "Tämä palveluntarjoaja käyttää HTTP:tä. API-avaimesi ja käännettävä teksti lähetetään salaamattomina, ja ne voidaan siepata tai niitä voidaan muuttaa. HTTP:tä suositellaan vain luotetuissa lähiverkoissa. Käytä muissa tapauksissa HTTPS:ää. Tallennetaanko silti?",
+    "translationProviderHttpSaveAnyway": "Tallenna silti",
     "translationUnsavedChanges": "Sinulla on tallentamattomia muutoksia. Haluatko tallentaa ne?",
     "translationDiscardChanges": "Hylkää",
     "translationSaveBeforeUse": "Tallenna asetukset ennen tämän toiminnon käyttöä.",

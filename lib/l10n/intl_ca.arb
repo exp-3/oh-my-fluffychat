@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:10.145728",
+    "translationProviderHttpWarning": "Aquest proveïdor fa servir HTTP. La clau de l’API i el text que voleu traduir s’enviaran sense xifrar i podrien ser interceptats o modificats. Només es recomana HTTP en xarxes locals de confiança. En altres casos, feu servir HTTPS. Voleu desar igualment?",
+    "translationProviderHttpSaveAnyway": "Desa igualment",
     "translationUnsavedChanges": "Teniu canvis sense desar. Voleu desar-los?",
     "translationDiscardChanges": "Descarta",
     "translationSaveBeforeUse": "Deseu la configuració abans de fer servir aquesta funció.",

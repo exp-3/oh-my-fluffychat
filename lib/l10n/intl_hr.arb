@@ -1,6 +1,8 @@
 {
     "@@locale": "hr",
     "@@last_modified": "2021-08-14 12:41:10.025984",
+    "translationProviderHttpWarning": "Ovaj pružatelj koristi HTTP. Vaš API ključ i tekst za prijevod slat će se bez šifriranja te mogu biti presretnuti ili izmijenjeni. HTTP se preporučuje samo na pouzdanim lokalnim mrežama. U ostalim slučajevima koristite HTTPS. Svejedno spremiti?",
+    "translationProviderHttpSaveAnyway": "Svejedno spremi",
     "translationUnsavedChanges": "Imate nespremljene promjene. Želite li ih spremiti?",
     "translationDiscardChanges": "Odbaci",
     "translationSaveBeforeUse": "Spremite postavke prije korištenja ove značajke.",

@@ -85,11 +85,7 @@ class TranslationProviderConfig {
       !endpoint.hasQuery &&
       endpoint.userInfo.isEmpty &&
       !endpoint.hasFragment &&
-      (endpoint.scheme == 'https' ||
-          (endpoint.scheme == 'http' &&
-              (endpoint.host == 'localhost' ||
-                  endpoint.host == '127.0.0.1' ||
-                  endpoint.host == '::1')));
+      (endpoint.scheme == 'https' || endpoint.scheme == 'http');
 
   Map<String, Object?> toJson() => {
     'id': id,

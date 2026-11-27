@@ -1,6 +1,8 @@
 {
     "@@locale": "de",
     "@@last_modified": "2021-08-14 12:41:10.119255",
+    "translationProviderHttpWarning": "Dieser Anbieter verwendet HTTP. Dein API-Schlüssel und der zu übersetzende Text werden unverschlüsselt übertragen und können abgefangen oder verändert werden. HTTP wird nur in vertrauenswürdigen lokalen Netzwerken empfohlen. Verwende andernfalls HTTPS. Trotzdem speichern?",
+    "translationProviderHttpSaveAnyway": "Trotzdem speichern",
     "translationUnsavedChanges": "Du hast ungespeicherte Änderungen. Möchtest du sie speichern?",
     "translationDiscardChanges": "Verwerfen",
     "translationSaveBeforeUse": "Speichere die Einstellungen, bevor du diese Funktion verwendest.",

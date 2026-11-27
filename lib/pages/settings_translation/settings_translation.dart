@@ -415,7 +415,7 @@ class SettingsTranslationProviderController
   }
 
   Future<void> save() async {
-    if (_busy) return;
+    if (_busy || _dialogOpen || _leaving) return;
     if (_loadingApiKey) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(L10n.of(context).loadingPleaseWait)),
@@ -429,11 +429,30 @@ class SettingsTranslationProviderController
       );
       return;
     }
+    final enteredApiKey = apiKey.text;
     setState(() => saving = true);
     try {
+      if (value.endpoint.scheme == 'http' &&
+          value.requestEndpoint != existing?.requestEndpoint) {
+        final l10n = L10n.of(context);
+        _dialogOpen = true;
+        final OkCancelResult? result;
+        try {
+          result = await showOkCancelAlertDialog(
+            context: context,
+            title: l10n.warning,
+            message: l10n.translationProviderHttpWarning,
+            okLabel: l10n.translationProviderHttpSaveAnyway,
+            cancelLabel: l10n.cancel,
+          );
+        } finally {
+          _dialogOpen = false;
+        }
+        if (result != OkCancelResult.ok || !mounted) return;
+      }
       await runtime.saveProvider(
         value,
-        apiKey: apiKey.text.trim().isEmpty ? null : apiKey.text,
+        apiKey: enteredApiKey.trim().isEmpty ? null : enteredApiKey,
       );
       if (!mounted) return;
       _returnToSettings();

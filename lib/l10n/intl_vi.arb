@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.781172",
+    "translationProviderHttpWarning": "Nhà cung cấp này sử dụng HTTP. Khóa API và văn bản cần dịch của bạn sẽ được gửi mà không mã hóa và có thể bị chặn đọc hoặc sửa đổi. Chỉ nên dùng HTTP trên mạng cục bộ đáng tin cậy. Trong các trường hợp khác, hãy dùng HTTPS. Vẫn lưu?",
+    "translationProviderHttpSaveAnyway": "Vẫn lưu",
     "translationUnsavedChanges": "Bạn có thay đổi chưa lưu. Bạn có muốn lưu không?",
     "translationDiscardChanges": "Loại bỏ",
     "translationSaveBeforeUse": "Hãy lưu cài đặt trước khi sử dụng tính năng này.",

@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:09.955292",
+    "translationProviderHttpWarning": "Deze aanbieder gebruikt HTTP. Je API-sleutel en de te vertalen tekst worden onversleuteld verzonden en kunnen worden onderschept of gewijzigd. HTTP wordt alleen aanbevolen op vertrouwde lokale netwerken. Gebruik in andere gevallen HTTPS. Toch opslaan?",
+    "translationProviderHttpSaveAnyway": "Toch opslaan",
     "translationUnsavedChanges": "Je hebt niet-opgeslagen wijzigingen. Wil je die opslaan?",
     "translationDiscardChanges": "Verwerpen",
     "translationSaveBeforeUse": "Sla de instellingen op voordat je deze functie gebruikt.",

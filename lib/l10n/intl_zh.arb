@@ -1,6 +1,8 @@
 {
     "@@locale": "zh",
     "@@last_modified": "2021-08-14 12:41:09.767805",
+    "translationProviderHttpWarning": "此供应商使用 HTTP。API 密钥和待翻译内容将未经加密传输，可能被他人截获或篡改。仅建议在可信局域网中使用 HTTP，其他情况下请使用 HTTPS。是否继续保存？",
+    "translationProviderHttpSaveAnyway": "继续保存",
     "translationUnsavedChanges": "有未保存的更改，是否保存？",
     "translationDiscardChanges": "舍弃",
     "translationSaveBeforeUse": "请先保存设置再使用此功能",

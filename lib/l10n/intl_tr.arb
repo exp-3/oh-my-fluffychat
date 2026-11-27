@@ -1,6 +1,8 @@
 {
     "@@locale": "tr",
     "@@last_modified": "2021-08-14 12:41:09.803728",
+    "translationProviderHttpWarning": "Bu sağlayıcı HTTP kullanıyor. API anahtarınız ve çevrilecek metin şifrelenmeden gönderilecek ve ele geçirilebilir veya değiştirilebilir. HTTP yalnızca güvenilir yerel ağlarda önerilir. Diğer durumlarda HTTPS kullanın. Yine de kaydedilsin mi?",
+    "translationProviderHttpSaveAnyway": "Yine de kaydet",
     "translationUnsavedChanges": "Kaydedilmemiş değişiklikleriniz var. Kaydetmek ister misiniz?",
     "translationDiscardChanges": "Vazgeç",
     "translationSaveBeforeUse": "Bu özelliği kullanmadan önce ayarları kaydedin.",

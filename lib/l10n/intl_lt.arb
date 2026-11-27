@@ -1,4 +1,6 @@
 {
+    "translationProviderHttpWarning": "Šis teikėjas naudoja HTTP. Jūsų API raktas ir verčiamas tekstas bus siunčiami nešifruoti, todėl juos gali perimti arba pakeisti kiti asmenys. HTTP rekomenduojama naudoti tik patikimuose vietiniuose tinkluose. Kitais atvejais naudokite HTTPS. Vis tiek išsaugoti?",
+    "translationProviderHttpSaveAnyway": "Vis tiek išsaugoti",
     "translationUnsavedChanges": "Turite neįrašytų pakeitimų. Ar norite juos įrašyti?",
     "translationDiscardChanges": "Atmesti",
     "translationSaveBeforeUse": "Prieš naudodami šią funkciją, įrašykite nustatymus.",

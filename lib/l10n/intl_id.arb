@@ -1,5 +1,7 @@
 {
     "@@last_modified": "2021-08-14 12:41:10.002360",
+    "translationProviderHttpWarning": "Penyedia ini menggunakan HTTP. Kunci API dan teks yang akan diterjemahkan akan dikirim tanpa enkripsi dan dapat disadap atau diubah. HTTP hanya disarankan pada jaringan lokal tepercaya. Gunakan HTTPS dalam situasi lain. Tetap simpan?",
+    "translationProviderHttpSaveAnyway": "Tetap simpan",
     "translationUnsavedChanges": "Ada perubahan yang belum disimpan. Apakah Anda ingin menyimpannya?",
     "translationDiscardChanges": "Buang",
     "translationSaveBeforeUse": "Simpan pengaturan sebelum menggunakan fitur ini.",
