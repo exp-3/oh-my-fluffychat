@@ -1,0 +1,51 @@
+# SPDX-FileCopyrightText: 2026 The Oh-My-FluffyChat Project
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: Restore prepared code checks
+description: Restore the shared Dart repairs and dependency lock before setting up Flutter
+
+inputs:
+  dependency-lock-repaired:
+    description: Whether preparation repaired pubspec.lock
+    required: true
+  dart-sources-repaired:
+    description: Whether preparation repaired Dart sources
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Download repaired dependency lock
+      if: inputs.dependency-lock-repaired == 'true'
+      uses: actions/download-artifact@v7
+      with:
+        name: repaired-dependency-lock
+        path: ${{ runner.temp }}/repaired-dependency-lock
+    - name: Download repaired Dart sources
+      if: inputs.dart-sources-repaired == 'true'
+      uses: actions/download-artifact@v7
+      with:
+        name: repaired-dart-sources
+        path: ${{ runner.temp }}/repaired-dart-sources
+    - name: Restore prepared sources and lock
+      shell: bash
+      env:
+        DEPENDENCY_LOCK_REPAIRED: ${{ inputs.dependency-lock-repaired }}
+        DART_SOURCES_REPAIRED: ${{ inputs.dart-sources-repaired }}
+      run: |
+        set -euo pipefail
+        if [[ "$DEPENDENCY_LOCK_REPAIRED" == "true" ]]; then
+          cp "$RUNNER_TEMP/repaired-dependency-lock/pubspec.lock" pubspec.lock
+        fi
+        if [[ "$DART_SOURCES_REPAIRED" == "true" ]]; then
+          git apply "$RUNNER_TEMP/repaired-dart-sources/dart-repairs.patch"
+        fi
+    - uses: subosito/flutter-action@v2
+      with:
+        flutter-version-file: .fvmrc
+        cache: true
+    - uses: dtolnay/rust-toolchain@stable
+    - name: Resolve prepared dependencies
+      shell: bash
+      run: flutter pub get --enforce-lockfile

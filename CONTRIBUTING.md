@@ -183,6 +183,12 @@ We do not allow code with wrong formatting. Please run `flutter format lib` if y
 
 We do not allow codes with dart errors or warnings. We use the [flutter_lints](https://pub.dev/packages/flutter_lints) package for static code analysis with additional rules under `analysis_options.yaml`.
 
+### Code Checks CI
+
+Repository checks run alongside dependency resolution, Dart fixes, and formatting. Once preparation succeeds, analysis and dependency checks, Dart code metrics, and tests run in three parallel jobs. Each job checks out the triggering commit and applies the same prepared source repairs and dependency lock before resolving dependencies with `--enforce-lockfile`.
+
+The `code_tests` job aggregates every required result and fails if any required job fails, is cancelled, or is skipped. On pushes to `main`, automatic repairs are committed after the checks finish, including when a check fails.
+
 ### Optional Firebase CI configuration
 
 To enable Firebase checks in Code Checks and Firebase Messaging in debug Android builds, configure the repository secret `GOOGLE_SERVICES_JSON` with the complete contents of the Android Firebase configuration file. Its client package name must match `applicationId` in `android/app/build.gradle.kts`.

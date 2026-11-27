@@ -8,37 +8,45 @@ on:
   merge_group:
 
 jobs:
-  code_tests:
+  repository_checks:
+    name: Repository checks
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
-    outputs:
-      dependency_lock_repaired: ${{ steps.flutter_dependencies.outputs.lock_repaired }}
-      dart_sources_repaired: ${{ steps.dart_repairs.outputs.repaired }}
     steps:
       - uses: actions/checkout@v7
-      - name: Check Firebase configuration
-        id: firebase
-        uses: ./.github/actions/prepare_firebase
         with:
-          google-services-json: ${{ secrets.GOOGLE_SERVICES_JSON }}
+          ref: ${{ github.sha }}
       - uses: webiny/action-conventional-commits@v1.4.2
       - name: Check licenses
         uses: fsfe/reuse-action@v6
       - run: ./scripts/generate-locale-config.sh
       - run: git diff --exit-code
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version-file: .fvmrc
-          cache: true
-      - uses: dtolnay/rust-toolchain@stable
       - name: Check for empty translations
         run: |
           if grep -rn '": ""' lib/l10n/*.arb; then
             echo "❌ Found empty translation strings."
             exit 1
           fi
+
+  prepare_checks:
+    name: Prepare dependencies and Dart repairs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      dependency_lock_repaired: ${{ steps.flutter_dependencies.outputs.lock_repaired }}
+      dart_sources_repaired: ${{ steps.dart_repairs.outputs.repaired }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: .fvmrc
+          cache: true
+      - uses: dtolnay/rust-toolchain@stable
       - name: Resolve Flutter dependencies
         id: flutter_dependencies
         shell: bash
@@ -88,9 +96,7 @@ jobs:
       - name: Store repaired dependency lock
         if: >-
           always() &&
-          steps.flutter_dependencies.outputs.lock_repaired == 'true' &&
-          github.event_name == 'push' &&
-          github.ref == 'refs/heads/main'
+          steps.flutter_dependencies.outputs.lock_repaired == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: repaired-dependency-lock
@@ -129,15 +135,28 @@ jobs:
       - name: Store Dart repairs
         if: >-
           always() &&
-          steps.dart_repairs.outputs.repaired == 'true' &&
-          github.event_name == 'push' &&
-          github.ref == 'refs/heads/main'
+          steps.dart_repairs.outputs.repaired == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: repaired-dart-sources
           path: ${{ runner.temp }}/dart-repairs.patch
           if-no-files-found: error
           retention-days: 1
+
+  analysis_checks:
+    name: Analysis and dependency checks
+    needs: prepare_checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+      - uses: ./.github/actions/restore_code_checks
+        with:
+          dependency-lock-repaired: ${{ needs.prepare_checks.outputs.dependency_lock_repaired }}
+          dart-sources-repaired: ${{ needs.prepare_checks.outputs.dart_sources_repaired }}
       - name: Check license compliance
         run: dart run license_checker check-licenses -c licenses.yaml --problematic
       - name: Check for unused translations
@@ -149,10 +168,6 @@ jobs:
         run: |
           dart pub global activate dependency_validator
           dart pub global run dependency_validator
-      - run: dart run dart_code_linter:metrics analyze lib --reporter=github
-      - run: dart run dart_code_linter:metrics check-unused-code lib
-      - run: dart run dart_code_linter:metrics check-unused-files lib
-      - run: dart run dart_code_linter:metrics check-unused-l10n lib
       - name: Check for commented-out Dart code with semicolons
         run: |
           if grep -R --include="*.dart" -nE '^[[:space:]]*//[^/<].*;[[:space:]]*$' lib/; then
@@ -160,6 +175,45 @@ jobs:
             echo "❌ Found commented-out Dart code ending with semicolon."
             exit 1
           fi
+
+  code_metrics:
+    name: Dart code metrics
+    needs: prepare_checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+      - uses: ./.github/actions/restore_code_checks
+        with:
+          dependency-lock-repaired: ${{ needs.prepare_checks.outputs.dependency_lock_repaired }}
+          dart-sources-repaired: ${{ needs.prepare_checks.outputs.dart_sources_repaired }}
+      - run: dart run dart_code_linter:metrics analyze lib --reporter=github
+      - run: dart run dart_code_linter:metrics check-unused-code lib
+      - run: dart run dart_code_linter:metrics check-unused-files lib
+      - run: dart run dart_code_linter:metrics check-unused-l10n lib
+
+  tests:
+    name: Tests and optional Firebase analysis
+    needs: prepare_checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+      - name: Check Firebase configuration
+        id: firebase
+        uses: ./.github/actions/prepare_firebase
+        with:
+          google-services-json: ${{ secrets.GOOGLE_SERVICES_JSON }}
+      - uses: ./.github/actions/restore_code_checks
+        with:
+          dependency-lock-repaired: ${{ needs.prepare_checks.outputs.dependency_lock_repaired }}
+          dart-sources-repaired: ${{ needs.prepare_checks.outputs.dart_sources_repaired }}
       - name: Add Firebase Messaging
         if: steps.firebase.outputs.configured == 'true'
         run: ./scripts/add-firebase-messaging.sh
@@ -170,13 +224,36 @@ jobs:
         run: ./scripts/prepare_vodozemac.sh
       - run: flutter test
 
+  code_tests:
+    needs:
+      - repository_checks
+      - prepare_checks
+      - analysis_checks
+      - code_metrics
+      - tests
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Check required job results
+        shell: bash
+        env:
+          CHECK_RESULTS: ${{ toJSON(needs) }}
+        run: |
+          set -euo pipefail
+          jq -r 'to_entries[] | "\(.key): \(.value.result)"' <<< "$CHECK_RESULTS"
+          if ! jq -e 'all(.[]; .result == "success")' <<< "$CHECK_RESULTS" > /dev/null; then
+            echo "::error::One or more required checks failed, were cancelled, or were skipped."
+            exit 1
+          fi
+
   commit_automatic_repairs:
     name: Commit automatic repairs
-    needs: code_tests
+    needs: [prepare_checks, code_tests]
     if: >-
       always() &&
-      (needs.code_tests.outputs.dependency_lock_repaired == 'true' ||
-      needs.code_tests.outputs.dart_sources_repaired == 'true') &&
+      (needs.prepare_checks.outputs.dependency_lock_repaired == 'true' ||
+      needs.prepare_checks.outputs.dart_sources_repaired == 'true') &&
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -185,14 +262,16 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
       - name: Download repaired dependency lock
-        if: needs.code_tests.outputs.dependency_lock_repaired == 'true'
+        if: needs.prepare_checks.outputs.dependency_lock_repaired == 'true'
         uses: actions/download-artifact@v7
         with:
           name: repaired-dependency-lock
           path: ${{ runner.temp }}/repaired-dependency-lock
       - name: Download repaired Dart sources
-        if: needs.code_tests.outputs.dart_sources_repaired == 'true'
+        if: needs.prepare_checks.outputs.dart_sources_repaired == 'true'
         uses: actions/download-artifact@v7
         with:
           name: repaired-dart-sources
@@ -201,11 +280,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ needs.code_tests.outputs.dependency_lock_repaired }}" == "true" ]]; then
+          if [[ "${{ needs.prepare_checks.outputs.dependency_lock_repaired }}" == "true" ]]; then
             cp "$RUNNER_TEMP/repaired-dependency-lock/pubspec.lock" pubspec.lock
           fi
 
-          if [[ "${{ needs.code_tests.outputs.dart_sources_repaired }}" == "true" ]]; then
+          if [[ "${{ needs.prepare_checks.outputs.dart_sources_repaired }}" == "true" ]]; then
             git apply "$RUNNER_TEMP/repaired-dart-sources/dart-repairs.patch"
           fi
 
@@ -217,10 +296,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add pubspec.lock lib/ test/
 
-          if [[ "${{ needs.code_tests.outputs.dependency_lock_repaired }}" == "true" &&
-                "${{ needs.code_tests.outputs.dart_sources_repaired }}" == "true" ]]; then
+          if [[ "${{ needs.prepare_checks.outputs.dependency_lock_repaired }}" == "true" &&
+                "${{ needs.prepare_checks.outputs.dart_sources_repaired }}" == "true" ]]; then
             commit_message="chore: apply automatic CI repairs"
-          elif [[ "${{ needs.code_tests.outputs.dart_sources_repaired }}" == "true" ]]; then
+          elif [[ "${{ needs.prepare_checks.outputs.dart_sources_repaired }}" == "true" ]]; then
             commit_message="fix: apply automatic Dart fixes and formatting"
           else
             commit_message="fix(deps): refresh unavailable Git revisions"
