@@ -5,29 +5,28 @@ SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-# Contributing to FluffyChat
-Contributions are always welcome but limited to collaborators only for now duo to spam. You can request collaboration access to the repository in an issue. Further collaboration will then be decided on the quality of your first pull request.
+# Contributing to Oh-My-FluffyChat
+Contributions are welcome from everyone. You do not need to be a repository collaborator to open a pull request.
 
 To improve the process please make sure that you read the following guidelines carefully:
 
 ## Contributing Guidelines
 
 1. Always create a Pull Request for any changes.
-2. We do not vibe code! You are required to understand and be able to explain every single line of code of your contribution.
+2. This fork takes a different approach to AI use from upstream: we do not impose a blanket ban on AI-assisted or AI-generated contributions, including vibe coding. If you plan to rely on prompts to produce an implementation rather than use AI as a coding assistant, and/or you do not plan to verify the changes in detail, we recommend using a top-tier frontier model. Well-designed, practical changes and good code quality improve the chances of acceptance.
 3. Whenever possible please make sure that your Pull Request only contains **one** commit. Cases where multiple commits make sense are very rare.
-4. Do not add merge commits. Use rebases.
+4. Do not add merge commits. Use rebases. As an exception, the repository owner uses merge commits when synchronizing changes from upstream.
 5. Every Pull Request should change only one thing. For bigger changes it is often better to split them up in multiple Pull Requests.
-6. [Sign your commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits).
+6. [Signing your commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits) is recommended.
 7. Format the commit message as [Conventional Commits](https://www.conventionalcommits.org).
-8. For bigger or complex changes (more than a couple of code lines) write an issue or refer to an existing issue and ask for approval from the maintainers (@krille-chan) **before** starting to implement it. This way you reduce the risk that your Pull Request get's declined.
+8. If you plan to contribute a new feature, consider discussing it with this repository's maintainers before starting implementation. If you have already implemented it for your own use, feel free to open a pull request directly.
 9. Prefer simple and easy to maintain solutions over complexity and fancy ones.
-10. Translations in the .arb files are managed in [Weblate](https://hosted.weblate.org/projects/fluffychat/) and not here.
+10. Upstream manages its `.arb` translations through [Weblate](https://hosted.weblate.org/projects/fluffychat/). When adding new features to this fork, you may add the new strings and their translations directly to `.arb` files. For missing translations of existing upstream strings, please use Weblate.
 11. Do not comment your code! Code comments are a sign that the code is not self-explanatory. Instead use comments to mark workarounds (always with a link to the upstream problem!) or explain **why** something is done in an unusual way.
-12. Do not fire&forget a pull request! Contributing also means taking over responsibility, reacting on comments and reviews and be able to collaborate.
-13. Do not overengineer something. Not everything needs to be abstracted, if it isn't used in more than one place. Code must fit in the current architecture.
-14. Avoid using `else` and prefer function guards, early returns and `switch`.
-15. Do not add functionality in the platform-directories. We try to not differ from the default as these creates huge conflicts on upgrading Flutter versions. We do not have our own platform channels but abstracted them in external packages. We must try to get rid of existing workarounds and not extend them! Exceptions are for edge cases like the Notification Service Extension on iOS.
-16. Keep all dependencies and external packages minimal. Make sure that new packages are well maintained and no threat to future dependency hell.
+12. Do not overengineer something. Not everything needs to be abstracted, if it isn't used in more than one place. Code must fit in the current architecture.
+13. Avoid using `else` and prefer function guards, early returns and `switch`.
+14. Do not add functionality in the platform-directories. We try to not differ from the default as these creates huge conflicts on upgrading Flutter versions. We do not have our own platform channels but abstracted them in external packages. We must try to get rid of existing workarounds and not extend them! Exceptions are for edge cases like the Notification Service Extension on iOS.
+15. Keep all dependencies and external packages minimal. Make sure that new packages are well maintained and no threat to future dependency hell.
 
 # Code Style
 
