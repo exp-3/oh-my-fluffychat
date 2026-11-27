@@ -95,7 +95,7 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                     horizontal: SettingsSpacing.inset,
                   ),
-                  child: ElevatedButton.icon(
+                  child: OutlinedButton.icon(
                     onPressed: controller.loading
                         ? null
                         : controller.loadSecrets,
@@ -116,7 +116,7 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                           style: TextStyle(color: theme.colorScheme.error),
                         ),
                       ),
-                      ElevatedButton.icon(
+                      OutlinedButton.icon(
                         onPressed: controller.busy || controller.loadFailed
                             ? null
                             : controller.save,
@@ -458,10 +458,13 @@ class TranslationRoamingSettingsView extends StatelessWidget {
                             onTap: uploadHint.isNotEmpty
                                 ? controller.showUploadHint
                                 : null,
-                            child: ElevatedButton.icon(
+                            child: OutlinedButton.icon(
                               onPressed: controller.canUpload
                                   ? controller.openUpload
                                   : null,
+                              style: OutlinedButton.styleFrom(
+                                shape: const StadiumBorder(),
+                              ),
                               icon: const Icon(Icons.cloud_upload_outlined),
                               label: Text(l10n.translationRoamingUploadLocal),
                             ),
